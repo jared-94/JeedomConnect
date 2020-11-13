@@ -1,0 +1,1 @@
+JeedomConnect plugin to communicate with JeedomConnect app

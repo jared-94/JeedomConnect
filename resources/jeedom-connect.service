@@ -1,0 +1,14 @@
+[Unit]
+Description=Jeedom Connect
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/var/www/html/plugins/JeedomConnect/core/php
+ExecStart=/usr/bin/php server.php
+Restart=on-failure
+RestartSec=1000ms
+SyslogIdentifier=jeedom-connect
+
+[Install]
+WantedBy=multi-user.target

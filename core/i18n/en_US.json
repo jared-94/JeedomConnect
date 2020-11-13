@@ -1,0 +1,9 @@
+{
+  "plugins\/JeedomConnect\/desktop\/php\/JeedomConnect.php": {
+    "JeedomConnect": "JeedomConnect",
+    "Configuration": "Configuration"
+  },
+  "plugins\/JeedomConnect\/plugin_info\/configuration.php": {
+    "Port d'écoute": "JeedomConnect internal port"
+  }
+}

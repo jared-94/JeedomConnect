@@ -1,0 +1,12 @@
+{
+	"id" : "JeedomConnect",
+	"name" : "Jeedom Connect",
+	"description" : "Plugin d'échange avec l'application Jeedom Connect",
+	"licence" : "AGPL",
+	"author" : "Jared",
+	"require" : "3.3",
+	"category" : "communication",
+	"hasDependency" : true,
+	"hasOwnDeamon" : true,
+	"maxDependancyInstallTime" : 2
+}
