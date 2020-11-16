@@ -18,12 +18,15 @@
 
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-require_once dirname(__FILE__) . '/../../3rdparty/vendor/autoload.php';
+$autoload = dirname(__FILE__) . '/../../3rdparty/vendor/autoload.php';
+if (file_exists($autoload)) {
+	require_once $autoload;
+}
 
 use Endroid\QrCode\QrCode;
 
 class JeedomConnect extends eqLogic {
-	
+
    /*     * *************************Attributs****************************** */
 
 	public static $_initialConfig = array(
@@ -37,8 +40,8 @@ class JeedomConnect extends eqLogic {
 			'groups' => array(),
 			'widgets' => array()
 		)
-	);	
-	
+	);
+
 	public static $_data_dir = __DIR__ . '/../../data/';
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
 	public static $_qr_dir = __DIR__ . '/../../data/qrcodes/';
@@ -50,17 +53,17 @@ class JeedomConnect extends eqLogic {
 			'log' => __CLASS__ . '_update',
 			'progress_file' => jeedom::getTmpFolder('JeedomConnect') . '/dependance',
 			'state' => self::packagesOk() ? 'ok' : 'nok'
-		);        
+		);
     }
 
     public static function dependancy_install() {
-		log::remove(__CLASS__ . '_update');        
+		log::remove(__CLASS__ . '_update');
 		return array(
-			'script' => dirname(__FILE__) . '/../../3rdparty/install.sh ' . jeedom::getTmpFolder('JeedomConnect') . '/dependance', 
+			'script' => dirname(__FILE__) . '/../../3rdparty/install.sh ' . jeedom::getTmpFolder('JeedomConnect') . '/dependance',
 			'log' => log::getPathToLog(__CLASS__ . '_update')
 		);
     }
-	
+
 	public static function packagesOk() {
 		$resource_path = realpath(__DIR__ . '/../../3rdparty');
         if (!file_exists($resource_path.'/vendor/cboden/ratchet') or !file_exists($resource_path.'/vendor/endroid/qr-code')) {
@@ -68,7 +71,7 @@ class JeedomConnect extends eqLogic {
         }
 		return true;
 	}
-	
+
 
     public static function deamon_info() {
         $return = array();
@@ -83,7 +86,7 @@ class JeedomConnect extends eqLogic {
         }
         return $return;
     }
-    
+
     public static function deamon_start($_debug = false) {
         log::add('JeedomConnect', 'info', 'Starting daemon');
         exec(system::getCmdSudo() . 'systemctl restart jeedom-connect');
@@ -108,21 +111,21 @@ class JeedomConnect extends eqLogic {
     }
 
     /*     * *********************Méthodes d'instance************************* */
-	
+
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
 			mkdir(self::$_config_dir);
-		}	
+		}
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		file_put_contents($config_file, json_encode($config));
 	}
-	
+
 	public function getConfig() {
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		$config = file_get_contents($config_file);
 		return json_decode($config, true);
 	}
-	
+
 	public function generateQRCode() {
 		if (!is_dir(self::$_qr_dir)) {
 				mkdir(self::$_qr_dir);
@@ -137,13 +140,13 @@ class JeedomConnect extends eqLogic {
 			$qrCode = new QrCode(json_encode($connectData));
 			$qrCode->writeFile(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
 	}
-	
+
 	public function registerDevice($id, $name) {
 		$this->setConfiguration('deviceId', $id);
 		$this->setConfiguration('deviceName', $name);
 		$this->save();
 	}
-	
+
 	public function removeDevice() {
 		$this->setConfiguration('deviceId', '');
 		$this->setConfiguration('deviceName', '');
@@ -153,26 +156,26 @@ class JeedomConnect extends eqLogic {
     public function preInsert() {
 		if ($this->getConfiguration('apiKey') == '') {
 			$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
-			$this->setLogicalId($this->getConfiguration('apiKey'));			
-			$this->generateQRCode();			
-		}		
+			$this->setLogicalId($this->getConfiguration('apiKey'));
+			$this->generateQRCode();
+		}
     }
 
     public function postInsert() {
-		$this->setIsEnable(1);		
+		$this->setIsEnable(1);
 		if ($this->getConfiguration('configVersion') == '') {
 			$this->setConfiguration('configVersion', 0);
-		}		
+		}
 		$this->save();
-		$this->saveConfig(self::$_initialConfig);		
+		$this->saveConfig(self::$_initialConfig);
     }
 
     public function preSave()
-    {			
+    {
     }
 
     public function postSave()
-    {		
+    {
     }
 
     public function preUpdate()
@@ -194,12 +197,12 @@ class JeedomConnect extends eqLogic {
     }
 
 
-   
+
 }
 
 class JeedomConnectCmd extends cmd {
-	
+
 	public function execute($_options = array()) {
 	}
-	
+
 }
