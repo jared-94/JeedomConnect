@@ -4,7 +4,7 @@ body {
 
 .tab {
   float: left;
-  width: 400px;
+  width: 250px;
   height: auto;
   border-right: 1px solid #ccc;
 }
@@ -35,7 +35,7 @@ body {
 
 /* Style the tab content */
 .tabcontent {
-  margin-left:420px;
+  margin-left:270px;
   padding: 0px 12px;
   width: 1000px;
   height:auto;

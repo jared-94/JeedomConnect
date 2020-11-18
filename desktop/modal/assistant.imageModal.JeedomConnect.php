@@ -34,8 +34,8 @@ if (!isConnect('admin')) {
 
 /* Style the images inside the grid */
 .column img {
-  opacity: 0.8; 
-  cursor: pointer; 
+  opacity: 0.8;
+  cursor: pointer;
 }
 
 .selected {
@@ -43,7 +43,7 @@ if (!isConnect('admin')) {
 	border-color: red;
 }
 </style>
-
+<div style="overflow-y:auto; overflow-x:hidden; height:450px;">
 <input type="file" accept="image/*" id="file-input" style="display:none;" >
 
 <br/>
@@ -51,21 +51,21 @@ Images internes
 <div class="row" id="internal-div"></div>
 Images personnelles
 <a class="btn btn-default roundedRight" onclick="addImage()">
-	<i class="fas fa-plus-square"></i> 
-	Ajouter 
+	<i class="fas fa-plus-square"></i>
+	Ajouter
 </a>
-	
+
 <div class="row" id="user-div">
 
 </div>
-
+</div>
 <script>
 
 function addImage() {
 	$("#file-input").click();
 }
 
-$("#file-input").change(function() { 
+$("#file-input").change(function() {
 	var fd = new FormData();
 	if($(this).prop('files').length > 0)
     {
@@ -79,10 +79,10 @@ $("#file-input").change(function() {
             contentType: false,
             processData: false,
             success: function(response){
-				setImageModalData();				
+				setImageModalData();
             },
         });
-		
+
     }
 });
 
@@ -91,13 +91,13 @@ function selectImage(img) {
 	$(img).addClass("selected");
 	$( "#validateImg").click();
 }
-function setImageModalData(selected) {	
+function setImageModalData(selected) {
 	$.post({
         url: 'plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php',
 		data: { 'action': 'getImgList' },
 		cache: false,
         success: function(response){
-            files = $.parseJSON(response).result;	
+            files = $.parseJSON(response).result;
 			internalContent = "";
 			for (var key in files.internal) {
 				if (files.internal[key] == selected) {
@@ -109,7 +109,7 @@ function setImageModalData(selected) {
 					<img src="plugins/JeedomConnect/data/img/${files.internal[key]}" id="${files.internal[key]}" style="width:40px" onclick="selectImage(this);">
 					</div>`;
 				}
-				
+
 			}
 			$("#internal-div").html(internalContent);
 			userContent = "";
@@ -122,12 +122,12 @@ function setImageModalData(selected) {
 					userContent += `<div class="column">
 					<img src="plugins/JeedomConnect/data/img/user_files/${files.user[key]}" id="user_files/${files.user[key]}"  style="width:40px" onclick="selectImage(this);">
 					</div>`;
-				}				
+				}
 			}
-			$("#user-div").html(userContent);		
+			$("#user-div").html(userContent);
         },
     });
 }
 
 
-</script>	
+</script>
