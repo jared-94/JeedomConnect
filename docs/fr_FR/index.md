@@ -1,6 +1,6 @@
 # Documentation du plugin Jeedom Connect
 
-![Jeedom Connect](/plugin_info/JeedomConnect_icon.png)
+![Jeedom Connect](../img/JeedomConnect_icon.png)
 
 ## Présentation du projet
 Le projet **Jeedom Connect** se compose de 2 parties : un plugin pour Jeedom, et une application Android. Une version pour iOS pourra être envisagée plus tard.
@@ -36,7 +36,7 @@ Vous pouvez ajouter des équipements dans le plugin de façon standard.
 
 1 équipement = 1 appareil muni de l'application
 
-![](/docs/img/screen-eqConfig.png)
+![](../img/screen-eqConfig.png)
 
 A la création d'un équipement, une clé API, ainsi qu'un QR Code est automatiquement généré avec les informations de configuration du plugin. Lors du démarrage de l'application, vous pourrez alors entrer manuellement l'adresse ws et cette clé, ou bien scanner le QR Code. Une fois connecté, l'équipement et l'appareil sont liés. Pour vous connecter avec un autre appareil, il vous faut le *détacher*  en cliquant sur le bouton associé.
 
@@ -45,7 +45,7 @@ La configuration d'un équipement consiste en un fichier JSON configurable avec 
 ## Configuration d'un équipement
 Toute la configuration se passe dans l'assistant.
 
- ![](/docs/img/screen-assistantBottom.png)
+ ![](../img/screen-assistantBottom.png)
 
 Le changement de configuration a lieu à chaque click sur le bouton *Sauvegarder*. Si l'application est démarrée, elle est automatiquement transférée. Si vous pensé avoir une erreur (par exemple supprimé un élément par erreur), actualisez simplement la page. Le bouton *Réinitialiser* (suivi de *Sauvegarder*) remet toute la configuration à zéro, attention donc !
 
@@ -54,7 +54,7 @@ Cette partie est assez explicite, elle permet de configurer les onglets qui appa
 Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navigation par ces onglets.
 
 * ### Menu du haut
- ![](/docs/img/screen-assistantTop.png)
+ ![](../img/screen-assistantTop.png)
 
  Cette partie est également explicite. Un menu sous forme d'onglets en haut de l'écran que vous pouvez 'slider'. Egalement facultatif.
 
@@ -62,10 +62,10 @@ Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navig
  Chaque widget peut être associé à une pièce à ajouter dans cette partie.
 
 * ### Widgets
- ![](/docs/img/screen-assistantWidgets.png)
+ ![](../img/screen-assistantWidgets.png)
  C'est ici qu'on configure les widgets affichés dans l'application. Placez-vous tout d'abord sur le menu / sous-menu que vous voulez configurer. Les différents éléments être peuvent bougés avec les boutons 'flèches' et 'supprimer'.
  * **Ajouter un groupe** : Vous pouvez ranger vos widgets dans un menu dépliable (type "acordéon").
- ![](/docs/img/screen-groupConfig.png)
+ ![](../img/screen-groupConfig.png)
    * **Actif** : Le groupe sera (ne sera pas) affiché dans l'application.
    * **Développé par défaut** : Le comportement par défaut (plié / déplié) du menu.
  * **Ajouter un widget** : Ajoutez autant de widgets de que vous souhaitez ! Certains champs sont commun à (presque) tous les widgets :
