@@ -75,7 +75,7 @@
 				"category": "stringList",
 				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 				"description": "Affichage forcé du widget"
-			}			
+			}
 		]
 	},
 	{
@@ -175,7 +175,7 @@
 	},
 	{
 		"type": "single-light-color",
-		"name": "Lumière de couleurs", 
+		"name": "Lumière de couleurs",
 		"img": "icon_wheel.png",
 		"description": "Gère une lumière à couleurs",
 		"options": [
@@ -227,7 +227,7 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "color"
-			},			
+			},
 			{
 				"id": "brightAction",
 				"name": "Intensité",
@@ -293,7 +293,7 @@
 				"description": "Affichage forcé du widget"
 			}
 		]
-	},	
+	},
 	{
 		"type": "group-light",
 		"name": "Groupe de lumières",
@@ -448,7 +448,7 @@
 				"name": "Nom",
 				"required": true,
 				"category": "string"
-			},			
+			},
 			{
 				"id": "widgets",
 				"name": "Widgets",
@@ -1094,7 +1094,7 @@
 				"name": "Image Piéton",
 				"required": false,
 				"category": "img"
-			},			
+			},
 			{
 				"id": "display",
 				"name": "Affichage forcé",
@@ -1421,7 +1421,7 @@
 				"category": "stringList",
 				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 				"description": "Affichage forcé du widget"
-			}			
+			}
 		]
 	},
 	{
@@ -1487,7 +1487,7 @@
 				"category": "stringList",
 				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 				"description": "Affichage forcé du widget"
-			}			
+			}
 		]
 	},
 	{
@@ -1546,6 +1546,66 @@
 				"required": false,
 				"category": "string",
 				"description": "Texte affiché lorsque la valeur est 1"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
+		"type": "generic-info-numeric",
+		"name": "Générique numérique",
+		"img": "information.png",
+		"description": "Widget générique pour afficher les infos d'une commande info numérique",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Etat de la commande"
+			},
+			{
+				"id": "image0",
+				"name": "Image 0",
+				"required": false,
+				"category": "img",
+				"description": "Image affichée lorsque la valeur est 0"
+			},
+			{
+				"id": "image1",
+				"name": "Image 1",
+				"required": false,
+				"category": "img",
+				"description": "Image affichée lorsque la valeur est > 0"
+			},
+			{
+				"id": "unit",
+				"name": "Unité",
+				"required": false,
+				"category": "string",
+				"description": "Suffixe à ajouter à la valeur"
 			},
 			{
 				"id": "display",
