@@ -18,12 +18,6 @@
 
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-$autoload = dirname(__FILE__) . '/../../3rdparty/vendor/autoload.php';
-if (file_exists($autoload)) {
-	require_once $autoload;
-}
-
-use Endroid\QrCode\QrCode;
 
 class JeedomConnect extends eqLogic {
 
@@ -48,48 +42,20 @@ class JeedomConnect extends eqLogic {
 
     /*     * ***********************Methode static*************************** */
 
-    public static function dependancy_info() {
-        return array(
-			'log' => __CLASS__ . '_update',
-			'progress_file' => jeedom::getTmpFolder('JeedomConnect') . '/dependance',
-			'state' => self::packagesOk() ? 'ok' : 'nok'
-		);
-    }
-
-    public static function dependancy_install() {
-		log::remove(__CLASS__ . '_update');
-		return array(
-			'script' => dirname(__FILE__) . '/../../3rdparty/install.sh ' . jeedom::getTmpFolder('JeedomConnect') . '/dependance',
-			'log' => log::getPathToLog(__CLASS__ . '_update')
-		);
-    }
-
-	public static function packagesOk() {
-		$resource_path = realpath(__DIR__ . '/../../3rdparty');
-        if (!file_exists($resource_path.'/vendor/cboden/ratchet') or !file_exists($resource_path.'/vendor/endroid/qr-code')) {
-			return false;
-        }
-		return true;
-	}
-
-
     public static function deamon_info() {
         $return = array();
-
-        $status = trim(shell_exec('systemctl is-active jeedom-connect'));
-        $return['state'] = ($status === 'active') ? 'ok' : 'nok';
-
+				$return['state'] = count(system::ps('core/php/server.php')) > 0 ? 'ok' : 'nok';
         $return['launchable'] = 'ok';
-        if (!file_exists('/etc/systemd/system/jeedom-connect.service')) {
-            $return['launchable'] = 'nok';
-            $return['launchable_message'] = __('Le démon n\'est pas installé ', __FILE__);
-        }
         return $return;
     }
 
     public static function deamon_start($_debug = false) {
+				self::deamon_stop();
         log::add('JeedomConnect', 'info', 'Starting daemon');
-        exec(system::getCmdSudo() . 'systemctl restart jeedom-connect');
+				$cmd = 'php ' . dirname(__FILE__) . '/../../core/php/server.php';
+				$cmd .= ' >> ' . log::getPathToLog('JeedomConnect') . ' 2>&1 &';
+
+				shell_exec($cmd);
         $i = 0;
         while ($i < 30) {
             $deamon_info = self::deamon_info();
@@ -107,7 +73,9 @@ class JeedomConnect extends eqLogic {
 
     public static function deamon_stop() {
         log::add('JeedomConnect', 'info', 'Stopping daemon');
-        exec(system::getCmdSudo() . 'systemctl stop jeedom-connect');
+				if (count(system::ps('core/php/server.php')) > 0) {
+					system::kill('core/php/server.php', false);
+				}
     }
 
     /*     * *********************Méthodes d'instance************************* */
@@ -137,8 +105,8 @@ class JeedomConnect extends eqLogic {
 				'apiKey' => $this->getConfiguration('apiKey')
 			);
 			log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
-			$qrCode = new QrCode(json_encode($connectData));
-			$qrCode->writeFile(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+			$request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
+			file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
 	}
 
 	public function registerDevice($id, $name) {

@@ -13,8 +13,7 @@ Le plugin, ainsi que l'application sont complètement **gratuit** et le resteron
 
 ## Installation du plugin
 Il s'installe depuis le market comme les autres (pour l'instant disponible en version beta).
-* Installez ensuite les dépendances
-* Puis démarrer le démon
+Le démon doit être démarré pour le bon fonctionnement.
 
 ## Configuration du plugin
 Il y a 3 champs  pré-remplis que vous pouvez modifier :

@@ -19,31 +19,12 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function JeedomConnect_install() {
-    // Installing daemon
-    log::add('JeedomConnect', 'info', 'Installing daemon');
-    exec(system::getCmdSudo() . 'cp '.dirname(__FILE__).'/../resources/jeedom-connect.service /etc/systemd/system/jeedom-connect.service');
-    exec(system::getCmdSudo() . 'systemctl daemon-reload');
-    exec(system::getCmdSudo() . 'systemctl start jeedom-connect');
-    exec(system::getCmdSudo() . 'systemctl enable jeedom-connect');
-    $active = trim(shell_exec('systemctl is-active jeedom-connect'));
-    $enabled = trim(shell_exec('systemctl is-enabled jeedom-connect'));
-    if ($active !== 'active' || $enabled !== 'enabled') {
-        log::add('JeedomConnect', 'error', "Daemon is not fully installed ($active / $enabled)");
-    } else {
-		log::add('JeedomConnect', 'info', "Daemon installed ($active / $enabled)");
-	}
 }
 
 function JeedomConnect_update() {
-    log::add('JeedomConnect', 'info', 'Updating daemon');
-    exec(system::getCmdSudo() . 'systemctl restart jeedom-connect');
+  log::add('JeedomConnect', 'info', 'Restart daemon');
+  JeedomConnect::deamon_start();
 }
 
 function JeedomConnect_remove() {
-    log::add('JeedomConnect', 'info', 'Removing daemon');
-    exec(system::getCmdSudo() . 'systemctl disable jeedom-connect');
-    exec(system::getCmdSudo() . 'systemctl stop jeedom-connect');
-    exec(system::getCmdSudo() . 'rm /etc/systemd/system/jeedom-connect.service');
-    exec(system::getCmdSudo() . 'systemctl daemon-reload');
-    log::add('JeedomConnect', 'info', "Daemon removed");
 }

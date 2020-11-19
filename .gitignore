@@ -2,7 +2,6 @@ data/configs/
 data/qrcodes/
 data/img/user_files/
 
-3rdparty/vendor/
 3rdparty/composer.phar
 
 .htaccess
