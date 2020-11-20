@@ -1616,6 +1616,137 @@
 				"description": "Affichage forcé du widget"
 			}
 		]
+	},
+	{
+		"type": "generic-info-string",
+		"name": "Générique texte",
+		"img": "information.png",
+		"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "string",
+				"description": "Etat de la commande"
+			},
+			{
+				"id": "image",
+				"name": "Image",
+				"required": false,
+				"category": "img",
+				"description": "Image affichée"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
+		"type": "generic-switch",
+		"name": "Générique switch",
+		"img": "switch.png",
+		"description": "Widget générique pour un switch (commande ON/OFF)",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Etat de la commande"
+			},
+			{
+				"id": "onAction",
+				"name": "Action ON",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "other",
+				"description": "Commande ON"
+			},
+			{
+				"id": "offAction",
+				"name": "Action OFF",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "other",
+				"description": "Commande OFF"
+			},
+			{
+				"id": "imageOn",
+				"name": "Image 0",
+				"required": false,
+				"category": "img",
+				"description": "Image affichée lorsque la valeur est 0"
+			},
+			{
+				"id": "imageOff",
+				"name": "Image 1",
+				"required": false,
+				"category": "img",
+				"description": "Image affichée lorsque la valeur est 1"
+			},
+			{
+				"id": "text0",
+				"name": "Texte 0",
+				"required": false,
+				"category": "string",
+				"description": "Texte affiché lorsque la valeur est 0"
+			},
+			{
+				"id": "text1",
+				"name": "Texte 1",
+				"required": false,
+				"category": "string",
+				"description": "Texte affiché lorsque la valeur est 1"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
 	}
 ]
 }
