@@ -7,7 +7,7 @@ function openTab(evt, tabName) {
 		refreshRoomData();
 	} else if (tabName == "widgetsTab") {
 		refreshWidgetData();
-	} 
+	}
 	var i, tabcontent, tablinks;
 	tabcontent = document.getElementsByClassName("tabcontent");
 	for (i = 0; i < tabcontent.length; i++) {
@@ -68,7 +68,7 @@ function getSimpleModal(_options, _callback) {
 		  result.widgetId = $("#mod-widget-input").val();
 		  result.widgetName = $("#mod-widget-input option:selected").text();
 	  }
-	  
+
       if ($.trim(result) != '' && 'function' == typeof(_callback)) {
         _callback(result);
       }
@@ -101,7 +101,7 @@ function getImageModal(_options, _callback) {
     });
   }
   setImageModalData(_options.selected);
-  
+
   $("#imageModal").dialog({
 	  buttons: [{
 		text: "Annuler",
@@ -121,9 +121,9 @@ function getImageModal(_options, _callback) {
 		}
 	  }]
 	});
-  
-  
-  
+
+
+
   $('#imageModal').dialog('open');
 };
 
@@ -136,7 +136,7 @@ function getWidgetModal(_options, _callback) {
   }
   if ($("#widgetModal").length == 0) {
     $('body').append('<div id="widgetModal"></div>');
-	
+
     $("#widgetModal").dialog({
 	  title: _options.title,
       closeText: '',
@@ -160,36 +160,40 @@ function getWidgetModal(_options, _callback) {
       $(this).dialog("close");
     },
     "Valider": function() {
-      var result = _options.widget ? _options.widget : {};	  
-	  
-	  var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());	
-	  
+      var result = _options.widget ? _options.widget : {};
+
+	  var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+
 	  widgetConfig.options.forEach(option => {
 		if (option.category == "cmd") {
 			if ($("#"+option.id+"-input").attr('cmdId') == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});				
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
 			if ($("#"+option.id+"-input").attr('cmdId') != '') {
 				result[option.id] = $("#"+option.id+"-input").attr('cmdId');
-			}			
+			}
+			if (option.type == 'action') {
+				result[option.id+'Confirm'] = $("#confirm-"+option.id).is(':checked') || undefined;
+				result[option.id+'Secure'] = $("#secure-"+option.id).is(':checked') || undefined;
+			}
 		} else if (option.category == "scenario") {
 			if ($("#"+option.id+"-input").attr('scId') == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});				
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
 			if ($("#"+option.id+"-input").attr('scId') != '') {
 				result[option.id] = $("#"+option.id+"-input").attr('scId');
-			}	
+			}
 		} else if (option.category == "string") {
 			if ($("#"+option.id+"-input").val() == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});				
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
 			result[option.id] = $("#"+option.id+"-input").val();
 		} else if (option.category == "stringList") {
 			if ($("#"+option.id+"-input").val() == 'none' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});				
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
 			if ($("#"+option.id+"-input").val() != 'none') {
@@ -197,42 +201,42 @@ function getWidgetModal(_options, _callback) {
 					result[option.id] = $("#subtitle-input-value").val();
 				} else {
 					result[option.id] = $("#"+option.id+"-input").val();
-				}			  
+				}
 			} else {
 				result[option.id] = undefined;
 			}
 		} else if (option.category == "widgets") {
 			if (widgetsCat.length == 0 & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});				
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
 			result[option.id] = widgetsCat;
 		} else if (option.category == "img") {
 			if ($("#"+option.id).attr("value") == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});				
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
 			if ($("#"+option.id).attr("value") != "") {
 				result[option.id] = $("#"+option.id).attr("value");
 			} else {
 				result[option.id] = undefined;
-			}			
+			}
 		}
 	  });
-	  
+
 	  result.type = $("#widgetsList-select").val();
 	  if ($("#room-input").val() != 'none') {
 		  result.room = $("#room-input").val();
 	  }
 	  result.enable = $("#enable-input").is(':checked');
-	  
+
         if ('function' == typeof(_callback)) {
           _callback(result);
-        }	  
+        }
 		$('#widget-alert').hideAlert();
         $(this).dialog('close');
-		
-	  
+
+
     }
   });
   $('#widgetModal').dialog('open');
