@@ -3,5 +3,7 @@ data/qrcodes/
 data/img/user_files/
 
 3rdparty/composer.phar
+3rdparty/composer.json
+3rdparty/composer.lock
 
 .htaccess

@@ -16,19 +16,11 @@
         }
     ],
     "require": {
-        "php": ">=7.2.5",
-        "symfony/deprecation-contracts": "^2.1",
-        "symfony/polyfill-mbstring": "~1.1",
-        "symfony/polyfill-php80": "^1.15"
+        "php": ">=5.5.9",
+        "symfony/polyfill-mbstring": "~1.1"
     },
     "require-dev": {
-        "predis/predis": "~1.0",
-        "symfony/cache": "^4.4|^5.0",
-        "symfony/mime": "^4.4|^5.0",
-        "symfony/expression-language": "^4.4|^5.0"
-    },
-    "suggest" : {
-        "symfony/mime": "To use the file extension guesser"
+        "symfony/expression-language": "~2.8|~3.0"
     },
     "autoload": {
         "psr-4": { "Symfony\\Component\\HttpFoundation\\": "" },
@@ -36,5 +28,10 @@
             "/Tests/"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.3-dev"
+        }
+    }
 }

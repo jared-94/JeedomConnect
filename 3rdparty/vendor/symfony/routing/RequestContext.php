@@ -31,9 +31,25 @@ class RequestContext
     private $httpPort;
     private $httpsPort;
     private $queryString;
-    private $parameters = [];
 
-    public function __construct(string $baseUrl = '', string $method = 'GET', string $host = 'localhost', string $scheme = 'http', int $httpPort = 80, int $httpsPort = 443, string $path = '/', string $queryString = '')
+    /**
+     * @var array
+     */
+    private $parameters = array();
+
+    /**
+     * Constructor.
+     *
+     * @param string $baseUrl     The base URL
+     * @param string $method      The HTTP method
+     * @param string $host        The HTTP host name
+     * @param string $scheme      The HTTP scheme
+     * @param int    $httpPort    The HTTP port
+     * @param int    $httpsPort   The HTTPS port
+     * @param string $path        The path
+     * @param string $queryString The query string
+     */
+    public function __construct($baseUrl = '', $method = 'GET', $host = 'localhost', $scheme = 'http', $httpPort = 80, $httpsPort = 443, $path = '/', $queryString = '')
     {
         $this->setBaseUrl($baseUrl);
         $this->setMethod($method);
@@ -45,25 +61,10 @@ class RequestContext
         $this->setQueryString($queryString);
     }
 
-    public static function fromUri(string $uri, string $host = 'localhost', string $scheme = 'http', int $httpPort = 80, int $httpsPort = 443): self
-    {
-        $uri = parse_url($uri);
-        $scheme = $uri['scheme'] ?? $scheme;
-        $host = $uri['host'] ?? $host;
-
-        if (isset($uri['port'])) {
-            if ('http' === $scheme) {
-                $httpPort = $uri['port'];
-            } elseif ('https' === $scheme) {
-                $httpsPort = $uri['port'];
-            }
-        }
-
-        return new self($uri['path'] ?? '', 'GET', $host, $scheme, $httpPort, $httpsPort);
-    }
-
     /**
      * Updates the RequestContext information based on a HttpFoundation Request.
+     *
+     * @param Request $request A Request instance
      *
      * @return $this
      */
@@ -74,8 +75,8 @@ class RequestContext
         $this->setMethod($request->getMethod());
         $this->setHost($request->getHost());
         $this->setScheme($request->getScheme());
-        $this->setHttpPort($request->isSecure() || null === $request->getPort() ? $this->httpPort : $request->getPort());
-        $this->setHttpsPort($request->isSecure() && null !== $request->getPort() ? $request->getPort() : $this->httpsPort);
+        $this->setHttpPort($request->isSecure() ? $this->httpPort : $request->getPort());
+        $this->setHttpsPort($request->isSecure() ? $request->getPort() : $this->httpsPort);
         $this->setQueryString($request->server->get('QUERY_STRING', ''));
 
         return $this;
@@ -94,9 +95,11 @@ class RequestContext
     /**
      * Sets the base URL.
      *
+     * @param string $baseUrl The base URL
+     *
      * @return $this
      */
-    public function setBaseUrl(string $baseUrl)
+    public function setBaseUrl($baseUrl)
     {
         $this->baseUrl = $baseUrl;
 
@@ -116,9 +119,11 @@ class RequestContext
     /**
      * Sets the path info.
      *
+     * @param string $pathInfo The path info
+     *
      * @return $this
      */
-    public function setPathInfo(string $pathInfo)
+    public function setPathInfo($pathInfo)
     {
         $this->pathInfo = $pathInfo;
 
@@ -140,9 +145,11 @@ class RequestContext
     /**
      * Sets the HTTP method.
      *
+     * @param string $method The HTTP method
+     *
      * @return $this
      */
-    public function setMethod(string $method)
+    public function setMethod($method)
     {
         $this->method = strtoupper($method);
 
@@ -164,9 +171,11 @@ class RequestContext
     /**
      * Sets the HTTP host.
      *
+     * @param string $host The HTTP host
+     *
      * @return $this
      */
-    public function setHost(string $host)
+    public function setHost($host)
     {
         $this->host = strtolower($host);
 
@@ -186,9 +195,11 @@ class RequestContext
     /**
      * Sets the HTTP scheme.
      *
+     * @param string $scheme The HTTP scheme
+     *
      * @return $this
      */
-    public function setScheme(string $scheme)
+    public function setScheme($scheme)
     {
         $this->scheme = strtolower($scheme);
 
@@ -208,11 +219,13 @@ class RequestContext
     /**
      * Sets the HTTP port.
      *
+     * @param int $httpPort The HTTP port
+     *
      * @return $this
      */
-    public function setHttpPort(int $httpPort)
+    public function setHttpPort($httpPort)
     {
-        $this->httpPort = $httpPort;
+        $this->httpPort = (int) $httpPort;
 
         return $this;
     }
@@ -230,11 +243,13 @@ class RequestContext
     /**
      * Sets the HTTPS port.
      *
+     * @param int $httpsPort The HTTPS port
+     *
      * @return $this
      */
-    public function setHttpsPort(int $httpsPort)
+    public function setHttpsPort($httpsPort)
     {
-        $this->httpsPort = $httpsPort;
+        $this->httpsPort = (int) $httpsPort;
 
         return $this;
     }
@@ -252,9 +267,11 @@ class RequestContext
     /**
      * Sets the query string.
      *
+     * @param string $queryString The query string (after "?")
+     *
      * @return $this
      */
-    public function setQueryString(?string $queryString)
+    public function setQueryString($queryString)
     {
         // string cast to be fault-tolerant, accepting null
         $this->queryString = (string) $queryString;
@@ -289,9 +306,11 @@ class RequestContext
     /**
      * Gets a parameter value.
      *
+     * @param string $name A parameter name
+     *
      * @return mixed The parameter value or null if nonexistent
      */
-    public function getParameter(string $name)
+    public function getParameter($name)
     {
         return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
@@ -299,29 +318,27 @@ class RequestContext
     /**
      * Checks if a parameter value is set for the given parameter.
      *
+     * @param string $name A parameter name
+     *
      * @return bool True if the parameter value is set, false otherwise
      */
-    public function hasParameter(string $name)
+    public function hasParameter($name)
     {
-        return \array_key_exists($name, $this->parameters);
+        return array_key_exists($name, $this->parameters);
     }
 
     /**
      * Sets a parameter value.
      *
-     * @param mixed $parameter The parameter value
+     * @param string $name      A parameter name
+     * @param mixed  $parameter The parameter value
      *
      * @return $this
      */
-    public function setParameter(string $name, $parameter)
+    public function setParameter($name, $parameter)
     {
         $this->parameters[$name] = $parameter;
 
         return $this;
-    }
-
-    public function isSecure(): bool
-    {
-        return 'https' === $this->scheme;
     }
 }

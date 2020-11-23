@@ -11,9 +11,6 @@
 
 namespace Symfony\Component\HttpFoundation;
 
-// Help opcache.preload discover always-needed symbols
-class_exists(AcceptHeaderItem::class);
-
 /**
  * Represents an Accept-* header.
  *
@@ -27,7 +24,7 @@ class AcceptHeader
     /**
      * @var AcceptHeaderItem[]
      */
-    private $items = [];
+    private $items = array();
 
     /**
      * @var bool
@@ -35,6 +32,8 @@ class AcceptHeader
     private $sorted = true;
 
     /**
+     * Constructor.
+     *
      * @param AcceptHeaderItem[] $items
      */
     public function __construct(array $items)
@@ -47,23 +46,20 @@ class AcceptHeader
     /**
      * Builds an AcceptHeader instance from a string.
      *
+     * @param string $headerValue
+     *
      * @return self
      */
-    public static function fromString(?string $headerValue)
+    public static function fromString($headerValue)
     {
         $index = 0;
 
-        $parts = HeaderUtils::split($headerValue ?? '', ',;=');
-
-        return new self(array_map(function ($subParts) use (&$index) {
-            $part = array_shift($subParts);
-            $attributes = HeaderUtils::combine($subParts);
-
-            $item = new AcceptHeaderItem($part[0], $attributes);
+        return new self(array_map(function ($itemValue) use (&$index) {
+            $item = AcceptHeaderItem::fromString($itemValue);
             $item->setIndex($index++);
 
             return $item;
-        }, $parts));
+        }, preg_split('/\s*(?:,*("[^"]+"),*|,*(\'[^\']+\'),*|,+)\s*/', $headerValue, 0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE)));
     }
 
     /**
@@ -79,9 +75,11 @@ class AcceptHeader
     /**
      * Tests if header has given value.
      *
+     * @param string $value
+     *
      * @return bool
      */
-    public function has(string $value)
+    public function has($value)
     {
         return isset($this->items[$value]);
     }
@@ -89,15 +87,19 @@ class AcceptHeader
     /**
      * Returns given value's item, if exists.
      *
+     * @param string $value
+     *
      * @return AcceptHeaderItem|null
      */
-    public function get(string $value)
+    public function get($value)
     {
-        return $this->items[$value] ?? $this->items[explode('/', $value)[0].'/*'] ?? $this->items['*/*'] ?? $this->items['*'] ?? null;
+        return isset($this->items[$value]) ? $this->items[$value] : null;
     }
 
     /**
      * Adds an item.
+     *
+     * @param AcceptHeaderItem $item
      *
      * @return $this
      */
@@ -124,9 +126,11 @@ class AcceptHeader
     /**
      * Filters items on their value using given regex.
      *
+     * @param string $pattern
+     *
      * @return self
      */
-    public function filter(string $pattern)
+    public function filter($pattern)
     {
         return new self(array_filter($this->items, function (AcceptHeaderItem $item) use ($pattern) {
             return preg_match($pattern, $item->getValue());
@@ -148,10 +152,10 @@ class AcceptHeader
     /**
      * Sorts items by descending quality.
      */
-    private function sort(): void
+    private function sort()
     {
         if (!$this->sorted) {
-            uasort($this->items, function (AcceptHeaderItem $a, AcceptHeaderItem $b) {
+            uasort($this->items, function ($a, $b) {
                 $qA = $a->getQuality();
                 $qB = $b->getQuality();
 

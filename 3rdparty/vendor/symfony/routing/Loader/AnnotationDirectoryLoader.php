@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\Routing\Loader;
 
-use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Config\Resource\DirectoryResource;
 
 /**
  * AnnotationDirectoryLoader loads routing information from annotations set
@@ -32,11 +32,9 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
      *
      * @throws \InvalidArgumentException When the directory does not exist or its routes cannot be parsed
      */
-    public function load($path, string $type = null)
+    public function load($path, $type = null)
     {
-        if (!is_dir($dir = $this->locator->locate($path))) {
-            return parent::supports($path, $type) ? parent::load($path, $type) : new RouteCollection();
-        }
+        $dir = $this->locator->locate($path);
 
         $collection = new RouteCollection();
         $collection->addResource(new DirectoryResource($dir, '/\.php$/'));
@@ -74,20 +72,18 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, string $type = null)
+    public function supports($resource, $type = null)
     {
-        if ('annotation' === $type) {
-            return true;
-        }
-
-        if ($type || !\is_string($resource)) {
+        if (!is_string($resource)) {
             return false;
         }
 
         try {
-            return is_dir($this->locator->locate($resource));
+            $path = $this->locator->locate($resource);
         } catch (\Exception $e) {
             return false;
         }
+
+        return is_dir($path) && (!$type || 'annotation' === $type);
     }
 }

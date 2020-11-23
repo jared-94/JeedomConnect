@@ -1,68 +1,6 @@
 CHANGELOG
 =========
 
-5.1.0
------
-
- * added the protected method `PhpFileLoader::callConfigurator()` as extension point to ease custom routing configuration
- * deprecated `RouteCollectionBuilder` in favor of `RoutingConfigurator`.
- * added "priority" option to annotated routes
- * added argument `$priority` to `RouteCollection::add()`
- * deprecated the `RouteCompiler::REGEX_DELIMITER` constant
- * added `ExpressionLanguageProvider` to expose extra functions to route conditions
- * added support for a `stateless` keyword for configuring route stateless in PHP, YAML and XML configurations.
- * added the "hosts" option to be able to configure the host per locale.
- * added `RequestContext::fromUri()` to ease building the default context
-
-5.0.0
------
-
- * removed `PhpGeneratorDumper` and `PhpMatcherDumper`
- * removed `generator_base_class`, `generator_cache_class`, `matcher_base_class` and `matcher_cache_class` router options
- * `Serializable` implementing methods for `Route` and `CompiledRoute` are final
- * removed referencing service route loaders with a single colon
- * Removed `ServiceRouterLoader` and `ObjectRouteLoader`.
-
-4.4.0
------
-
- * Deprecated `ServiceRouterLoader` in favor of `ContainerLoader`.
- * Deprecated `ObjectRouteLoader` in favor of `ObjectLoader`.
- * Added a way to exclude patterns of resources from being imported by the `import()` method
-
-4.3.0
------
-
- * added `CompiledUrlMatcher` and `CompiledUrlMatcherDumper`
- * added `CompiledUrlGenerator` and `CompiledUrlGeneratorDumper`
- * deprecated `PhpGeneratorDumper` and `PhpMatcherDumper`
- * deprecated `generator_base_class`, `generator_cache_class`, `matcher_base_class` and `matcher_cache_class` router options
- * `Serializable` implementing methods for `Route` and `CompiledRoute` are marked as `@internal` and `@final`.
-   Instead of overwriting them, use `__serialize` and `__unserialize` as extension points which are forward compatible
-   with the new serialization methods in PHP 7.4.
- * exposed `utf8` Route option, defaults "locale" and "format" in configuration loaders and configurators
- * added support for invokable service route loaders
-
-4.2.0
------
-
- * added fallback to cultureless locale for internationalized routes
-
-4.0.0
------
-
- * dropped support for using UTF-8 route patterns without using the `utf8` option
- * dropped support for using UTF-8 route requirements without using the `utf8` option
-
-3.4.0
------
-
- * Added `NoConfigurationException`.
- * Added the possibility to define a prefix for all routes of a controller via @Route(name="prefix_")
- * Added support for prioritized routing loaders.
- * Add matched and default parameters to redirect responses
- * Added support for a `controller` keyword for configuring route controllers in YAML and XML configurations.
-
 3.3.0
 -----
 
@@ -81,7 +19,7 @@ CHANGELOG
 
  * Added support for `bool`, `int`, `float`, `string`, `list` and `map` defaults in XML configurations.
  * Added support for UTF-8 requirements
-
+  
 2.8.0
 -----
 
@@ -94,7 +32,7 @@ CHANGELOG
    Before:
 
    ```php
-   $router->generate('blog_show', ['slug' => 'my-blog-post'], true);
+   $router->generate('blog_show', array('slug' => 'my-blog-post'), true);
    ```
 
    After:
@@ -102,7 +40,7 @@ CHANGELOG
    ```php
    use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-   $router->generate('blog_show', ['slug' => 'my-blog-post'], UrlGeneratorInterface::ABSOLUTE_URL);
+   $router->generate('blog_show', array('slug' => 'my-blog-post'), UrlGeneratorInterface::ABSOLUTE_URL);
    ```
 
 2.5.0
@@ -110,7 +48,7 @@ CHANGELOG
 
  * [DEPRECATION] The `ApacheMatcherDumper` and `ApacheUrlMatcher` were deprecated and
    will be removed in Symfony 3.0, since the performance gains were minimal and
-   it's hard to replicate the behavior of PHP implementation.
+   it's hard to replicate the behaviour of PHP implementation.
 
 2.3.0
 -----
@@ -167,7 +105,7 @@ CHANGELOG
    ```php
    $route = new Route();
    $route->setPath('/article/{id}');
-   $route->setMethods(['POST', 'PUT']);
+   $route->setMethods(array('POST', 'PUT'));
    $route->setSchemes('https');
    ```
 
@@ -222,10 +160,10 @@ CHANGELOG
    used with a single parameter. The other params `$prefix`, `$default`, `$requirements` and `$options`
    will still work, but have been deprecated. The `addPrefix` method should be used for this
    use-case instead.
-   Before: `$parentCollection->addCollection($collection, '/prefix', [...], [...])`
+   Before: `$parentCollection->addCollection($collection, '/prefix', array(...), array(...))`
    After:
    ```php
-   $collection->addPrefix('/prefix', [...], [...]);
+   $collection->addPrefix('/prefix', array(...), array(...));
    $parentCollection->addCollection($collection);
    ```
  * added support for the method default argument values when defining a @Route
@@ -250,7 +188,7 @@ CHANGELOG
    (only relevant if you implemented your own RouteCompiler).
  * Added possibility to generate relative paths and network paths in the UrlGenerator, e.g.
    "../parent-file" and "//example.com/dir/file". The third parameter in
-   `UrlGeneratorInterface::generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)`
+   `UrlGeneratorInterface::generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)`
    now accepts more values and you should use the constants defined in `UrlGeneratorInterface` for
    claritiy. The old method calls with a Boolean parameter will continue to work because they
    equal the signature using the constants.

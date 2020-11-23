@@ -50,7 +50,7 @@ class MockArraySessionStorage implements SessionStorageInterface
     /**
      * @var array
      */
-    protected $data = [];
+    protected $data = array();
 
     /**
      * @var MetadataBag
@@ -60,14 +60,25 @@ class MockArraySessionStorage implements SessionStorageInterface
     /**
      * @var array|SessionBagInterface[]
      */
-    protected $bags = [];
+    protected $bags = array();
 
-    public function __construct(string $name = 'MOCKSESSID', MetadataBag $metaBag = null)
+    /**
+     * Constructor.
+     *
+     * @param string      $name    Session name
+     * @param MetadataBag $metaBag MetadataBag instance
+     */
+    public function __construct($name = 'MOCKSESSID', MetadataBag $metaBag = null)
     {
         $this->name = $name;
         $this->setMetadataBag($metaBag);
     }
 
+    /**
+     * Sets the session data.
+     *
+     * @param array $array
+     */
     public function setSessionData(array $array)
     {
         $this->data = $array;
@@ -94,7 +105,7 @@ class MockArraySessionStorage implements SessionStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function regenerate(bool $destroy = false, int $lifetime = null)
+    public function regenerate($destroy = false, $lifetime = null)
     {
         if (!$this->started) {
             $this->start();
@@ -117,7 +128,7 @@ class MockArraySessionStorage implements SessionStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function setId(string $id)
+    public function setId($id)
     {
         if ($this->started) {
             throw new \LogicException('Cannot set session ID after the session has started.');
@@ -137,7 +148,7 @@ class MockArraySessionStorage implements SessionStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -148,7 +159,7 @@ class MockArraySessionStorage implements SessionStorageInterface
     public function save()
     {
         if (!$this->started || $this->closed) {
-            throw new \RuntimeException('Trying to save a session that was not started yet or was already closed.');
+            throw new \RuntimeException('Trying to save a session that was not started yet or was already closed');
         }
         // nothing to do since we don't persist the session data
         $this->closed = false;
@@ -166,7 +177,7 @@ class MockArraySessionStorage implements SessionStorageInterface
         }
 
         // clear out the session
-        $this->data = [];
+        $this->data = array();
 
         // reconnect the bags to the session
         $this->loadSession();
@@ -183,10 +194,10 @@ class MockArraySessionStorage implements SessionStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getBag(string $name)
+    public function getBag($name)
     {
         if (!isset($this->bags[$name])) {
-            throw new \InvalidArgumentException(sprintf('The SessionBagInterface "%s" is not registered.', $name));
+            throw new \InvalidArgumentException(sprintf('The SessionBagInterface %s is not registered.', $name));
         }
 
         if (!$this->started) {
@@ -204,6 +215,11 @@ class MockArraySessionStorage implements SessionStorageInterface
         return $this->started;
     }
 
+    /**
+     * Sets the MetadataBag.
+     *
+     * @param MetadataBag $bag
+     */
     public function setMetadataBag(MetadataBag $bag = null)
     {
         if (null === $bag) {
@@ -238,11 +254,11 @@ class MockArraySessionStorage implements SessionStorageInterface
 
     protected function loadSession()
     {
-        $bags = array_merge($this->bags, [$this->metadataBag]);
+        $bags = array_merge($this->bags, array($this->metadataBag));
 
         foreach ($bags as $bag) {
             $key = $bag->getStorageKey();
-            $this->data[$key] = isset($this->data[$key]) ? $this->data[$key] : [];
+            $this->data[$key] = isset($this->data[$key]) ? $this->data[$key] : array();
             $bag->initialize($this->data[$key]);
         }
 
