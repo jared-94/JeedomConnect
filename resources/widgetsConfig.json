@@ -1747,6 +1747,58 @@
 				"description": "Affichage forcé du widget"
 			}
 		]
-	}
+	},
+		{
+			"type": "mode",
+			"name": "Mode",
+			"img": "mode.png",
+			"description": "Affiche une liste de modes et permet de les sélectionner",
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Info mode",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Etat actuel du mode"
+				},
+				{
+					"id": "modes",
+					"name": "Modes",
+					"required": true,
+					"category": "cmdList",
+					"options": {"type": "action", "subtype": "other", "hasIcon": false, "hasImage": true, "hasName": false }
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		}
 ]
 }

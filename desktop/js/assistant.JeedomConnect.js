@@ -211,6 +211,27 @@ function getWidgetModal(_options, _callback) {
 				throw {};
 			}
 			result[option.id] = widgetsCat;
+		} else if (option.category == "cmdList") {
+			if (cmdCat.length == 0 & option.required) {
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
+				throw {};
+			}
+			cmdCat.forEach(item => {
+				if (option.options.hasImage) {
+					item.image = $("#cmdList-"+item.id+" img").first().attr("value");
+					if (item.image == "") { delete item.image; }
+				}
+				if (option.options.hasIcon) {
+					item.icon = $("#"+item.id+"-icon-input").val();
+					if (item.icon == "") { delete item.icon; }
+				}
+				if (option.options.type == 'action') {
+					item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
+					item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
+				}
+			});
+			result[option.id] = cmdCat;
+
 		} else if (option.category == "img") {
 			if ($("#"+option.id).attr("value") == '' & option.required) {
 				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
