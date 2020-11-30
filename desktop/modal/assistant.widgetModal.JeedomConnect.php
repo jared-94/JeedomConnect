@@ -150,7 +150,7 @@ if (!isConnect('admin')) {
 
 	function refreshAddWidgets() {
 		widgetsCat = [];
-    cmdList = [];
+    cmdCat = [];
 		var type = $("#widgetsList-select").val();
 		var widget = widgetsList.widgets.find(i => i.type == type);
 		$("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/"+widget.img);
