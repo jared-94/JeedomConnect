@@ -63,6 +63,8 @@ if (!isConnect('admin')) {
  <script>
 	//used for widgets option
 	var widgetsCat = [];
+  //use for cmdList
+  var cmdCat = [];
 
 	function setWidgetModalData(options) {
 		refreshAddWidgets();
@@ -122,9 +124,12 @@ if (!isConnect('admin')) {
 						$("#subtitle-input-value").css('display', 'block');
 					 }
 				 } else if (option.category == "widgets" & options.widget[option.id] !== undefined) {
-					 widgetsCat = options.widget.widgets;
+					 widgetsCat = options.widget[option.id];
 					 refreshWidgetOption();
-				 } else if (option.category == "img" & options.widget[option.id] !== undefined ) {
+				 } else if (option.category == "cmdList" & options.widget[option.id] !== undefined) {
+					 cmdCat = options.widget[option.id];
+					 refreshCmdListOption(JSON.stringify(option.options));
+				 }else if (option.category == "img" & options.widget[option.id] !== undefined ) {
 					$("#"+option.id).attr("value", options.widget[option.id]);
 					$("#"+option.id).attr("src", "plugins/JeedomConnect/data/img/"+options.widget[option.id]);
 					$("#"+option.id).css("display", "");
@@ -145,6 +150,7 @@ if (!isConnect('admin')) {
 
 	function refreshAddWidgets() {
 		widgetsCat = [];
+    cmdList = [];
 		var type = $("#widgetsList-select").val();
 		var widget = widgetsList.widgets.find(i => i.type == type);
 		$("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/"+widget.img);
@@ -214,7 +220,7 @@ if (!isConnect('admin')) {
 					</div></div></div></li>`;
 			} else if (option.category == "img") {
 				curOption += `<span class="input-group-btn">
-								<img id="${option.id}" src="" style="width:30px; height:30px; display:none;" />
+								<img id="${option.id}" src="" style="width:30px; height:30px; margin-top:-15px; display:none;" />
 								<i class="mdi mdi-minus-circle" id="${option.id}-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:none;" aria-hidden="true" onclick="removeImage('${option.id}')"></i>
 								<a class="btn btn-success roundedRight" onclick="imagePicker('${option.id}')"><i class="fas fa-check-square">
 								</i> Choisir </a>
@@ -240,7 +246,12 @@ if (!isConnect('admin')) {
 								<a class="btn btn-default roundedRight" onclick="addWidgetOption('${widgetChoices.join(".")}')"><i class="fas fa-plus-square">
 								</i> Ajouter</a></span><div id="widget-option"></div>`;
 				curOption += `</div></div></li>`;
-			} else if (option.category == "scenario") {
+      } else if (option.category == "cmdList") {
+        curOption += `<span class="input-group-btn">
+								<a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
+								</i> Ajouter</a></span><div id="cmdList-option"></div>`;
+				curOption += `</div></div></li>`;
+      } else if (option.category == "scenario") {
 				curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
 			<span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir un scenario' onclick="selectScenario('${option.id}');">
 			<i class='fas fa-list-alt'></i></a></span></div>
@@ -336,6 +347,126 @@ if (!isConnect('admin')) {
 		});
 		$("#widget-option").html(curOption);
 	}
+
+
+
+  function refreshCmdListOption(optionsJson) {
+    var options = JSON.parse(optionsJson);
+		curOption = "";
+    cmdCat.sort(function(s,t) {
+			return s.index - t.index;
+		});
+		cmdCat.forEach(item => {
+			curOption += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="cmdList-${item.id}">
+						<input style="width:240px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='' disabled>
+            <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+      			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+      			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>`
+      if (options.type == 'action') {
+          curOption += `<div style="text-align:end;">
+            <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${item.id}">
+            <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  ></div>
+            </li><div style="margin-top:-20px;">`;
+
+      }
+      if (options.hasIcon) {
+        curOption += `<div class='input-group'><label class="xs-col-3">Icône : </label><input style="width:170px;" id="${item.id}-icon-input" value="${item.icon || ''}"></div>`
+      }
+      if (options.hasImage) {
+        curOption += `
+        <div class='input-group'> <label class="xs-col-3">Image : </label><span class="input-group-btn">
+                <img id="${item.id}" src="${item.image ? 'plugins/JeedomConnect/data/img/'+item.image : ''}" style="width:30px; height:30px;margin-top:-15px; display:${item.image ? '': 'none'};" value="${item.image || ''}" />
+                <i class="mdi mdi-minus-circle" id="${item.id}-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:${item.image ? '': 'none'};" aria-hidden="true" onclick="removeImage('${item.id}')"></i>
+                <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}')"><i class="fas fa-check-square">
+                </i> Choisir </a>
+                </span> </div>`;
+      }
+			curOption += '</div>'
+      if (item.type == 'action') {
+        curOption += '</div>'
+      }
+      getHumanName({
+        id: item.id,
+        error: function (error) {},
+        success: function (data) {
+          $("#"+item.id+"-input").val(data);
+        }
+      });
+		});
+		$("#cmdList-option").html(curOption);
+    cmdCat.forEach(item => {
+    var confirm = item.confirm ? "checked": "";
+    $("#confirm-"+item.id).prop('checked', confirm);
+    var secure = item.secure ? "checked": "";
+    $("#secure-"+item.id).prop('checked', secure);
+  })
+	}
+
+  function addCmdOption(optionsJson) {
+    var options = JSON.parse(optionsJson);
+    var cmd = {};
+    if (options.type) {
+      cmd =  {type: options.type }
+    }
+		if (options.subtype) {
+			cmd = {type: options.type, subType: options.subtype}
+		}
+		jeedom.cmd.getSelectModal({cmd:cmd}, function(result) {
+      var name = result.human.replace(/#/g, '');
+      name = name.split('[');
+      name = name[name.length-1].replace(/]/g, '');
+      var maxIndex = getMaxIndex(cmdCat);
+      cmdCat.push({id: result.cmd.id, name:name, index: maxIndex+1 });
+      refreshCmdListOption(optionsJson)
+		})
+	}
+
+  function deleteCmdOption(id, optionsJson) {
+		var cmdToDelete = cmdCat.find(i => i.id == id);
+		var index = cmdCat.indexOf(cmdToDelete);
+		cmdCat.forEach(item => {
+		if (item.index > cmdToDelete.index) {
+			item.index = item.index - 1;
+		}
+		});
+		cmdCat.splice(index, 1);
+		refreshCmdListOption(optionsJson);
+	}
+
+  function upCmdOption(id, optionsJson) {
+    console.log(optionsJson)
+    cmdCat.forEach(item => {
+      item.image = $("#cmdList-"+item.id+" img").first().attr("value");
+      item.icon = $("#"+item.id+"-icon-input").val();
+    });
+		var cmdToMove = cmdCat.find(i => i.id == parseInt(id));
+		var index = parseInt(cmdToMove.index);
+		if (index == 0) {
+			return;
+		}
+		var otherCmd = cmdCat.find(i => i.index == index - 1);
+		cmdToMove.index = index - 1;
+		otherCmd.index = index;
+		refreshCmdListOption(optionsJson);
+	}
+
+	function downCmdOption(id, optionsJson) {
+    cmdCat.forEach(item => {
+      item.image = $("#cmdList-"+item.id+" img").first().attr("value");
+      item.icon = $("#"+item.id+"-icon-input").val();
+    });
+		var cmdToMove = cmdCat.find(i => i.id == parseInt(id));
+		var index = parseInt(cmdToMove.index);
+		if (index == getMaxIndex(cmdCat)) {
+			return;
+		}
+		var otherCmd = cmdCat.find(i => i.index == index + 1);
+		cmdToMove.index = index + 1;
+		otherCmd.index = index;
+		refreshCmdListOption(optionsJson);
+	}
+
+
 
 	function addWidgetOption(choices) {
 		var widgets = choices.split(".");

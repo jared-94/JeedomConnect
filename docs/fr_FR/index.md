@@ -19,14 +19,7 @@ Le démon doit être démarré pour le bon fonctionnement.
 Il y a 3 champs  pré-remplis que vous pouvez modifier :
 * **Port d'écoute du websocket** : Sauf si vous avez une application qui utilise ce port, vous n'avez pas besoin de le modifier. En cas de modification, n'oubliez pas de redémarrer le démon.
 * **Adresse http(s) Jeedom** : Adresse http d'accès à votre jeedom. Si vous voulez utiliser l'application depuis l'extérieur, indiquez l'adresse externe. Cette adresse est utilisée pour afficher la page Web mobile, et pour télécharger les images personalisées.
-* **Adresse websocket Jeedom** : Le plugin installe un serveur websocket sur votre machine sur le port 8090 par défaut.  L'adresse locale sera alors du type `ws://192.168.x.x:8090` . Pour un accès extérieur, vous pouvez soit faire une redirection de port sur votre routeur, soit rediriger le trafic vers le port 80 (ou 443 si vous êtes sécurisé). Pour cela, il faut modifier la configuration Apache en éditant le fichier `/etc/apache2/sites-enabled/000-default.conf` et ajoutant
-```configuration
-<Location "/ws/">
-  ProxyPass ws://localhost:8090
-  ProxyPassReverse ws://localhost:8090
-</Location>
-```
-L'adresse sera alors `ws://ip_externe/ws/` (ou bien `wss://ip_externe/ws/`). Une manipulation similaire est possible si vous utiliser Nginx à la place d'Apache.
+* **Adresse websocket Jeedom** : Le plugin installe un serveur websocket sur votre machine sur le port 8090 par défaut.  L'adresse locale sera alors du type `ws://192.168.x.x:8090` . Pour un accès extérieur, vous pouvez faire une redirection de port sur votre routeur.
 
 Si vous modifiez un de ces champs, il faudra bien sûr sauvegarder, puis re-générer les QR Code des équipements.
 

@@ -4,10 +4,10 @@
 	"description" : "Plugin d'échange avec l'application Jeedom Connect",
 	"licence" : "AGPL",
 	"author" : "Jared",
-	"require" : "3.3.0",
+	"require" : "3.3",
 	"category" : "communication",
-	"documentation ": "https://jared-94.github.io/JeedomConnect/#language#/",
-	"changelog ": "https://jared-94.github.io/JeedomConnect/#language#/changelog",
+	"documentation ": "https:\/\/jared-94.github.io\/JeedomConnect\/#language#\/",
+	"changelog ": "https:\/\/jared-94.github.io\/JeedomConnect\/#language#\/changelog",
 	"link" : {
 		"forum":"https://community.jeedom.com/t/jeedom-connect-application-mobile-pour-jeedom/42439/4"
 	},
@@ -20,6 +20,7 @@
         "smart",
         "rpi",
         "docker",
-        "diy"
+        "diy",
+				"v4"
     ]
 }

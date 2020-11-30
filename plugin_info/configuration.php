@@ -27,6 +27,8 @@ if (!isConnect()) {
 
 ?>
 <form class="form-horizontal">
+  <a href="https://github.com/jared-94/JeedomConnect/releases/latest"
+    style="font-style:italic" target="_blank">Télécharger la dernière version de l'application pour Android</a>
     <fieldset>
         <div class="form-group">
             <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
@@ -37,17 +39,16 @@ if (!isConnect()) {
 		<div class="form-group">
             <label class="col-lg-6 control-label">{{Adresse http(s) Jeedom}}</label>
             <div class="col-lg-3">
-                <input class="configKey form-control" type="string" data-l1key="httpUrl" 
+                <input class="configKey form-control" type="string" data-l1key="httpUrl"
 					placeholder="<?php echo config::byKey('externalProtocol') . config::byKey('externalAddr') . ':' . config::byKey('externalPort', 'core', 80); ?>" />
             </div>
         </div>
 		<div class="form-group">
             <label class="col-lg-6 control-label">{{Adresse websocket Jeedom}}</label>
             <div class="col-lg-3">
-                <input class="configKey form-control" type="string" data-l1key="wsAddress" 
+                <input class="configKey form-control" type="string" data-l1key="wsAddress"
 					placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
             </div>
         </div>
     </fieldset>
 </form>
-
