@@ -248,7 +248,7 @@ if (!isConnect('admin')) {
 				curOption += `</div></div></li>`;
       } else if (option.category == "cmdList") {
         curOption += `<span class="input-group-btn">
-								<a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options)}')"><i class="fas fa-plus-square">
+								<a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
 								</i> Ajouter</a></span><div id="cmdList-option"></div>`;
 				curOption += `</div></div></li>`;
       } else if (option.category == "scenario") {
