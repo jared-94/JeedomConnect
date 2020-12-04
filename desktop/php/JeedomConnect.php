@@ -113,10 +113,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
 						</div>
 					</div>
-					
+
 					<div class="col-sm-6">
-						<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>               
-						
+						<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>
+
 						<div class="form-group">
                             <label class="col-sm-3 control-label">{{Assistant}}</label>
                             <div class="col-sm-4">
@@ -125,7 +125,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
                             </div>
                         </div>
 						<div class="form-group">
-                            <label class="col-sm-3 control-label">{{Actions}}</label>                            
+                            <label class="col-sm-3 control-label">{{Actions}}</label>
 							<div class="col-sm-4">
 								<input type="file" accept=".json" id="import-input" style="display:none;" >
                                 <a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
@@ -137,39 +137,47 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							<div class="col-sm-4">
 								<span class="eqLogicAttr label label-info" style="font-size:1em;" data-l1key="configuration" type="text" data-l2key="deviceName"></span>
 								<a class="btn btn-danger" id="removeDevice" style="display:none"><i class="fa fa-minus-circle"></i> {{Détacher}} </a>
-							</div>					
+							</div>
 						</div>
-					</div>	
+						<div class="form-group">
+                            <label class="col-sm-3 control-label">{{Notifications}}</label>
+                            <div class="col-sm-4">
+                                <a class="btn btn-success" id="notifConfig-btn"><i class="fa fa-wrench"></i> {{Configurer}}
+                                </a>
+                            </div>
+                        </div>
+
+					</div>
 					<div class="col-sm-6">
-						<legend><i class="fa fa-info"></i>  {{Informations}}</legend> 
-						<div class="form-group">					
+						<legend><i class="fa fa-info"></i>  {{Informations}}</legend>
+						<div class="form-group">
 							<div class="alert alert-info clo-sm-4" style=" margin-left:120px; margin-top:10px; width:500px;">
-								Utilisez l'assistant de configuration pour gérer l'interface de l'application.<br/>							
+								Utilisez l'assistant de configuration pour gérer l'interface de l'application.<br/>
 								Dans la partie Login de l'application, entrez manuellement l'adresse websocket et la clé API ci-dessous, ou bien scannez directement le QR Code.
-							</div>											
+							</div>
                         </div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">{{Clé API :}}</label>
 							<div class="col-sm-4">
 								<span class="eqLogicAttr label label-info" style="font-size:1em;" data-l1key="configuration" type="text" data-l2key="apiKey"></span>
-							</div>					
+							</div>
 						</div>
-						
+
 						<div class="form-group">
-							<label class="col-sm-3 control-label">{{QR Code :}}</label>						
+							<label class="col-sm-3 control-label">{{QR Code :}}</label>
                             <img id="img_config" class="img-responsive" style="margin-top:10px; max-height : 250px;" />
 							<div class="col-sm-3" style=" margin-left:185px; margin-top:10px;">
                                 <a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}
                                 </a>
-                            </div>								
-                        </div>						
-					</div>						
+                            </div>
+                        </div>
+					</div>
 
 				</fieldset>
-				
-				
+
+
 			</form>
-		</div>	
+		</div>
 		<div role="tabpanel" class="tab-pane" id="commandtab">
 
                 <table id="table_cmd" class="table table-bordered table-condensed">
@@ -190,7 +198,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 	</div>
 </div>
 
-<?php 
+<?php
   include_file('core', 'plugin.template', 'js');
   include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');
 ?>

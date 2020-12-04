@@ -36,9 +36,28 @@ class JeedomConnect extends eqLogic {
 		)
 	);
 
+	public static $_notifConfig = array(
+		'idCounter' => 0,
+		'channels' => array(
+			array(
+				'id' => 'default',
+				'name' => 'Défaut'
+			)
+		),
+		'notifs' => array(
+			array(
+				'id' => 'defaultNotif',
+				'name' => 'Notification',
+				'channel' => 'default',
+				'index' => 0
+			)
+		)
+	);
+
 	public static $_data_dir = __DIR__ . '/../../data/';
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
 	public static $_qr_dir = __DIR__ . '/../../data/qrcodes/';
+	public static $_notif_dir = __DIR__ . '/../../data/notifs/';
 
     /*     * ***********************Methode static*************************** */
 
@@ -94,6 +113,68 @@ class JeedomConnect extends eqLogic {
 		return json_decode($config, true);
 	}
 
+	public function saveNotifs($config) {
+		//update channels
+		$data = array(
+			"type" => "SET_CHANNELS"
+		);
+		$data["payload"]["channels"] = $config['channels'];
+
+
+		if (!is_dir(self::$_notif_dir)) {
+			mkdir(self::$_notif_dir);
+		}
+		$config_file = self::$_notif_dir . $this->getConfiguration('apiKey') . ".json";
+		file_put_contents($config_file, json_encode($config));
+		$this->sendNotif('defaultNotif', $data);
+
+		//Update cmds
+		foreach ($config['notifs'] as $notif) {
+			$this->addCmd($notif);
+		}
+		//Remove unused cmds
+		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
+			if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false ) {
+				$remove = true;
+				foreach ($config['notifs'] as $notif) {
+					if ($cmd->getLogicalId() == $notif['id']) {
+						$remove = false;
+					}
+				}
+				if ($remove) {
+					log::add('JeedomConnect', 'debug', 'remove cmd '.$cmd->getName());
+					$cmd->remove();
+				}
+			}
+		}
+	}
+
+	public function addCmd($notif) {
+		$cmdNotif = $this->getCmd(null, $notif['id']);
+		if (!is_object($cmdNotif)) {
+			log::add('JeedomConnect', 'debug', 'add new cmd '.$notif['name']);
+			$cmdNotif = new JeedomConnectCmd();
+		}
+		$cmdNotif->setLogicalId($notif['id']);
+		$cmdNotif->setName(__($notif['name'], __FILE__));
+		$cmdNotif->setOrder(0);
+		$cmdNotif->setEqLogic_id($this->getId());
+		$cmdNotif->setDisplay('generic_type', 'GENERIC_ACTION');
+		$cmdNotif->setType('action');
+		$cmdNotif->setSubType('message');
+		$cmdNotif->setIsVisible(1);
+		$cmdNotif->save();
+	}
+
+	public function getNotifs() {
+		$config_file = self::$_notif_dir . $this->getConfiguration('apiKey') . ".json";
+		if (!file_exists($config_file)) {
+			$this->saveNotifs(self::$_notifConfig);
+		}
+		$config = file_get_contents($config_file);
+		return json_decode($config, true);
+	}
+
 	public function generateQRCode() {
 		if (!is_dir(self::$_qr_dir)) {
 				mkdir(self::$_qr_dir);
@@ -121,29 +202,74 @@ class JeedomConnect extends eqLogic {
 		$this->save();
 	}
 
-    public function preInsert() {
-		if ($this->getConfiguration('apiKey') == '') {
-			$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
-			$this->setLogicalId($this->getConfiguration('apiKey'));
-			$this->generateQRCode();
+	public function registerToken($token) {
+		$this->setConfiguration('token', $token);
+		$this->save();
+	}
+
+	public function sendNotif($notifId, $data) {
+		if ($this->getConfiguration('token') == null) {
+			log::add('JeedomConnect', 'info', "No token defnied. Please connect your device first");
+			return;
 		}
+		$postData = array(
+			'to' => $this->getConfiguration('token'),
+			'priority' => 'high'
+		);
+		$postData["data"] = $data;
+		foreach ($this->getNotifs()['notifs'] as $notif) {
+			if ($notif['id'] == $notifId) {
+				unset($notif['name']);
+				unset($notif['id']);
+				$postData["data"]["payload"] = array_merge($postData["data"]["payload"], $notif);
+			}
+		}
+
+		$sendBin = '';
+		switch (php_uname("m")) {
+    case "x86_64":
+        $sendBin = "sendNotif_x64";
+        break;
+    case "armv71":
+        $sendBin = "sendNotif_arm";
+        break;
+		}
+		if ($sendBin == '') {
+			log::add('JeedomConnect', 'info', "Error while detecting system architecture");
+			return;
+		}
+		$cmd = __DIR__ . "/../../resources/" . $sendBin . " -data='". json_encode($postData) ."' 2>&1";
+		log::add('JeedomConnect', 'info', "Send notification with data ".json_encode($postData["data"]));
+		$output = shell_exec($cmd);
+		if (is_null($output) || empty($output)) {
+			log::add('JeedomConnect', 'info', "Error while sending notification");
+			return;
+		}
+	}
+
+    public function preInsert() {
+			if ($this->getConfiguration('apiKey') == '') {
+				$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
+				$this->setLogicalId($this->getConfiguration('apiKey'));
+				$this->generateQRCode();
+			}
     }
 
     public function postInsert() {
-		$this->setIsEnable(1);
-		if ($this->getConfiguration('configVersion') == '') {
-			$this->setConfiguration('configVersion', 0);
-		}
-		$this->save();
-		$this->saveConfig(self::$_initialConfig);
+			$this->setIsEnable(1);
+			if ($this->getConfiguration('configVersion') == '') {
+				$this->setConfiguration('configVersion', 0);
+			}
+			$this->save();
+			$this->saveConfig(self::$_initialConfig);
+			$this->saveNotifs(self::$_notifConfig);
     }
 
     public function preSave()
     {
     }
 
-    public function postSave()
-    {
+    public function postSave() {
     }
 
     public function preUpdate()
@@ -154,10 +280,10 @@ class JeedomConnect extends eqLogic {
     {
     }
 
-    public function preRemove()
-    {
+    public function preRemove() {
 		unlink(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
 		unlink(self::$_config_dir . $this->getConfiguration('apiKey') . ".json");
+		unlink(self::$_notif_dir . $this->getConfiguration('apiKey') . ".json");
     }
 
     public function postRemove()
@@ -171,6 +297,24 @@ class JeedomConnect extends eqLogic {
 class JeedomConnectCmd extends cmd {
 
 	public function execute($_options = array()) {
+		if ($this->getType() != 'action') {
+			return;
+		}
+		$eqLogic = $this->getEqLogic();
+		if (strpos(strtolower($this->getLogicalId()), 'notif') !== false) {
+			log::add('JeedomConnect', 'info', $_options['message']);
+			$data = array(
+				'type' => 'DISPLAY_NOTIF',
+				'payload' => array(
+					'cmdId' => $this->getId(),
+					'title' => str_replace("'", "&#039;", $_options['title']),
+					'message' => str_replace("'", "&#039;", $_options['message']),
+					'answer' => $_options['answer'],
+					'timeout' => $_options['timeout']
+				)
+			);
+			$eqLogic->sendNotif($this->getLogicalId(), $data);
+		}
 	}
 
 }

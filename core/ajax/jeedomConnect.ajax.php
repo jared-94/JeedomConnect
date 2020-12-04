@@ -23,10 +23,10 @@ try {
     if (!isConnect('admin')) {
         throw new \Exception(__('401 - Accès non autorisé', __FILE__));
     }
-    
+
 
 	if (init('action') == 'saveConfig') {
-        $config = init('config');
+    $config = init('config');
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config);
@@ -39,14 +39,40 @@ try {
 			$eqLogic->saveConfig($configJson);
 			ajax::success();
 		}
-    }
+  }
 
-    if (init('action') == 'uploadImg') {
+  if (init('action') == 'getNotifs') {
+		$apiKey = init('apiKey');
+
+		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		if (!is_object($eqLogic)) {
+			ajax::error('Erreur');
+		} else {
+			$notifs = $eqLogic->getNotifs();
+			ajax::success($notifs);
+		}
+  }
+
+  if (init('action') == 'saveNotifs') {
+    $config = init('config');
+		$apiKey = init('apiKey');
+
+		$configJson = json_decode($config, true);
+		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		if (!is_object($eqLogic) or $configJson == null) {
+			ajax::error('Erreur');
+		} else {
+			$eqLogic->saveNotifs($configJson);
+			ajax::success();
+		}
+  }
+
+  if (init('action') == 'uploadImg') {
         $filename = $_FILES['file']['name'];
 		$destination = __DIR__ . '/../../data/img/user_files/';
 		if (!is_dir($destination)) {
 			mkdir($destination);
-		}		
+		}
 		$location = $destination.$filename;
 
 		if (move_uploaded_file($_FILES['file']['tmp_name'],$location)){
@@ -54,16 +80,18 @@ try {
 		} else {
 			ajax:error();
 		}
-    }
-	
+  }
+
+
+
 	if (init('action') == 'removeDevice') {
 		$id = init('id');
 		$eqLogic = \eqLogic::byId($id);
 		$eqLogic->removeDevice();
 		ajax::success();
-		
+
 	}
-	
+
 	if (init('action') == 'getImgList') {
         $internalImgPath = __DIR__ . '/../../data/img/';
 		$userImgPath = $internalImgPath."user_files/";
@@ -78,9 +106,9 @@ try {
 
 		ajax::success($result);
     }
-	
-	if (init('action') == 'generateQRcode') {	
-	
+
+	if (init('action') == 'generateQRcode') {
+
         $id = init('id');
 		$eqLogic = \eqLogic::byId($id);
 		if (!is_object($eqLogic)) {

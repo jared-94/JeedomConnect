@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
 	var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 	$('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/'+key+'.png');
-	
+
 });
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=deviceName]').on('change', function () {
@@ -36,6 +36,11 @@ $("#assistant-btn").click(function(){
     $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId='+$('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
 });
 
+$("#notifConfig-btn").click(function(){
+    $('#md_modal').dialog({title: "{{Configuration des notifications}}"});
+    $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId='+$('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+});
+
 $("#export-btn").click(function() {
 	var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 	var a = document.createElement("a");
@@ -49,7 +54,7 @@ $("#import-btn").click(function() {
 	$("#import-input").click();
 });
 
-$("#import-input").change(function() { 
+$("#import-input").change(function() {
 	var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 	if($(this).prop('files').length > 0)
     {
@@ -71,7 +76,7 @@ $("#import-input").change(function() {
 				});
 			};
 		})(file);
-		reader.readAsText(file);		
+		reader.readAsText(file);
     }
 });
 
@@ -94,7 +99,7 @@ $("#removeDevice").click(function() {
 	$.post({
             url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
             data: {'action': 'removeDevice', 'id': $('.eqLogicAttr[data-l1key=id]').value() },
-            success: function () {               
+            success: function () {
 			   $('.eqLogicAttr[data-l1key=configuration][data-l2key=deviceName]').html('');
             },
             error: function (error) {
@@ -103,7 +108,7 @@ $("#removeDevice").click(function() {
     });
 });
 
- 
+
  $("#butCol").click(function(){
    $("#hidCol").toggle("slow");
    document.getElementById("listCol").classList.toggle('col-lg-12');
@@ -167,7 +172,7 @@ $("#removeDevice").click(function() {
          modifyWithoutSave = false;
          setTimeout(function(){
            modifyWithoutSave = false;
-         },1000)		 
+         },1000)
        }
      });
    }
@@ -272,4 +277,3 @@ if (init(_cmd.type) == 'action') {
 
 }
 }
-
