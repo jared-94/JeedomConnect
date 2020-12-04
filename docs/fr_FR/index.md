@@ -11,6 +11,13 @@ La brique de base est la notion de *widget*, qui va représenter un "équipement
 
 Le plugin, ainsi que l'application sont complètement **gratuit** et le resteront. Je ne suis pas développeur et fais ça sur mon temps libre, relativement limité. Si vous souhaitez **soutenir le projet**, vous pouvez suggérer des améliorations, signaler des bugs et contribuer au code du plugin si vous avez des notions de PHP/JS/HTML, ou de l'application si vous maîtriser le React Native.
 
+## Fonctionnalités
+- Affichage et gestion de vos équipements domotiques
+- Personalisation poussée de l'interface
+- Notifications enrichies compatibles avec Ask
+- Communication via le protocole WebSocket à faible latence
+- Thème personalisable (couleur, mode sombre)
+
 ## Installation du plugin
 Il s'installe depuis le market comme les autres (pour l'instant disponible en version beta).
 Le démon doit être démarré pour le bon fonctionnement.
@@ -35,7 +42,7 @@ A la création d'un équipement, une clé API, ainsi qu'un QR Code est automatiq
 La configuration d'un équipement consiste en un fichier JSON configurable avec l'assistant, et que vous pouvez exporter / importer. Si vous voulez par exemple cloner un équipement, ajoutez en un nouveau et utiliser l'exportation / importation.
 
 ## Configuration d'un équipement
-Toute la configuration se passe dans l'assistant.
+La configuration du contenu de l'application se passe dans l'assistant.
 
  ![](../img/screen-assistantBottom.png)
 

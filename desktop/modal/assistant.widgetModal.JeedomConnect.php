@@ -434,7 +434,6 @@ if (!isConnect('admin')) {
 	}
 
   function upCmdOption(id, optionsJson) {
-    console.log(optionsJson)
     cmdCat.forEach(item => {
       item.image = $("#cmdList-"+item.id+" img").first().attr("value");
       item.icon = $("#"+item.id+"-icon-input").val();
