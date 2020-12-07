@@ -157,11 +157,11 @@ function getNotifModal(_options, _callback) {
     },
     "Valider": function() {
       var result = _options.notif || {};
-			if ($("#mod-name-input").val() == '') {
+			if ($("#mod-notifName-input").val() == '') {
 				$('#notif-alert').showAlert({message: 'La commande Nom est obligatoire', level: 'danger'});
 				throw {};
 			}
-	  	result.name = $("#mod-name-input").val();
+	  	result.name = $("#mod-notifName-input").val();
 			result.channel = $("#mod-channel-input").val();
 			if ($("#mod-color-input").val() != '') {
 				result.color = $("#mod-color-input").val();
