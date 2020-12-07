@@ -238,7 +238,11 @@ class JeedomConnect extends eqLogic {
 			log::add('JeedomConnect', 'info', "Error while detecting system architecture");
 			return;
 		}
-		$cmd = __DIR__ . "/../../resources/" . $sendBin . " -data='". json_encode($postData) ."' 2>&1";
+		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
+		if (!is_executable($binFlie)) {
+			chmod($binFile, 0555);
+		}
+		$cmd = $binFile . " -data='". json_encode($postData) ."' 2>&1";
 		log::add('JeedomConnect', 'info', "Send notification with data ".json_encode($postData["data"]));
 		$output = shell_exec($cmd);
 		if (is_null($output) || empty($output)) {
