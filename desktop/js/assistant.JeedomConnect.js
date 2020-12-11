@@ -250,6 +250,7 @@ function getWidgetModal(_options, _callback) {
 		  result.room = $("#room-input").val();
 	  }
 	  result.enable = $("#enable-input").is(':checked');
+		result.blockDetail = $("#blockDetail-input").is(':checked');
 
         if ('function' == typeof(_callback)) {
           _callback(result);

@@ -154,14 +154,14 @@ class ConnectLogic implements MessageComponentInterface
 			}
 
 			//check version requierement
-			if (version_compare($this->appRequire, $objectMsg->appVersion, "<")) {
+			if (version_compare($this->appVersion, $objectMsg->appRequire, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad version requierement");
 				$result = array( 'type' => 'APP_VERSION_ERROR' );
 				$conn->send(json_encode($result));
 				$conn->close();
 				return;
 			}
-			if (version_compare($this->pluginVersion, $objectMsg->pluginRequire, "<")) {
+			if (version_compare($this->pluginRequire, $objectMsg->pluginVersion, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad plugin requierement");
 				$result = array( 'type' => 'PLUGIN_VERSION_ERROR' );
 				$conn->send(json_encode($result));
@@ -410,7 +410,7 @@ class ConnectLogic implements MessageComponentInterface
 		$return = array();
 		foreach ($config['payload']['widgets'] as $widget) {
 			foreach ($widget as $item => $value) {
-				if (substr_compare($item, 'Info', strlen($str)-4, 4) === 0) {
+				if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
 					array_push($return, $value);
 				}
 			}
