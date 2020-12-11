@@ -216,6 +216,7 @@ class JeedomConnect extends eqLogic {
 			'to' => $this->getConfiguration('token'),
 			'priority' => 'high'
 		);
+		$data["payload"]["time"] = time();
 		$postData["data"] = $data;
 		foreach ($this->getNotifs()['notifs'] as $notif) {
 			if ($notif['id'] == $notifId) {
@@ -306,7 +307,7 @@ class JeedomConnectCmd extends cmd {
 		}
 		$eqLogic = $this->getEqLogic();
 		if (strpos(strtolower($this->getLogicalId()), 'notif') !== false) {
-			log::add('JeedomConnect', 'info', $_options['message']);
+			//log::add('JeedomConnect', 'info', json_encode($_options));
 			$data = array(
 				'type' => 'DISPLAY_NOTIF',
 				'payload' => array(
