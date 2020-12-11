@@ -13,14 +13,14 @@
 	},
 	"hasOwnDeamon" : true,
 	"language": [
-        "fr_FR"
+    "fr_FR"
     ],
-    "compatibility": [
-        "miniplus",
-        "smart",
-        "rpi",
-        "docker",
-        "diy",
-				"v4"
-    ]
+  "compatibility": [
+    "miniplus",
+    "smart",
+    "rpi",
+    "docker",
+    "diy",
+		"v4"
+  ]
 }

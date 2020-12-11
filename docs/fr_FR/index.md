@@ -2,7 +2,17 @@
 
 ![Jeedom Connect](../img/JeedomConnect_icon.png)
 
-## Présentation du projet
+Télécharger l'application au format APK : https://github.com/jared-94/JeedomConnect/releases/latest
+
+
+1. [Présentation du projet](#presentation)
+2. [Fonctionnalités](#fonctionalites)
+3. [Installation du plugin](#install)
+4. [Configuration du plugin](#configurePlugin)
+5. [Ajouter des équipements](#addEq)
+6. [Configuration d'un équipement](#configureEq)
+
+## Présentation du projet <a name="presentation"></a>
 Le projet **Jeedom Connect** se compose de 2 parties : un plugin pour Jeedom, et une application Android. Une version pour iOS pourra être envisagée plus tard.
 
 L'application utilise la plupart des éléments de navigation d'une application : un drawer (menu dépliable sur la gauche), un menu bas, un menu haut, et des listes accordéon. Tous ceux-ci sont personalisables à partir du plugin.
@@ -11,18 +21,20 @@ La brique de base est la notion de *widget*, qui va représenter un "équipement
 
 Le plugin, ainsi que l'application sont complètement **gratuit** et le resteront. Je ne suis pas développeur et fais ça sur mon temps libre, relativement limité. Si vous souhaitez **soutenir le projet**, vous pouvez suggérer des améliorations, signaler des bugs et contribuer au code du plugin si vous avez des notions de PHP/JS/HTML, ou de l'application si vous maîtriser le React Native.
 
-## Fonctionnalités
+## Fonctionnalités <a name="fonctionalites"></a>
 - Affichage et gestion de vos équipements domotiques
+- Historique sous forme de graphique ou tableau
+- Possibilité de sécuriser toutes les action avec données biométriques
 - Personalisation poussée de l'interface
-- Notifications enrichies compatibles avec Ask
+- Notifications Push enrichies compatibles avec Ask
 - Communication via le protocole WebSocket à faible latence
 - Thème personalisable (couleur, mode sombre)
 
-## Installation du plugin
+## Installation du plugin <a name="install"></a>
 Il s'installe depuis le market comme les autres (pour l'instant disponible en version beta).
 Le démon doit être démarré pour le bon fonctionnement.
 
-## Configuration du plugin
+## Configuration du plugin <a name="configurePlugin"></a>
 Il y a 3 champs  pré-remplis que vous pouvez modifier :
 * **Port d'écoute du websocket** : Sauf si vous avez une application qui utilise ce port, vous n'avez pas besoin de le modifier. En cas de modification, n'oubliez pas de redémarrer le démon.
 * **Adresse http(s) Jeedom** : Adresse http d'accès à votre jeedom. Si vous voulez utiliser l'application depuis l'extérieur, indiquez l'adresse externe. Cette adresse est utilisée pour afficher la page Web mobile, et pour télécharger les images personalisées.
@@ -30,7 +42,7 @@ Il y a 3 champs  pré-remplis que vous pouvez modifier :
 
 Si vous modifiez un de ces champs, il faudra bien sûr sauvegarder, puis re-générer les QR Code des équipements.
 
-## Ajouter des équipements
+## Ajouter des équipements <a name="addEq"></a>
 Vous pouvez ajouter des équipements dans le plugin de façon standard.
 
 1 équipement = 1 appareil muni de l'application
@@ -41,7 +53,7 @@ A la création d'un équipement, une clé API, ainsi qu'un QR Code est automatiq
 
 La configuration d'un équipement consiste en un fichier JSON configurable avec l'assistant, et que vous pouvez exporter / importer. Si vous voulez par exemple cloner un équipement, ajoutez en un nouveau et utiliser l'exportation / importation.
 
-## Configuration d'un équipement
+## Configuration d'un équipement <a name="configureEq"></a>
 La configuration du contenu de l'application se passe dans l'assistant.
 
  ![](../img/screen-assistantBottom.png)
@@ -80,6 +92,37 @@ Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navig
    ```Mon ampoule est allumée depuis 1h12min et consomme 15W```
    * **Affichage forcé** : De façon standard, chaque widget (sauf exception) possède 3 types d'affichage : carte, vignette et détail. Les affichages carte et vignettes peuvent être choisis via l'icône en haut à droite dans l'application. L'affichage détail est une page entière affichée quand on click sur le widget. Vous pouvez ici forcer un widget à s'afficher d'une de ces 3 façons.  
    Attention pour le mode détail, le widget doit être seul sur sa page.
+   * **Sécuriser les actions** : Toutes les commandes de type action peuvent être sécurisées à l'aide de ces deux boutons :
+
+     ![](../img/screen-secureBtn.png)   
+   Le premier permet de faire une simple demande de confirmation de l'action, le second demande l'empreinte digitale pour exécuter l'action (sur appareils disposant d'un capteur)
 
 * ### Widgets disponibles
-A remplir...
+ * Lumière On/Off
+ * Lumière à variation
+ * Lumière de couleurs
+ * Groupe de lumières
+ * Scénario
+ * Résumé
+ * Favoris
+ * Luminosité
+ * Humidité
+ * Température
+ * Puissance
+ * Climatiseur
+ * Porte
+ * Groupe de portes
+ * Fenêtre
+ * Groupe de fenêtres
+ * Portail coulissant
+ * Volet
+ * Groupe de volets
+ * PIR
+ * Alarme
+ * Groupe d'alarmes
+ * Générique binaire
+ * Générique numérique
+ * Générique texte
+ * Générique switch
+ * Générique actions
+ * Mode
