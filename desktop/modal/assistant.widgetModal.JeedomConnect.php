@@ -74,6 +74,8 @@ if (!isConnect('admin')) {
 			 //Enable
 			 var enable = options.widget.enable ? "checked": "";
 			 $("#enable-input").prop('checked', enable);
+       var blockDetail = options.widget.blockDetail ? "checked": "";
+			 $("#blockDetail-input").prop('checked', blockDetail);
 			 //Room
 			 if (options.widget.room !== undefined & configData.payload.rooms.find(r => r.name == options.widget.room) !== undefined) {
 				$('#room-input option[value="'+options.widget.room+'"]').prop('selected', true);
@@ -264,6 +266,11 @@ if (!isConnect('admin')) {
 
 
 		});
+    //Details access
+		option = `<li><div class='form-group'>
+			<label class='col-xs-3 '>Bloquer vue détails</label>
+			<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="blockDetail-input" ></div></div></div></li>`;
+		items.push(option);
 
 		$("#widgetOptions").html(items.join(""));
 	}

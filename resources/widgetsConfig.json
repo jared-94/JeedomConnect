@@ -114,7 +114,14 @@
 				"category": "cmd",
 				"type": "info",
 				"subtype": "numeric",
-				"description": "Intensité de la lumière (entre 0 et 100)"
+				"description": "Intensité de la lumière"
+			},
+			{
+				"id": "brightMax",
+				"name": "Intensité max",
+				"required": false,
+				"category": "string",
+				"description": "100 par défaut"
 			},
 			{
 				"id": "brightAction",
@@ -209,7 +216,14 @@
 				"category": "cmd",
 				"type": "info",
 				"subtype": "numeric",
-				"description": "Intensité de la lumière (entre 0 et 100)"
+				"description": "Intensité de la lumière"
+			},
+			{
+				"id": "brightMax",
+				"name": "Intensité max",
+				"required": false,
+				"category": "string",
+				"description": "100 par défaut"
 			},
 			{
 				"id": "colorInfo",
