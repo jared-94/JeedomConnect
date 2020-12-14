@@ -8,8 +8,8 @@ use Ratchet\ConnectionInterface;
 class ConnectLogic implements MessageComponentInterface
 {
 
-	private $configList = array();
-	private $apiKeyList = array();
+		private $configList = array();
+		private $apiKeyList = array();
 
     /**
      * @var \SplObjectStorage List of unauthenticated clients (waiting for authentication message)
@@ -40,21 +40,20 @@ class ConnectLogic implements MessageComponentInterface
     /**
      * Notifier constructor
      */
-    public function __construct($pluginVersion, $appRequire)
-    {
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-			$apiKey = $eqLogic->getConfiguration('apiKey');
-			array_push($this->apiKeyList, $apiKey);
-			$this->configList[$apiKey] = $eqLogic->getConfig();
-		}
-        $this->unauthenticatedClients = new \SplObjectStorage;
-        $this->authenticatedClients = new \SplObjectStorage;
-        $this->hasAuthenticatedClients = false;
-        $this->hasUnauthenticatedClients = false;
-        $this->authDelay = 2;
-				$this->pluginVersion = $pluginVersion;
-				$this->appRequire = $appRequire;
-        $this->lastReadTimestamp = time();
+    public function __construct($pluginVersion, $appRequire) {
+			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$apiKey = $eqLogic->getConfiguration('apiKey');
+				array_push($this->apiKeyList, $apiKey);
+				$this->configList[$apiKey] = $eqLogic->getConfig();
+			}
+      $this->unauthenticatedClients = new \SplObjectStorage;
+      $this->authenticatedClients = new \SplObjectStorage;
+      $this->hasAuthenticatedClients = false;
+      $this->hasUnauthenticatedClients = false;
+      $this->authDelay = 2;
+			$this->pluginVersion = $pluginVersion;
+			$this->appRequire = $appRequire;
+      $this->lastReadTimestamp = time();
     }
 
 
@@ -178,10 +177,10 @@ class ConnectLogic implements MessageComponentInterface
 			}
 
 
-            $conn->apiKey = $objectMsg->apiKey;
-            $this->authenticatedClients->attach($conn);
-            $this->hasAuthenticatedClients = true;
-            \log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
+      $conn->apiKey = $objectMsg->apiKey;
+      $this->authenticatedClients->attach($conn);
+      $this->hasAuthenticatedClients = true;
+      \log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
 			$result = array(
 				'type' => 'WELCOME',
 				'payload' => array(
