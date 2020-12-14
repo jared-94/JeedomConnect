@@ -231,12 +231,12 @@ class JeedomConnect extends eqLogic {
     case "x86_64":
         $sendBin = "sendNotif_x64";
         break;
-    case "armv71":
+    case "armv7l":
         $sendBin = "sendNotif_arm";
         break;
 		}
 		if ($sendBin == '') {
-			log::add('JeedomConnect', 'info', "Error while detecting system architecture");
+			log::add('JeedomConnect', 'info', "Error while detecting system architecture. " . php_uname("m") . " detected");
 			return;
 		}
 		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
@@ -249,6 +249,8 @@ class JeedomConnect extends eqLogic {
 		if (is_null($output) || empty($output)) {
 			log::add('JeedomConnect', 'info', "Error while sending notification");
 			return;
+		} else {
+			log::add('JeedomConnect', 'debug', "Send output : " . $output);
 		}
 	}
 
