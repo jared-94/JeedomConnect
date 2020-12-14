@@ -10,8 +10,6 @@ class ConnectLogic implements MessageComponentInterface
 
 		private $configList = array();
 		private $apiKeyList = array();
-		private $pluginVersion;
-		private $pluginVersion;
 
     /**
      * @var \SplObjectStorage List of unauthenticated clients (waiting for authentication message)
