@@ -117,6 +117,13 @@
 				"description": "Intensité de la lumière"
 			},
 			{
+				"id": "brightMin",
+				"name": "Intensité min",
+				"required": false,
+				"category": "string",
+				"description": "0 par défaut"
+			},
+			{
 				"id": "brightMax",
 				"name": "Intensité max",
 				"required": false,
@@ -217,6 +224,13 @@
 				"type": "info",
 				"subtype": "numeric",
 				"description": "Intensité de la lumière"
+			},
+			{
+				"id": "brightMin",
+				"name": "Intensité min",
+				"required": false,
+				"category": "string",
+				"description": "0 par défaut"
 			},
 			{
 				"id": "brightMax",
@@ -711,8 +725,7 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"subtype": "string",
-				"description": "Etat du climatisuer."
+				"description": "Etat du thermostat (chaîne ou binaire)."
 			},
 			{
 				"id": "tempExtInfo",
@@ -795,7 +808,7 @@
 			},
 			{
 				"id": "lockAction",
-				"name": "Verouillage",
+				"name": "Verrouillage",
 				"required": false,
 				"category": "cmd",
 				"type": "action",
@@ -803,7 +816,7 @@
 			},
 			{
 				"id": "unlockAction",
-				"name": "Déverouillage",
+				"name": "Déverrouillage",
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other"
