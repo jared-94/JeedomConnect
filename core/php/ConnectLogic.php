@@ -153,14 +153,14 @@ class ConnectLogic implements MessageComponentInterface
 			}
 
 			//check version requierement
-			if (version_compare($this->appVersion, $objectMsg->appRequire, "<")) {
+			if (version_compare($objectMsg->appVersion, $this->appRequire, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad version requierement");
 				$result = array( 'type' => 'APP_VERSION_ERROR' );
 				$conn->send(json_encode($result));
 				$conn->close();
 				return;
 			}
-			if (version_compare($this->pluginRequire, $objectMsg->pluginVersion, "<")) {
+			if (version_compare($this->pluginVersion, $objectMsg->pluginRequire, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad plugin requierement");
 				$result = array( 'type' => 'PLUGIN_VERSION_ERROR' );
 				$conn->send(json_encode($result));

@@ -192,7 +192,10 @@ if (!isConnect('admin')) {
                 <input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' cmdId='' disabled>
 			             <span class='input-group-btn'>
                    <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}');">
-			                <i class='fas fa-list-alt'></i></a></span></div>`;
+			                <i class='fas fa-list-alt'></i></a>
+                      <i class="mdi mdi-minus-circle" id="${option.id}-remove"
+                        style="color:rgb(185, 58, 62);font-size:16px;margin-right:10px;display:${option.required ? 'none' : ''};" aria-hidden="true" onclick="removeCmd('${option.id}')"></i>
+                      </span></div>`;
         if (option.type == 'action') {
           curOption += `<div style="text-align:end;">
             <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}">
@@ -293,7 +296,11 @@ if (!isConnect('admin')) {
 		$("#"+id+"-remove").css("display", "none");
 	}
 
-
+  function removeCmd(id) {
+    $("#"+id+"-input").attr('value', '');
+    $("#"+id+"-input").val('');
+    $("#"+id+"-input").attr('cmdId', '');
+  }
 
 	function selectCmd(name, type, subtype) {
 		var cmd =  {type: type }

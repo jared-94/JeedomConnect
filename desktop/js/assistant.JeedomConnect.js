@@ -172,6 +172,8 @@ function getWidgetModal(_options, _callback) {
 			}
 			if ($("#"+option.id+"-input").attr('cmdId') != '') {
 				result[option.id] = $("#"+option.id+"-input").attr('cmdId');
+			} else {
+				result[option.id] = undefined;
 			}
 			if (option.type == 'action') {
 				result[option.id+'Confirm'] = $("#confirm-"+option.id).is(':checked') || undefined;
