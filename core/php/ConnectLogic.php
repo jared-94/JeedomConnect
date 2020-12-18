@@ -269,6 +269,15 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_HISTORY':
 				$this->sendHistory($from, $msg['payload']['id'], $msg['payload']['options']);
 				break;
+			case 'ADD_GEOFENCE':
+				$this->addGeofence($from, $msg['payload']['geofence']);
+				break;
+			case 'REMOVE_GEOFENCE':
+				$this->removeGeofence($from, $msg['payload']['geofence']);
+				break;
+			case 'GET_GEOFENCES':
+				$this->sendGeofences($from);
+				break;
 		}
 
     }
@@ -498,6 +507,44 @@ class ConnectLogic implements MessageComponentInterface
 		}
 		\log::add('JeedomConnect', 'info', 'Send history');
 		$client->send(json_encode($result));
-
 	}
+
+	public function addGeofence($client, $geofence) {
+		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+		$eqLogic->addGeofenceCmd($geofence);
+	}
+
+	public function removeGeofence($client, $geofence) {
+		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+		$eqLogic->removeGeofenceCmd($geofence);
+	}
+
+	public function sendGeofences($client) {
+		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+		$result = array(
+			'type' => 'SET_GEOFENCES',
+			'payload' => array(
+				'geofences' => array()
+			)
+		);
+		foreach ($eqLogic->getCmd('info') as $cmd) {
+			if (substr( $cmd->getLogicalId(), 0, 8 ) === "geofence") {
+				array_push($result['payload']['geofences'], array(
+					'identifier' => substr( $cmd->getLogicalId(), 9 ),
+					'extras' => array(
+		        'name' => $cmd->getName()
+		      ),
+		      'radius' => $cmd->getConfiguration('radius'),
+		      'latitude' => $cmd->getConfiguration('latitude'),
+		      'longitude' => $cmd->getConfiguration('longitude'),
+		      'notifyOnEntry' => true,
+		      'notifyOnExit' => true
+				));
+			}
+		}
+		if (count($result['payload']['geofences']) > 0) {
+			$client->send(json_encode($result));
+		}
+	}
+
 }
