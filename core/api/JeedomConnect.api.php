@@ -23,12 +23,14 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 $jsonData = file_get_contents("php://input");
 $data = json_decode($jsonData, true);
 
+//log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
+
 $eqLogic = eqLogic::byLogicalId($data['apiKey'], 'JeedomConnect');
 if (!is_object($eqLogic)) {
   throw new Exception(__('No valid API key', __FILE__), -32699);
 }
 
-log::add('JeedomConnect', 'debug', 'http api received '.$jsonData);
+log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
 
 switch ($data['type']) {
   case 'CMD_EXEC':
@@ -49,7 +51,22 @@ switch ($data['type']) {
     if ($cmd->askResponse($answer)) {
       log::add('JeedomConnect', 'debug', 'reply to ask OK');
     }
-
+    break;
+  case 'GEOLOC':
+    if (array_key_exists('location', $data)) {
+      $geofenceCmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), 'geofence_' . $data['location']['geofence']['identifier']);
+      if (!is_object($geofenceCmd)) {
+        log::add('JeedomConnect', 'error', "Can't find geofence command");
+        return;
+      }
+      if ($data['location']['geofence']['action'] == 'ENTER') {
+        log::add('JeedomConnect', 'debug', "Set 1 for geofence " . $data['location']['geofence']['extras']['name']);
+        $geofenceCmd->event(1);
+      } else if ($data['location']['geofence']['action'] == 'EXIT') {
+        log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $data['location']['geofence']['extras']['name']);
+        $geofenceCmd->event(0);
+      }
+    }
     break;
 }
 

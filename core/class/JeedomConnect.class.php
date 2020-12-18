@@ -254,6 +254,34 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+	public function addGeofenceCmd($geofence) {
+		log::add('JeedomConnect', 'debug', "Add or update geofence cmd : " . json_encode($geofence) );
+
+		$geofenceCmd = cmd::byEqLogicIdAndLogicalId($this->getId(), 'geofence_' . $geofence['identifier']);
+			if (!is_object($geofenceCmd)) {
+				$geofenceCmd = new JeedomConnectCmd();
+				$geofenceCmd->setLogicalId('geofence_' . $geofence['identifier']);
+				$geofenceCmd->setEqLogic_id($this->getId());
+				$geofenceCmd->setType('info');
+				$geofenceCmd->setSubType('binary');
+				$geofenceCmd->setIsVisible(1);
+			}
+			$geofenceCmd->setName(__($geofence['extras']['name'], __FILE__));
+			$geofenceCmd->setConfiguration('latitude', $geofence['latitude']);
+			$geofenceCmd->setConfiguration('longitude', $geofence['longitude']);
+			$geofenceCmd->setConfiguration('radius', $geofence['radius']);
+			$geofenceCmd->save();
+	}
+
+	public function removeGeofenceCmd($geofence) {
+		log::add('JeedomConnect', 'debug', "Remove geofence cmd : " . json_encode($geofence));
+
+		$geofenceCmd = cmd::byEqLogicIdAndLogicalId($this->getId(), 'geofence_' . $geofence['identifier']);
+		if(is_object($geofenceCmd)) {
+			$geofenceCmd->remove();
+		}
+	}
+
     public function preInsert() {
 			if ($this->getConfiguration('apiKey') == '') {
 				$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
