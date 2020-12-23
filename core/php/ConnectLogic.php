@@ -60,27 +60,26 @@ class ConnectLogic implements MessageComponentInterface
     /**
      * Process the logic (read events and broadcast to authenticated clients, close authenticated clients)
      */
-    public function process()
-    {
-        if ($this->hasUnauthenticatedClients) {
-            // Check is there is unauthenticated clients for too long
-            \log::add('JeedomConnect', 'debug', 'Close unauthenticated client');
-            $current = time();
-            foreach ($this->unauthenticatedClients as $client) {
-                if ($current - $client->openTimestamp > $this->authDelay) {
-                    // Client has been connected without authentication for too long, close connection
-                    \log::add('JeedomConnect', 'warning', "Close unauthenticated client #{$client->resourceId} from IP: {$client->ip}");
-                    $client->close();
-                }
-            }
+    public function process() {
+      if ($this->hasUnauthenticatedClients) {
+        // Check is there is unauthenticated clients for too long
+        \log::add('JeedomConnect', 'debug', 'Close unauthenticated client');
+        $current = time();
+        foreach ($this->unauthenticatedClients as $client) {
+          if ($current - $client->openTimestamp > $this->authDelay) {
+            // Client has been connected without authentication for too long, close connection
+            \log::add('JeedomConnect', 'warning', "Close unauthenticated client #{$client->resourceId} from IP: {$client->ip}");
+            $client->close();
+          }
         }
-		$this->lookForNewConfig();
-        if ($this->hasAuthenticatedClients) {
-            // Read events from Jeedom
-            $events = \event::changes($this->lastReadTimestamp);
-			$this->lastReadTimestamp = time();
-            $this->broadcastEvents($events);
-        }
+      }
+			$this->lookForNewConfig();
+      if ($this->hasAuthenticatedClients) {
+        // Read events from Jeedom
+        $events = \event::changes($this->lastReadTimestamp);
+				$this->lastReadTimestamp = time();
+        $this->broadcastEvents($events);
+      }
     }
 
 
@@ -266,6 +265,12 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_SC_INFO':
 				$this->sendScenarioInfo($from);
 				break;
+			case 'GET_ALL_SC':
+				$this->sendScenarioInfo($from, true);
+				break;
+			case 'UNSUBSCRIBE_SC':
+				$from->sendAllSc = false;
+				break;
 			case 'GET_HISTORY':
 				$this->sendHistory($from, $msg['payload']['id'], $msg['payload']['options']);
 				break;
@@ -359,6 +364,12 @@ class ConnectLogic implements MessageComponentInterface
 
 	private function broadcastEvents($events) {
 		foreach ($this->configList as $key => $config) {
+			$curClient = null;
+			foreach ($this->authenticatedClients as $client) {
+				if ($client->apiKey == $key) {
+					$curClient = $client;
+				}
+			}
 			$result_cmd = array(
 				'type' => 'CMD_INFO',
 				'payload' => array()
@@ -372,7 +383,7 @@ class ConnectLogic implements MessageComponentInterface
 
 			foreach ($events['result'] as $event) {
 				if ($event['name'] == 'scenario::update') {
-					if (in_array($event['option']['scenario_id'], $scIds) ) {
+					if (in_array($event['option']['scenario_id'], $scIds) || $curClient->sendAllSc) {
 						$sc_info = array(
 							'id' => $event['option']['scenario_id'],
 							'status' => $event['option']['state'],
@@ -455,19 +466,22 @@ class ConnectLogic implements MessageComponentInterface
 		$client->send(json_encode($result));
 	}
 
-	public function sendScenarioInfo($client) {
+	public function sendScenarioInfo($client, $all=false) {
+		$client->sendAllSc = $all;
 		$scIds = $this->getScenarioIds($this->configList[$client->apiKey]);
 		$result = array(
-			'type' => 'SET_SC_INFO',
+			'type' => $all ? 'SET_ALL_SC' : 'SET_SC_INFO',
 			'payload' => array()
 		);
 
 		foreach (\scenario::all() as $sc) {
-			if (in_array($sc->getId(), $scIds) ) {
+			if (in_array($sc->getId(), $scIds) || $all) {
 				$state = $sc->getCache(array('state', 'lastLaunch'));
 				$sc_info = array(
 					'id' => $sc->getId(),
 					'name' => $sc->getName(),
+					'object' => $sc->getObject() == null ? 'Aucun' : $sc->getObject()->getName(),
+					'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
 					'status' => $state['state'],
 					'lastLaunch' => strtotime($state['lastLaunch']),
 					'active' => $sc->getIsActive() ? 1 : 0

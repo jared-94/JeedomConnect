@@ -1,16 +1,17 @@
-# Documentation du plugin Jeedom Connect
+images/# Documentation du plugin Jeedom Connect
 
-![Jeedom Connect](../img/JeedomConnect_icon.png)
+![Jeedom Connect](../images/JeedomConnect_icon.png)
 
 Télécharger l'application au format APK : https://github.com/jared-94/JeedomConnect/releases/latest
 
 
 1. [Présentation du projet](#presentation)
 2. [Fonctionnalités](#fonctionalites)
-3. [Installation du plugin](#install)
-4. [Configuration du plugin](#configurePlugin)
-5. [Ajouter des équipements](#addEq)
-6. [Configuration d'un équipement](#configureEq)
+3. [Screenshots](#screenshots)
+4. [Installation du plugin](#install)
+5. [Configuration du plugin](#configurePlugin)
+6. [Ajouter des équipements](#addEq)
+7. [Configuration d'un équipement](#configureEq)
 
 ## Présentation du projet <a name="presentation"></a>
 Le projet **Jeedom Connect** se compose de 2 parties : un plugin pour Jeedom, et une application Android. Une version pour iOS pourra être envisagée plus tard.
@@ -22,13 +23,25 @@ La brique de base est la notion de *widget*, qui va représenter un "équipement
 Le plugin, ainsi que l'application sont complètement **gratuit** et le resteront. Je ne suis pas développeur et fais ça sur mon temps libre, relativement limité. Si vous souhaitez **soutenir le projet**, vous pouvez suggérer des améliorations, signaler des bugs et contribuer au code du plugin si vous avez des notions de PHP/JS/HTML, ou de l'application si vous maîtriser le React Native.
 
 ## Fonctionnalités <a name="fonctionalites"></a>
-- Affichage et gestion de vos équipements domotiques
-- Historique sous forme de graphique ou tableau
+- Affichage et gestion de vos équipements domotiques et des scénarios
+- Historiques sous forme de graphique ou tableau
 - Possibilité de sécuriser toutes les action avec données biométriques
 - Personalisation poussée de l'interface
 - Notifications Push enrichies compatibles avec Ask
+- Géolocalisation avec gestion avancée de la batterie
 - Communication via le protocole WebSocket à faible latence
 - Thème personalisable (couleur, mode sombre)
+
+## Screenshots <a name="screenshots"></a>
+<img src='../images/JeedomConnect_screenshot1.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot2.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot3.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot4.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot5.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot6.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot7.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot8.png' width='200px' />
+<img src='../images/JeedomConnect_screenshot9.png' width='200px' />
 
 ## Installation du plugin <a name="install"></a>
 Il s'installe depuis le market comme les autres (pour l'instant disponible en version beta).
@@ -37,7 +50,7 @@ Le démon doit être démarré pour le bon fonctionnement.
 ## Configuration du plugin <a name="configurePlugin"></a>
 Il y a 3 champs  pré-remplis que vous pouvez modifier :
 * **Port d'écoute du websocket** : Sauf si vous avez une application qui utilise ce port, vous n'avez pas besoin de le modifier. En cas de modification, n'oubliez pas de redémarrer le démon.
-* **Adresse http(s) Jeedom** : Adresse http d'accès à votre jeedom. Si vous voulez utiliser l'application depuis l'extérieur, indiquez l'adresse externe. Cette adresse est utilisée pour afficher la page Web mobile, et pour télécharger les images personalisées.
+* **Adresse http(s) Jeedom** : Adresse http d'accès à votre jeedom. Si vous voulez utiliser l'application depuis l'extérieur, indiquez l'adresse externe. Cette adresse est utilisée pour afficher la page Web mobile, pour télécharger les images personalisées, pour la géolocalisation et les actions de notifications.
 * **Adresse websocket Jeedom** : Le plugin installe un serveur websocket sur votre machine sur le port 8090 par défaut.  L'adresse locale sera alors du type `ws://192.168.x.x:8090` . Pour un accès extérieur, vous pouvez faire une redirection de port sur votre routeur.
 
 Si vous modifiez un de ces champs, il faudra bien sûr sauvegarder, puis re-générer les QR Code des équipements.
@@ -47,7 +60,7 @@ Vous pouvez ajouter des équipements dans le plugin de façon standard.
 
 1 équipement = 1 appareil muni de l'application
 
-![](../img/screen-eqConfig.png)
+![](../images/screen-eqConfig.png)
 
 A la création d'un équipement, une clé API, ainsi qu'un QR Code est automatiquement généré avec les informations de configuration du plugin. Lors du démarrage de l'application, vous pourrez alors entrer manuellement l'adresse ws et cette clé, ou bien scanner le QR Code. Une fois connecté, l'équipement et l'appareil sont liés. Pour vous connecter avec un autre appareil, il vous faut le *détacher*  en cliquant sur le bouton associé.
 
@@ -56,7 +69,7 @@ La configuration d'un équipement consiste en un fichier JSON configurable avec 
 ## Configuration d'un équipement <a name="configureEq"></a>
 La configuration du contenu de l'application se passe dans l'assistant.
 
- ![](../img/screen-assistantBottom.png)
+ ![](../images/screen-assistantBottom.png)
 
 Le changement de configuration a lieu à chaque click sur le bouton *Sauvegarder*. Si l'application est démarrée, elle est automatiquement transférée. Si vous pensé avoir une erreur (par exemple supprimé un élément par erreur), actualisez simplement la page. Le bouton *Réinitialiser* (suivi de *Sauvegarder*) remet toute la configuration à zéro, attention donc !
 
@@ -65,7 +78,7 @@ Cette partie est assez explicite, elle permet de configurer les onglets qui appa
 Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navigation par ces onglets.
 
 * ### Menu du haut
- ![](../img/screen-assistantTop.png)
+ ![](../images/screen-assistantTop.png)
 
  Cette partie est également explicite. Un menu sous forme d'onglets en haut de l'écran que vous pouvez 'slider'. Egalement facultatif.
 
@@ -73,10 +86,10 @@ Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navig
  Chaque widget peut être associé à une pièce à ajouter dans cette partie.
 
 * ### Widgets
- ![](../img/screen-assistantWidgets.png)
+ ![](../images/screen-assistantWidgets.png)
  C'est ici qu'on configure les widgets affichés dans l'application. Placez-vous tout d'abord sur le menu / sous-menu que vous voulez configurer. Les différents éléments être peuvent bougés avec les boutons 'flèches' et 'supprimer'.
  * **Ajouter un groupe** : Vous pouvez ranger vos widgets dans un menu dépliable (type "acordéon").
- ![](../img/screen-groupConfig.png)
+ ![](../images/screen-groupConfig.png)
    * **Actif** : Le groupe sera (ne sera pas) affiché dans l'application.
    * **Développé par défaut** : Le comportement par défaut (plié / déplié) du menu.
  * **Ajouter un widget** : Ajoutez autant de widgets de que vous souhaitez ! Certains champs sont commun à (presque) tous les widgets :
@@ -94,7 +107,7 @@ Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navig
    Attention pour le mode détail, le widget doit être seul sur sa page.
    * **Sécuriser les actions** : Toutes les commandes de type action peuvent être sécurisées à l'aide de ces deux boutons :
 
-     ![](../img/screen-secureBtn.png)   
+     ![](../images/screen-secureBtn.png)   
    Le premier permet de faire une simple demande de confirmation de l'action, le second demande l'empreinte digitale pour exécuter l'action (sur appareils disposant d'un capteur)
 
 * ### Widgets disponibles

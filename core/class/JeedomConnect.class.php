@@ -110,7 +110,23 @@ class JeedomConnect extends eqLogic {
 	public function getConfig() {
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		$config = file_get_contents($config_file);
-		return json_decode($config, true);
+		$jsonConfig = json_decode($config, true);
+		//add cmd configs
+		foreach ($jsonConfig['payload']['widgets'] as $index => $widget) {
+			foreach ($widget as $item => $value) {
+				//if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
+					$cmd = cmd::byId($value);
+					if (is_object($cmd)) {
+						$jsonConfig['payload']['widgets'][$index][$item . 'SubType'] = $cmd->getSubType();
+						$jsonConfig['payload']['widgets'][$index][$item . 'MinValue'] = $cmd->getConfiguration('minValue');
+						$jsonConfig['payload']['widgets'][$index][$item . 'MaxValue'] = $cmd->getConfiguration('maxValue');
+						$jsonConfig['payload']['widgets'][$index][$item . 'Unit'] = $cmd->getUnite();
+						$jsonConfig['payload']['widgets'][$index][$item . 'Value'] = $cmd->getValue();
+					}
+				//}
+			}
+		}
+		return $jsonConfig;
 	}
 
 	public function saveNotifs($config) {
@@ -221,7 +237,6 @@ class JeedomConnect extends eqLogic {
 		foreach ($this->getNotifs()['notifs'] as $notif) {
 			if ($notif['id'] == $notifId) {
 				unset($notif['name']);
-				unset($notif['id']);
 				$postData["data"]["payload"] = array_merge($postData["data"]["payload"], $notif);
 			}
 		}
@@ -282,6 +297,34 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+	public function setGeofencesByCoordinates($lat, $lgt) {
+		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
+			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false ) {
+				$dist = $this->getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
+				if ($dist < $cmd->getConfiguration('radius')) {
+					if ($cmd->execCmd() != 1) {
+						log::add('JeedomConnect', 'debug', "Set 1 for geofence " . $cmd->getName());
+						$cmd->event(1);
+					}
+				} else {
+					if ($cmd->execCmd() != 0) {
+						log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $cmd->getName());
+						$cmd->event(0);
+					}
+				}
+			}
+		}
+	}
+
+	private function getDistance($lat1, $lon1, $lat2, $lon2) {
+		$theta = $lon1 - $lon2;
+  	$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+  	$dist = acos($dist);
+  	$dist = rad2deg($dist);
+  	$dist = ($dist * 60 * 1.1515) * 1609.344;
+  	return floor($dist);
+	}
+
     public function preInsert() {
 			if ($this->getConfiguration('apiKey') == '') {
 				$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
@@ -330,6 +373,10 @@ class JeedomConnect extends eqLogic {
 }
 
 class JeedomConnectCmd extends cmd {
+
+	public function dontRemoveCmd() {
+		return true;
+	}
 
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {

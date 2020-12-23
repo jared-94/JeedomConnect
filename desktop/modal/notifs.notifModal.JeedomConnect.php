@@ -74,6 +74,18 @@ if (!isConnect('admin')) {
     channelsHtml += `</select></div></div></div></li>`;
     items.push(channelsHtml);
 
+    //Update
+    var updateValue = notif ? notif.update ? "checked" : "" : "";
+    var updateHtml = `<li><div class='form-group'>
+    <label class='col-xs-3'>Mettre à jour l'existante</label>
+    <div class='col-xs-9'>
+      <div class="description">Si une autre notification de cette catégorie existe, son contenu sera mis à jour</div>
+    <div class='input-group'>
+      <input type="checkbox" style="width:150px;" id="update-input" ${updateValue}>
+    </div></div></div></li>`;
+
+    items.push(updateHtml);
+
     //Color
     var colorValue = notif ? notif.color || '' : '';
     var colorHtml = `<li><div class='form-group'>

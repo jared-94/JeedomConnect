@@ -33,6 +33,9 @@ if (!is_object($eqLogic)) {
 log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
 
 switch ($data['type']) {
+  case 'PING':
+    echo '{"result": "ok"}';
+    break;
   case 'CMD_EXEC':
     $cmd = cmd::byId($data['payload']['id']);
     if (!is_object($cmd)) {
@@ -53,19 +56,25 @@ switch ($data['type']) {
     }
     break;
   case 'GEOLOC':
-    if (array_key_exists('location', $data)) {
+    if (array_key_exists('location', $data) and  array_key_exists('geofence', $data['location']) ) {
       $geofenceCmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), 'geofence_' . $data['location']['geofence']['identifier']);
       if (!is_object($geofenceCmd)) {
         log::add('JeedomConnect', 'error', "Can't find geofence command");
         return;
       }
       if ($data['location']['geofence']['action'] == 'ENTER') {
-        log::add('JeedomConnect', 'debug', "Set 1 for geofence " . $data['location']['geofence']['extras']['name']);
-        $geofenceCmd->event(1);
+        if ($geofenceCmd->execCmd() != 1) {
+          log::add('JeedomConnect', 'debug', "Set 1 for geofence " . $data['location']['geofence']['extras']['name']);
+          $geofenceCmd->event(1);
+        }
       } else if ($data['location']['geofence']['action'] == 'EXIT') {
-        log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $data['location']['geofence']['extras']['name']);
-        $geofenceCmd->event(0);
+        if ($geofenceCmd->execCmd() != 0) {
+          log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $data['location']['geofence']['extras']['name']);
+          $geofenceCmd->event(0);
+        }
       }
+    } else {
+      $eqLogic->setGeofencesByCoordinates($data['location']['coords']['latitude'], $data['location']['coords']['longitude']);
     }
     break;
 }

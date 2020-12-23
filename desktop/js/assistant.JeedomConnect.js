@@ -234,7 +234,19 @@ function getWidgetModal(_options, _callback) {
 			});
 			result[option.id] = cmdCat;
 
-		} else if (option.category == "img") {
+		} else if (option.category == "ifImgs") {
+			if (imgCat.length == 0 & option.required) {
+				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
+				throw {};
+			}
+			imgCat.forEach(item => {
+	      item.image = $("#imgList-"+item.index+" img").first().attr("value");
+	      item.info = $("#info-"+item.index).val();
+	      item.operator = $("#operator-"+item.index).val();
+	      item.value = $("#"+item.index+"-value").val();
+	    });
+			result[option.id] = imgCat;
+		}	else if (option.category == "img") {
 			if ($("#"+option.id).attr("value") == '' & option.required) {
 				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
