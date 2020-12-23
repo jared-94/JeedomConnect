@@ -39,9 +39,9 @@ if (!isConnect('admin')) {
   }
 </style>
 
-<div class="" style="margin:auto; width:800px; height:350px;">
+<div  style="margin:auto; width:800px; height:400px;">
   <div style="display:none;" id="widget-alert"></div>
-  <div style="float:left; width:300px; height:350px; position:fixed;">
+  <div style="float:left; width:300px; height:400px; position:fixed;">
       <h3>Choix du widget</h3>
     <select name="widgetsList" id="widgetsList-select"  onchange="refreshAddWidgets();">
     </select>
@@ -63,8 +63,10 @@ if (!isConnect('admin')) {
  <script>
 	//used for widgets option
 	var widgetsCat = [];
-  //use for cmdList
+  //used for cmdList
   var cmdCat = [];
+  //used for img list
+  var imgCat = [];
 
 	function setWidgetModalData(options) {
 		refreshAddWidgets();
@@ -131,7 +133,10 @@ if (!isConnect('admin')) {
 				 } else if (option.category == "cmdList" & options.widget[option.id] !== undefined) {
 					 cmdCat = options.widget[option.id];
 					 refreshCmdListOption(JSON.stringify(option.options));
-				 }else if (option.category == "img" & options.widget[option.id] !== undefined ) {
+				 } else if (option.category == "ifImgs" & options.widget[option.id] !== undefined) {
+					 imgCat = options.widget[option.id];
+					 refreshImgListOption(JSON.stringify(option.infos));
+				 } else if (option.category == "img" & options.widget[option.id] !== undefined ) {
 					$("#"+option.id).attr("value", options.widget[option.id]);
 					$("#"+option.id).attr("src", "plugins/JeedomConnect/data/img/"+options.widget[option.id]);
 					$("#"+option.id).css("display", "");
@@ -153,6 +158,7 @@ if (!isConnect('admin')) {
 	function refreshAddWidgets() {
 		widgetsCat = [];
     cmdCat = [];
+    imgCat = [];
 		var type = $("#widgetsList-select").val();
 		var widget = widgetsList.widgets.find(i => i.type == type);
 		$("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/"+widget.img);
@@ -256,13 +262,20 @@ if (!isConnect('admin')) {
 								<a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
 								</i> Ajouter</a></span><div id="cmdList-option"></div>`;
 				curOption += `</div></div></li>`;
+      } else if (option.category == "ifImgs") {
+        curOption += `<span class="input-group-btn">
+								<a class="btn btn-default roundedRight" onclick="addImgOption('${JSON.stringify(option.infos).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
+								</i> Ajouter</a></span><div id="imgList-option"></div>`;
+				curOption += `</div></div></li>`;
       } else if (option.category == "scenario") {
 				curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
 			<span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir un scenario' onclick="selectScenario('${option.id}');">
 			<i class='fas fa-list-alt'></i></a></span></div>
 			</div>
 			</div></li>`;
-			}
+    } else {
+      return;
+    }
 
 
 			items.push(curOption);
@@ -477,6 +490,107 @@ if (!isConnect('admin')) {
 		cmdToMove.index = index + 1;
 		otherCmd.index = index;
 		refreshCmdListOption(optionsJson);
+	}
+
+// Image list
+  function refreshImgListOption(optionsJson) {
+    var options = JSON.parse(optionsJson);
+    var type = $("#widgetsList-select").val();
+		var widget = widgetsList.widgets.find(i => i.type == type);
+		curOption = "";
+    imgCat.sort(function(s,t) {
+			return s.index - t.index;
+		});
+		imgCat.forEach(item => {
+			curOption += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="imgList-${item.index}">
+      Si :<select id="info-${item.index}" style="width:100px;height:31px;margin-left:5px;">`;
+      options.forEach(info => {
+        var infoName = widget.options.find(o => o.id == info).name;
+        curOption += `<option value="${info}" ${item.info == info && "selected"}>${infoName}</option>`;
+      });
+      curOption += `</select> <select id="operator-${item.index}" style="width:50px;height:31px; margin-left:5px;">
+        <option value="=" ${item.operator == "=" && "selected"}>=</option>
+        <option value="<" ${item.operator == "<" && "selected"}><</option>
+        <option value=">" ${item.operator == ">" && "selected"}>></option>
+        <option value="!=" ${item.operator == "!=" && "selected"}>!=</option> </select>`;
+
+      curOption +=`<input style="width:150px;height:31px;margin-left:5px;" class=' roundedLeft' id="${item.index}-value" value='${item.value || ''}' >`
+      curOption += `
+        <div class='input-group'> <label class="xs-col-3">Image : </label><span class="input-group-btn">
+                <img id="${item.index}" src="${item.image ? 'plugins/JeedomConnect/data/img/'+item.image : ''}" style="width:30px; height:30px;margin-top:-15px; display:${item.image ? '': 'none'};" value="${item.image || ''}" />
+                <i class="mdi mdi-minus-circle" id="${item.index}-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:${item.image ? '': 'none'};" aria-hidden="true" onclick="removeImage('${item.index}')"></i>
+                <a class="btn btn-success roundedRight" onclick="imagePicker('${item.index}')"><i class="fas fa-check-square">
+                </i> Choisir </a>
+                </span>
+                <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+          			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+          			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                </div>`;
+
+			curOption += '</div>'
+		});
+		$("#imgList-option").html(curOption);
+	}
+
+  function addImgOption(infos) {
+    imgCat.forEach(item => {
+      item.image = $("#imgList-"+item.index+" img").first().attr("value");
+      item.info = $("#info-"+item.index).val();
+      item.operator = $("#operator-"+item.index).val();
+      item.value = $("#"+item.index+"-value").val();
+    });
+    var maxIndex = getMaxIndex(imgCat);
+    imgCat.push({index: maxIndex+1 });
+    refreshImgListOption(infos);
+  }
+
+  function deleteImgOption(id, optionsJson) {
+		var imgToDelete = imgCat.find(i => i.index == id);
+		var index = imgCat.indexOf(imgToDelete);
+    imgCat.splice(index, 1);
+		imgCat.forEach(item => {
+		if (item.index > imgToDelete.index) {
+			item.index = item.index - 1;
+		}
+		});
+
+		refreshImgListOption(optionsJson);
+	}
+
+  function upImgOption(id, optionsJson) {
+    imgCat.forEach(item => {
+      item.image = $("#imgList-"+item.index+" img").first().attr("value");
+      item.info = $("#info-"+item.index).val();
+      item.operator = $("#operator-"+item.index).val();
+      item.value = $("#"+item.index+"-value").val();
+    });
+		var imgToMove = imgCat.find(i => i.index == parseInt(id));
+		var index = parseInt(imgToMove.index);
+		if (index == 0) {
+			return;
+		}
+		var otherImg = imgCat.find(i => i.index == index - 1);
+		imgToMove.index = index - 1;
+		otherImg.index = index;
+		refreshImgListOption(optionsJson);
+	}
+
+	function downImgOption(id, optionsJson) {
+    imgCat.forEach(item => {
+      item.image = $("#imgList-"+item.index+" img").first().attr("value");
+      item.info = $("#info-"+item.index).val();
+      item.operator = $("#operator-"+item.index).val();
+      item.value = $("#"+item.index+"-value").val();
+    });
+		var imgToMove = imgCat.find(i => i.index == parseInt(id));
+		var index = parseInt(imgToMove.index);
+		if (index == getMaxIndex(imgCat)) {
+			return;
+		}
+		var otherImg = imgCat.find(i => i.index == index + 1);
+		imgToMove.index = index + 1;
+		otherImg.index = index;
+		refreshImgListOption(optionsJson);
 	}
 
 

@@ -163,6 +163,7 @@ function getNotifModal(_options, _callback) {
 			}
 	  	result.name = $("#mod-notifName-input").val();
 			result.channel = $("#mod-channel-input").val();
+			result.update = $("#update-input").is(':checked')
 			if ($("#mod-color-input").val() != '') {
 				result.color = $("#mod-color-input").val();
 			} else {
@@ -181,7 +182,6 @@ function getNotifModal(_options, _callback) {
 			} else {
 				result.actions = undefined;
 			}
-
 
       if ('function' == typeof(_callback)) {
           _callback(result);

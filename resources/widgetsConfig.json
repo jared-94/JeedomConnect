@@ -517,16 +517,18 @@
 				"description": "Etat de la luminosité en Lux"
 			},
 			{
-				"id": "image0",
-				"name": "Image 0",
+				"id": "image",
+				"name": "Image",
 				"required": false,
-				"category": "img"
+				"category": "img",
+				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "image1",
-				"name": "Image >0",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
 			},
 			{
 				"id": "display",
@@ -568,16 +570,18 @@
 				"description": "Etat de l'humidité en %"
 			},
 			{
-				"id": "image0",
-				"name": "Image 0",
+				"id": "image",
+				"name": "Image",
 				"required": false,
-				"category": "img"
+				"category": "img",
+				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "image1",
-				"name": "Image >0",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
 			},
 			{
 				"id": "display",
@@ -593,7 +597,7 @@
 		"type": "temperature",
 		"name": "Température",
 		"img": "temperature.png",
-		"description": "Donne la température en °C",
+		"description": "Affiche la température en °C",
 		"options": [
 			{
 				"id": "name",
@@ -619,16 +623,18 @@
 				"description": "Etat de la température en °C"
 			},
 			{
-				"id": "image0",
-				"name": "Image 0",
+				"id": "image",
+				"name": "Image",
 				"required": false,
-				"category": "img"
+				"category": "img",
+				"description": "Image par défaut si aucune condition n'est remplie"
 			},
 			{
-				"id": "image1",
-				"name": "Image >0",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
 			},
 			{
 				"id": "display",
@@ -670,16 +676,18 @@
 				"description": "Etat de la puissance en W"
 			},
 			{
-				"id": "image0",
-				"name": "Image 0",
+				"id": "image",
+				"name": "Image",
 				"required": false,
-				"category": "img"
+				"category": "img",
+				"description": "Image par défaut si aucune condition n'est remplie"
 			},
 			{
-				"id": "image1",
-				"name": "Image >0",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
 			},
 			{
 				"id": "display",
@@ -1305,8 +1313,12 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat du volet (entre 0 et 100)"
+				"description": "Etat du volet (numérique ou binaire)"
+			},
+			{
+				"id": "statusSubType",
+				"cmdId": "statusInfo",
+				"category": "cmdSubType"
 			},
 			{
 				"id": "powerInfo",
@@ -1338,7 +1350,7 @@
 			{
 				"id": "stopAction",
 				"name": "Stop",
-				"required": true,
+				"required": false,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
@@ -1347,7 +1359,7 @@
 			{
 				"id": "positionAction",
 				"name": "Position",
-				"required": true,
+				"required": false,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "slider",
@@ -1761,18 +1773,18 @@
 				"description": "Etat de la commande"
 			},
 			{
-				"id": "image0",
-				"name": "Image 0",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img",
-				"description": "Image affichée lorsque la valeur est 0"
+				"description": "Image par défaut si aucune condition n'est remplie"
 			},
 			{
-				"id": "image1",
-				"name": "Image 1",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img",
-				"description": "Image affichée lorsque la valeur est > 0"
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
 			},
 			{
 				"id": "unit",

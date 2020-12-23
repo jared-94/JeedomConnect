@@ -212,6 +212,7 @@ function addNotifModal() {
 function editNotifModal(notifId) {
   var notifToEdit = notifData.notifs.find(i => i.id == notifId);
   getNotifModal({title:"Editer une notification", notif:notifToEdit}, function(result) {
+		console.log(result)
 		notifToEdit = result;
 	 	refreshNotifsTabData();
 
