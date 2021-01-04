@@ -363,13 +363,8 @@ class ConnectLogic implements MessageComponentInterface
 	}
 
 	private function broadcastEvents($events) {
-		foreach ($this->configList as $key => $config) {
-			$curClient = null;
-			foreach ($this->authenticatedClients as $client) {
-				if ($client->apiKey == $key) {
-					$curClient = $client;
-				}
-			}
+		foreach ($this->authenticatedClients as $client) {
+			$config = $this->configList[$client->apiKey];
 			$result_cmd = array(
 				'type' => 'CMD_INFO',
 				'payload' => array()
@@ -407,20 +402,12 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 			if (count($result_cmd['payload']) > 0) {
-				foreach ($this->authenticatedClients as $client) {
-					if ($client->apiKey == $key) {
-						\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_cmd));
-						$client->send(json_encode($result_cmd));
-					}
-				}
+				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_cmd));
+				$client->send(json_encode($result_cmd));
 			}
 			if (count($result_sc['payload']) > 0) {
-				foreach ($this->authenticatedClients as $client) {
-					if ($client->apiKey == $key) {
-						\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_sc));
-						$client->send(json_encode($result_sc));
-					}
-				}
+				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_sc));
+				$client->send(json_encode($result_sc));
 			}
 		}
 	}
@@ -434,7 +421,7 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 		}
-		return $return;
+		return array_unique($return);
 	}
 
 	private function getScenarioIds($config) {

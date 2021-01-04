@@ -249,6 +249,8 @@ class JeedomConnect extends eqLogic {
     case "armv7l":
         $sendBin = "sendNotif_arm";
         break;
+		case "aarch64":
+				$sendBin = "sendNotif_arm64"
 		}
 		if ($sendBin == '') {
 			log::add('JeedomConnect', 'info', "Error while detecting system architecture. " . php_uname("m") . " detected");
