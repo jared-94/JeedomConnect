@@ -175,7 +175,6 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 
-
       $conn->apiKey = $objectMsg->apiKey;
       $this->authenticatedClients->attach($conn);
       $this->hasAuthenticatedClients = true;
@@ -185,6 +184,7 @@ class ConnectLogic implements MessageComponentInterface
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
 					'configVersion' => $this->configList[$objectMsg->apiKey]['payload']['configVersion'],
+					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'jeedomURL' => \config::byKey('httpUrl', 'JeedomConnect', \config::byKey('externalProtocol') . \config::byKey('externalAddr'))
 				)
 			);

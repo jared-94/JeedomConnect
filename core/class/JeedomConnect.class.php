@@ -111,6 +111,7 @@ class JeedomConnect extends eqLogic {
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		$config = file_get_contents($config_file);
 		$jsonConfig = json_decode($config, true);
+		
 		//add cmd configs
 		foreach ($jsonConfig['payload']['widgets'] as $index => $widget) {
 			foreach ($widget as $item => $value) {
@@ -250,7 +251,8 @@ class JeedomConnect extends eqLogic {
         $sendBin = "sendNotif_arm";
         break;
 		case "aarch64":
-				$sendBin = "sendNotif_arm64"
+				$sendBin = "sendNotif_arm64";
+				break;
 		}
 		if ($sendBin == '') {
 			log::add('JeedomConnect', 'info', "Error while detecting system architecture. " . php_uname("m") . " detected");
@@ -352,8 +354,11 @@ class JeedomConnect extends eqLogic {
     public function postSave() {
     }
 
-    public function preUpdate()
-    {
+    public function preUpdate() {
+			if ($this->getConfiguration('scenariosEnabled') == '') {
+				$this->setConfiguration('scenariosEnabled', '1');
+				$this->save();
+			}
     }
 
     public function postUpdate()
@@ -361,9 +366,9 @@ class JeedomConnect extends eqLogic {
     }
 
     public function preRemove() {
-		unlink(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
-		unlink(self::$_config_dir . $this->getConfiguration('apiKey') . ".json");
-		unlink(self::$_notif_dir . $this->getConfiguration('apiKey') . ".json");
+			unlink(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+			unlink(self::$_config_dir . $this->getConfiguration('apiKey') . ".json");
+			unlink(self::$_notif_dir . $this->getConfiguration('apiKey') . ".json");
     }
 
     public function postRemove()
