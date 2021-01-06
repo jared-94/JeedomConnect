@@ -146,7 +146,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
                                 </a>
                             </div>
                         </div>
-
+						<div class="form-group">
+								<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
+								<div class="col-sm-3">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
+								</div>
+						</div>
 					</div>
 					<div class="col-sm-6">
 						<legend><i class="fa fa-info"></i>  {{Informations}}</legend>
