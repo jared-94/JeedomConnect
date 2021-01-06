@@ -129,7 +129,9 @@ function refreshWidgetsContent() {
 	$.each( rootElmts, function( key, val ) {
 		if (val.type !== undefined) { //it is a widget
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
-			items.push( `<li><a  onclick="editWidgetModal('${val.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}</a>
+			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
+			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
+			<span style="font-size:12px;margin-left:40px;">${val.room || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>

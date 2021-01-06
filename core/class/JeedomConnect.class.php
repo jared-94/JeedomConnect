@@ -111,11 +111,10 @@ class JeedomConnect extends eqLogic {
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		$config = file_get_contents($config_file);
 		$jsonConfig = json_decode($config, true);
-		
+
 		//add cmd configs
 		foreach ($jsonConfig['payload']['widgets'] as $index => $widget) {
 			foreach ($widget as $item => $value) {
-				//if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
 					$cmd = cmd::byId($value);
 					if (is_object($cmd)) {
 						$jsonConfig['payload']['widgets'][$index][$item . 'SubType'] = $cmd->getSubType();
@@ -124,7 +123,6 @@ class JeedomConnect extends eqLogic {
 						$jsonConfig['payload']['widgets'][$index][$item . 'Unit'] = $cmd->getUnite();
 						$jsonConfig['payload']['widgets'][$index][$item . 'Value'] = $cmd->getValue();
 					}
-				//}
 			}
 		}
 		return $jsonConfig;

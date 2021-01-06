@@ -240,7 +240,11 @@ class ConnectLogic implements MessageComponentInterface
 					\log::add('JeedomConnect', 'error', "Can't find command");
 					return;
 				}
-				$cmd->execCmd($option = $msg['payload']['options']);
+				if ($msg['payload']['options'] == null) {
+					$cmd->execCmd();
+				} else {
+					$cmd->execCmd($option = $msg['payload']['options']);
+				}
 				break;
 			case 'SC_EXEC':
 				$sc = \scenario::byId($msg['payload']['id']);
