@@ -1,4 +1,12 @@
 # Changelog JeedomConnect
+## Version 0.12.0
+- Historique : correction du bug des boutons de zoom
+- Historique : accès à l'historique de toutes les commandes info via la page détails
+- Notification : ajout de la compatibilité avec les machines ARM 64 bits
+- Assistant : ajout des pièces dans la liste des widgets
+- Scénarios : option pour l'accès à la page des scénarios. correction d'un bug sur cette page
+- Page de login : meilleur rendu en mode paysage
+
 ## Version 0.11.0
 - Notifications : possibilité de mettre à jour le contenu d'une notification existante
 - Possibilité d'ajouter des conditions sur status pour le choix de l'image sur les widgets (gérérique numérique - Température - Humidité - Puissance)
