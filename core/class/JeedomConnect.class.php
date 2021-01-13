@@ -193,16 +193,20 @@ class JeedomConnect extends eqLogic {
 	public function generateQRCode() {
 		if (!is_dir(self::$_qr_dir)) {
 				mkdir(self::$_qr_dir);
-			}
-			$port = config::byKey('port', 'JeedomConnect', 8090);
-			$url = config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':'. $port);
-			$connectData = array(
-				'url' => $url,
-				'apiKey' => $this->getConfiguration('apiKey')
-			);
-			log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
-			$request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
-			file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
+		}
+		$connectData = array(
+			'useWs' => config::byKey('useWs', 'JeedomConnect', false),
+    	'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
+      'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
+      'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
+      'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
+			'apiKey' => $this->getConfiguration('apiKey'),
+			'userHash' => user::byLogin('admin')->getHash()
+		);
+
+		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
+		$request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
+		file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
 	}
 
 	public function registerDevice($id, $name) {
@@ -326,6 +330,8 @@ class JeedomConnect extends eqLogic {
   	$dist = ($dist * 60 * 1.1515) * 1609.344;
   	return floor($dist);
 	}
+
+
 
     public function preInsert() {
 			if ($this->getConfiguration('apiKey') == '') {

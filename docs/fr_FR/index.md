@@ -1,4 +1,4 @@
-images/# Documentation du plugin Jeedom Connect
+# Documentation du plugin Jeedom Connect
 
 ![Jeedom Connect](../images/JeedomConnect_icon.png)
 
@@ -29,7 +29,7 @@ Le plugin, ainsi que l'application sont complètement **gratuit** et le resteron
 - Personalisation poussée de l'interface
 - Notifications Push enrichies compatibles avec Ask
 - Géolocalisation avec gestion avancée de la batterie
-- Communication via le protocole WebSocket à faible latence
+- Communication via le protocole WebSocket à faible latence, ou bien en HTTP
 - Thème personalisable (couleur, mode sombre)
 
 ## Screenshots <a name="screenshots"></a>
@@ -48,12 +48,15 @@ Il s'installe depuis le market comme les autres (pour l'instant disponible en ve
 Le démon doit être démarré pour le bon fonctionnement.
 
 ## Configuration du plugin <a name="configurePlugin"></a>
-Il y a 3 champs  pré-remplis que vous pouvez modifier :
+Il y a plusieurs champs  pré-remplis que vous pouvez modifier. Des placeholder sont indiqués sur chacun d'entre eux. S'ils vous semblent corrects, inutile de les modifier.
+* **Adresse http externe** : Indiquez ici votre adresse d'accès à Jeedom depuis l'extérieur de votre domicile.
+* **Adresse http interne** : Adresse de Jeedom sur votre réseau local.
+* **Activer la connexion par Websocket** : Indiquera à l'application si vous préférez utiliser le protocole Websocket pour la communication avec vos appareils. Notez tout de même que l'adresse HTTP est nécessaire au bon fonctionement de certains services (images persos, géolocalisation, actions sur notifications)
 * **Port d'écoute du websocket** : Sauf si vous avez une application qui utilise ce port, vous n'avez pas besoin de le modifier. En cas de modification, n'oubliez pas de redémarrer le démon.
-* **Adresse http(s) Jeedom** : Adresse http d'accès à votre jeedom. Si vous voulez utiliser l'application depuis l'extérieur, indiquez l'adresse externe. Cette adresse est utilisée pour afficher la page Web mobile, pour télécharger les images personalisées, pour la géolocalisation et les actions de notifications.
-* **Adresse websocket Jeedom** : Le plugin installe un serveur websocket sur votre machine sur le port 8090 par défaut.  L'adresse locale sera alors du type `ws://192.168.x.x:8090` . Pour un accès extérieur, vous pouvez faire une redirection de port sur votre routeur.
+* **Adresse externe websocket** : Adresse websocket accessible depuis l'extérieur (nécessite une configuration de votre réseau)
+* **Adresse interne websocket** : Adresse websocket sur votre réseau local
 
-Si vous modifiez un de ces champs, il faudra bien sûr sauvegarder, puis re-générer les QR Code des équipements.
+Si vous modifiez un de ces champs, il faudra bien sûr sauvegarder, puis re-générer les QR Code des équipements. En cas d'utilisation du HTTP, il faudra aussi redémarrer l'appli.
 
 ## Ajouter des équipements <a name="addEq"></a>
 Vous pouvez ajouter des équipements dans le plugin de façon standard.
@@ -62,7 +65,7 @@ Vous pouvez ajouter des équipements dans le plugin de façon standard.
 
 ![](../images/screen-eqConfig.png)
 
-A la création d'un équipement, une clé API, ainsi qu'un QR Code est automatiquement généré avec les informations de configuration du plugin. Lors du démarrage de l'application, vous pourrez alors entrer manuellement l'adresse ws et cette clé, ou bien scanner le QR Code. Une fois connecté, l'équipement et l'appareil sont liés. Pour vous connecter avec un autre appareil, il vous faut le *détacher*  en cliquant sur le bouton associé.
+A la création d'un équipement, une clé API, ainsi qu'un QR Code est automatiquement généré avec les informations de configuration du plugin. Lors du démarrage de l'application, vous pourrez alors entrer manuellement vos identifiants jeedom, ou bien scanner le QR Code. Une fois connecté, l'équipement et l'appareil sont liés. Pour vous connecter avec un autre appareil, il vous faut le *détacher*  en cliquant sur le bouton associé.
 
 La configuration d'un équipement consiste en un fichier JSON configurable avec l'assistant, et que vous pouvez exporter / importer. Si vous voulez par exemple cloner un équipement, ajoutez en un nouveau et utiliser l'exportation / importation.
 

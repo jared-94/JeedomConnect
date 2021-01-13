@@ -27,28 +27,59 @@ if (!isConnect()) {
 
 ?>
 <form class="form-horizontal">
+  <div class="alert alert-success" style="text-align:center;">
   <a href="https://github.com/jared-94/JeedomConnect/releases/latest"
-    style="font-style:italic" target="_blank">Télécharger la dernière version de l'application pour Android</a>
+    style="color: white !important;" target="_blank">Télécharger la dernière version de l'application pour Android</a>
+  </div>
+  <div class="alert alert-info" style="text-align:center;">
+    Les paramètres c-dessous doivent être configurés correctement pour le bon fonctionnement de l'application.<br/>
+    Les paramètres liés au websocket ne sont nécessaires que si vous l'activez.
+    Si vous n'utilisez pas le websocket, vous pouvez désactiver le démon.<br/>
+    Après tout changement ici, veuillez redémarrer l'application.
+  </div>
     <fieldset>
-        <div class="form-group">
-            <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
-            <div class="col-lg-1">
-                <input class="configKey form-control" type="number" data-l1key="port" placeholder="8090" />
-            </div>
-        </div>
-		<div class="form-group">
-            <label class="col-lg-6 control-label">{{Adresse http(s) Jeedom}}</label>
-            <div class="col-lg-3">
-                <input class="configKey form-control" type="string" data-l1key="httpUrl"
-					placeholder="<?php echo config::byKey('externalProtocol') . config::byKey('externalAddr') . ':' . config::byKey('externalPort', 'core', 80); ?>" />
-            </div>
-        </div>
-		<div class="form-group">
-            <label class="col-lg-6 control-label">{{Adresse websocket Jeedom}}</label>
-            <div class="col-lg-3">
-                <input class="configKey form-control" type="string" data-l1key="wsAddress"
-					placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
-            </div>
-        </div>
+      <div class="form-group">
+          <label class="col-lg-6 control-label">{{Adresse http externe}}</label>
+          <div class="col-lg-3">
+              <input class="configKey form-control" type="string" data-l1key="httpUrl"
+					         placeholder="<?php echo network::getNetworkAccess('external'); ?>" />
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="col-lg-6 control-label">{{Adresse http interne}}</label>
+          <div class="col-lg-3">
+              <input class="configKey form-control" type="string" data-l1key="internHttpUrl"
+					         placeholder="<?php echo network::getNetworkAccess('internal'); ?>" />
+          </div>
+      </div>
+      <div class="alert alert-info" style="text-align:center;">
+        La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
+			</div>
+      <div class="form-group">
+			     <label class="col-lg-6 control-label">{{Activer la connexion par Websocket }}</label>
+			     <div class="col-sm-1">
+				         <input type="checkbox" class="configKey form-control" data-l1key="useWs"/>
+			     </div>
+		  </div>
+      <div class="form-group">
+          <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
+          <div class="col-lg-1">
+              <input class="configKey form-control" type="number" data-l1key="port" placeholder="8090" />
+          </div>
+      </div>
+		  <div class="form-group">
+          <label class="col-lg-6 control-label">{{Adresse externe websocket}}</label>
+          <div class="col-lg-3">
+              <input class="configKey form-control" type="string" data-l1key="wsAddress"
+					         placeholder="<?php echo 'ws://' . config::byKey('externalAddr') . ':8090'; ?>" />
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="col-lg-6 control-label">{{Adresse interne websocket}}</label>
+          <div class="col-lg-3">
+              <input class="configKey form-control" type="string" data-l1key="internWsAddress"
+					         placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
+          </div>
+      </div>
     </fieldset>
 </form>
