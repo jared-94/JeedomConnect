@@ -194,6 +194,12 @@ class JeedomConnect extends eqLogic {
 		if (!is_dir(self::$_qr_dir)) {
 				mkdir(self::$_qr_dir);
 		}
+		$user = user::byHash($this->getConfiguration('userHash'));
+		if ($user == null) {
+			$user = user::all()[0];
+			$this->setConfiguration('userHash', $user->getHash());
+		}
+
 		$connectData = array(
 			'useWs' => config::byKey('useWs', 'JeedomConnect', false),
     	'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
@@ -201,7 +207,7 @@ class JeedomConnect extends eqLogic {
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
-			'userHash' => user::byLogin('admin')->getHash()
+			'userHash' => $user->getHash()
 		);
 
 		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));

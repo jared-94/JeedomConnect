@@ -175,6 +175,16 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 
+			//check userHash
+			$user = \user::byHash($objectMsg->userHash);
+			if ($user == null) {
+				\log::add('JeedomConnect', 'debug', "user not valid");
+			  $conn->close();
+			}
+			\log::add('JeedomConnect', 'debug', "set userHash ".$objectMsg->userHash);
+			$eqLogic->setConfiguration('userHash', $objectMsg->userHash);
+			$eqLogic->save();
+
       $conn->apiKey = $objectMsg->apiKey;
       $this->authenticatedClients->attach($conn);
       $this->hasAuthenticatedClients = true;
@@ -346,7 +356,7 @@ class ConnectLogic implements MessageComponentInterface
 				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
 					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
 					$this->configList[$apiKey] = $eqLogic->getConfig();
-					array_push($apiKey, $this->apiKeyList);
+					array_push($this->apiKeyList, $apiKey);
 					foreach ($this->authenticatedClients as $client) {
 						if ($client->apiKey == $apiKey) {
 							\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} : ".json_encode($this->configList[$apiKey]));

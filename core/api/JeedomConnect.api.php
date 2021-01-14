@@ -47,6 +47,12 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG') {
 
 switch ($method) {
   case 'GET_PLUGIN_CONFIG':
+		$user = user::byHash($params['userHash']);
+		if ($user == null) {
+			log::add('JeedomConnect', 'debug', "user not valid");
+		  throw new Exception(__("User not valid", __FILE__), -32699);
+		}
+
     $jsonrpc->makeSuccess(array(
       'type' => 'PLUGIN_CONFIG',
       'payload' => array(
@@ -84,6 +90,16 @@ switch ($method) {
       $jsonrpc->makeSuccess(array( 'type' => 'PLUGIN_VERSION_ERROR' ));
       return;
     }
+
+		//check userHash
+		$user = user::byHash($params['userHash']);
+		if ($user == null) {
+			log::add('JeedomConnect', 'debug', "user not valid");
+		  throw new Exception(__("User not valid", __FILE__), -32699);
+		}
+		$eqLogic->setConfiguration('userHash', $params['userHash']);
+		$eqLogic->save();
+
     $result = array(
       'type' => 'WELCOME',
       'payload' => array(
