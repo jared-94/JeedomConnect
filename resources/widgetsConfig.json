@@ -26,8 +26,7 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la lumière (binaire)"
+				"description": "Etat de la lumière (binaire ou numérique)"
 			},
 			{
 				"id": "onAction",
@@ -1298,7 +1297,7 @@
 			{
 				"id": "statusInfo",
 				"name": "Status",
-				"required": true,
+				"required": false,
 				"category": "cmd",
 				"type": "info",
 				"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])"
