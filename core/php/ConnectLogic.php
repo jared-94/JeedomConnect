@@ -175,6 +175,16 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 
+			//check userHash
+			$user = \user::byHash($objectMsg->userHash);
+			if ($user == null) {
+				\log::add('JeedomConnect', 'debug', "user not valid");
+			  $conn->close();
+			}
+			\log::add('JeedomConnect', 'debug', "set userHash ".$objectMsg->userHash);
+			$eqLogic->setConfiguration('userHash', $objectMsg->userHash);
+			$eqLogic->save();
+
       $conn->apiKey = $objectMsg->apiKey;
       $this->authenticatedClients->attach($conn);
       $this->hasAuthenticatedClients = true;
@@ -184,8 +194,7 @@ class ConnectLogic implements MessageComponentInterface
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
 					'configVersion' => $this->configList[$objectMsg->apiKey]['payload']['configVersion'],
-					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
-					'jeedomURL' => \config::byKey('httpUrl', 'JeedomConnect', \config::byKey('externalProtocol') . \config::byKey('externalAddr'))
+					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1'
 				)
 			);
 			\log::add('JeedomConnect', 'info', "Send ".json_encode($result));
@@ -258,6 +267,19 @@ class ConnectLogic implements MessageComponentInterface
 				$sc = \scenario::byId($msg['payload']['id']);
 				$sc->setIsActive($msg['payload']['active']);
 				$sc->save();
+				break;
+			case 'GET_PLUGIN_CONFIG':
+				$conf = array(
+		      'type' => 'PLUGIN_CONFIG',
+		      'payload' => array(
+		        'useWs' => \config::byKey('useWs', 'JeedomConnect', false),
+		        'httpUrl' => \config::byKey('httpUrl', 'JeedomConnect', \network::getNetworkAccess('external')),
+		        'internalHttpUrl' => \config::byKey('internHttpUrl', 'JeedomConnect', \network::getNetworkAccess('internal')),
+		        'wsAddress' => \config::byKey('wsAddress', 'JeedomConnect', 'ws://' . \config::byKey('externalAddr') . ':8090'),
+		        'internalWsAddress' => \config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . \config::byKey('internalAddr', 'core', 'localhost') . ':8090')
+		     ));
+				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($conf));
+				$from->send(json_encode($conf));
 				break;
 			case 'GET_CONFIG':
 				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($this->configList[$from->apiKey]));
@@ -334,7 +356,7 @@ class ConnectLogic implements MessageComponentInterface
 				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
 					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
 					$this->configList[$apiKey] = $eqLogic->getConfig();
-					array_push($apiKey, $this->apiKeyList);
+					array_push($this->apiKeyList, $apiKey);
 					foreach ($this->authenticatedClients as $client) {
 						if ($client->apiKey == $apiKey) {
 							\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} : ".json_encode($this->configList[$apiKey]));
@@ -382,7 +404,7 @@ class ConnectLogic implements MessageComponentInterface
 
 			foreach ($events['result'] as $event) {
 				if ($event['name'] == 'scenario::update') {
-					if (in_array($event['option']['scenario_id'], $scIds) || $curClient->sendAllSc) {
+					if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
 						$sc_info = array(
 							'id' => $event['option']['scenario_id'],
 							'status' => $event['option']['state'],

@@ -409,6 +409,77 @@
 		]
 	},
 	{
+		"type": "plug",
+		"name": "Prise",
+		"img": "plug6.png",
+		"description": "Widget pour gérer une prise électrique",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}, {"id":"power", "name":"Puissance"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Etat (Allumé/Eteint) de la prise"
+			},
+			{
+				"id": "onAction",
+				"name": "Allumer",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "other"
+			},
+			{
+				"id": "offAction",
+				"name": "Eteindre",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "other"
+			},
+			{
+				"id": "powerInfo",
+				"name": "Puissance",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Puissance en watts"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs",
+				"infos": [ "statusInfo", "powerInfo" ]
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
 		"type": "scenario",
 		"name": "Scénario",
 		"img": "scenario.png",
@@ -1310,7 +1381,7 @@
 			{
 				"id": "statusInfo",
 				"name": "Status",
-				"required": true,
+				"required": false,
 				"category": "cmd",
 				"type": "info",
 				"description": "Etat du volet (numérique ou binaire)"

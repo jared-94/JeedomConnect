@@ -118,6 +118,20 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>
 
 						<div class="form-group">
+							<label class="col-sm-3 control-label">{{Utilisateur}}</label>
+							<div class="col-sm-4">
+								<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userHash">
+									<option value="">{{Aucun}}</option>
+									<?php
+									foreach (user::all() as $user) {
+										echo '<option value="' . $user->getHash() . '">' . $user->getLogin() . '</option>';
+									}
+									?>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
                             <label class="col-sm-3 control-label">{{Assistant}}</label>
                             <div class="col-sm-4">
                                 <a class="btn btn-success" id="assistant-btn"><i class="fa fa-wrench"></i> {{Configurer l'appareil}}
@@ -158,9 +172,9 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<div class="form-group">
 							<div class="alert alert-info clo-sm-4" style=" margin-left:120px; margin-top:10px; width:500px;">
 								Utilisez l'assistant de configuration pour gérer l'interface de l'application.<br/>
-								Dans la partie Login de l'application, entrez manuellement l'adresse websocket et la clé API ci-dessous, ou bien scannez directement le QR Code.
+								Dans la partie Login de l'application, scannez directement le QR Code.
 							</div>
-                        </div>
+            </div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">{{Clé API :}}</label>
 							<div class="col-sm-4">
@@ -172,10 +186,14 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							<label class="col-sm-3 control-label">{{QR Code :}}</label>
                             <img id="img_config" class="img-responsive" style="margin-top:10px; max-height : 250px;" />
 							<div class="col-sm-3" style=" margin-left:185px; margin-top:10px;">
-                                <a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}
-                                </a>
-                            </div>
-                        </div>
+                <a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
+              </div>
+							<div class="alert alert-danger clo-sm-4" style=" margin-left:120px; margin-top:80px; width:500px;">
+								Veuillez re-générer le QR code si vous avez modifié :<br/>
+								* Les adresses dans la config du plugin<br/>
+								* L'utilisateur de cet équipement
+							</div>
+            </div>
 					</div>
 
 				</fieldset>
