@@ -1,9 +1,12 @@
 # Changelog JeedomConnect
-## Version 0.13.0 Beta (13/01/2021)
+## Version 0.13.3 (18/01/2021)
 - Ajout de la connexion en http
 - Possibilité de donner 2 adresses (locale et externe). Le switch se fait automatiquement pas l'appli
+- Nouveau widget Prise
 - Fix : image perso sur le générique switch
 - Fix : Arrondi sur valeur intensité lumière
+- Volets : status et action stop en option
+- Maj de la doc
 
 ## Version 0.12.0
 - Historique : correction du bug des boutons de zoom

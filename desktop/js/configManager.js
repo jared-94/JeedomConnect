@@ -281,7 +281,7 @@ function getWidgetsParents() {
 function addBottomTabModal() {
 	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},{type:"icon"}] }, function(result) {
 	  var name = result.name;
-	  var icon = result.icon;
+	  var icon = result.icon.trim();
 	  if (name == '' | icon == '') {
 		return;
 	  }
@@ -304,7 +304,7 @@ function editBottomTabModal(tabId) {
   var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
   getSimpleModal({title: "Editer un menu bas", fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value:tabToEdit.icon}] }, function(result) {
 	tabToEdit.name = result.name;
-	tabToEdit.icon = result.icon;
+	tabToEdit.icon = result.icon.trim();
 	tabToEdit.enable = result.enable;
 	refreshBottomTabData();
   });

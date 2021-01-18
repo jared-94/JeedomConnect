@@ -12,6 +12,7 @@ Télécharger l'application au format APK : https://github.com/jared-94/JeedomCo
 5. [Configuration du plugin](#configurePlugin)
 6. [Ajouter des équipements](#addEq)
 7. [Configuration d'un équipement](#configureEq)
+8. [Géolocalisation](#geoloc)
 
 ## Présentation du projet <a name="presentation"></a>
 Le projet **Jeedom Connect** se compose de 2 parties : un plugin pour Jeedom, et une application Android. Une version pour iOS pourra être envisagée plus tard.
@@ -28,7 +29,7 @@ Le plugin, ainsi que l'application sont complètement **gratuit** et le resteron
 - Possibilité de sécuriser toutes les action avec données biométriques
 - Personalisation poussée de l'interface
 - Notifications Push enrichies compatibles avec Ask
-- Géolocalisation avec gestion avancée de la batterie
+- [Géolocalisation](#geoloc) avec gestion avancée de la batterie
 - Communication via le protocole WebSocket à faible latence, ou bien en HTTP
 - Thème personalisable (couleur, mode sombre)
 
@@ -44,8 +45,8 @@ Le plugin, ainsi que l'application sont complètement **gratuit** et le resteron
 <img src='../images/JeedomConnect_screenshot9.png' width='200px' />
 
 ## Installation du plugin <a name="install"></a>
-Il s'installe depuis le market comme les autres (pour l'instant disponible en version beta).
-Le démon doit être démarré pour le bon fonctionnement.
+Il s'installe depuis le market comme les autres. La version beta contient les nouveautés les plus récentes.
+
 
 ## Configuration du plugin <a name="configurePlugin"></a>
 Il y a plusieurs champs  pré-remplis que vous pouvez modifier. Des placeholder sont indiqués sur chacun d'entre eux. S'ils vous semblent corrects, inutile de les modifier.
@@ -74,7 +75,8 @@ La configuration du contenu de l'application se passe dans l'assistant.
 
  ![](../images/screen-assistantBottom.png)
 
-Le changement de configuration a lieu à chaque click sur le bouton *Sauvegarder*. Si l'application est démarrée, elle est automatiquement transférée. Si vous pensé avoir une erreur (par exemple supprimé un élément par erreur), actualisez simplement la page. Le bouton *Réinitialiser* (suivi de *Sauvegarder*) remet toute la configuration à zéro, attention donc !
+Le changement de configuration a lieu à chaque click sur le bouton *Sauvegarder*. Si l'application est démarrée, elle est automatiquement transférée (websocket uniquement). Vous pouvez recharger la configuration dans l'appli en appuyant sur le logo du 'menu hamburger'.  
+Si vous pensé avoir une erreur avant d'avoir sauvegarder (par exemple supprimé un élément par erreur), actualisez simplement la page. Le bouton *Réinitialiser* (suivi de *Sauvegarder*) remet toute la configuration à zéro, attention donc !
 
 * ### Menu du bas
 Cette partie est assez explicite, elle permet de configurer les onglets qui apparaissent en bas de l'écran. Le coix des icône se fait sur https://materialdesignicons.com/ (un moteur de recherche est intégré).  
@@ -112,12 +114,15 @@ Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navig
 
      ![](../images/screen-secureBtn.png)   
    Le premier permet de faire une simple demande de confirmation de l'action, le second demande l'empreinte digitale pour exécuter l'action (sur appareils disposant d'un capteur)
+   * **Images** : Les images de l'application sont stockée dans le dossier `plugins/JeedomConnect/data/img/`. Si vous souhaitez ajoutez des images persos, utilisez l'assistant, ou bien copiez vos images dans `plugins/JeedomConnect/data/img/user_files/`. Il est conseillé d'utiliser des images PNG en 128x128. Vous pouvez aussi mettre des GIF animés.
+   * **Images sous conditions** : Vous pouvez dans certains widgets définir une image en fonction des valeurs d'une commande. L'ordre des ces condition sera prise en compte par l'appli (les plus hautes sont prioritaires).
 
 * ### Widgets disponibles
  * Lumière On/Off
  * Lumière à variation
  * Lumière de couleurs
  * Groupe de lumières
+ * Prise
  * Scénario
  * Résumé
  * Favoris
@@ -142,3 +147,18 @@ Vous pouvez choisir de ne configurer cette partie si vous ne voulez pas de navig
  * Générique switch
  * Générique actions
  * Mode
+
+## Géolocalisation <a name="geoloc"></a>
+Jeedom Connect dispose d'une fonction de Geofencing : définissez des lieux géographiques sur une carte et des commandes binaires seront créées dans votre équipement vous indiquant si l'appareil est dans ce lieu ou pas.
+
+Commencez par ouvrir l'application et rendez-vous dans les Préférences puis activez la géolocalisation.
+<img src='../images/screen-geo1.png' width='200px' />
+<img src='../images/screen-geo2.png' width='200px' />
+<img src='../images/screen-geo3.png' width='200px' />
+
+Pour le bon fonctionnement du service, il est impératif d'accepter toutes les autorisations, en particulier la `Localisation` doit être sur `Toujours autoriser` (Android 10+)
+
+Vous pouvez ensuite aller sur `Gestion des lieux`.
+- Pour **définir une zone**, faites un appuie long sur la carte puis donner un nom et un rayon (en mètres). Le binaire est immédiatement créé côté Jeedom.
+- Pour **supprimer ou éditer une zone**, appuyez sur le marqueur puis sur le nom qui apparait.
+- Pour **déplacer une zone**, faites un appuie long sur le marqueur puis glisser.

@@ -1381,7 +1381,7 @@
 			{
 				"id": "statusInfo",
 				"name": "Status",
-				"required": true,
+				"required": false,
 				"category": "cmd",
 				"type": "info",
 				"description": "Etat du volet (numérique ou binaire)"
