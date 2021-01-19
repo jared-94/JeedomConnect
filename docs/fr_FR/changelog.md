@@ -1,4 +1,14 @@
 # Changelog JeedomConnect
+## Version 0.14.0 Beta (19/01/2021)
+- Widget Portail : status en option
+- Widget Lumière On/Off : le status peut être numérique
+- Fix : titre des fenêtres dans l'assistant
+- Nouveaux widgets : Groupe PIR - Groupe génériques binaires - Générique slider
+- Ajout des icônes Font Awesome
+- Appli fix : images des notifications
+- Appli : Option pour définir les arrondis des éléments
+- Un groupe vide fera passer à la ligne en mode vignettes
+
 ## Version 0.13.3 (18/01/2021)
 - Ajout de la connexion en http
 - Possibilité de donner 2 adresses (locale et externe). Le switch se fait automatiquement pas l'appli
