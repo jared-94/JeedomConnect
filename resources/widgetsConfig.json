@@ -2117,6 +2117,80 @@
 		]
 	},
 	{
+		"type": "generic-slider",
+		"name": "Générique slider",
+		"img": "meter.png",
+		"description": "Gère un slider",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Valeur"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Etat du slider (numérique)"
+			},
+			{
+				"id": "sliderAction",
+				"name": "Action",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "slider"
+			},
+			{
+				"id": "minValue",
+				"name": "Valeur min",
+				"required": false,
+				"category": "string",
+				"description": "0 par défaut"
+			},
+			{
+				"id": "maxValue",
+				"name": "Valeur max",
+				"required": false,
+				"category": "string",
+				"description": "100 par défaut"
+			},
+			{
+				"id": "unit",
+				"name": "Unité",
+				"required": false,
+				"category": "string"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
 		"type": "generic-action-other",
 		"name": "Générique actions",
 		"img": "powerButton.png",
