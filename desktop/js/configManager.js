@@ -774,16 +774,44 @@ function downWidget(widgetId) {
 
 function deleteWidget(widgetId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {
-	var widgetToDelete = configData.payload.widgets.find(g => g.id == widgetId);
-	var index = configData.payload.widgets.indexOf(widgetToDelete);
-	var rootElmts = getRootObjects(widgetToDelete.parentId);
-	rootElmts.forEach(item => {
-		if (item.index > widgetToDelete.index) {
-			item.index = item.index - 1;
-		}
-	});
+		var widgetToDelete = configData.payload.widgets.find(g => g.id == widgetId);
+		var index = configData.payload.widgets.indexOf(widgetToDelete);
+		var rootElmts = getRootObjects(widgetToDelete.parentId);
+		rootElmts.forEach(item => {
+			if (item.index > widgetToDelete.index) {
+				item.index = item.index - 1;
+			}
+		});
     configData.payload.widgets.splice(index, 1);
-	refreshWidgetsContent();
+
+		//remove widget if in a group widgets
+		var groupList = [];
+		widgetsList.widgets.forEach(w => {
+			w.options.forEach(o => {
+				if (o.category == 'widgets') {
+					groupList.push({ type: w.type, optionId: o.id });
+				}
+			});
+		});
+		configData.payload.widgets.forEach((w, i) => {
+			var wConfig = groupList.find(g => g.type == w.type);
+			if (wConfig != undefined) {
+				if (w[wConfig.optionId] != undefined) {
+					var toRemove = w[wConfig.optionId].find(o => o.id == widgetId);
+					if (toRemove != undefined) {
+						index = w[wConfig.optionId].indexOf(toRemove);
+						configData.payload.widgets[i][wConfig.optionId].forEach(item => {
+							if (item.index > index) {
+								item.index = item.index - 1;
+							}
+						});
+						configData.payload.widgets[i][wConfig.optionId].splice(index, 1);
+					}
+				}
+			}
+		});
+
+		refreshWidgetsContent();
   });
 }
 

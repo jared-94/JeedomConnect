@@ -28,7 +28,7 @@ function getSimpleModal(_options, _callback) {
   if ($("#simpleModal").length == 0) {
     $('body').append('<div id="simpleModal"></div>');
     $("#simpleModal").dialog({
-	  title: _options.title,
+	  	title: _options.title,
       closeText: '',
       autoOpen: false,
       modal: true,
@@ -43,7 +43,7 @@ function getSimpleModal(_options, _callback) {
     });
   }
   setSimpleModalData(_options.fields);
-  $("#simpleModal").dialog('option', 'buttons', {
+  $("#simpleModal").dialog({title: _options.title, buttons: {
     "Annuler": function() {
       $(this).dialog("close");
     },
@@ -74,7 +74,7 @@ function getSimpleModal(_options, _callback) {
       }
       $(this).dialog('close');
     }
-  });
+  }});
   $('#simpleModal').dialog('open');
 };
 
@@ -154,7 +154,7 @@ function getWidgetModal(_options, _callback) {
     });
   }
   setWidgetModalData(_options);
-  $("#widgetModal").dialog('option', 'buttons', {
+  $("#widgetModal").dialog({title: _options.title, buttons: {
     "Annuler": function() {
 	  $('#widget-alert').hideAlert();
       $(this).dialog("close");
@@ -274,6 +274,6 @@ function getWidgetModal(_options, _callback) {
 
 
     }
-  });
+  }});
   $('#widgetModal').dialog('open');
 };

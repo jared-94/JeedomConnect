@@ -1571,6 +1571,62 @@
 		]
 	},
 	{
+		"type": "group-pir",
+		"name": "Groupe de PIR",
+		"img": "pirOff.png",
+		"description": "Gère un groupe de plusieurs capteurs de mouvements",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "widgets",
+				"name": "Widgets",
+				"required": true,
+				"category": "widgets",
+				"whiteList": ["pir"],
+				"description": "Liste des capteurs à gérer"
+			},
+			{
+				"id": "image0",
+				"name": "Image tous inactifs",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image1",
+				"name": "Image tous actifs",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image2",
+				"name": "Image partielle",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
 		"type": "alarm",
 		"name": "Alarme",
 		"img": "alarm_red.png",
@@ -1802,6 +1858,62 @@
 				"required": false,
 				"category": "string",
 				"description": "Texte affiché lorsque la valeur est 1"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
+		"type": "group-generic-info-binary",
+		"name": "Groupe de génériques binaires",
+		"img": "information.png",
+		"description": "Gère un groupe de plusieurs widgets générique info binaire",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "widgets",
+				"name": "Widgets",
+				"required": true,
+				"category": "widgets",
+				"whiteList": ["generic-info-binary"],
+				"description": "Liste des génériques binaires à gérer"
+			},
+			{
+				"id": "image0",
+				"name": "Image tous nuls",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image1",
+				"name": "Image tous 1",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image2",
+				"name": "Image partielle",
+				"required": false,
+				"category": "img"
 			},
 			{
 				"id": "display",

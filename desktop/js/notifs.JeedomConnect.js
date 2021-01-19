@@ -24,7 +24,7 @@ function getSimpleModal(_options, _callback) {
   if ($("#simpleModal").length == 0) {
     $('body').append('<div id="simpleModal"></div>');
     $("#simpleModal").dialog({
-	  title: _options.title,
+	  	title: _options.title,
       closeText: '',
       autoOpen: false,
       modal: true,
@@ -39,7 +39,7 @@ function getSimpleModal(_options, _callback) {
     });
   }
   setSimpleModalData(_options.fields);
-  $("#simpleModal").dialog('option', 'buttons', {
+  $("#simpleModal").dialog({title: _options.title, buttons: {
     "Annuler": function() {
       $(this).dialog("close");
     },
@@ -70,7 +70,7 @@ function getSimpleModal(_options, _callback) {
       }
       $(this).dialog('close');
     }
-  });
+  }});
   $('#simpleModal').dialog('open');
 };
 
@@ -118,8 +118,6 @@ function getImageModal(_options, _callback) {
 	  }]
 	});
 
-
-
   $('#imageModal').dialog('open');
 };
 
@@ -150,7 +148,7 @@ function getNotifModal(_options, _callback) {
     });
   }
   setNotifModalData(_options);
-  $("#notifModal").dialog('option', 'buttons', {
+  $("#notifModal").dialog({title: _options.title, buttons: {
     "Annuler": function() {
 	  $('#notif-alert').hideAlert();
       $(this).dialog("close");
@@ -189,8 +187,7 @@ function getNotifModal(_options, _callback) {
 			$('#notif-alert').hideAlert();
       $(this).dialog('close');
 
-
     }
-  });
+  }});
   $('#notifModal').dialog('open');
 };
