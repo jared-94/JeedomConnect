@@ -32,7 +32,7 @@ function getSimpleModal(_options, _callback) {
       closeText: '',
       autoOpen: false,
       modal: true,
-      width: 350
+      width: 430
     });
     jQuery.ajaxSetup({
       async: false
@@ -56,7 +56,7 @@ function getSimpleModal(_options, _callback) {
 		  result.name = $("#mod-name-input").val();
 	  }
 	  if (_options.fields.find(i => i.type == "icon")) {
-		  result.icon = $("#mod-icon-input").val();
+			result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
 	  }
 	  if (_options.fields.find(i => i.type == "move")) {
 		  result.moveToId = $("#mod-move-input").val();
@@ -224,8 +224,8 @@ function getWidgetModal(_options, _callback) {
 					if (item.image == "") { delete item.image; }
 				}
 				if (option.options.hasIcon) {
-					item.icon = $("#"+item.id+"-icon-input").val();
-					if (item.icon == "") { delete item.icon; }
+					item.icon = { name: $("#"+item.id+"-icon-input").val().trim(), source: $("#"+item.id+"-icon-source-input").val()}
+					if (item.icon.name == "") { delete item.icon; }
 				}
 				if (option.options.type == 'action') {
 					item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;

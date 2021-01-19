@@ -397,7 +397,15 @@ if (!isConnect('admin')) {
 
       }
       if (options.hasIcon) {
-        curOption += `<div class='input-group'><label class="xs-col-3">Icône : </label><input style="width:170px;" id="${item.id}-icon-input" value="${item.icon || ''}"></div>`
+        var value = item.icon ? typeof(item.icon) == 'string' ? item.icon : item.icon.name : '';
+        var source = item.icon ? typeof(item.icon) == 'string' ? 'md' : item.icon.source : 'md';
+        curOption += `<div class='input-group'><label class="xs-col-3">Icône : </label>
+          <input style="width:120px;" id="${item.id}-icon-input" value="${value}">
+          <select style="width:50px;margin-left:5px;" id="${item.id}-icon-source-input" value=''>
+            <option value="md" ${source == 'md' && 'selected'}>MD</option>
+            <option value="fa" ${source == 'fa' && 'selected'}>FA</option>
+            </select>
+          </div>`;
       }
       if (options.hasImage) {
         curOption += `

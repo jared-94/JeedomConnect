@@ -35,8 +35,10 @@ function refreshBottomTabData() {
 	});
 	var items = [];
 	$.each( tabs, function( key, val ) {
+		var icon = typeof(val.icon) == 'string' ? `mdi mdi-${val.icon}` : val.icon.source == 'md' ?
+			`mdi mdi-${val.icon.name}` :  `fa fa-${val.icon.name}`;
 		items.push( `<li><a  onclick="editBottomTabModal('${val.id}');">
-			<i class="mdi mdi-${val.icon}" aria-hidden="true" style="margin-right:15px;"></i>${val.name}</a>
+			<i class="${icon}" aria-hidden="true" style="margin-right:15px;"></i>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
@@ -302,11 +304,13 @@ function addBottomTabModal() {
 
 function editBottomTabModal(tabId) {
   var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
-  getSimpleModal({title: "Editer un menu bas", fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value:tabToEdit.icon}] }, function(result) {
-	tabToEdit.name = result.name;
-	tabToEdit.icon = result.icon.trim();
-	tabToEdit.enable = result.enable;
-	refreshBottomTabData();
+  getSimpleModal({title: "Editer un menu bas",
+		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value:tabToEdit.icon}] },
+		function(result) {
+				tabToEdit.name = result.name;
+				tabToEdit.icon = result.icon;
+				tabToEdit.enable = result.enable;
+				refreshBottomTabData();
   });
 }
 

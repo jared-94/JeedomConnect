@@ -48,10 +48,16 @@ function setSimpleModalData(options) {
 			<div class='col-xs-9'><div class='input-group'><input style="width:150px;" id="mod-name-input" value='${value}'></div></div></div></li>`;
 			items.push(name);
 		} else if (option.type == "icon") {
-			var value = option.value ? option.value : '';
+			var value = option.value ? typeof(option.value) == 'string' ? option.value : option.value.name : '';
+      var source = option.value ? typeof(option.value) == 'string' ? 'md' : option.value.source : 'md';
 			icon = `<li><div class='form-group'>
 			<label class='col-xs-3  required' >Icone</label>
-			<div class='col-xs-9'><div class='input-group'><input style="width:150px;" id="mod-icon-input" value='${value}'></div></div></div></li>`;
+			<div class='col-xs-9'><div class='input-group'><input style="width:150px;" id="mod-icon-input" value='${value}'>
+      <select style="width:130px;margin-left:10px;" id="icon-source-input" value=''>
+        <option value="md" ${source == 'md' && 'selected'}>Material Design</option>
+        <option value="fa" ${source == 'fa' && 'selected'}>Font Awesome</option>
+        </select></div></div>
+      </div></li>`;
 	        items.push(icon);
 		} else if (option.type == "move") {
 			move = `<li><div class='form-group'>
@@ -75,22 +81,22 @@ function setSimpleModalData(options) {
 			<label class='col-xs-3  required' >Widget</label>
 			<div class='col-xs-9'><div class='input-group'>
 			<select style="width:250px;" id="mod-widget-input">`
-			
+
 			configData.payload.widgets.forEach(item => {
 				if (option.choices.includes(item.type)) {
 					var name = getWidgetPath(item.id);
 					widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name}</option>`;
 				}
-			})			
+			})
 			widget += `</select></div></div></div></li>`;
 			items.push(widget);
 		}
 	});
-	
-	
-	
+
+
+
 	$("#modalOptions").html(items.join(""));
 }
 
 
-</script>	
+</script>

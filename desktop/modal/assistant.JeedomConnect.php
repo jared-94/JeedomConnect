@@ -52,7 +52,9 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
   <div class="rightContent">
     <div class="alert alert-info">
 	Vous pouvez ici configurer les menus du bas dans l'application. Choisissez de préférence un nom court et indiquez le nom EXACT d'une icone trouvée sur <br>
-	<a href="https://materialdesignicons.com/" target="_blank">https://materialdesignicons.com/</a>
+	<a href="https://materialdesignicons.com/" target="_blank">https://materialdesignicons.com/</a><br/>
+  ou sur<br/>
+  <a href="https://fontawesome.com/icons?d=gallery&m=free" target="_blank">https://fontawesome.com/</a>
 	</div>
   <img src="plugins/JeedomConnect/desktop/img/bottom_tab.png" />
   </div>
