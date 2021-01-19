@@ -324,7 +324,7 @@
 	{
 		"type": "group-light",
 		"name": "Groupe de lumières",
-		"img": "icon_wheel.png",
+		"img": "groupLight.png",
 		"description": "Gère un groupe de plusieurs widgets lumières",
 		"options": [
 			{
@@ -1126,7 +1126,7 @@
 	{
 		"type": "group-door",
 		"name": "Groupe de portes",
-		"img": "doorOn.png",
+		"img": "groupDoor.png",
 		"description": "Gère un groupe de plusieurs widgets portes",
 		"options": [
 			{
@@ -1227,7 +1227,7 @@
 	{
 		"type": "group-window",
 		"name": "Groupe de fenêtres",
-		"img": "windowOpen.png",
+		"img": "groupWindows.png",
 		"description": "Gère un groupe de plusieurs widgets fenêtres",
 		"options": [
 			{
@@ -1466,7 +1466,7 @@
 	{
 		"type": "group-shutter",
 		"name": "Groupe de volets",
-		"img": "shutter50.png",
+		"img": "groupShutter.png",
 		"description": "Gère un groupe de plusieurs widgets volets",
 		"options": [
 			{
@@ -1573,7 +1573,7 @@
 	{
 		"type": "group-pir",
 		"name": "Groupe de PIR",
-		"img": "pirOff.png",
+		"img": "groupPIR.png",
 		"description": "Gère un groupe de plusieurs capteurs de mouvements",
 		"options": [
 			{
@@ -1739,7 +1739,7 @@
 	{
 		"type": "group-alarm",
 		"name": "Groupe d'alarmes",
-		"img": "alarm_red.png",
+		"img": "groupAlarm.png",
 		"description": "Gère un groupe d'alarmes",
 		"options": [
 			{
@@ -1872,7 +1872,7 @@
 	{
 		"type": "group-generic-info-binary",
 		"name": "Groupe de génériques binaires",
-		"img": "information.png",
+		"img": "groupBinary.png",
 		"description": "Gère un groupe de plusieurs widgets générique info binaire",
 		"options": [
 			{
