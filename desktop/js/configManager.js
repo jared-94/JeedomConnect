@@ -283,7 +283,7 @@ function getWidgetsParents() {
 function addBottomTabModal() {
 	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},{type:"icon"}] }, function(result) {
 	  var name = result.name;
-	  var icon = result.icon.trim();
+	  var icon = result.icon;
 	  if (name == '' | icon == '') {
 		return;
 	  }
