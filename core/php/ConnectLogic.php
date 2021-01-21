@@ -220,8 +220,7 @@ class ConnectLogic implements MessageComponentInterface
         // Add client to unauthenticated clients list for handling his unauthentication
         $this->unauthenticatedClients->attach($conn);
         $this->hasUnauthenticatedClients = true;
-        \log::add('JeedomConnect', 'info', "New connection: #{$conn->resourceId} from IP: {$conn->ip}");
-        \log::add('JeedomConnect', 'debug', 'New connection headers: '.json_encode($conn->httpRequest->getHeaders()));
+        \log::add('JeedomConnect', 'debug', "New connection: #{$conn->resourceId} from IP: {$conn->ip}");
     }
 
     /**
@@ -376,7 +375,7 @@ class ConnectLogic implements MessageComponentInterface
 		//Remove deleted configs
 		foreach ($this->apiKeyList as $i => $key) {
 			if (!in_array($key, $eqLogicKeys)) {
-				\log::add('JeedomConnect', 'info', "Remove device with key ".$apiKey);
+				\log::add('JeedomConnect', 'info', "Remove device with key ".$key);
 				foreach ($this->authenticatedClients as $client) {
 					if ($client->apiKey == $key) {
 						$client->close();

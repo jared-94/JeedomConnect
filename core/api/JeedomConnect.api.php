@@ -20,7 +20,6 @@ header('Content-Type: application/json');
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 
-
 $jsonData = file_get_contents("php://input");
 log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
 $jsonrpc = new jsonrpc($jsonData);
@@ -100,13 +99,25 @@ switch ($method) {
 		$eqLogic->setConfiguration('userHash', $params['userHash']);
 		$eqLogic->save();
 
+		$registerDevice = $user->getOptions('registerDevice', array());
+		if (!is_array($registerDevice)) {
+			$registerDevice = array();
+		}
+		$rdk = (!isset($params['rdk']) || !isset($registerDevice[sha512($params['rdk'])])) ? config::genKey() : $params['rdk'];
+		$registerDevice[sha512($rdk)] = array();
+		$registerDevice[sha512($rdk)]['datetime'] = date('Y-m-d H:i:s');
+		$registerDevice[sha512($rdk)]['ip'] = getClientIp();
+		$registerDevice[sha512($rdk)]['session_id'] = session_id();
+		$user->setOptions('registerDevice', $registerDevice);
+		$user->save();
+
     $result = array(
       'type' => 'WELCOME',
       'payload' => array(
         'pluginVersion' => $versionJson->version,
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
-        'jeedomURL' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'))
+				'rdk' => $rdk
       )
     );
     log::add('JeedomConnect', 'debug', 'send '.json_encode($result));

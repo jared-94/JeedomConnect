@@ -48,34 +48,27 @@ function refreshBottomTabData() {
 
 function refreshTopTabData() {
 	if (configData.payload.tabs.length == 0) {
-		$("#topTabParents-select").html("<option value='none'>Aucun</option>");
+		$("#topTabParents-select").html("<option>Aucun</option>");
 	} else {
-
-	bottomTabs = configData.payload.tabs.sort(function(s,t) {
-		return s.index - t.index;
-	});
-
-	var items = [];
-	if (configData.payload.sections.filter(tab => tab.parentId === undefined).length > 0) {
-		items.push("<option value='none'>Aucun</option>");
+		bottomTabs = configData.payload.tabs.sort(function(s,t) {
+			return s.index - t.index;
+		});
+		var items = [];
+		if (configData.payload.sections.filter(tab => tab.parentId === undefined).length > 0) {
+			items.push("<option>Aucun</option>");
+		}
+		$.each(bottomTabs, function(key, val) {
+			items.push(`<option value="${val.id}">${val.name}</option>`);
+		});
+		$("#topTabParents-select").html(items.join(""));
 	}
-	$.each(bottomTabs, function(key, val) {
-	items.push(`<option value="${val.id}">${val.name}</option>`);
-	});
-	$("#topTabParents-select").html(items.join(""));
-	}
-
 	refreshTopTabContent();
 }
 
 function refreshTopTabContent() {
-
-	var parentId = $("#topTabParents-select").val();
+	var parentId = $("#topTabParents-select option:selected").attr('value');
 	var tabs = configData.payload.sections.filter(tabs => tabs.parentId == parentId);
 
-	if (parentId == 'none') {
-		tabs = configData.payload.sections.filter(tabs => tabs.parentId === undefined);
-	}
 	tabs = tabs.sort(function(s,t) {
 		return s.index - t.index;
 	});
@@ -106,14 +99,14 @@ function refreshRoomData() {
 }
 
 function refreshWidgetData() {
+	var items = [];
 	if (configData.payload.tabs.length == 0 & configData.payload.sections.length == 0) {
-		$("#widgetsParents-select").html("<option value='none'>Aucun</option>");
+		$("#widgetsParents-select").html("<option>Aucun</option>");
 	} else {
 	  var parents = getWidgetsParents();
 	  $.each(parents, function(key, val) {
 			items.push(`<option value="${val.id}">${val.name}</option>`);
 	  });
-
 	  $("#widgetsParents-select").html(items.join(""));
 	}
 
@@ -121,7 +114,7 @@ function refreshWidgetData() {
 }
 
 function refreshWidgetsContent() {
-	var parentId = $("#widgetsParents-select").val();
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
 	rootElmts = rootElmts.sort(function(s,t) {
 		return s.index - t.index;
@@ -139,7 +132,7 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<li><a  onclick="editGroupModal('${val.id}');">${val.name}</a>
+			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list" /> ${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
@@ -216,13 +209,7 @@ function getMaxIndex(array) {
 
 function getRootObjects(id) {
 	var widgets = configData.payload.widgets.filter(w => w.parentId == id);
-	if (id == 'none') {
-		widgets = configData.payload.widgets.filter(w => w.parentId === undefined);
-	}
 	var groups = configData.payload.groups.filter(g => g.parentId == id);
-	if (id == 'none') {
-		groups = configData.payload.groups.filter(w => w.parentId === undefined);
-	}
 	return groups.concat(widgets);
 }
 
@@ -259,22 +246,19 @@ function getWidgetPath(id) {
 
 function getWidgetsParents() {
 	var items = [];
-	  $.each(configData.payload.tabs, function(key, val) {
-		 if (configData.payload.sections.find(s => s.parentId == val.id) === undefined) {
+	 $.each(configData.payload.tabs, function(key, val) {
+	 	if (configData.payload.sections.find(s => s.parentId == val.id) === undefined) {
 			items.push({id:val.id, name:val.name});
 		 }
-	  });
-	  $.each(configData.payload.sections, function(key, val) {
+	 });
+	 $.each(configData.payload.sections, function(key, val) {
 		var tab = configData.payload.tabs.find(t => t.id == val.parentId);
-		if (tab === undefined) {
+		if (tab === undefined & configData.payload.tabs.length == 0) {
 			items.push({id:val.id, name:val.name});
 		} else {
 			items.push({id:val.id, name:tab.name+" / "+val.name});
 		}
-	  });
-	  if (configData.payload.widgets.find(w => w.parentId === undefined) !== undefined) {
-		  items.push({id: 'none', name: "Aucun"});
-	  }
+	 });
 	return items;
 }
 
@@ -284,7 +268,7 @@ function addBottomTabModal() {
 	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},{type:"icon"}] }, function(result) {
 	  var name = result.name;
 	  var icon = result.icon;
-	  if (name == '' | icon == '') {
+	  if (name == ''  | icon.name == '') {
 		return;
 	  }
 
@@ -297,6 +281,18 @@ function addBottomTabModal() {
 	  newTab.id = configData.idCounter;
 
 	  configData.payload.tabs.push(newTab);
+
+		if (maxIndex == -1) { //this is the first bottom tab
+			configData.payload.sections.forEach(item => {
+				item.parentId = newTab.id;
+			});
+			configData.payload.groups.forEach(item => {
+				item.parentId = item.parentId || newTab.id;
+			});
+			configData.payload.widgets.forEach(item => {
+				item.parentId = item.parentId || newTab.id;
+			});
+		}
 	  incrementIdCounter();
 	  refreshBottomTabData();
 	});
@@ -305,7 +301,7 @@ function addBottomTabModal() {
 function editBottomTabModal(tabId) {
   var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
   getSimpleModal({title: "Editer un menu bas",
-		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value:tabToEdit.icon}] },
+		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value: tabToEdit.icon}] },
 		function(result) {
 				tabToEdit.name = result.name;
 				tabToEdit.icon = result.icon;
@@ -340,35 +336,34 @@ function downBottomTab(tabId) {
 
 function deleteBottomTab(tabId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous vraiment supprimer ce menu ?"}] }, function(result) {
-	var tabToDelete = configData.payload.tabs.find(tab => tab.id == tabId);
-	var index = configData.payload.tabs.indexOf(tabToDelete);
-	configData.payload.tabs.forEach(item => {
-		if (item.index > tabToDelete.index) {
-			item.index = item.index - 1;
-		}
-	});
-	configData.payload.tabs.splice(index, 1);
+		var tabToDelete = configData.payload.tabs.find(tab => tab.id == tabId);
+		var index = configData.payload.tabs.indexOf(tabToDelete);
+		configData.payload.tabs.forEach(item => {
+			if (item.index > tabToDelete.index) {
+				item.index = item.index - 1;
+			}
+		});
+		configData.payload.tabs.splice(index, 1);
 
-	configData.payload.sections.slice().forEach(section => {
-		if (section.parentId == tabId) {
-			deleteTopTab(section.id);
-		}
-	});
+		//remove all sub-elements
+		configData.payload.sections.slice().forEach(section => {
+			if (section.parentId == tabId) {
+				deleteTopTab(section.id);
+			}
+		});
+		configData.payload.groups.slice().forEach(group => {
+			if (group.parentId == tabId) {
+				deleteGroup(group.id);
+			}
+		});
+		configData.payload.widgets.forEach(widget => {
+			if (widget.parentId == tabId) {
+				deleteWidget(widget.id);
+			}
+		});
 
-	configData.payload.groups.slice().forEach(group => {
-		if (group.parentId == tabId) {
-			deleteGroup(group.id);
-		}
+		refreshBottomTabData();
 	});
-
-	configData.payload.widgets.forEach(widget => {
-		if (widget.parentId == tabId) {
-			widget.parentId = undefined;
-		}
-	});
-
-	refreshBottomTabData();
-  });
 }
 
 /* TOP TAB FUNCTIONS */
@@ -376,29 +371,30 @@ function deleteBottomTab(tabId) {
 function addTopTabModal() {
 	getSimpleModal({title: "Ajouter un menu haut", fields:[{type: "enable", value: true},{type: "name"}] }, function(result) {
 	  var name = result.name;
-	  var parentId = $("#topTabParents-select").val();
-	  if (name == '') {
-		return;
-	  }
+	  var parentId = $("#topTabParents-select option:selected").attr('value');
+	  if (name == '') { return; }
 
-	  var tabList;
-	  if (parentId == 'none') {
-		tabList = configData.payload.sections.filter(tab => tab.parentId === undefined);
-	  } else {
-		tabList = configData.payload.sections.filter(tab => tab.parentId == parentId);
-	  }
+		var tabList = configData.payload.sections.filter(tab => tab.parentId == parentId);
 
 	  var maxIndex = getMaxIndex(tabList);
 	  var newTab = {};
 	  newTab.name = name;
 	  newTab.enable = result.enable;
-	  if (parentId != 'none') {
-		newTab.parentId = parseInt(parentId);
-	  }
+		newTab.parentId = parentId && parseInt(parentId);
 	  newTab.index = maxIndex + 1;
 	  newTab.id = configData.idCounter;
 
 	  configData.payload.sections.push(newTab);
+
+		if (maxIndex == -1) {//this is the first toptab
+			configData.payload.groups.forEach(item => {
+				item.parentId = (item.parentId == newTab.parentId) ? newTab.id : item.parentId;
+			});
+			configData.payload.widgets.forEach(item => {
+				item.parentId = (item.parentId == newTab.parentId) ? newTab.id : item.parentId;
+			});
+		}
+
 	  incrementIdCounter();
 	  refreshTopTabContent();
 	});
@@ -407,9 +403,9 @@ function addTopTabModal() {
 function editTopTabModal(tabId) {
   var tabToEdit = configData.payload.sections.find(tab => tab.id == tabId);
   getSimpleModal({title: "Editer un menu haut", fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name}] }, function(result) {
-	tabToEdit.name = result.name;
-	tabToEdit.enable = result.enable;
-	refreshTopTabContent();
+		tabToEdit.name = result.name;
+		tabToEdit.enable = result.enable;
+		refreshTopTabContent();
   });
 }
 
@@ -445,45 +441,43 @@ function downTopTab(tabId) {
 
 function deleteTopTab(tabId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous vraiment supprimer ce menu ?"}] }, function(result) {
-	var tabToDelete = configData.payload.sections.find(tab => tab.id == tabId);
-	var index = configData.payload.sections.indexOf(tabToDelete);
-	var tabList = configData.payload.sections.filter(tab => tab.parentId == tabToDelete.parentId);
-	tabList.forEach(item => {
-		if (item.index > tabToDelete.index) {
-			item.index = item.index - 1;
-		}
-	});
-	configData.payload.sections.splice(index, 1);
+		var tabToDelete = configData.payload.sections.find(tab => tab.id == tabId);
+		var index = configData.payload.sections.indexOf(tabToDelete);
+		var tabList = configData.payload.sections.filter(tab => tab.parentId == tabToDelete.parentId);
+		tabList.forEach(item => {
+			if (item.index > tabToDelete.index) {
+				item.index = item.index - 1;
+			}
+		});
+		configData.payload.sections.splice(index, 1);
 
-	configData.payload.groups.slice().forEach(group => {
-		if (group.parentId == tabId) {
-			deleteGroup(group.id);
-		}
-	});
+		configData.payload.groups.slice().forEach(group => {
+			if (group.parentId == tabId) {
+				deleteGroup(group.id);
+			}
+		});
 
-	configData.payload.widgets.forEach(widget => {
-		if (widget.parentId == tabId) {
-			widget.parentId = undefined;
-		}
-	});
+		configData.payload.widgets.forEach(widget => {
+			if (widget.parentId == tabId) {
+				deleteWidget(widget.id)
+			}
+		});
 
-	refreshTopTabContent();
+		refreshTopTabContent();
   });
 }
 
 function moveTopTabModal(tabId) {
 	getSimpleModal({title: "Déplacer un menu haut", fields:[{type: "move",value:configData.payload.tabs}] }, function(result) {
 	  var parentId = result.moveToId;
-	  if (parentId === null) {
-		return;
-	  }
+	  if (parentId === null) { return; }
 	  var tabToMove = configData.payload.sections.find(tab => tab.id == tabId);
 	  //re-index current tab list
 	  var tabList = configData.payload.sections.filter(tab => tab.parentId == tabToMove.parentId);
 	  tabList.forEach(item => {
-		if (item.index > tabToMove.index) {
-		  item.index = item.index - 1;
-		}
+			if (item.index > tabToMove.index) {
+		  	item.index = item.index - 1;
+			}
 	  });
 
 	  var maxIndex = getMaxIndex(configData.payload.sections.filter(s => s.parentId == parentId));
@@ -498,19 +492,17 @@ function moveTopTabModal(tabId) {
 
 function addRoomModal() {
   getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}] }, function(result) {
-	var name = result.name;
-	if (name == '') {
-		return;
-	}
-	var maxIndex = getMaxIndex(configData.payload.rooms);
-	var newRoom = {};
-	newRoom.name = name;
-	newRoom.index = maxIndex + 1;
-	newRoom.id = configData.idCounter;
+		var name = result.name;
+		if (name == '') { return; }
+		var maxIndex = getMaxIndex(configData.payload.rooms);
+		var newRoom = {};
+		newRoom.name = name;
+		newRoom.index = maxIndex + 1;
+		newRoom.id = configData.idCounter;
 
-	configData.payload.rooms.push(newRoom);
-	incrementIdCounter();
-	refreshRoomData();
+		configData.payload.rooms.push(newRoom);
+		incrementIdCounter();
+		refreshRoomData();
   });
 }
 
@@ -550,16 +542,23 @@ function downRoom(roomId) {
 
 function deleteRoom(roomId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer cette pièce ?"}] }, function(result) {
-	var roomToDelete = configData.payload.rooms.find(room => room.id == roomId);
-	var index = configData.payload.rooms.indexOf(roomToDelete);
+		var roomToDelete = configData.payload.rooms.find(room => room.id == roomId);
+		var index = configData.payload.rooms.indexOf(roomToDelete);
 
-	configData.payload.rooms.forEach(item => {
-		if (item.index > roomToDelete.index) {
-			item.index = item.index - 1;
-		}
-	});
-    configData.payload.rooms.splice(index, 1);
-	refreshRoomData();
+		configData.payload.rooms.forEach(item => {
+			if (item.index > roomToDelete.index) {
+				item.index = item.index - 1;
+			}
+		});
+		//remove room for used widgets
+		configData.payload.widgets.forEach(widget => {
+			if (widget.room == roomToDelete.name) {
+				widget.room = undefined;
+			}
+		});
+
+  	configData.payload.rooms.splice(index, 1);
+		refreshRoomData();
   });
 }
 
@@ -567,40 +566,38 @@ function deleteRoom(roomId) {
 
 function addGroupModal() {
   getSimpleModal({title: "Ajouter un groupe", fields:[{type: "enable", value: true},{type: "name"}, {type: "expanded", value: false}] }, function(result) {
-	var name = result.name;
-	if (name == '') {
-		return;
-	}
-	var parentId = $("#widgetsParents-select").val();
-	var rootElmts = getRootObjects(parentId);
+		var name = result.name;
+		if (name == '') { return; }
+		var parentId = $("#widgetsParents-select option:selected").attr('value');
+		var rootElmts = getRootObjects(parentId);
 
-	var maxIndex = getMaxIndex(rootElmts);
-	var newGroup = {};
-	newGroup.name = name;
-	newGroup.expanded = result.expanded;
-	newGroup.enable = result.enable;
-	newGroup.parentId = parseInt(parentId);
-	newGroup.index = maxIndex + 1;
-	newGroup.id = configData.idCounter;
+		var maxIndex = getMaxIndex(rootElmts);
+		var newGroup = {};
+		newGroup.name = name;
+		newGroup.expanded = result.expanded;
+		newGroup.enable = result.enable;
+		newGroup.parentId = parentId && parseInt(parentId);
+		newGroup.index = maxIndex + 1;
+		newGroup.id = configData.idCounter;
 
-	configData.payload.groups.push(newGroup);
-	incrementIdCounter();
-	refreshWidgetsContent();
+		configData.payload.groups.push(newGroup);
+		incrementIdCounter();
+		refreshWidgetsContent();
   });
 }
 
 function editGroupModal(groupId) {
   var groupToEdit = configData.payload.groups.find(g => g.id == groupId);
   getSimpleModal({title: "Editer un groupe", fields:[ {type: "enable", value: groupToEdit.enable},{type: "name",value:groupToEdit.name},{type: "expanded", value:groupToEdit.expanded}] }, function(result) {
-	groupToEdit.name = result.name;
-	groupToEdit.expanded = result.expanded;
-	groupToEdit.enable = result.enable;
-	refreshWidgetsContent();
+		groupToEdit.name = result.name;
+		groupToEdit.expanded = result.expanded;
+		groupToEdit.enable = result.enable;
+		refreshWidgetsContent();
   });
 }
 
 function upGroup(groupId) {
-	var parentId = $("#widgetsParents-select").val();
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
 
 	var groupToMove = rootElmts.find(g => g.id == groupId);
@@ -616,7 +613,7 @@ function upGroup(groupId) {
 }
 
 function downGroup(groupId) {
-	var parentId = $("#widgetsParents-select").val();
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
 
 	var groupToMove = rootElmts.find(g => g.id == groupId);
@@ -633,88 +630,84 @@ function downGroup(groupId) {
 
 function deleteGroup(groupId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Tous les widgets attachés à ce groupe seront supprimés. Voulez-vous continuer ?"}] }, function(result) {
-	var groupToDelete = configData.payload.groups.find(g => g.id == groupId);
-	var index = configData.payload.groups.indexOf(groupToDelete);
-	var rootElmts = getRootObjects(groupToDelete.parentId);
-	rootElmts.forEach(item => {
-		if (item.index > groupToDelete.index) {
-			item.index = item.index - 1;
-		}
-	});
+		var groupToDelete = configData.payload.groups.find(g => g.id == groupId);
+		var index = configData.payload.groups.indexOf(groupToDelete);
+		var rootElmts = getRootObjects(groupToDelete.parentId);
+		rootElmts.forEach(item => {
+			if (item.index > groupToDelete.index) {
+				item.index = item.index - 1;
+			}
+		});
     configData.payload.groups.splice(index, 1);
 
-	configData.payload.widgets.slice().forEach(widget => {
-		if (widget.parentId == groupId) {
-			deleteWidget(widget.id);
-		}
-	});
-	refreshWidgetsContent();
+		configData.payload.widgets.slice().forEach(widget => {
+			if (widget.parentId == groupId) {
+				deleteWidget(widget.id);
+			}
+		});
+		refreshWidgetsContent();
   });
 }
 
 function moveGroupModal(groupId) {
   getSimpleModal({title: "Déplacer un groupe", fields:[{type: "move",value:getWidgetsParents()}] }, function(result) {
-	var parentId = result.moveToId;
-	if (parentId === null) {
-		return;
-	}
-	var groupToMove = configData.payload.groups.find(g => g.id == groupId);
-	var rootElmts = getRootObjects(groupToMove.parentId);
-	rootElmts.forEach(item => {
-		if (item.index > groupToMove.index) {
-			item.index = item.index - 1;
-		}
-	});
-	var dest = getRootObjects(parentId);
-	var maxIndex = getMaxIndex(dest);
-	groupToMove.parentId = parseInt(parentId);
-	groupToMove.index = maxIndex + 1;
+		var parentId = result.moveToId;
+		if (parentId === null) { 	return; }
+		var groupToMove = configData.payload.groups.find(g => g.id == groupId);
+		var rootElmts = getRootObjects(groupToMove.parentId);
+		rootElmts.forEach(item => {
+			if (item.index > groupToMove.index) {
+				item.index = item.index - 1;
+			}
+		});
+		var dest = getRootObjects(parentId);
+		var maxIndex = getMaxIndex(dest);
+		groupToMove.parentId = parseInt(parentId);
+		groupToMove.index = maxIndex + 1;
 
-	refreshWidgetsContent();
+		refreshWidgetsContent();
   });
 }
 
 /* WIDGETS */
 
-
-
 function upWidget(widgetId) {
-	var parentId = $("#widgetsParents-select").val();
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
 
 	var widgetToMove = rootElmts.find(w => w.id == widgetId);
 	if (widgetToMove !== undefined) { //widget is not in a group
 	  var widgetIndex = widgetToMove.index;
 	  if (widgetIndex == 0) {
-		console.log("can't move this widget");
-		return;
+			console.log("can't move this widget");
+			return;
 	  }
 	  var otherElmt = rootElmts.find(e => e.index == widgetIndex - 1);
 	  var group = configData.payload.groups.find(g => g.id == otherElmt.id);
 	  if (group !== undefined) { //transfer widget to a group
-		rootElmts.forEach(item => {
-			if (item.index > widgetToMove.index) {
-				item.index = item.index - 1;
-			}
-		});
-		widgetToMove.index = getMaxIndex(getRootObjects(group.id)) + 1;
-        widgetToMove.parentId = group.id;
+			rootElmts.forEach(item => {
+				if (item.index > widgetToMove.index) {
+					item.index = item.index - 1;
+				}
+			});
+			widgetToMove.index = getMaxIndex(getRootObjects(group.id)) + 1;
+      widgetToMove.parentId = group.id;
 	  } else {
-		widgetToMove.index = widgetIndex - 1;
+			widgetToMove.index = widgetIndex - 1;
 	    otherElmt.index = widgetIndex;
 	  }
 	} else {
 		widgetToMove = configData.payload.widgets.find(w => w.id == widgetId);
 		group = rootElmts.find(g => g.id == widgetToMove.parentId);
 		var widgetIndex = widgetToMove.index;
-	    if (widgetIndex == 0) {
+	  if (widgetIndex == 0) { //exit from group
 			rootElmts.forEach(item => {
-		      if (item.index > group.index) {
-			    item.index = item.index + 1;
-		      }
-	        });
+		  	if (item.index > group.index) {
+			   	item.index = item.index + 1;
+		    }
+	    });
 			widgetToMove.index = group.index;
-			widgetToMove.parentId = parseInt(parentId);
+			widgetToMove.parentId = parentId && parseInt(parentId);
 			group.index = group.index + 1
 		} else {
 			var otherWidget = configData.payload.widgets.find(w => w.parentId == widgetToMove.parentId & w.index == widgetIndex - 1);
@@ -727,29 +720,29 @@ function upWidget(widgetId) {
 }
 
 function downWidget(widgetId) {
-	var parentId = $("#widgetsParents-select").val();
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
 
 	var widgetToMove = rootElmts.find(w => w.id == widgetId);
 	if (widgetToMove !== undefined) { //widget is not in a group
 	  var widgetIndex = widgetToMove.index;
 	  if (widgetIndex == getMaxIndex(rootElmts)) {
-		console.log("can't move this widget");
-		return;
+			console.log("can't move this widget");
+			return;
 	  }
 	  var otherElmt = rootElmts.find(e => e.index == widgetIndex + 1);
 
 	  var group = configData.payload.groups.find(g => g.id == otherElmt.id);
 	  if (group !== undefined) { //transfer widget to a group
-		rootElmts.forEach(item => {
-			if (item.index > widgetToMove.index) {
-				item.index = item.index - 1;
-			}
-		});
-		widgetToMove.index = getMaxIndex(getRootObjects(group.id)) + 1;
-        widgetToMove.parentId = group.id;
+			rootElmts.forEach(item => {
+				if (item.index > widgetToMove.index) {
+					item.index = item.index - 1;
+				}
+			});
+			widgetToMove.index = getMaxIndex(getRootObjects(group.id)) + 1;
+      widgetToMove.parentId = group.id;
 	  } else {
-		widgetToMove.index = widgetIndex + 1;
+			widgetToMove.index = widgetIndex + 1;
 	    otherElmt.index = widgetIndex;
 	  }
 	} else {
@@ -757,15 +750,14 @@ function downWidget(widgetId) {
 		var widgetsList = configData.payload.widgets.filter(w => w.parentId == widgetToMove.parentId);
 		group = rootElmts.find(g => g.id == widgetToMove.parentId);
 		var widgetIndex = widgetToMove.index;
-	    if (widgetIndex == getMaxIndex(widgetsList)) {
+	  if (widgetIndex == getMaxIndex(widgetsList)) { // exit from group
 		  rootElmts.forEach(item => {
 		    if (item.index > group.index) {
-			  item.index = item.index + 1;
+			  	item.index = item.index + 1;
 		    }
-	      });
+	    });
 		  widgetToMove.index = group.index + 1;
-		  widgetToMove.parentId = parseInt(parentId);
-
+		  widgetToMove.parentId = parentId && parseInt(parentId);
 		} else {
 			var otherWidget = widgetsList.find(w => w.index == widgetIndex + 1);
 			widgetToMove.index = widgetIndex + 1;
@@ -822,9 +814,7 @@ function deleteWidget(widgetId) {
 function moveWidgetModal(widgetId) {
   getSimpleModal({title: "Déplacer un widget", fields:[{type: "move",value:getWidgetsParents()}] }, function(result) {
 	var parentId = result.moveToId;
-	if (parentId === null) {
-		return;
-	}
+	if (parentId === null) { return; }
 	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId);
 	var rootElmts = getRootObjects(widgetToMove.parentId);
 	rootElmts.forEach(item => {
@@ -843,33 +833,24 @@ function moveWidgetModal(widgetId) {
 
 function addWidgetModal() {
   getWidgetModal({title:"Ajouter un widget"}, function(result) {
-  console.log(result)
-	  var parentId = $("#widgetsParents-select").val();
-  	  var rootElmts = getRootObjects(parentId);
+  	console.log(result)
+	  var parentId = $("#widgetsParents-select option:selected").attr('value');
+  	 var rootElmts = getRootObjects(parentId);
 
 	  var maxIndex = getMaxIndex(rootElmts);
-	  result.parentId = parentId == 'none' ? undefined : parseInt(parentId);
+	  result.parentId = parentId && parseInt(parentId);
 	  result.index = maxIndex + 1;
 	  result.id = configData.idCounter;
 
 	  configData.payload.widgets.push(result);
 	  incrementIdCounter();
 	  refreshWidgetsContent();
-
   });
 }
 
 function editWidgetModal(widgetId) {
   var widgetToEdit = configData.payload.widgets.find(w => w.id == widgetId);
   getWidgetModal({title:"Editer un widget", widget:widgetToEdit}, function(result) {
-	/*var type = result.type;
-	var widgetConfig = widgetsList.widgets.find(i => i.type == options.widget.type);
-
-	  var parentId = $("#widgetsParents-select").val();
-  	  var rootElmts = getRootObjects(parentId);
-	  widgetToEdit = result;
-	  */
-	 console.log(result)
-
+	 console.log(result);
   });
 }

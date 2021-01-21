@@ -66,8 +66,12 @@ $("#import-input").change(function() {
 				$.post({
 					url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
 					data: {'action': 'saveConfig', 'config': config, 'apiKey': key },
-					success: function () {
-						$('#div_alert').showAlert({message: 'Configuration importée avec succès', level: 'success'});
+					success: function (r) {
+						if (JSON.parse(r).state == 'error') {
+							$('#div_alert').showAlert({message: "Erreur lors de l'importation", level: 'danger'});
+						} else {
+							$('#div_alert').showAlert({message: 'Configuration importée avec succès', level: 'success'});
+						}						
 					},
 					error: function (error) {
 						console.log(error);
