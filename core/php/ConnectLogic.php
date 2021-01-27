@@ -442,7 +442,7 @@ class ConnectLogic implements MessageComponentInterface
 		foreach ($config['payload']['widgets'] as $widget) {
 			foreach ($widget as $item => $value) {
 				if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
-					array_push($return, $value);
+					array_push($return, $value['id']);
 				}
 			}
 		}

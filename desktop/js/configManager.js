@@ -1,12 +1,12 @@
 var configData;
 var widgetsList;
 
-$.ajax({
-	dataType: 'json',
-	url: "plugins/JeedomConnect/data/configs/" + apiKey + ".json",
+$.post({
+	url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+	data: {'action': 'getConfig', 'apiKey': apiKey },
 	cache: false,
 	success: function( config ) {
-		configData = config;
+		configData = json_decode(config).result;
 		$.ajax({
 			dataType: 'json',
 			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
@@ -18,8 +18,6 @@ $.ajax({
 		});
 	}
 });
-
-
 
 function initData() {
 	document.getElementById("defaultOpen").click();
@@ -126,7 +124,7 @@ function refreshWidgetsContent() {
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
 			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
-			<span style="font-size:12px;margin-left:40px;">${val.room || 'Pas de pièce'}</span></a>
+			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
@@ -205,6 +203,15 @@ function getMaxIndex(array) {
 		}
 	});
 	return maxIndex;
+}
+
+function getRoomName(id) {
+	const room = configData.payload.rooms.find(r => r.id == id);
+	if (room) {
+		return room.name;
+	} else {
+		return undefined;
+	}
 }
 
 function getRootObjects(id) {

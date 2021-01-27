@@ -24,6 +24,11 @@ function JeedomConnect_install() {
 function JeedomConnect_update() {
   log::add('JeedomConnect', 'info', 'Restart daemon');
   JeedomConnect::deamon_start();
+
+  foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+    $eqLogic->updateConfig();
+  }
+
 }
 
 function JeedomConnect_remove() {

@@ -142,8 +142,8 @@ function getWidgetModal(_options, _callback) {
       closeText: '',
       autoOpen: false,
       modal: true,
-      width: 850,
-	  height: 450
+      width: 1050,
+	  	height: 0.8*$(window).height()
     });
     jQuery.ajaxSetup({
       async: false
@@ -171,13 +171,19 @@ function getWidgetModal(_options, _callback) {
 				throw {};
 			}
 			if ($("#"+option.id+"-input").attr('cmdId') != '') {
-				result[option.id] = $("#"+option.id+"-input").attr('cmdId');
+				result[option.id] = {};
+				result[option.id].id = $("#"+option.id+"-input").attr('cmdId');
+				result[option.id].type = $("#"+option.id+"-input").attr('cmdType');
+				result[option.id].subType = $("#"+option.id+"-input").attr('cmdSubType');
+				result[option.id].minValue = $("#"+option.id+"-minInput").val() != '' ? $("#"+option.id+"-minInput").val() : undefined;
+				result[option.id].maxValue = $("#"+option.id+"-maxInput").val() != '' ? $("#"+option.id+"-maxInput").val() : undefined;
+				result[option.id].unit = $("#"+option.id+"-unitInput").val() != '' ? $("#"+option.id+"-unitInput").val() : undefined;
+				result[option.id].invert = $("#invert-"+option.id).is(':checked') || undefined;
+				result[option.id].confirm = $("#confirm-"+option.id).is(':checked') || undefined;
+				result[option.id].secure = $("#secure-"+option.id).is(':checked') || undefined;
+				Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
 			} else {
 				result[option.id] = undefined;
-			}
-			if (option.type == 'action') {
-				result[option.id+'Confirm'] = $("#confirm-"+option.id).is(':checked') || undefined;
-				result[option.id+'Secure'] = $("#secure-"+option.id).is(':checked') || undefined;
 			}
 		} else if (option.category == "scenario") {
 			if ($("#"+option.id+"-input").attr('scId') == '' & option.required) {

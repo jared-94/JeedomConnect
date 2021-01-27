@@ -1,4 +1,13 @@
 # Changelog JeedomConnect
+## Version 0.14.2 Beta (27/01/2021)
+- Correction bug status lumières
+- Ajout icônes groupe
+- Option pour inverser un binaire
+- Assistant widget: remplissage auto de certains champs info
+- Appli : option pour retour haptique sur action
+- Bugs corrigés sur l'assistant de config
+- Bug échelle historique
+
 ## Version 0.14.0 Beta (19/01/2021)
 - Widget Portail : status en option
 - Widget Lumière On/Off : le status peut être numérique

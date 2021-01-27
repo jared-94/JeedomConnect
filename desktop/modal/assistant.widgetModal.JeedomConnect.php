@@ -39,9 +39,9 @@ if (!isConnect('admin')) {
   }
 </style>
 
-<div  style="margin:auto; width:800px; height:400px;">
+<div  style="margin:auto;">
   <div style="display:none;" id="widget-alert"></div>
-  <div style="float:left; width:300px; height:400px; position:fixed;">
+  <div style="float:left; width:200px; height:400px; position:fixed;">
       <h3>Choix du widget</h3>
     <select name="widgetsList" id="widgetsList-select"  onchange="refreshAddWidgets();">
     </select>
@@ -49,10 +49,10 @@ if (!isConnect('admin')) {
 	<div class="alert alert-info" id="widgetDescription">
 	</div>
   </div>
-  <div style="margin-left:310px; height:inherit; width:500px; border-left: 1px solid #ccc;">
+  <div style="margin-left:210px; height:inherit; width:500px; border-left: 1px solid #ccc;">
     <h3 style="margin-left:25px;">Options du widget</h3><br>
 	<div style="margin-left:25px; font-size:12px; margin-top:-20px; margin-bottom:15px;">Les options marquées d'une étoile sont obligatoires.</div>
-	<form class="form-horizontal" style="overflow: hidden;">
+	<form class="form-horizontal" style="overflow: hidden; min-width: 800px;">
 	  <ul id="widgetOptions" style="padding-left:10px; list-style-type: none;">
 
 	  </ul>
@@ -79,7 +79,7 @@ if (!isConnect('admin')) {
        var blockDetail = options.widget.blockDetail ? "checked": "";
 			 $("#blockDetail-input").prop('checked', blockDetail);
 			 //Room
-			 if (options.widget.room !== undefined & configData.payload.rooms.find(r => r.name == options.widget.room) !== undefined) {
+			 if (options.widget.room !== undefined & configData.payload.rooms.find(r => r.id == options.widget.room) !== undefined) {
 				$('#room-input option[value="'+options.widget.room+'"]').prop('selected', true);
 			 }
 
@@ -88,20 +88,47 @@ if (!isConnect('admin')) {
 				 if (option.category == "string" & options.widget[option.id] !== undefined ) {
 					 $("#"+option.id+"-input").val(options.widget[option.id]);
 				 } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
-					 getHumanName({
-						id: options.widget[option.id],
-						error: function (error) {},
-						success: function (data) {
-						  $("#"+option.id+"-input").attr('cmdId', options.widget[option.id]);
-						  $("#"+option.id+"-input").val(data);
-						}
-					 });
-           if (option.type == "action") {
-             var confirm = options.widget[option.id+'Confirm'] ? "checked": "";
-      			 $("#confirm-"+option.id).prop('checked', confirm);
-             var secure = options.widget[option.id+'Secure'] ? "checked": "";
-      			 $("#secure-"+option.id).prop('checked', secure);
+           $("#"+option.id+"-input").attr('cmdId', options.widget[option.id].id);
+           getHumanName({
+             id: options.widget[option.id].id,
+             error: function (error) {},
+             success: function (data) {
+               $("#"+option.id+"-input").val(data);
+             }
+           });
+           $("#"+option.id+"-input").attr('cmdType', options.widget[option.id].type);
+           $("#"+option.id+"-input").attr('cmdSubType', options.widget[option.id].subType);
+           if (options.widget[option.id].type == 'action') {
+             $("#confirm-div-"+option.id).css('display', '');
+             $("#secure-div-"+option.id).css('display', '');
+             $("#confirm-"+option.id).prop('checked', options.widget[option.id].confirm ? "checked" : "");
+             $("#secure-"+option.id).prop('checked', options.widget[option.id].secure ? "checked" : "");
+           } else {
+             $("#confirm-div-"+option.id).css('display', 'none');
+             $("#secure-div-"+option.id).css('display', 'none');
            }
+           if (options.widget[option.id].subType == 'slider' | options.widget[option.id].subType == 'numeric') {
+             $("#"+option.id+"-minInput").css('display', '');
+             $("#"+option.id+"-maxInput").css('display', '');
+             $("#"+option.id+"-minInput").val(options.widget[option.id].minValue);
+             $("#"+option.id+"-maxInput").val(options.widget[option.id].maxValue);
+           } else {
+             $("#"+option.id+"-minInput").css('display', 'none');
+             $("#"+option.id+"-maxInput").css('display', 'none');
+           }
+           if (options.widget[option.id].subType == 'binary' | options.widget[option.id].subType == 'numeric') {
+             $("#invert-div-"+option.id).css('display', '');
+             $("#invert-"+option.id).prop('checked', options.widget[option.id].invert ? "checked" : "");
+           } else {
+               $("#invert-div-"+option.id).css('display', 'none');
+           }
+           if (options.widget[option.id].subType == 'numeric') {
+             $("#"+option.id+"-unitInput").css('display', '');
+             $("#"+option.id+"-unitInput").val(options.widget[option.id].unit);
+           } else {
+               $("#"+option.id+"-unitInput").css('display', 'none');
+           }
+
 				 } else if (option.category == "scenario" & options.widget[option.id] !== undefined) {
 					 getScenarioHumanName({
 						id: options.widget[option.id],
@@ -144,8 +171,6 @@ if (!isConnect('admin')) {
 				 }
 			 });
 		}
-
-
 	}
 
 	items = [];
@@ -179,7 +204,7 @@ if (!isConnect('admin')) {
 			<div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
 			<option value="none">Sélection  d'une pièce</option>`;
 		configData.payload.rooms.forEach(item => {
-		  option += `<option value="${item.name}">${item.name}</option>`;
+		  option += `<option value="${item.id}">${item.name}</option>`;
 		});
 		option += `</select></div></div></div></li>`;
 		items.push(option);
@@ -194,19 +219,37 @@ if (!isConnect('admin')) {
 			<div class="description">${description}</div>`;
 
 			if (option.category == "cmd") {
-				curOption += `<div class='input-group'>
-                <input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' cmdId='' disabled>
-			             <span class='input-group-btn'>
-                   <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}');">
+				curOption += `<table><tr class="cmd">
+              <td>
+                <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' disabled>
+                <td>
+                   <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}', '${option.value}');">
 			                <i class='fas fa-list-alt'></i></a>
-                      <i class="mdi mdi-minus-circle" id="${option.id}-remove"
+                      </td>
+              </td>
+              <td>
+                  <i class="mdi mdi-minus-circle" id="${option.id}-remove"
                         style="color:rgb(185, 58, 62);font-size:16px;margin-right:10px;display:${option.required ? 'none' : ''};" aria-hidden="true" onclick="removeCmd('${option.id}')"></i>
-                      </span></div>`;
-        if (option.type == 'action') {
-          curOption += `<div style="text-align:end;">
-            <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}">
-            <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>`;
-        }
+              </td>
+              <td>
+                      <div style="width:50px;margin-left:5px; display:none;" id="invert-div-${option.id}">
+                      <i class='fa fa-sync' title="Inverser"></i><input type="checkbox" style="margin-left:5px;" id="invert-${option.id}"></div>
+              </td>
+              <td>
+                    <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
+                    <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
+              </td><td>
+                      <div style="width:50px; display:none;" id="secure-div-${option.id}">
+                      <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
+              </td>
+              <td>
+                  <input style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+                </td><td>
+                  <input style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+              </td><td>
+                  <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
+                </td></tr></table>
+                      `;
 
 			 curOption += "</div></div></li>";
 
@@ -315,17 +358,65 @@ if (!isConnect('admin')) {
     $("#"+id+"-input").attr('cmdId', '');
   }
 
-	function selectCmd(name, type, subtype) {
+	function selectCmd(name, type, subtype, value) {
 		var cmd =  {type: type }
 		if (subtype != 'undefined') {
 			cmd = {type: type, subType: subtype}
 		}
 		jeedom.cmd.getSelectModal({cmd: cmd}, function(result) {
-			$("#"+name+"-input").attr('value', result.human);
-			$("#"+name+"-input").val(result.human);
-			$("#"+name+"-input").attr('cmdId', result.cmd.id);
+      refreshCmdData(name, result.cmd.id, value);
 		})
 	}
+
+  function refreshCmdData(name, id, value) {
+    getCmd({
+     id: id,
+     error: function (error) {},
+     success: function (data) {
+       $("#"+name+"-input").attr('cmdId', data.result.id);
+       $("#"+name+"-input").val(data.result.humanName);
+       $("#"+name+"-input").attr('cmdType', data.result.type);
+       $("#"+name+"-input").attr('cmdSubType', data.result.subType);
+       if (data.result.type == 'action') {
+         $("#confirm-div-"+name).css('display', '');
+         $("#secure-div-"+name).css('display', '');
+       } else {
+         $("#confirm-div-"+name).css('display', 'none');
+         $("#secure-div-"+name).css('display', 'none');
+       }
+       if (data.result.subType == 'slider' | data.result.subType == 'numeric') {
+         $("#"+name+"-minInput").css('display', '');
+         $("#"+name+"-maxInput").css('display', '');
+         $("#"+name+"-minInput").val(data.result.minValue);
+         $("#"+name+"-maxInput").val(data.result.maxValue);
+       } else {
+         $("#"+name+"-minInput").css('display', 'none');
+         $("#"+name+"-maxInput").css('display', 'none');
+       }
+       if (data.result.subType == 'binary' | data.result.subType == 'numeric') {
+         $("#invert-div-"+name).css('display', '');
+         //$("#invert-"+name).prop('checked', data.result.invertBinary == '1' ? "checked" : "");
+       } else {
+           $("#invert-div-"+name).css('display', 'none');
+       }
+       if (data.result.subType == 'numeric') {
+         $("#"+name+"-unitInput").css('display', '');
+         $("#"+name+"-unitInput").val(data.result.unit);
+       } else {
+           $("#"+name+"-unitInput").css('display', 'none');
+       }
+       if (value != 'undefined' & data.result.value != '') {
+         refreshCmdData(value, data.result.value, 'undefined');
+       }
+
+
+     }
+    });
+  }
+
+
+
+
 
 	function selectScenario(name) {
 		jeedom.scenario.getSelectModal({}, function(result) {
@@ -649,7 +740,7 @@ if (!isConnect('admin')) {
 	}
 
    function getHumanName(_params) {
-	 var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
+	    var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
 
      var paramsAJAX = jeedom.private.getParamsAJAX(params);
      paramsAJAX.url = 'core/ajax/cmd.ajax.php';
@@ -658,6 +749,22 @@ if (!isConnect('admin')) {
       id: _params.id
      };
      $.ajax(paramsAJAX);
+   }
+
+   function getCmd({id, error, success}) {
+     $.post({
+       url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+       data: {'action': 'getCmd', 'id': id },
+       cache: false,
+       success: function( cmdData ) {
+         jsonData = JSON.parse(cmdData);
+         if (jsonData.state == 'ok') {
+           success && success(jsonData);
+         } else {
+           error && error(jsonData);
+         }
+       }
+     });
    }
 
    function getScenarioHumanName(_params) {

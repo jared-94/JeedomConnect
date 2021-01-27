@@ -112,20 +112,69 @@ class JeedomConnect extends eqLogic {
 		$config = file_get_contents($config_file);
 		$jsonConfig = json_decode($config, true);
 
-		//add cmd configs
+		return $jsonConfig;
+	}
+
+	public function updateConfig() {
+		$jsonConfig = $this->getConfig();
+		$changed = false;
 		foreach ($jsonConfig['payload']['widgets'] as $index => $widget) {
 			foreach ($widget as $item => $value) {
-					$cmd = cmd::byId($value);
-					if (is_object($cmd)) {
-						$jsonConfig['payload']['widgets'][$index][$item . 'SubType'] = $cmd->getSubType();
-						$jsonConfig['payload']['widgets'][$index][$item . 'MinValue'] = $cmd->getConfiguration('minValue');
-						$jsonConfig['payload']['widgets'][$index][$item . 'MaxValue'] = $cmd->getConfiguration('maxValue');
-						$jsonConfig['payload']['widgets'][$index][$item . 'Unit'] = $cmd->getUnite();
-						$jsonConfig['payload']['widgets'][$index][$item . 'Value'] = $cmd->getValue();
+				//update rooms to new format
+				if ($item == "room" && !is_int($value)) {
+					$changed = true;
+					$key = false;
+					foreach ($jsonConfig['payload']['rooms'] as $key => $val) {
+						if ($val['name'] == $value) {
+							$jsonConfig['payload']['widgets'][$index][$item] = $val['id'];
+							log::add('JeedomConnect', 'info', 'widget room '. $value . '::' . $val['id']);
+						}
 					}
+				}
+				//update cmd to new format
+				if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0 || substr_compare($item, 'Action', strlen($item)-6, 6) === 0) {
+					if (is_string($value)) {
+						$changed = true;
+						if ($value == "") {
+							unset($jsonConfig['payload']['widgets'][$index][$item]);
+						}
+						$cmd = cmd::byId($value);
+						if (is_object($cmd)) {
+							$jsonConfig['payload']['widgets'][$index][$item] = array(
+								'category' => 'cmd',
+								'id' => $cmd->getId(),
+								'type' => $cmd->getType(),
+								'subType' => $cmd->getSubType()
+							);
+							if ($cmd->getConfiguration('minValue') != '') {
+								$jsonConfig['payload']['widgets'][$index][$item]['minValue'] = $cmd->getConfiguration('minValue');
+							}
+							if ($cmd->getConfiguration('maxValue') != '') {
+								$jsonConfig['payload']['widgets'][$index][$item]['maxValue'] = $cmd->getConfiguration('maxValue');
+							}
+							if ($cmd->getUnite() != '') {
+								$jsonConfig['payload']['widgets'][$index][$item]['unit'] = $cmd->getUnite();
+							}
+							if ($cmd->getValue() != '') {
+								$jsonConfig['payload']['widgets'][$index][$item]['value'] = $cmd->getValue();
+							}
+							if (array_key_exists($item . "Secure", $jsonConfig['payload']['widgets'][$index])) {
+								$jsonConfig['payload']['widgets'][$index][$item]['secure'] = true;
+								unset($jsonConfig['payload']['widgets'][$index][$item . "Secure"]);
+							}
+							if (array_key_exists($item . "Confirm", $jsonConfig['payload']['widgets'][$index])) {
+								$jsonConfig['payload']['widgets'][$index][$item]['confirm'] = true;
+								unset($jsonConfig['payload']['widgets'][$index][$item . "Confirm"]);
+							}
+						}
+					}
+				}
 			}
 		}
-		return $jsonConfig;
+		if ($changed) {
+			log::add('JeedomConnect', 'info', 'Config file updated for '. $this->getName() . ':' . json_encode($jsonConfig));
+			$this->saveConfig($jsonConfig);
+		}
 	}
 
 	public function saveNotifs($config) {
