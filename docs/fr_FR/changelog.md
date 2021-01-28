@@ -1,5 +1,5 @@
 # Changelog JeedomConnect
-## Version 0.14.2 Beta (27/01/2021)
+## Version 0.14.3 (28/01/2021)
 - Correction bug status lumières
 - Ajout icônes groupe
 - Option pour inverser un binaire
