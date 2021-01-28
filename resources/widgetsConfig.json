@@ -21,21 +21,13 @@
 				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la lumière (binaire)"
-			},
-			{
 				"id": "onAction",
 				"name": "Action ON",
 				"required": true,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande ON"
 			},
 			{
@@ -45,7 +37,16 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande OFF"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"description": "Etat de la lumière (binaire ou numérique)"
 			},
 			{
 				"id": "powerInfo",
@@ -99,52 +100,13 @@
 				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
-			},
-			{
-				"id": "brightInfo",
-				"name": "Info Intensité",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Intensité de la lumière"
-			},
-			{
-				"id": "brightMin",
-				"name": "Intensité min",
-				"required": false,
-				"category": "string",
-				"description": "0 par défaut"
-			},
-			{
-				"id": "brightMax",
-				"name": "Intensité max",
-				"required": false,
-				"category": "string",
-				"description": "100 par défaut"
-			},
-			{
-				"id": "brightAction",
-				"name": "Intensité",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider"
-			},
-			{
 				"id": "onAction",
 				"name": "Action ON",
 				"required": true,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande ON"
 			},
 			{
@@ -154,7 +116,35 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande OFF"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+			},
+			{
+				"id": "brightAction",
+				"name": "Intensité",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"value": "brightInfo",
+				"subtype": "slider"
+			},
+			{
+				"id": "brightInfo",
+				"name": "Info Intensité",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Intensité de la lumière"
 			},
 			{
 				"id": "powerInfo",
@@ -208,36 +198,13 @@
 				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": false,
+				"id": "colorAction",
+				"name": "Couleur action",
+				"required": true,
 				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
-			},
-			{
-				"id": "brightInfo",
-				"name": "Info Intensité",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Intensité de la lumière"
-			},
-			{
-				"id": "brightMin",
-				"name": "Intensité min",
-				"required": false,
-				"category": "string",
-				"description": "0 par défaut"
-			},
-			{
-				"id": "brightMax",
-				"name": "Intensité max",
-				"required": false,
-				"category": "string",
-				"description": "100 par défaut"
+				"type": "action",
+				"subtype": "color",
+				"value": "colorInfo"
 			},
 			{
 				"id": "colorInfo",
@@ -249,28 +216,13 @@
 				"description": "Couleur de la lumière"
 			},
 			{
-				"id": "colorAction",
-				"name": "Couleur",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "color"
-			},
-			{
-				"id": "brightAction",
-				"name": "Intensité",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider"
-			},
-			{
 				"id": "onAction",
 				"name": "Action ON",
 				"required": false,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande ON"
 			},
 			{
@@ -280,7 +232,35 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande OFF"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+			},
+			{
+				"id": "brightAction",
+				"name": "Intensité",
+				"required": false,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "slider",
+				"value": "brightInfo"
+			},
+			{
+				"id": "brightInfo",
+				"name": "Info Intensité",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Intensité de la lumière"
 			},
 			{
 				"id": "powerInfo",
@@ -325,7 +305,7 @@
 	{
 		"type": "group-light",
 		"name": "Groupe de lumières",
-		"img": "icon_wheel.png",
+		"img": "groupLight.png",
 		"description": "Gère un groupe de plusieurs widgets lumières",
 		"options": [
 			{
@@ -360,21 +340,13 @@
 				"description": "Puissance en watts"
 			},
 			{
-				"id": "autoManInfo",
-				"name": "Gestion auto",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Gestion automatique des lumières"
-			},
-			{
 				"id": "autoManOnAction",
 				"name": "Gestion ON",
 				"required": false,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "autoManInfo",
 				"description": "Active la gestion automatique"
 			},
 			{
@@ -384,7 +356,17 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "autoManInfo",
 				"description": "Désactive la gestion automatique"
+			},
+			{
+				"id": "autoManInfo",
+				"name": "Gestion auto",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Gestion automatique des lumières"
 			},
 			{
 				"id": "imageOn",
@@ -429,21 +411,13 @@
 				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat (Allumé/Eteint) de la prise"
-			},
-			{
 				"id": "onAction",
 				"name": "Allumer",
 				"required": true,
 				"category": "cmd",
 				"type": "action",
-				"subtype": "other"
+				"subtype": "other",
+				"value": "statusInfo"
 			},
 			{
 				"id": "offAction",
@@ -451,7 +425,17 @@
 				"required": true,
 				"category": "cmd",
 				"type": "action",
-				"subtype": "other"
+				"subtype": "other",
+				"value": "statusInfo"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Etat (Allumé/Eteint) de la prise"
 			},
 			{
 				"id": "powerInfo",
@@ -807,9 +791,18 @@
 				"description": "Etat du thermostat (chaîne ou binaire)."
 			},
 			{
-				"id": "tempExtInfo",
-				"name": "Température extérieure",
-				"required": false,
+				"id": "setpointAction",
+				"name": "Consigne",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "slider",
+				"value": "setpointInfo"
+			},
+			{
+				"id": "setpointInfo",
+				"name": "Info Consigne",
+				"required": true,
 				"category": "cmd",
 				"type": "info",
 				"subtype": "numeric"
@@ -823,34 +816,12 @@
 				"subtype": "numeric"
 			},
 			{
-				"id": "setpointInfo",
-				"name": "Info Consigne",
-				"required": true,
+				"id": "tempExtInfo",
+				"name": "Température extérieure",
+				"required": false,
 				"category": "cmd",
 				"type": "info",
 				"subtype": "numeric"
-			},
-			{
-				"id": "setpointAction",
-				"name": "Consigne",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider"
-			},
-			{
-				"id": "setpointMin",
-				"name": "Min Consigne",
-				"required": true,
-				"category": "string",
-				"description": "Valeur minimum en degré pour la consigne"
-			},
-			{
-				"id": "setpointMax",
-				"name": "Max Consigne",
-				"required": true,
-				"category": "string",
-				"description": "Valeur maximum en degré pour la consigne"
 			},
 			{
 				"id": "modeInfo",
@@ -937,6 +908,26 @@
 				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
+				"id": "onAction",
+				"name": "Action ON",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "other",
+				"value": "statusInfo",
+				"description": "Commande ON"
+			},
+			{
+				"id": "offAction",
+				"name": "Action OFF",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "other",
+				"value": "statusInfo",
+				"description": "Commande OFF"
+			},
+			{
 				"id": "statusInfo",
 				"name": "Status",
 				"required": true,
@@ -946,12 +937,13 @@
 				"description": "Etat du climatisuer (binaire)."
 			},
 			{
-				"id": "tempInfo",
-				"name": "Température",
-				"required": false,
+				"id": "setpointAction",
+				"name": "Consigne",
+				"required": true,
 				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
+				"type": "action",
+				"subtype": "slider",
+				"value": "setpointInfo"
 			},
 			{
 				"id": "setpointInfo",
@@ -962,44 +954,12 @@
 				"subtype": "numeric"
 			},
 			{
-				"id": "setpointAction",
-				"name": "Consigne",
-				"required": true,
+				"id": "tempInfo",
+				"name": "Température",
+				"required": false,
 				"category": "cmd",
-				"type": "action",
-				"subtype": "slider"
-			},
-			{
-				"id": "setpointMin",
-				"name": "Min Consigne",
-				"required": true,
-				"category": "string",
-				"description": "Valeur minimum en degré pour la consigne"
-			},
-			{
-				"id": "setpointMax",
-				"name": "Max Consigne",
-				"required": true,
-				"category": "string",
-				"description": "Valeur maximum en degré pour la consigne"
-			},
-			{
-				"id": "onAction",
-				"name": "Action ON",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Commande ON"
-			},
-			{
-				"id": "offAction",
-				"name": "Action OFF",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Commande OFF"
+				"type": "info",
+				"subtype": "numeric"
 			},
 			{
 				"id": "modeInfo",
@@ -1127,7 +1087,7 @@
 	{
 		"type": "group-door",
 		"name": "Groupe de portes",
-		"img": "doorOn.png",
+		"img": "groupDoor.png",
 		"description": "Gère un groupe de plusieurs widgets portes",
 		"options": [
 			{
@@ -1228,7 +1188,7 @@
 	{
 		"type": "group-window",
 		"name": "Groupe de fenêtres",
-		"img": "windowOpen.png",
+		"img": "groupWindows.png",
 		"description": "Gère un groupe de plusieurs widgets fenêtres",
 		"options": [
 			{
@@ -1298,7 +1258,7 @@
 			{
 				"id": "statusInfo",
 				"name": "Status",
-				"required": true,
+				"required": false,
 				"category": "cmd",
 				"type": "info",
 				"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])"
@@ -1387,26 +1347,13 @@
 				"description": "Etat du volet (numérique ou binaire)"
 			},
 			{
-				"id": "statusSubType",
-				"cmdId": "statusInfo",
-				"category": "cmdSubType"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
-			},
-			{
 				"id": "upAction",
 				"name": "Monter",
 				"required": true,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande pour monter le volet"
 			},
 			{
@@ -1416,6 +1363,7 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande pour déscendre le volet"
 			},
 			{
@@ -1434,7 +1382,17 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "slider",
+				"value": "statusInfo",
 				"description": "Commande de positionnement du volet"
+			},
+			{
+				"id": "powerInfo",
+				"name": "Puissance",
+				"required": false,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Puissance en watts"
 			},
 			{
 				"id": "image0",
@@ -1467,7 +1425,7 @@
 	{
 		"type": "group-shutter",
 		"name": "Groupe de volets",
-		"img": "shutter50.png",
+		"img": "groupShutter.png",
 		"description": "Gère un groupe de plusieurs widgets volets",
 		"options": [
 			{
@@ -1572,6 +1530,62 @@
 		]
 	},
 	{
+		"type": "group-pir",
+		"name": "Groupe de PIR",
+		"img": "groupPIR.png",
+		"description": "Gère un groupe de plusieurs capteurs de mouvements",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "widgets",
+				"name": "Widgets",
+				"required": true,
+				"category": "widgets",
+				"whiteList": ["pir"],
+				"description": "Liste des capteurs à gérer"
+			},
+			{
+				"id": "image0",
+				"name": "Image tous inactifs",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image1",
+				"name": "Image tous actifs",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image2",
+				"name": "Image partielle",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
 		"type": "alarm",
 		"name": "Alarme",
 		"img": "alarm_red.png",
@@ -1616,6 +1630,7 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "enableInfo",
 				"description": "Commande pour activer l'alarme"
 			},
 			{
@@ -1625,6 +1640,7 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "enableInfo",
 				"description": "Commande pour désactiver l'alarme"
 			},
 			{
@@ -1684,7 +1700,7 @@
 	{
 		"type": "group-alarm",
 		"name": "Groupe d'alarmes",
-		"img": "alarm_red.png",
+		"img": "groupAlarm.png",
 		"description": "Gère un groupe d'alarmes",
 		"options": [
 			{
@@ -1815,6 +1831,62 @@
 		]
 	},
 	{
+		"type": "group-generic-info-binary",
+		"name": "Groupe de génériques binaires",
+		"img": "groupBinary.png",
+		"description": "Gère un groupe de plusieurs widgets générique info binaire",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "widgets",
+				"name": "Widgets",
+				"required": true,
+				"category": "widgets",
+				"whiteList": ["generic-info-binary"],
+				"description": "Liste des génériques binaires à gérer"
+			},
+			{
+				"id": "image0",
+				"name": "Image tous nuls",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image1",
+				"name": "Image tous 1",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "image2",
+				"name": "Image partielle",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
 		"type": "generic-info-numeric",
 		"name": "Générique numérique",
 		"img": "information.png",
@@ -1856,13 +1928,6 @@
 				"required": false,
 				"category": "ifImgs",
 				"infos": [ "statusInfo" ]
-			},
-			{
-				"id": "unit",
-				"name": "Unité",
-				"required": false,
-				"category": "string",
-				"description": "Suffixe à ajouter à la valeur"
 			},
 			{
 				"id": "display",
@@ -1941,21 +2006,13 @@
 				"description": "Information supplémentaire affichée sur le widget"
 			},
 			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la commande"
-			},
-			{
 				"id": "onAction",
 				"name": "Action ON",
 				"required": true,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande ON"
 			},
 			{
@@ -1965,7 +2022,17 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
+				"value": "statusInfo",
 				"description": "Commande OFF"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "binary",
+				"description": "Etat de la commande"
 			},
 			{
 				"id": "imageOn",
@@ -1994,6 +2061,61 @@
 				"required": false,
 				"category": "string",
 				"description": "Texte affiché lorsque la valeur est 1"
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
+		"type": "generic-slider",
+		"name": "Générique slider",
+		"img": "meter.png",
+		"description": "Gère un slider",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Valeur"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "sliderAction",
+				"name": "Action",
+				"required": true,
+				"category": "cmd",
+				"type": "action",
+				"subtype": "slider",
+				"value": "statusInfo"
+			},
+			{
+				"id": "statusInfo",
+				"name": "Status",
+				"required": true,
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric",
+				"description": "Etat du slider (numérique)"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs",
+				"infos": [ "statusInfo" ]
 			},
 			{
 				"id": "display",

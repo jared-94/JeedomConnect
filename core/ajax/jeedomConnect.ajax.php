@@ -41,6 +41,17 @@ try {
 		}
   }
 
+  if (init('action') == 'getConfig') {
+    $apiKey = init('apiKey');
+    $eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+    if (!is_object($eqLogic)) {
+			ajax::error('Erreur');
+		} else {
+			$configJson = $eqLogic->getConfig();
+			ajax::success($configJson);
+		}
+  }
+
   if (init('action') == 'getNotifs') {
 		$apiKey = init('apiKey');
 
@@ -68,7 +79,7 @@ try {
   }
 
   if (init('action') == 'uploadImg') {
-        $filename = $_FILES['file']['name'];
+    $filename = $_FILES['file']['name'];
 		$destination = __DIR__ . '/../../data/img/user_files/';
 		if (!is_dir($destination)) {
 			mkdir($destination);
@@ -82,18 +93,32 @@ try {
 		}
   }
 
-
-
 	if (init('action') == 'removeDevice') {
 		$id = init('id');
 		$eqLogic = \eqLogic::byId($id);
 		$eqLogic->removeDevice();
 		ajax::success();
-
 	}
 
+  if (init('action') == 'getCmd') {
+    $cmd = cmd::byId(init('id'));
+    if (!is_object($cmd)) {
+				throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+		}
+    ajax::success(array(
+      'id' => init('id'),
+      'type' => $cmd->getType(),
+      'subType' => $cmd->getSubType(),
+      'humanName' => $cmd->getHumanName(),
+      'minValue' => $cmd->getConfiguration('minValue'),
+      'maxValue' => $cmd->getConfiguration('maxValue'),
+      'unit' => $cmd->getUnite(),
+      'value' => $cmd->getValue()
+    ));
+  }
+
 	if (init('action') == 'getImgList') {
-        $internalImgPath = __DIR__ . '/../../data/img/';
+    $internalImgPath = __DIR__ . '/../../data/img/';
 		$userImgPath = $internalImgPath."user_files/";
 
 		$internal = array_diff(scandir($internalImgPath), array('..', '.','user_files'));
@@ -108,8 +133,7 @@ try {
     }
 
 	if (init('action') == 'generateQRcode') {
-
-        $id = init('id');
+    $id = init('id');
 		$eqLogic = \eqLogic::byId($id);
 		if (!is_object($eqLogic)) {
 			ajax::error('Erreur');
@@ -117,7 +141,7 @@ try {
 			$eqLogic->generateQRCode();
 			ajax::success();
 		}
-    }
+  }
 
    throw new \Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
 } catch (\Exception $e) {
