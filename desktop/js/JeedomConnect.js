@@ -22,15 +22,6 @@ $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', func
 
 });
 
-$('.eqLogicAttr[data-l1key=configuration][data-l2key=deviceName]').on('change', function () {
-	var device = $('.eqLogicAttr[data-l1key=configuration][data-l2key=deviceName]').html();
-	if (device != '') {
-		$("#removeDevice").css("display", "");
-	} else {
-		$("#removeDevice").css("display", "none");
-	}
-});
-
 $("#assistant-btn").click(function(){
     $('#md_modal').dialog({title: "{{Configuration de l'équipement}}"});
     $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId='+$('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
@@ -71,7 +62,7 @@ $("#import-input").change(function() {
 							$('#div_alert').showAlert({message: "Erreur lors de l'importation", level: 'danger'});
 						} else {
 							$('#div_alert').showAlert({message: 'Configuration importée avec succès', level: 'success'});
-						}						
+						}
 					},
 					error: function (error) {
 						console.log(error);
