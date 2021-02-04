@@ -4,6 +4,7 @@ namespace JeedomConnectLogic;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
+require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 
 class ConnectLogic implements MessageComponentInterface
 {
@@ -181,11 +182,11 @@ class ConnectLogic implements MessageComponentInterface
 				\log::add('JeedomConnect', 'debug', "user not valid");
 			  $conn->close();
 			}
-			\log::add('JeedomConnect', 'debug', "set userHash ".$objectMsg->userHash);
 			$eqLogic->setConfiguration('userHash', $objectMsg->userHash);
 			$eqLogic->save();
 
       $conn->apiKey = $objectMsg->apiKey;
+			$conn->eqLogic = $eqLogic;
       $this->authenticatedClients->attach($conn);
       $this->hasAuthenticatedClients = true;
       \log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
@@ -194,7 +195,11 @@ class ConnectLogic implements MessageComponentInterface
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
 					'configVersion' => $this->configList[$objectMsg->apiKey]['payload']['configVersion'],
-					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1'
+					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+					'pluginConfig' => \apiHelper::getPluginConfig(),
+					'cmdInfo' => \apiHelper::getCmdInfoData($this->configList[$conn->apiKey]),
+					'scInfo' => \apiHelper::getScenarioData($this->configList[$conn->apiKey]),
+					'objInfo' => \apiHelper::getObjectData($this->configList[$conn->apiKey])
 				)
 			);
 			\log::add('JeedomConnect', 'info', "Send ".json_encode($result));
@@ -281,8 +286,10 @@ class ConnectLogic implements MessageComponentInterface
 				$from->send(json_encode($conf));
 				break;
 			case 'GET_CONFIG':
-				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($this->configList[$from->apiKey]));
-				$from->send(json_encode($this->configList[$from->apiKey]));
+				$result = $this->configList[$from->apiKey];
+				$result['payload']['summaryConfig'] = \config::byKey('object:summary');
+				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($result));
+				$from->send(json_encode($result));
 				break;
 			case 'GET_CMD_INFO':
 				$this->sendCmdInfo($from);
@@ -400,8 +407,16 @@ class ConnectLogic implements MessageComponentInterface
 				'payload' => array()
 			);
 			$scIds = $this->getScenarioIds($config);
+			$result_obj = array(
+				'type' => 'OBJ_INFO',
+				'payload' => array()
+			);
+			$objIds = \apiHelper::getObjectList($config);
 
 			foreach ($events['result'] as $event) {
+				if ($event['name'] == 'jeeObject::summary::update') {
+					array_push($result_obj['payload'], $event['option']);
+				}
 				if ($event['name'] == 'scenario::update') {
 					if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
 						$sc_info = array(
@@ -434,6 +449,10 @@ class ConnectLogic implements MessageComponentInterface
 				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_sc));
 				$client->send(json_encode($result_sc));
 			}
+			if (count($result_obj['payload']) > 0) {
+				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_obj));
+				$client->send(json_encode($result_obj));
+			}
 		}
 	}
 
@@ -456,24 +475,43 @@ class ConnectLogic implements MessageComponentInterface
 				array_push($return, $widget['scenarioId']);
 			}
 		}
-		return $return;
+		return array_unique($return);
 	}
 
-	public function sendCmdInfo($client) {
-		$cmds = \cmd::byIds($this->getInfoCmds($this->configList[$client->apiKey]));
+	private function getObjects($config) {
+		$return = array();
+		foreach ($config['payload']['rooms'] as $room) {
+				if (array_key_exists("object", $room)) {
+					array_push($return, $room['object']);
+				}
+		}
+		return array_unique($return);
+	}
+
+	public function sendSummaries($client) {
+		$objIds = $this->getObjects($this->configList[$client->apiKey]);
 		$result = array(
 			'type' => 'SET_CMD_INFO',
 			'payload' => array()
 		);
-		foreach ($cmds as $cmd) {
-			$state = $cmd->getCache(array('valueDate', 'value'));
-			$cmd_info = array(
-				'id' => $cmd->getId(),
-				'value' => $state['value'],
-				'modified' => strtotime($state['valueDate'])
-			);
-			array_push($result['payload'], $cmd_info);
+		foreach (\jeeObject::all() as $object) {
+			if (in_array($object->getId(), $objIds)) {
+				$summary = array(
+					'id' => $object->getId(),
+					'summary' => $object->getSummary()
+				);
+				array_push($result['payload'], $summary);
+			}
 		}
+		\log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
+		$client->send(json_encode($result));
+	}
+
+	public function sendCmdInfo($client) {
+		$result = array(
+			'type' => 'SET_CMD_INFO',
+			'payload' => \apiHelper::getCmdInfoData($this->configList[$client->apiKey])
+		);
 		\log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$client->send(json_encode($result));
 	}

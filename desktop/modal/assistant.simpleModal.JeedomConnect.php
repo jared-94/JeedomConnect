@@ -27,7 +27,22 @@ if (!isConnect('admin')) {
 </style>
 
 <form class="form-horizontal" style="overflow: hidden;">
-  <ul id="modalOptions" style="padding-left:10px; list-style-type: none;"></ul>
+  <ul id="modalOptions" style="padding-left:10px; list-style-type: none;">
+    <li id="object-li" style="display:none;">
+      <div class='form-group'>
+      <label class='col-xs-3 ' >Objet</label>
+      <div class='col-xs-9'>
+        <select id="object-select" onchange="objectSelected();">
+          <option value="">{{Aucun}}</option>
+          <?php
+          foreach (jeeObject::all() as $object) {
+            echo '<option value="' . $object->getId() . '">' . $object->getName() . '</option>';
+          }
+          ?>
+        </select>
+      </div>
+    </li>
+  </ul>
 </form>
 
 
@@ -90,13 +105,123 @@ function setSimpleModalData(options) {
 			})
 			widget += `</select></div></div></div></li>`;
 			items.push(widget);
-		}
+		} else if (option.type == "object") {
+      $("#object-li").css("display", "block");
+      if (option.value) {
+        $('#object-select option[value="'+option.value+'"]').prop('selected', true);
+      }
+    } else if (option.type == "swipeUp" | option.type == "swipeDown") {
+      swipe = `<li><div class='form-group'>
+			   <label class='col-xs-3' >${option.type == 'swipeUp' ? "Swipe Up" : "Swipe Down"}</label>
+			   <div class='col-xs-9'>
+          <select id="${option.type}-select" onchange="swipeSelected('${option.type}');">
+            <option value='none' ${option.value ? "" : "selected"}>Aucun</option>
+            <option value='cmd' ${option.value ? option.value.type == 'cmd' ? "selected" : "": ""}>Exécuter une commande</option>
+            <option value='sc' ${option.value ? option.value.type == 'sc' ? "selected" : "": ""}>Lancer un scénario</option>
+          </select>
+          <div class='input-group' id="${option.type}-cmd-div"
+            style="display:${option.value ? option.value.type == 'cmd' ? "''" : "none": "none"};"><input class='input-sm form-control roundedLeft' style="width:260px;"
+            id="${option.type}-cmd-input" value=''
+            cmdId='${option.value ? option.value.type == 'cmd' ? option.value.id: '': ''}' disabled>
+            <a class='btn btn-default btn-sm cursor bt_selectTrigger'
+              tooltip='Choisir une commande' onclick="selectCmd('${option.type}');">
+            <i class='fas fa-list-alt'></i></a>
+          </div>
+          <div class='input-group' id="${option.type}-sc-div"
+          style="display:${option.value ? option.value.type == 'sc' ? "''" : "none": "none"};"><input class='input-sm form-control roundedLeft' style="width:260px;"
+            id="${option.type}-sc-input" value='' scId='${option.value ? option.value.type == 'sc' ? option.value.id: '': ''}' disabled>
+            <a class='btn btn-default btn-sm cursor bt_selectTrigger'
+              tooltip='Choisir un scénario' onclick="selectSc('${option.type}');">
+            <i class='fas fa-list-alt'></i></a>
+         </div>
+         </div></li>`;
+			items.push(swipe);
+    }
 	});
 
+	$("#modalOptions").append(items.join(""));
+  refreshSwipe("swipeUp");
+  refreshSwipe("swipeDown");
 
-
-	$("#modalOptions").html(items.join(""));
 }
 
+function refreshSwipe(type) {
+  if ($("#"+type+"-cmd-input").attr('cmdId') != '') {
+    getCmd({ id: $("#"+type+"-cmd-input").attr('cmdId'), success: function (data) {
+      $("#"+type+"-cmd-input").val(data.result.humanName);
+    }})
+  }
+
+  if ($("#"+type+"-sc-input").attr('scId') != '') {
+    getScenarioHumanName({ id: $("#"+type+"-sc-input").attr('scId'), success: function (data) {
+      data.forEach(sc => {
+        if (sc['id'] == $("#"+type+"-sc-input").attr('scId')) {
+          $("#"+type+"-sc-input").val(sc['humanName']);
+        }
+      })
+    }})
+  }
+}
+
+function objectSelected() {
+  $("#mod-name-input").val($("#object-select  option:selected").text());
+}
+
+function swipeSelected(type) {
+  val = $("#"+type+"-select  option:selected").val();
+  if (val == 'cmd') {
+    $("#"+type+"-cmd-div").css("display", "");
+    $("#"+type+"-sc-div").css("display", "none");
+  } else if (val == 'sc') {
+    $("#"+type+"-cmd-div").css("display", "none");
+    $("#"+type+"-sc-div").css("display", "");
+  } else if (val == 'none') {
+    $("#"+type+"-cmd-div").css("display", "none");
+    $("#"+type+"-sc-div").css("display", "none");
+  }
+}
+
+function selectCmd(name) {
+  jeedom.cmd.getSelectModal({cmd: {type: 'action', subType: 'other'}}, function(result) {
+    console.log(result)
+    $("#"+name+"-cmd-input").val(result.human);
+    $("#"+name+"-cmd-input").attr('cmdId', result.cmd.id);
+  })
+}
+
+function selectSc(name) {
+  jeedom.scenario.getSelectModal({}, function(result) {
+    $("#"+name+"-sc-input").attr('scId', result.id);
+    $("#"+name+"-sc-input").val(result.human);
+  })
+}
+
+function getScenarioHumanName(_params) {
+var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
+
+  var paramsAJAX = jeedom.private.getParamsAJAX(params);
+  paramsAJAX.url = 'core/ajax/scenario.ajax.php';
+  paramsAJAX.data = {
+   action: 'all',
+   id: _params.id
+  };
+  $.ajax(paramsAJAX);
+}
+
+function getCmd({id, error, success}) {
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {'action': 'getCmd', 'id': id },
+    cache: false,
+    success: function( cmdData ) {
+      jsonData = JSON.parse(cmdData);
+      if (jsonData.state == 'ok') {
+        success && success(jsonData);
+      } else {
+        error && error(jsonData);
+      }
+    }
+  });
+}
 
 </script>

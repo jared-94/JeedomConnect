@@ -25,6 +25,7 @@ function getSimpleModal(_options, _callback) {
   if (!isset(_options)) {
     return;
   }
+	$("#simpleModal").dialog('destroy').remove();
   if ($("#simpleModal").length == 0) {
     $('body').append('<div id="simpleModal"></div>');
     $("#simpleModal").dialog({
@@ -34,6 +35,7 @@ function getSimpleModal(_options, _callback) {
       modal: true,
       width: 430
     });
+
     jQuery.ajaxSetup({
       async: false
     });
@@ -47,35 +49,61 @@ function getSimpleModal(_options, _callback) {
     "Annuler": function() {
       $(this).dialog("close");
     },
-    "Valider": function() {
-      var result = {};
-	  if (_options.fields.find(i => i.type == "enable")) {
-		  result.enable = $("#mod-enable-input").is(':checked');
-	  }
-	  if (_options.fields.find(i => i.type == "name")) {
-		  result.name = $("#mod-name-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "icon")) {
-			result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
-	  }
-	  if (_options.fields.find(i => i.type == "move")) {
-		  result.moveToId = $("#mod-move-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "expanded")) {
-		  result.expanded = $("#mod-expanded-input").is(':checked');
-	  }
-	  if (_options.fields.find(i => i.type == "widget")) {
-		  result.widgetId = $("#mod-widget-input").val();
-		  result.widgetName = $("#mod-widget-input option:selected").text();
-	  }
+    Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function() {
+	      var result = {};
+		  	if (_options.fields.find(i => i.type == "enable")) {
+			  	result.enable = $("#mod-enable-input").is(':checked');
+		  	}
+		  	if (_options.fields.find(i => i.type == "name")) {
+			  	result.name = $("#mod-name-input").val();
+		  	}
+		  	if (_options.fields.find(i => i.type == "icon")) {
+					result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
+		  	}
+		  	if (_options.fields.find(i => i.type == "move")) {
+			  	result.moveToId = $("#mod-move-input").val();
+		  	}
+		  	if (_options.fields.find(i => i.type == "expanded")) {
+			  	result.expanded = $("#mod-expanded-input").is(':checked');
+		  	}
+		  	if (_options.fields.find(i => i.type == "widget")) {
+			  	result.widgetId = $("#mod-widget-input").val();
+			  	result.widgetName = $("#mod-widget-input option:selected").text();
+		  	}
+				if (_options.fields.find(i => i.type == "object")) {
+			  	result.object = $("#object-select  option:selected").val();
+		  	}
+				if (_options.fields.find(i => i.type == "swipeUp")) {
+					let choice = $("#swipeUp-select option:selected").val();
+					if (choice == 'cmd') {
+						result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
+					} else if (choice == 'sc') {
+						result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
+					}
+		  	}
+				if (_options.fields.find(i => i.type == "swipeDown")) {
+					let choice = $("#swipeDown-select option:selected").val();
+					if (choice == 'cmd') {
+						result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
+					} else if (choice == 'sc') {
+						result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
+					}
+		  	}
+	    if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+	        _callback(result);
+	    }
+	    $(this).dialog('close');
 
-      if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-        _callback(result);
-      }
-      $(this).dialog('close');
-    }
-  }});
+	   }
+		} }});
   $('#simpleModal').dialog('open');
+	$('#simpleModal').keydown(function(e) { if (e.which == 13) {
+		$('#saveSimple').click();
+		return false;
+	}})
 };
 
 

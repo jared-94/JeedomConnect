@@ -515,8 +515,22 @@
 				"name": "Widgets",
 				"required": true,
 				"category": "widgets",
-				"blackList": ["widgets-summary", "favorites"],
+				"blackList": ["widgets-summary", "favorites", "room-summary"],
 				"description": "Liste des widgets à afficher"
+			}
+		]
+	},
+	{
+		"type": "room",
+		"name": "Résumé de pièce",
+		"img": "information.png",
+		"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
 			}
 		]
 	},
@@ -537,7 +551,7 @@
 				"name": "Widgets",
 				"required": true,
 				"category": "widgets",
-				"blackList": ["widgets-summary", "favorites"],
+				"blackList": ["widgets-summary", "favorites", "room-summary"],
 				"description": "Liste des widgets à afficher"
 			}
 		]
@@ -797,7 +811,8 @@
 				"category": "cmd",
 				"type": "action",
 				"subtype": "slider",
-				"value": "setpointInfo"
+				"value": "setpointInfo",
+				"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)"
 			},
 			{
 				"id": "setpointInfo",

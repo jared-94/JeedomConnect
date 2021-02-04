@@ -97,7 +97,7 @@ class JeedomConnect extends eqLogic {
 				}
     }
 
-    /*     * *********************Méthodes d'instance************************* */
+		/*     * *********************Méthodes d'instance************************* */
 
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
@@ -127,7 +127,6 @@ class JeedomConnect extends eqLogic {
 					foreach ($jsonConfig['payload']['rooms'] as $key => $val) {
 						if ($val['name'] == $value) {
 							$jsonConfig['payload']['widgets'][$index][$item] = $val['id'];
-							log::add('JeedomConnect', 'info', 'widget room '. $value . '::' . $val['id']);
 						}
 					}
 				}

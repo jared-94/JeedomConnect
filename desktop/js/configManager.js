@@ -7,6 +7,7 @@ $.post({
 	cache: false,
 	success: function( config ) {
 		configData = json_decode(config).result;
+		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
 			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
@@ -130,7 +131,7 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list" /> ${val.name}</a>
+			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list"></i> ${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
@@ -269,10 +270,36 @@ function getWidgetsParents() {
 	return items;
 }
 
+function validateDataIndex() {
+	configData.payload.tabs.forEach(i => {
+		reIndexArray(getRootObjects(i.id));
+	});
+	configData.payload.sections.forEach(i => {
+		reIndexArray(getRootObjects(i.id));
+	});
+	configData.payload.groups.forEach(i => {
+		reIndexArray(getRootObjects(i.id));
+	});
+
+}
+
+function reIndexArray(array) {
+	array.sort(function(s,t) {
+		return s.index - t.index;
+	});
+	let index = 0;
+	array.forEach(item => {
+		item.index = index;
+		index = index+1;
+	});
+
+}
+
 /* BOTTOM TAB FUNCTIONS */
 
 function addBottomTabModal() {
-	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},{type:"icon"}] }, function(result) {
+	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},
+		{type:"icon"}, {type: "swipeUp"}, {type: "swipeDown"}] }, function(result) {
 	  var name = result.name;
 	  var icon = result.icon;
 	  if (name == ''  | icon.name == '') {
@@ -283,6 +310,8 @@ function addBottomTabModal() {
 	  var newTab = {};
 	  newTab.name = name;
 	  newTab.icon = icon;
+		if (result.swipeUp) { newTab.swipeUp = result.swipeUp; }
+		if (result.swipeDown) { newTab.swipeDown = result.swipeDown; }
 	  newTab.enable = result.enable;
 	  newTab.index = maxIndex + 1;
 	  newTab.id = configData.idCounter;
@@ -308,10 +337,13 @@ function addBottomTabModal() {
 function editBottomTabModal(tabId) {
   var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
   getSimpleModal({title: "Editer un menu bas",
-		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value: tabToEdit.icon}] },
+		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name}, {type:"icon",value: tabToEdit.icon},
+			{type:'swipeUp', value:tabToEdit.swipeUp}, {type:'swipeDown', value:tabToEdit.swipeDown}] },
 		function(result) {
 				tabToEdit.name = result.name;
 				tabToEdit.icon = result.icon;
+				tabToEdit.swipeUp = result.swipeUp;
+				tabToEdit.swipeDown = result.swipeDown;
 				tabToEdit.enable = result.enable;
 				refreshBottomTabData();
   });
@@ -498,12 +530,15 @@ function moveTopTabModal(tabId) {
 /* ROOM FUNCTIONS */
 
 function addRoomModal() {
-  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}] }, function(result) {
+  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}, {type: "object"}] }, function(result) {
 		var name = result.name;
 		if (name == '') { return; }
 		var maxIndex = getMaxIndex(configData.payload.rooms);
 		var newRoom = {};
 		newRoom.name = name;
+		if (parseInt(result.object)) {
+			newRoom.object = parseInt(result.object);
+		}
 		newRoom.index = maxIndex + 1;
 		newRoom.id = configData.idCounter;
 
@@ -515,8 +550,14 @@ function addRoomModal() {
 
 function editRoomModal(roomId) {
 	var roomToEdit = configData.payload.rooms.find(room => room.id == roomId);
-	getSimpleModal({title: "Editer une pièce", fields:[{type: "name",value:roomToEdit.name}] }, function(result) {
+	getSimpleModal({title: "Editer une pièce",
+		fields:[{type: "name",value:roomToEdit.name}, {type: "object", value: roomToEdit.object}] }, function(result) {
 	  roomToEdit.name = result.name;
+		if (parseInt(result.object)) {
+			roomToEdit.object = parseInt(result.object);
+		} else {
+			roomToEdit.object = undefined;
+		}
 	  refreshRoomData();
 	});
 }
@@ -559,7 +600,7 @@ function deleteRoom(roomId) {
 		});
 		//remove room for used widgets
 		configData.payload.widgets.forEach(widget => {
-			if (widget.room == roomToDelete.name) {
+			if (widget.room == roomToDelete.id) {
 				widget.room = undefined;
 			}
 		});
@@ -713,6 +754,9 @@ function upWidget(widgetId) {
 			   	item.index = item.index + 1;
 		    }
 	    });
+			configData.payload.widgets.filter(w => w.parentId == group.id).forEach(item => {
+			  item.index = item.index - 1;
+	    });
 			widgetToMove.index = group.index;
 			widgetToMove.parentId = parentId && parseInt(parentId);
 			group.index = group.index + 1
@@ -722,7 +766,6 @@ function upWidget(widgetId) {
 			otherWidget.index = widgetIndex;
 		}
 	}
-
 	refreshWidgetsContent();
 }
 
@@ -763,6 +806,7 @@ function downWidget(widgetId) {
 			  	item.index = item.index + 1;
 		    }
 	    });
+
 		  widgetToMove.index = group.index + 1;
 		  widgetToMove.parentId = parentId && parseInt(parentId);
 		} else {
@@ -771,7 +815,6 @@ function downWidget(widgetId) {
 			otherWidget.index = widgetIndex;
 		}
 	}
-
 	refreshWidgetsContent();
 }
 
@@ -859,5 +902,6 @@ function editWidgetModal(widgetId) {
   var widgetToEdit = configData.payload.widgets.find(w => w.id == widgetId);
   getWidgetModal({title:"Editer un widget", widget:widgetToEdit}, function(result) {
 	 console.log(result);
+	 refreshWidgetsContent();
   });
 }
