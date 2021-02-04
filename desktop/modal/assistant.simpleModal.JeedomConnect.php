@@ -124,14 +124,14 @@ function setSimpleModalData(options) {
             id="${option.type}-cmd-input" value=''
             cmdId='${option.value ? option.value.type == 'cmd' ? option.value.id: '': ''}' disabled>
             <a class='btn btn-default btn-sm cursor bt_selectTrigger'
-              tooltip='Choisir une commande' onclick="selectCmd('${option.type}');">
+              tooltip='Choisir une commande' onclick="selectSimpleCmd('${option.type}');">
             <i class='fas fa-list-alt'></i></a>
           </div>
           <div class='input-group' id="${option.type}-sc-div"
           style="display:${option.value ? option.value.type == 'sc' ? "''" : "none": "none"};"><input class='input-sm form-control roundedLeft' style="width:260px;"
             id="${option.type}-sc-input" value='' scId='${option.value ? option.value.type == 'sc' ? option.value.id: '': ''}' disabled>
             <a class='btn btn-default btn-sm cursor bt_selectTrigger'
-              tooltip='Choisir un scénario' onclick="selectSc('${option.type}');">
+              tooltip='Choisir un scénario' onclick="selectSimpleSc('${option.type}');">
             <i class='fas fa-list-alt'></i></a>
          </div>
          </div></li>`;
@@ -147,13 +147,13 @@ function setSimpleModalData(options) {
 
 function refreshSwipe(type) {
   if ($("#"+type+"-cmd-input").attr('cmdId') != '') {
-    getCmd({ id: $("#"+type+"-cmd-input").attr('cmdId'), success: function (data) {
+    getSimpleCmd({ id: $("#"+type+"-cmd-input").attr('cmdId'), success: function (data) {
       $("#"+type+"-cmd-input").val(data.result.humanName);
     }})
   }
 
   if ($("#"+type+"-sc-input").attr('scId') != '') {
-    getScenarioHumanName({ id: $("#"+type+"-sc-input").attr('scId'), success: function (data) {
+    getSimpleScenarioHumanName({ id: $("#"+type+"-sc-input").attr('scId'), success: function (data) {
       data.forEach(sc => {
         if (sc['id'] == $("#"+type+"-sc-input").attr('scId')) {
           $("#"+type+"-sc-input").val(sc['humanName']);
@@ -181,7 +181,7 @@ function swipeSelected(type) {
   }
 }
 
-function selectCmd(name) {
+function selectSimpleCmd(name) {
   jeedom.cmd.getSelectModal({cmd: {type: 'action', subType: 'other'}}, function(result) {
     console.log(result)
     $("#"+name+"-cmd-input").val(result.human);
@@ -189,14 +189,14 @@ function selectCmd(name) {
   })
 }
 
-function selectSc(name) {
+function selectSimpleSc(name) {
   jeedom.scenario.getSelectModal({}, function(result) {
     $("#"+name+"-sc-input").attr('scId', result.id);
     $("#"+name+"-sc-input").val(result.human);
   })
 }
 
-function getScenarioHumanName(_params) {
+function getSimpleScenarioHumanName(_params) {
 var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
 
   var paramsAJAX = jeedom.private.getParamsAJAX(params);
@@ -208,7 +208,7 @@ var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
   $.ajax(paramsAJAX);
 }
 
-function getCmd({id, error, success}) {
+function getSimpleCmd({id, error, success}) {
   $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: {'action': 'getCmd', 'id': id },
