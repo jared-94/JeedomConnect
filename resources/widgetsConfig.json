@@ -147,6 +147,21 @@
 				"description": "Intensité de la lumière"
 			},
 			{
+				"id": "whiteTempAction",
+				"name": "Température blanc",
+				"category": "cmd",
+				"type": "action",
+				"value": "whiteTempInfo",
+				"subtype": "slider"
+			},
+			{
+				"id": "whiteTempInfo",
+				"name": "Info Temp. blanc",
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric"
+			},
+			{
 				"id": "powerInfo",
 				"name": "Puissance",
 				"required": false,
@@ -261,6 +276,21 @@
 				"type": "info",
 				"subtype": "numeric",
 				"description": "Intensité de la lumière"
+			},
+			{
+				"id": "whiteTempAction",
+				"name": "Température blanc",
+				"category": "cmd",
+				"type": "action",
+				"value": "whiteTempInfo",
+				"subtype": "slider"
+			},
+			{
+				"id": "whiteTempInfo",
+				"name": "Info Temp. blanc",
+				"category": "cmd",
+				"type": "info",
+				"subtype": "numeric"
 			},
 			{
 				"id": "powerInfo",
@@ -464,6 +494,51 @@
 		]
 	},
 	{
+		"type": "group-plug",
+		"name": "Groupe de prises",
+		"img": "plug6.png",
+		"description": "Gère un groupe de plusieurs widgets prises",
+		"options": [
+			{
+				"id": "name",
+				"name": "Nom",
+				"required": true,
+				"category": "string"
+			},
+			{
+				"id": "subtitle",
+				"name": "Sous-titre",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id": "power", "name": "Puissance"}],
+				"description": "Information supplémentaire affichée sur le widget"
+			},
+			{
+				"id": "widgets",
+				"name": "Widgets",
+				"required": true,
+				"category": "widgets",
+				"whiteList": ["plug"],
+				"description": "Liste des prises à gérer"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs",
+				"infos": [ "Status", "Puissance totale" ]
+			},
+			{
+				"id": "display",
+				"name": "Affichage forcé",
+				"required": false,
+				"category": "stringList",
+				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+				"description": "Affichage forcé du widget"
+			}
+		]
+	},
+	{
 		"type": "scenario",
 		"name": "Scénario",
 		"img": "scenario.png",
@@ -517,6 +592,12 @@
 				"category": "widgets",
 				"blackList": ["widgets-summary", "favorites", "room-summary"],
 				"description": "Liste des widgets à afficher"
+			},
+			{
+				"id": "blocDisplay",
+				"name": "Affichage bloc",
+				"category": "binary",
+				"description": "Affichage du résumé sur plusieurs lignes"
 			}
 		]
 	},
@@ -531,6 +612,12 @@
 				"name": "Nom",
 				"required": true,
 				"category": "string"
+			},
+			{
+				"id": "blocDisplay",
+				"name": "Affichage bloc",
+				"category": "binary",
+				"description": "Affichage du résumé sur plusieurs lignes"
 			}
 		]
 	},
@@ -553,6 +640,12 @@
 				"category": "widgets",
 				"blackList": ["widgets-summary", "favorites", "room-summary"],
 				"description": "Liste des widgets à afficher"
+			},
+			{
+				"id": "blocDisplay",
+				"name": "Affichage bloc",
+				"category": "binary",
+				"description": "Affichage des éléments sur plusieurs lignes"
 			}
 		]
 	},
@@ -1364,7 +1457,6 @@
 			{
 				"id": "upAction",
 				"name": "Monter",
-				"required": true,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",
@@ -1374,7 +1466,6 @@
 			{
 				"id": "downAction",
 				"name": "Descendre",
-				"required": true,
 				"category": "cmd",
 				"type": "action",
 				"subtype": "other",

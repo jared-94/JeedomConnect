@@ -227,6 +227,8 @@ function getWidgetModal(_options, _callback) {
 				throw {};
 			}
 			result[option.id] = $("#"+option.id+"-input").val();
+		} else if (option.category == "binary") {
+			result[option.id] = $("#"+option.id+"-input").is(':checked');
 		} else if (option.category == "stringList") {
 			if ($("#"+option.id+"-input").val() == 'none' & option.required) {
 				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});

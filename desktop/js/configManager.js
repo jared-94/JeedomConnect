@@ -207,6 +207,7 @@ function getMaxIndex(array) {
 }
 
 function getRoomName(id) {
+	if (id == 'global') { return 'Global'; }
 	const room = configData.payload.rooms.find(r => r.id == id);
 	if (room) {
 		return room.name;

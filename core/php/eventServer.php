@@ -61,8 +61,9 @@ while (true) {
   $data = getData($events);
   if (count($data['result']) > 0) {
     //log::add('JeedomConnect', 'debug', "eventServer send : " . json_encode($data));
+    echo "id: " . $lastReadTimestamp . "\n";
     echo "data: " . json_encode($data) . "\n\n";
-    echo "id: " . $lastReadTimestamp . "\n\n";
+    
     ob_flush();
     flush();
     $lastReadTimestamp = time();
@@ -82,9 +83,9 @@ function getData($events) {
 
   foreach ($events['result'] as $event) {
     if ($event['name'] == 'jeeObject::summary::update') {
-      if (in_array($event['option']['object_id'], $objIds)) {
+      //if (in_array($event['option']['object_id'], $objIds)) {
         array_push($result['result'], $event);
-      }
+      //}
     }
     if ($event['name'] == 'scenario::update') {
       if (in_array($event['option']['scenario_id'], $scIds)) {

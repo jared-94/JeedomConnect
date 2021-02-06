@@ -1,4 +1,8 @@
 # Changelog JeedomConnect
+## Version 0.15.1 Beta (06/02/2021)
+- Widget groupe de prises
+- Lumières : température de blancs
+
 ## Version 0.15.0 Beta (04/02/2021)
 ***Attention, l'application n'est plus en debug mais en release, veuillez désinstaller la version précédente***
 - Pièces : possibilité de lié un objet Jeedom aux pièces

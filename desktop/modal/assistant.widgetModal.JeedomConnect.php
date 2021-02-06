@@ -87,6 +87,8 @@ if (!isConnect('admin')) {
 			 widgetConfig.options.forEach(option => {
 				 if (option.category == "string" & options.widget[option.id] !== undefined ) {
 					 $("#"+option.id+"-input").val(options.widget[option.id]);
+				 } else if (option.category == "binary" & options.widget[option.id] !== undefined ) {
+					 $("#"+option.id+"-input").prop('checked', options.widget[option.id] ? "checked": "");
 				 } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
            $("#"+option.id+"-input").attr('cmdId', options.widget[option.id].id);
            getHumanName({
@@ -200,12 +202,15 @@ if (!isConnect('admin')) {
 
 		//Room
 		option = `<li><div class='form-group'>
-			<label class='col-xs-3 '>Pièce</label>
+			<label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
 			<div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
 			<option value="none">Sélection  d'une pièce</option>`;
 		configData.payload.rooms.forEach(item => {
 		  option += `<option value="${item.id}">${item.name}</option>`;
 		});
+    if (type == 'room') {
+      option += `<option value="global">Global</option>`;
+    }
 		option += `</select></div></div></div></li>`;
 		items.push(option);
 
@@ -257,6 +262,9 @@ if (!isConnect('admin')) {
 				curOption += `<div class='input-group'><input style="width:340px;" id="${option.id}-input" value=''>
 			</div>
 			</div></div></li>`;
+    } else if (option.category == "binary") {
+				curOption += `<div class='input-group'><input type="checkbox" style="width:150px;" id="${option.id}-input"></div>
+			     </div></div></li>`;
 			} else if (option.category == "stringList") {
 				curOption += `<div class='input-group'><select style="width:340px;" id="${option.id}-input" onchange="subtitleSelected();">`;
 				if (!required) {
@@ -604,7 +612,8 @@ if (!isConnect('admin')) {
 			curOption += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="imgList-${item.index}">
       Si :<select id="info-${item.index}" style="width:100px;height:31px;margin-left:5px;">`;
       options.forEach(info => {
-        var infoName = widget.options.find(o => o.id == info).name;
+        var infoCmd = widget.options.find(o => o.id == info);
+        var infoName = infoCmd ? infoCmd.name : info;
         curOption += `<option value="${info}" ${item.info == info && "selected"}>${infoName}</option>`;
       });
       curOption += `</select> <select id="operator-${item.index}" style="width:50px;height:31px; margin-left:5px;">

@@ -99,7 +99,9 @@ function setSimpleModalData(options) {
 
 			configData.payload.widgets.forEach(item => {
 				if (option.choices.includes(item.type)) {
-					var name = getWidgetPath(item.id);
+					let name = getWidgetPath(item.id);
+          room = getRoomName(item.room);
+          if (room) { name = name +' (' + room + ')'}
 					widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name}</option>`;
 				}
 			})
