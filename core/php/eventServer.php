@@ -30,13 +30,16 @@ if (!is_object($eqLogic)) {
   log::add('JeedomConnect', 'debug', "Can't find eqLogic");
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
 }
+$id = rand(0,1000);
+log::add('JeedomConnect', 'debug', "eventServer init client #".$id);
 
 $config = $eqLogic->getConfig();
 $lastReadTimestamp = time();
+$step = 0;
 
 while (true) {
-  if (connection_aborted() || !connection_status() == CONNECTION_NORMAL) {
-      sleep(2);
+  if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
+      log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #".$id);
       die();
   }
   $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config);
@@ -60,13 +63,22 @@ while (true) {
   $events = event::changes($lastReadTimestamp);
   $data = getData($events);
   if (count($data['result']) > 0) {
-    //log::add('JeedomConnect', 'debug', "eventServer send : " . json_encode($data));
+    //log::add('JeedomConnect', 'debug', "eventServer send to #".$id.": " . json_encode($data));
     echo "id: " . $lastReadTimestamp . "\n";
     echo "data: " . json_encode($data) . "\n\n";
-    
     ob_flush();
     flush();
+    $steph = 0;
     $lastReadTimestamp = time();
+  } else {
+    $step +=1;
+    if ($step == 5) {
+      //log::add('JeedomConnect', 'debug', "eventServer heartbeat to ".$id);
+      echo "heartbeat\n\n";
+      ob_flush();
+      flush();
+      $step = 0;
+    }
   }
   sleep(1);
 }

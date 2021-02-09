@@ -71,6 +71,7 @@ function setSimpleModalData(options) {
       <select style="width:130px;margin-left:10px;" id="icon-source-input" value=''>
         <option value="md" ${source == 'md' && 'selected'}>Material Design</option>
         <option value="fa" ${source == 'fa' && 'selected'}>Font Awesome</option>
+        <option value="jeedom" ${source == 'jeedom' && 'selected'}>Jeedom</option>
         </select></div></div>
       </div></li>`;
 	        items.push(icon);

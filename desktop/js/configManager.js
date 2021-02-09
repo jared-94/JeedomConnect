@@ -35,12 +35,12 @@ function refreshBottomTabData() {
 	var items = [];
 	$.each( tabs, function( key, val ) {
 		var icon = typeof(val.icon) == 'string' ? `mdi mdi-${val.icon}` : val.icon.source == 'md' ?
-			`mdi mdi-${val.icon.name}` :  `fa fa-${val.icon.name}`;
+			`mdi mdi-${val.icon.name}` : val.icon.source == 'fa' ? `fa fa-${val.icon.name}` : `icon ${val.icon.name}`;
 		items.push( `<li><a  onclick="editBottomTabModal('${val.id}');">
 			<i class="${icon}" aria-hidden="true" style="margin-right:15px;"></i>${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
 	});
 	$("#bottomUL").html(items.join(""));
 }
@@ -75,10 +75,10 @@ function refreshTopTabContent() {
 	items = [];
 	$.each( tabs, function( key, val ) {
 		items.push( `<li><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteTopTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveTopTabModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-right-circle" title="Supprimer" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveTopTabModal('${val.id}');"></i></li>`);
 	});
 	$("#topUL").html(items.join(""));
 }
@@ -90,9 +90,9 @@ function refreshRoomData() {
 	var items = [];
 	$.each( rooms, function( key, val ) {
 		items.push( `<li><a  onclick="editRoomModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
 	});
 	$("#roomUL").html(items.join(""));
 }
@@ -126,16 +126,16 @@ function refreshWidgetsContent() {
 			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
 		} else { //it's a group
 			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list"></i> ${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${val.id}');"></i></li>`);
 			var curWidgets = configData.payload.widgets.filter(w => w.parentId == val.id);
 			curWidgets = curWidgets.sort(function(s,t) {
 				return s.index - t.index;
@@ -144,10 +144,10 @@ function refreshWidgetsContent() {
 			$.each(curWidgets, function (key, w) {
 				var img = widgetsList.widgets.find(i => w.type == i.type).img;
 				items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
 			});
 			items.push("</ul></li>");
 		}

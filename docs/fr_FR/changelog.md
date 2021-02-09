@@ -1,4 +1,8 @@
 # Changelog JeedomConnect
+## Version 15.0.2 Beta (09/02/2021)
+- Ajout des icônes Jeedom
+- Correction du bug des widgets en double
+
 ## Version 0.15.1 Beta (06/02/2021)
 - Widget groupe de prises
 - Lumières : température de blancs

@@ -96,6 +96,7 @@ if (!isConnect('admin')) {
              error: function (error) {},
              success: function (data) {
                $("#"+option.id+"-input").val(data);
+               $("#"+option.id+"-input").attr('title', data);
              }
            });
            $("#"+option.id+"-input").attr('cmdType', options.widget[option.id].type);
@@ -383,6 +384,7 @@ if (!isConnect('admin')) {
      success: function (data) {
        $("#"+name+"-input").attr('cmdId', data.result.id);
        $("#"+name+"-input").val(data.result.humanName);
+       $("#"+name+"-input").attr('title', data.result.humanName);
        $("#"+name+"-input").attr('cmdType', data.result.type);
        $("#"+name+"-input").attr('cmdSubType', data.result.subType);
        if (data.result.type == 'action') {
