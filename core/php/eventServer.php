@@ -15,13 +15,26 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 
- require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
- require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
+require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
+require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 
-header('Access-Control-Allow-Origin: *');
-header("Content-Type: text/event-stream\n\n");
+ob_end_clean();
+
+
+function sse( $data=null){
+  if( !is_null( $data ) ) {
+	   echo "data:" . json_encode( $data );
+     echo "\r\n\r\n";
+		 if( @ob_get_level() > 0 ) for( $i=0; $i < @ob_get_level(); $i++ ) @ob_flush();
+     @flush();
+  }
+}
+
+header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
+header('X-Accel-Buffering: no');
 ignore_user_abort(true);
+
 
 $apiKey = init('apiKey');
 $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
@@ -33,15 +46,23 @@ if (!is_object($eqLogic)) {
 $id = rand(0,1000);
 log::add('JeedomConnect', 'debug', "eventServer init client #".$id);
 
+
 $config = $eqLogic->getConfig();
 $lastReadTimestamp = time();
 $step = 0;
+
+sse( json_encode(array('infos' => array(
+  'cmdInfo' => apiHelper::getCmdInfoData($config),
+  'scInfo' => apiHelper::getScenarioData($config),
+  'objInfo' => apiHelper::getObjectData($config)
+  ))) );
 
 while (true) {
   if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
       log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #".$id);
       die();
   }
+
   $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config);
   if ($newConfig != false) {
     $config = $newConfig;
@@ -54,34 +75,30 @@ while (true) {
       'option' => $config
     ));
     log::add('JeedomConnect', 'debug', "eventServer send new config : " . json_encode($result));
-    echo "data: " . json_encode($result) . "\n\n";
-    echo "id: " . $lastReadTimestamp . "\n\n";
-    ob_flush();
-    flush();
+    sse(json_encode($result));
     sleep(1);
   }
+
   $events = event::changes($lastReadTimestamp);
   $data = getData($events);
+
   if (count($data['result']) > 0) {
-    //log::add('JeedomConnect', 'debug', "eventServer send to #".$id.": " . json_encode($data));
-    echo "id: " . $lastReadTimestamp . "\n";
-    echo "data: " . json_encode($data) . "\n\n";
-    ob_flush();
-    flush();
-    $steph = 0;
+    //log::add('JeedomConnect', 'debug', "eventServer send ".json_encode($data));
+    sse( json_encode($data) );
+    $step = 0;
     $lastReadTimestamp = time();
-  } else {
+  }
+  else {
     $step +=1;
     if ($step == 5) {
-      //log::add('JeedomConnect', 'debug', "eventServer heartbeat to ".$id);
-      echo "heartbeat\n\n";
-      ob_flush();
-      flush();
+      //log::add('JeedomConnect', 'debug', "eventServer heartbeat to #".$id);
+      sse( json_encode(array('event' => 'heartbeat')) );
       $step = 0;
     }
   }
   sleep(1);
 }
+
 
 function getData($events) {
   global $eqLogic, $config;

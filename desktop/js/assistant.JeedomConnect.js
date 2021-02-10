@@ -21,6 +21,43 @@ function openTab(evt, tabName) {
 	evt.currentTarget.className += " active";
 }
 
+function getIconModal(_options, _callback) {
+	if ($("#iconModal").length == 0) {
+    $('body').append('<div id="iconModal"></div>');
+    $("#iconModal").dialog({
+	  	title: _options.title,
+      closeText: '',
+      autoOpen: false,
+      modal: true,
+			height: (jQuery(window).height() - 150),
+      width: 1500
+    });
+		jQuery.ajaxSetup({
+      async: false
+    });
+    $('#iconModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect');
+    jQuery.ajaxSetup({
+      async: true
+    });
+	}
+
+	$("#iconModal").dialog({title: _options.title, buttons: {
+    "Annuler": function() {
+      $(this).dialog("close");
+    },
+    Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function() {
+				console.log("valid")
+			}
+		}
+	}});
+
+	$('#iconModal').dialog('open');
+
+}
+
 function getSimpleModal(_options, _callback) {
   if (!isset(_options)) {
     return;
@@ -99,6 +136,7 @@ function getSimpleModal(_options, _callback) {
 
 	   }
 		} }});
+
   $('#simpleModal').dialog('open');
 	$('#simpleModal').keydown(function(e) { if (e.which == 13) {
 		$('#saveSimple').click();

@@ -67,7 +67,13 @@ function setSimpleModalData(options) {
       var source = option.value ? typeof(option.value) == 'string' ? 'md' : option.value.source : 'md';
 			icon = `<li><div class='form-group'>
 			<label class='col-xs-3  required' >Icone</label>
-			<div class='col-xs-9'><div class='input-group'><input style="width:150px;" id="mod-icon-input" value='${value}'>
+			<div class='col-xs-9'><div class='input-group'>
+<!--
+      <a class='btn btn-default btn-sm cursor bt_selectTrigger'
+        tooltip='Choisir une icone' onclick="getIcon();">
+      <i class='fas fa-list-alt'></i></a>
+-->
+      <input style="width:150px;" id="mod-icon-input" value='${value}'>
       <select style="width:130px;margin-left:10px;" id="icon-source-input" value=''>
         <option value="md" ${source == 'md' && 'selected'}>Material Design</option>
         <option value="fa" ${source == 'fa' && 'selected'}>Font Awesome</option>
@@ -225,6 +231,10 @@ function getSimpleCmd({id, error, success}) {
       }
     }
   });
+}
+
+function getIcon() {
+  getIconModal({ title: "Choisir une icône"})
 }
 
 </script>
