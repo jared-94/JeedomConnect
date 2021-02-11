@@ -63,22 +63,15 @@ function setSimpleModalData(options) {
 			<div class='col-xs-9'><div class='input-group'><input style="width:150px;" id="mod-name-input" value='${value}'></div></div></div></li>`;
 			items.push(name);
 		} else if (option.type == "icon") {
-			var value = option.value ? typeof(option.value) == 'string' ? option.value : option.value.name : '';
-      var source = option.value ? typeof(option.value) == 'string' ? 'md' : option.value.source : 'md';
+      let icon = option.value ? iconToHtml(option.value) : '';
 			icon = `<li><div class='form-group'>
 			<label class='col-xs-3  required' >Icone</label>
 			<div class='col-xs-9'><div class='input-group'>
-<!--
       <a class='btn btn-default btn-sm cursor bt_selectTrigger'
         tooltip='Choisir une icone' onclick="getIcon();">
-      <i class='fas fa-list-alt'></i></a>
--->
-      <input style="width:150px;" id="mod-icon-input" value='${value}'>
-      <select style="width:130px;margin-left:10px;" id="icon-source-input" value=''>
-        <option value="md" ${source == 'md' && 'selected'}>Material Design</option>
-        <option value="fa" ${source == 'fa' && 'selected'}>Font Awesome</option>
-        <option value="jeedom" ${source == 'jeedom' && 'selected'}>Jeedom</option>
-        </select></div></div>
+      <i class='fas fa-flag'></i> Icône </a>
+      <a id="icon-div">${icon} </a>
+        </div></div>
       </div></li>`;
 	        items.push(icon);
 		} else if (option.type == "move") {
@@ -233,8 +226,10 @@ function getSimpleCmd({id, error, success}) {
   });
 }
 
-function getIcon() {
-  getIconModal({ title: "Choisir une icône"})
+function getIcon(name) {
+  getIconModal({ title: "Choisir une icône"}, (result) => {
+    $("#icon-div").html(result.html);
+  })
 }
 
 </script>

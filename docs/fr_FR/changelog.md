@@ -1,4 +1,8 @@
 # Changelog JeedomConnect
+## Version 0.15.4 Beta (11/02/2021)
+- Notification : comptibilité avec l'architecture X32
+- Option pour afficher la barre du haut
+
 ## Version 0.15.3 Beta (10/02/2021)
 - Fix bug taille icônes Jeedom
 - Fix connection http

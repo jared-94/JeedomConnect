@@ -293,7 +293,40 @@ function reIndexArray(array) {
 		item.index = index;
 		index = index+1;
 	});
+}
 
+function htmlToIcon(html) {
+	let tag = html.split('\"')[1].split(' ');
+	let source = '';
+	let name = '';
+	if (tag[0] == 'icon') {
+		source = 'jeedom';
+		name = tag[1];
+	} else if (tag[0] == 'mdi') {
+		source = 'md';
+		name = tag[1].substring(4);
+	} else if (tag[0] == 'fa') {
+		source = 'fa';
+		name = tag[1].substring(3)
+	}
+	let icon = { source, name };
+	return icon;
+}
+
+function iconToHtml(icon) {
+	let tag1 = '';
+	let tag2 = '';
+	if (icon.source == 'jeedom') {
+		tag1 = 'icon'
+		tag2 = icon.name;
+	} else if (icon.source == 'md') {
+		tag1 = 'mdi'
+		tag2 = 'mdi-' + icon.name;
+	} else if (icon.source == 'fa') {
+		tag1 = 'fa'
+		tag2 = 'fa-' + icon.name;
+	}
+	return `<i class="${tag1} ${tag2}"></i>`;
 }
 
 /* BOTTOM TAB FUNCTIONS */

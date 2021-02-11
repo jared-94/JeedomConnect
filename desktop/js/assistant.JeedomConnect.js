@@ -22,6 +22,7 @@ function openTab(evt, tabName) {
 }
 
 function getIconModal(_options, _callback) {
+	$("#iconModal").dialog('destroy').remove();
 	if ($("#iconModal").length == 0) {
     $('body').append('<div id="iconModal"></div>');
     $("#iconModal").dialog({
@@ -49,7 +50,16 @@ function getIconModal(_options, _callback) {
 			text: "Valider",
 			id: "saveSimple",
 			click: function() {
-				console.log("valid")
+				var icon = $('.iconSelected .iconSel').html();
+				icon = icon.replace(/"/g, "'")
+				var result = {};
+				result.html = icon;
+
+				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+		        _callback(result);
+		    }
+
+				$(this).dialog('close');
 			}
 		}
 	}});
@@ -98,7 +108,8 @@ function getSimpleModal(_options, _callback) {
 			  	result.name = $("#mod-name-input").val();
 		  	}
 		  	if (_options.fields.find(i => i.type == "icon")) {
-					result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
+					//result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
+					result.icon = htmlToIcon($("#icon-div").html());
 		  	}
 		  	if (_options.fields.find(i => i.type == "move")) {
 			  	result.moveToId = $("#mod-move-input").val();

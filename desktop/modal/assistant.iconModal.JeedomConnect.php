@@ -43,24 +43,28 @@ if (!isConnect('admin')) {
 	border-color: red;
 }
 </style>
-<div style="overflow-y:auto; overflow-x:hidden; ">
+<div class="tab-content" style="overflow-y:scroll;">
+
 <input type="file" accept="image/*" id="file-input" style="display:none;" >
+
+
 
 <div class="panel-group" id="accordionIcon">
   <div class="panel panel-default">
 	<div class="panel-heading">
 	<h3 class="panel-title">
-	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="true" href="">Icônes Jeedom</a>
+	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="false" id="jeeCon-a">Icônes Jeedom</a>
 	</h3>
 	</div>
+
 	<div id="jeeCon" class="panel-collapse collapse">
 	   <div class="panel-body">
-	      <div class="scenarioListContainer">
+	      <div>
 
 
           <div role="tabpanel" class="tab-pane active" id="tabicon" style="width:calc(100% - 20px)">
           		<?php
-          		$scanPaths = array('core/css/icon', 'data/fonts');
+          		$scanPaths = array('core/css/icon');
           		$div = '';
           		foreach ($scanPaths as $root) {
           			$ls = ls($root, '*');
@@ -98,17 +102,120 @@ if (!isConnect('admin')) {
           		}
           		echo $div;
           		?>
+	    </div>
+	    </div>
+	    </div>
+    </div>
+    </div>
+
+    <!-- Material -->
+      <div class="panel panel-default">
+    	<div class="panel-heading">
+    	<h3 class="panel-title">
+    	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="false" id="mdCon-a">Icônes Material Design</a>
+    	</h3>
+    	</div>
+    	<div id="mdCon" class="panel-collapse collapse">
+    	   <div class="panel-body">
+    	      <div>
+              <div role="tabpanel" class="tab-pane active" id="tabicon" style="width:calc(100% - 20px)">
+              		<?php
+              		$div = '';
+              		$dir = 'plugins/JeedomConnect/desktop/css';
 
 
+              				$css = file_get_contents($dir . '/materialdesignicons.css');
+              				$research = 'mdi';
+              				preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
+              				$div .= '<div class="iconCategory"><legend>' . $research . '</legend>';
+
+              				$number = 1;
+              				foreach ($matches as $match) {
+              					if (isset($match[0])) {
+              						if ($number == 1) {
+              							$div .= '<div class="row">';
+              						}
+              						$div .= '<div class="col-lg-1 divIconSel">';
+              						$icon = str_replace(array(':', '.'), '', $match[0]);
+              						$div .= '<span class="iconSel"><i class=\'mdi ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
+              						$div .= '</div>';
+              						$number++;
+              					}
+              				}
+              				if($number != 0){
+              					$div .= '</div>';
+              				}
+              				$div .= '</div>';
+
+
+              		echo $div;
+              		?>
+    	    </div>
+    	    </div>
+    	    </div>
+        </div>
+        </div>
+
+        <!-- FA -->
+          <div class="panel panel-default">
+        	<div class="panel-heading">
+        	<h3 class="panel-title">
+        	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="false" id="faCon-a">Icônes FontAwesome</a>
+        	</h3>
+        	</div>
+        	<div id="faCon" class="panel-collapse collapse">
+        	   <div class="panel-body">
+        	      <div>
+                  <div role="tabpanel" class="tab-pane active" id="tabicon" style="width:calc(100% - 20px)">
+                  		<?php
+                  		$div = '';
+                  		$dir = 'plugins/JeedomConnect/desktop/css';
+
+
+                  				$css = file_get_contents($dir . '/fontawesome.css');
+                  				$research = 'fa';
+                  				preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
+                  				$div .= '<div class="iconCategory"><legend>' . $research . '</legend>';
+
+                  				$number = 1;
+                  				foreach ($matches as $match) {
+                  					if (isset($match[0])) {
+                  						if ($number == 1) {
+                  							$div .= '<div class="row">';
+                  						}
+                  						$div .= '<div class="col-lg-1 divIconSel">';
+                  						$icon = str_replace(array(':', '.'), '', $match[0]);
+                  						$div .= '<span class="iconSel"><i class=\'fa ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
+                  						$div .= '</div>';
+                  						$number++;
+                  					}
+                  				}
+                  				if($number != 0){
+                  					$div .= '</div>';
+                  				}
+                  				$div .= '</div>';
+
+
+                  		echo $div;
+                  		?>
+        	    </div>
+        	    </div>
+        	    </div>
+            </div>
+            </div>
+
 	</div>
-	</div>
-	</div>
-	</div>
+
+
+
+
+
+
 </div>
 
 
 
-
+<!--
 <br/>
 Images internes
 <div class="row" id="internal-div"></div>
@@ -118,10 +225,20 @@ Images personnelles
 	Ajouter
 </a>
 
-<div class="row" id="user-div">
+<div class="row" id="user-div"></div>
+-->
+<div id="mySearch" class="input-group" style="margin-left:6px;margin-top:6px">
+
+  <input class="form-control" placeholder="{{Rechercher}}" id="in_searchIconSelector">
+  <div class="input-group-btn">
+    <a id="bt_resetSearch" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i> </a>
+  </div>
+</div>
 
 </div>
-</div>
+
+
+
 <script>
 
 function addImage() {
@@ -193,6 +310,69 @@ function setImageModalData(selected) {
 }
 
 
+$("#jeeCon-a").on( "click", function() {
+  $("#jeeCon").toggleClass( "collapse" )
+});
 
+$("#mdCon-a").on( "click", function() {
+  $("#mdCon").toggleClass( "collapse" )
+});
+$("#faCon-a").on( "click", function() {
+  $("#faCon").toggleClass( "collapse" )
+});
+
+$('.divIconSel').on('click', function() {
+	$('.divIconSel').removeClass('iconSelected');
+	$(this).closest('.divIconSel').addClass('iconSelected');
+});
+
+//searching
+$('#in_searchIconSelector').on('keyup',function() {
+
+	var search = $(this).value()
+  if (search.length < 2) { return; }
+  $('.divIconSel').show()
+	$('.iconCategory').show()
+  $("#jeeCon").removeClass( "collapse" )
+  $("#mdCon").removeClass( "collapse" )
+  $("#faCon").removeClass( "collapse" )
+
+	if (search != '') {
+		search = normTextLower(search)
+		$('.iconDesc').each(function() {
+			if ($(this).text().indexOf(search) == -1) {
+				$(this).closest('.divIconSel').hide()
+			}
+		})
+	}
+
+	var somethingFound = 0
+	$('.iconCategory').each(function() {
+		var hide = true
+		if ($(this).find('.divIconSel:visible').length == 0) {
+			$(this).hide()
+		} else {
+			somethingFound +=1
+		}
+	})
+	if (somethingFound == 0) {
+		$('.generalCategory').show()
+	}
+})
+
+$('#bt_resetSearch').on('click', function() {
+  $("#jeeCon").addClass( "collapse" )
+  $("#mdCon").addClass( "collapse" )
+  $("#faCon").addClass( "collapse" )
+	$('#in_searchIconSelector').val('').keyup()
+})
+
+
+$(function() {
+  var buttonSet = $('.ui-dialog[aria-describedby="iconModal"]').find('.ui-dialog-buttonpane')
+	buttonSet.find('#mySearch').remove()
+	var mySearch = $('.ui-dialog[aria-describedby="iconModal"]').find('#mySearch')
+	buttonSet.append(mySearch)
+});
 
 </script>
