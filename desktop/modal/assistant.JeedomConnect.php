@@ -26,7 +26,10 @@ include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'configManager', 'js', 'JeedomConnect');
 include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
 ?>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.5.55/css/materialdesignicons.min.css">
+
+
 
 <div class="container-modal">
 

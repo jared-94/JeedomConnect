@@ -7,6 +7,7 @@ $.post({
 	cache: false,
 	success: function( config ) {
 		configData = json_decode(config).result;
+		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
 			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
@@ -34,12 +35,12 @@ function refreshBottomTabData() {
 	var items = [];
 	$.each( tabs, function( key, val ) {
 		var icon = typeof(val.icon) == 'string' ? `mdi mdi-${val.icon}` : val.icon.source == 'md' ?
-			`mdi mdi-${val.icon.name}` :  `fa fa-${val.icon.name}`;
+			`mdi mdi-${val.icon.name}` : val.icon.source == 'fa' ? `fa fa-${val.icon.name}` : `icon ${val.icon.name}`;
 		items.push( `<li><a  onclick="editBottomTabModal('${val.id}');">
 			<i class="${icon}" aria-hidden="true" style="margin-right:15px;"></i>${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
 	});
 	$("#bottomUL").html(items.join(""));
 }
@@ -74,10 +75,10 @@ function refreshTopTabContent() {
 	items = [];
 	$.each( tabs, function( key, val ) {
 		items.push( `<li><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteTopTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveTopTabModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-right-circle" title="Supprimer" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveTopTabModal('${val.id}');"></i></li>`);
 	});
 	$("#topUL").html(items.join(""));
 }
@@ -89,9 +90,9 @@ function refreshRoomData() {
 	var items = [];
 	$.each( rooms, function( key, val ) {
 		items.push( `<li><a  onclick="editRoomModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
 	});
 	$("#roomUL").html(items.join(""));
 }
@@ -125,16 +126,16 @@ function refreshWidgetsContent() {
 			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list" /> ${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${val.id}');"></i></li>`);
+			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list"></i> ${val.name}</a>
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${val.id}');"></i></li>`);
 			var curWidgets = configData.payload.widgets.filter(w => w.parentId == val.id);
 			curWidgets = curWidgets.sort(function(s,t) {
 				return s.index - t.index;
@@ -143,10 +144,10 @@ function refreshWidgetsContent() {
 			$.each(curWidgets, function (key, w) {
 				var img = widgetsList.widgets.find(i => w.type == i.type).img;
 				items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
-			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
 			});
 			items.push("</ul></li>");
 		}
@@ -206,6 +207,7 @@ function getMaxIndex(array) {
 }
 
 function getRoomName(id) {
+	if (id == 'global') { return 'Global'; }
 	const room = configData.payload.rooms.find(r => r.id == id);
 	if (room) {
 		return room.name;
@@ -269,10 +271,69 @@ function getWidgetsParents() {
 	return items;
 }
 
+function validateDataIndex() {
+	configData.payload.tabs.forEach(i => {
+		reIndexArray(getRootObjects(i.id));
+	});
+	configData.payload.sections.forEach(i => {
+		reIndexArray(getRootObjects(i.id));
+	});
+	configData.payload.groups.forEach(i => {
+		reIndexArray(getRootObjects(i.id));
+	});
+
+}
+
+function reIndexArray(array) {
+	array.sort(function(s,t) {
+		return s.index - t.index;
+	});
+	let index = 0;
+	array.forEach(item => {
+		item.index = index;
+		index = index+1;
+	});
+}
+
+function htmlToIcon(html) {
+	let tag = html.split('\"')[1].split(' ');
+	let source = '';
+	let name = '';
+	if (tag[0] == 'icon') {
+		source = 'jeedom';
+		name = tag[1];
+	} else if (tag[0] == 'mdi') {
+		source = 'md';
+		name = tag[1].substring(4);
+	} else if (tag[0] == 'fa') {
+		source = 'fa';
+		name = tag[1].substring(3)
+	}
+	let icon = { source, name };
+	return icon;
+}
+
+function iconToHtml(icon) {
+	let tag1 = '';
+	let tag2 = '';
+	if (icon.source == 'jeedom') {
+		tag1 = 'icon'
+		tag2 = icon.name;
+	} else if (icon.source == 'md') {
+		tag1 = 'mdi'
+		tag2 = 'mdi-' + icon.name;
+	} else if (icon.source == 'fa') {
+		tag1 = 'fa'
+		tag2 = 'fa-' + icon.name;
+	}
+	return `<i class="${tag1} ${tag2}"></i>`;
+}
+
 /* BOTTOM TAB FUNCTIONS */
 
 function addBottomTabModal() {
-	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},{type:"icon"}] }, function(result) {
+	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},
+		{type:"icon"}, {type: "swipeUp"}, {type: "swipeDown"}] }, function(result) {
 	  var name = result.name;
 	  var icon = result.icon;
 	  if (name == ''  | icon.name == '') {
@@ -283,6 +344,8 @@ function addBottomTabModal() {
 	  var newTab = {};
 	  newTab.name = name;
 	  newTab.icon = icon;
+		if (result.swipeUp) { newTab.swipeUp = result.swipeUp; }
+		if (result.swipeDown) { newTab.swipeDown = result.swipeDown; }
 	  newTab.enable = result.enable;
 	  newTab.index = maxIndex + 1;
 	  newTab.id = configData.idCounter;
@@ -308,10 +371,13 @@ function addBottomTabModal() {
 function editBottomTabModal(tabId) {
   var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
   getSimpleModal({title: "Editer un menu bas",
-		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name},{type:"icon",value: tabToEdit.icon}] },
+		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name}, {type:"icon",value: tabToEdit.icon},
+			{type:'swipeUp', value:tabToEdit.swipeUp}, {type:'swipeDown', value:tabToEdit.swipeDown}] },
 		function(result) {
 				tabToEdit.name = result.name;
 				tabToEdit.icon = result.icon;
+				tabToEdit.swipeUp = result.swipeUp;
+				tabToEdit.swipeDown = result.swipeDown;
 				tabToEdit.enable = result.enable;
 				refreshBottomTabData();
   });
@@ -498,12 +564,15 @@ function moveTopTabModal(tabId) {
 /* ROOM FUNCTIONS */
 
 function addRoomModal() {
-  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}] }, function(result) {
+  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}, {type: "object"}] }, function(result) {
 		var name = result.name;
 		if (name == '') { return; }
 		var maxIndex = getMaxIndex(configData.payload.rooms);
 		var newRoom = {};
 		newRoom.name = name;
+		if (parseInt(result.object)) {
+			newRoom.object = parseInt(result.object);
+		}
 		newRoom.index = maxIndex + 1;
 		newRoom.id = configData.idCounter;
 
@@ -515,8 +584,14 @@ function addRoomModal() {
 
 function editRoomModal(roomId) {
 	var roomToEdit = configData.payload.rooms.find(room => room.id == roomId);
-	getSimpleModal({title: "Editer une pièce", fields:[{type: "name",value:roomToEdit.name}] }, function(result) {
+	getSimpleModal({title: "Editer une pièce",
+		fields:[{type: "name",value:roomToEdit.name}, {type: "object", value: roomToEdit.object}] }, function(result) {
 	  roomToEdit.name = result.name;
+		if (parseInt(result.object)) {
+			roomToEdit.object = parseInt(result.object);
+		} else {
+			roomToEdit.object = undefined;
+		}
 	  refreshRoomData();
 	});
 }
@@ -559,7 +634,7 @@ function deleteRoom(roomId) {
 		});
 		//remove room for used widgets
 		configData.payload.widgets.forEach(widget => {
-			if (widget.room == roomToDelete.name) {
+			if (widget.room == roomToDelete.id) {
 				widget.room = undefined;
 			}
 		});
@@ -713,6 +788,9 @@ function upWidget(widgetId) {
 			   	item.index = item.index + 1;
 		    }
 	    });
+			configData.payload.widgets.filter(w => w.parentId == group.id).forEach(item => {
+			  item.index = item.index - 1;
+	    });
 			widgetToMove.index = group.index;
 			widgetToMove.parentId = parentId && parseInt(parentId);
 			group.index = group.index + 1
@@ -722,7 +800,6 @@ function upWidget(widgetId) {
 			otherWidget.index = widgetIndex;
 		}
 	}
-
 	refreshWidgetsContent();
 }
 
@@ -763,6 +840,7 @@ function downWidget(widgetId) {
 			  	item.index = item.index + 1;
 		    }
 	    });
+
 		  widgetToMove.index = group.index + 1;
 		  widgetToMove.parentId = parentId && parseInt(parentId);
 		} else {
@@ -771,7 +849,6 @@ function downWidget(widgetId) {
 			otherWidget.index = widgetIndex;
 		}
 	}
-
 	refreshWidgetsContent();
 }
 
@@ -859,5 +936,6 @@ function editWidgetModal(widgetId) {
   var widgetToEdit = configData.payload.widgets.find(w => w.id == widgetId);
   getWidgetModal({title:"Editer un widget", widget:widgetToEdit}, function(result) {
 	 console.log(result);
+	 refreshWidgetsContent();
   });
 }

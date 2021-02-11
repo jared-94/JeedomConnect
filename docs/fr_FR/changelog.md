@@ -1,5 +1,39 @@
 # Changelog JeedomConnect
+
+## Version 0.15.4 Beta (11/02/2021)
+- Notification : comptibilité avec l'architecture X32
+- Option pour afficher la barre du haut
+
+## Version 0.15.3 Beta (10/02/2021)
+- Fix bug taille icônes Jeedom
+- Fix connection http
+
+## Version 0.15.2 Beta (09/02/2021)
+- Ajout des icônes Jeedom
+- Correction du bug des widgets en double
+
+## Version 0.15.1 Beta (06/02/2021)
+- Widget groupe de prises
+- Lumières : température de blancs
+
+## Version 0.15.0 Beta (04/02/2021)
+***Attention, l'application n'est plus en debug mais en release, veuillez désinstaller la version précédente***
+- Pièces : possibilité de lié un objet Jeedom aux pièces
+- Pièces : ajout du widget Pièce qui donne le résumé de l'objet
+- Pièces : ajout dans l'app d'un bouton Pièces (menu gauche) qui donne accès à tous les résumés
+- Authentification automatique à l'interface Web
+- Menu du bas : possibilité d'exécuter des actions lors d'un swipe vers le haut ou le bas
+- Historique : Axe horizontal en bas (même avec valeurs négatives)
+- Historique : Option pour ne pas afficher dans la vue détails
+- Historique : Option pour choisir le zoom par défaut
+- Thermostat : slider désactivé lorsque vérouillé
+- Optimisation de la connexion http
+- Résolution de divers bugs et améliorations mineures
+
+## Version 0.14.3 (27/01/2021)
+=======
 ## Version 0.14.3 (28/01/2021)
+
 - Correction bug status lumières
 - Ajout icônes groupe
 - Option pour inverser un binaire

@@ -150,7 +150,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							<label class="col-sm-3 control-label">{{Appareil enregistré :}}</label>
 							<div class="col-sm-4">
 								<span class="eqLogicAttr label label-info" style="font-size:1em;" data-l1key="configuration" type="text" data-l2key="deviceName"></span>
-								<a class="btn btn-danger" id="removeDevice" style="display:none"><i class="fa fa-minus-circle"></i> {{Détacher}} </a>
+								<a class="btn btn-danger" id="removeDevice"><i class="fa fa-minus-circle"></i> {{Détacher}} </a>
 							</div>
 						</div>
 						<div class="form-group">

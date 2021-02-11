@@ -97,7 +97,7 @@ class JeedomConnect extends eqLogic {
 				}
     }
 
-    /*     * *********************Méthodes d'instance************************* */
+		/*     * *********************Méthodes d'instance************************* */
 
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
@@ -118,7 +118,33 @@ class JeedomConnect extends eqLogic {
 	public function updateConfig() {
 		$jsonConfig = $this->getConfig();
 		$changed = false;
+		$hasMenu = count($jsonConfig['payload']['tabs']) > 0 || count($jsonConfig['payload']['sections']) > 0;
+		//remove groups with no parent
+		if ($hasMenu) {
+			foreach ($jsonConfig['payload']['groups'] as $index => $group) {
+				if (array_search($group['parentId'], array_column($jsonConfig['payload']['tabs'], 'id')) === false
+					&& array_search($group['parentId'], array_column($jsonConfig['payload']['sections'], 'id')) === false) {
+						log::add('JeedomConnect', 'info', 'Remove group '. $group['name']);
+						$changed = true;
+						unset($jsonConfig['payload']['groups'][$index]);
+				}
+			}
+		}
+
 		foreach ($jsonConfig['payload']['widgets'] as $index => $widget) {
+			//remove widget with no parent
+			if ($hasMenu) {
+				if (array_search($widget['parentId'], array_column($jsonConfig['payload']['tabs'], 'id')) === false
+					&& array_search($widget['parentId'], array_column($jsonConfig['payload']['sections'], 'id')) === false
+					&& array_search($widget['parentId'], array_column($jsonConfig['payload']['groups'], 'id')) === false
+			) {
+						$changed = true;
+						log::add('JeedomConnect', 'info', 'Remove widget '. $widget['name']);
+						unset($jsonConfig['payload']['widgets'][$index]);
+						continue;
+				}
+			}
+
 			foreach ($widget as $item => $value) {
 				//update rooms to new format
 				if ($item == "room" && !is_int($value)) {
@@ -127,7 +153,6 @@ class JeedomConnect extends eqLogic {
 					foreach ($jsonConfig['payload']['rooms'] as $key => $val) {
 						if ($val['name'] == $value) {
 							$jsonConfig['payload']['widgets'][$index][$item] = $val['id'];
-							log::add('JeedomConnect', 'info', 'widget room '. $value . '::' . $val['id']);
 						}
 					}
 				}
@@ -172,6 +197,8 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 		if ($changed) {
+			$jsonConfig['payload']['widgets'] = array_values($jsonConfig['payload']['widgets']);
+			$jsonConfig['payload']['groups'] = array_values($jsonConfig['payload']['groups']);
 			log::add('JeedomConnect', 'info', 'Config file updated for '. $this->getName() . ':' . json_encode($jsonConfig));
 			$this->saveConfig($jsonConfig);
 		}
@@ -309,6 +336,9 @@ class JeedomConnect extends eqLogic {
         break;
 		case "aarch64":
 				$sendBin = "sendNotif_arm64";
+				break;
+		case "i686":
+				$sendBin = "sendNotif_x32";
 				break;
 		}
 		if ($sendBin == '') {

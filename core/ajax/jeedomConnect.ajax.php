@@ -47,6 +47,7 @@ try {
     if (!is_object($eqLogic)) {
 			ajax::error('Erreur');
 		} else {
+      //$eqLogic->updateConfig();
 			$configJson = $eqLogic->getConfig();
 			ajax::success($configJson);
 		}

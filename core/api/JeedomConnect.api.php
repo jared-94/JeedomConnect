@@ -19,6 +19,7 @@
 header('Content-Type: application/json');
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
+require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 
 $jsonData = file_get_contents("php://input");
 log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
@@ -44,6 +45,7 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG') {
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
 }
 
+
 switch ($method) {
   case 'GET_PLUGIN_CONFIG':
 		$user = user::byHash($params['userHash']);
@@ -51,16 +53,9 @@ switch ($method) {
 			log::add('JeedomConnect', 'debug', "user not valid");
 		  throw new Exception(__("User not valid", __FILE__), -32699);
 		}
-
     $jsonrpc->makeSuccess(array(
       'type' => 'PLUGIN_CONFIG',
-      'payload' => array(
-        'useWs' => config::byKey('useWs', 'JeedomConnect', false),
-        'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
-        'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
-        'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
-        'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090')
-      )
+      'payload' => apiHelper::getPluginConfig()
     ));
     break;
   case 'CONNECT':
@@ -91,25 +86,14 @@ switch ($method) {
     }
 
 		//check userHash
-		$user = user::byHash($params['userHash']);
+		$user = \user::byHash($params['userHash']);
 		if ($user == null) {
 			log::add('JeedomConnect', 'debug', "user not valid");
-		  throw new Exception(__("User not valid", __FILE__), -32699);
+			throw new Exception(__("User not valid", __FILE__), -32699);
 		}
 		$eqLogic->setConfiguration('userHash', $params['userHash']);
 		$eqLogic->save();
-
-		$registerDevice = $user->getOptions('registerDevice', array());
-		if (!is_array($registerDevice)) {
-			$registerDevice = array();
-		}
-		$rdk = (!isset($params['rdk']) || !isset($registerDevice[sha512($params['rdk'])])) ? config::genKey() : $params['rdk'];
-		$registerDevice[sha512($rdk)] = array();
-		$registerDevice[sha512($rdk)]['datetime'] = date('Y-m-d H:i:s');
-		$registerDevice[sha512($rdk)]['ip'] = getClientIp();
-		$registerDevice[sha512($rdk)]['session_id'] = session_id();
-		$user->setOptions('registerDevice', $registerDevice);
-		$user->save();
+		$config = $eqLogic->getConfig();
 
     $result = array(
       'type' => 'WELCOME',
@@ -117,27 +101,72 @@ switch ($method) {
         'pluginVersion' => $versionJson->version,
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
-				'rdk' => $rdk
+				'pluginConfig' => apiHelper::getPluginConfig(),
+				'cmdInfo' => apiHelper::getCmdInfoData($config),
+				'scInfo' => apiHelper::getScenarioData($config),
+				'objInfo' => apiHelper::getObjectData($config)
       )
     );
     log::add('JeedomConnect', 'debug', 'send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+	case 'REGISTER_DEVICE':
+		$rdk = apiHelper::registerUser($eqLogic, $params['userHash'], $params['rdk']);
+		if (!isset($rdk)) {
+			log::add('JeedomConnect', 'debug', "user not valid");
+			throw new Exception(__("User not valid", __FILE__), -32699);
+		}
+		$jsonrpc->makeSuccess(array(
+      'type' => 'REGISTERED',
+      'payload' => array(
+				'rdk' => $rdk
+      )
+    ));
+		break;
   case 'GET_CONFIG':
-    $jsonrpc->makeSuccess($eqLogic->getConfig());
+		$result = $eqLogic->getConfig();
+		$result['payload']['summaryConfig'] = config::byKey('object:summary');
+    $jsonrpc->makeSuccess($result);
     break;
   case 'GET_CMD_INFO':
-    $result = getCmdInfoData($eqLogic);
+    $result = array(
+	    'type' => 'SET_CMD_INFO',
+	    'payload' => apiHelper::getCmdInfoData($eqLogic->getConfig())
+	  );
     log::add('JeedomConnect', 'debug', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_SC_INFO':
-    $result = getScenarioData($eqLogic);
+    $result = array(
+	    'type' => 'SET_SC_INFO',
+	    'payload' => apiHelper::getScenarioData($eqLogic->getConfig())
+	  );
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+	case 'GET_OBJ_INFO':
+    $result = array(
+	    'type' => 'SET_OBJ_INFO',
+	    'payload' => apiHelper::getObjectData($eqLogic->getConfig())
+	  );
+    log::add('JeedomConnect', 'info', 'Send objects '.json_encode($result));
+    $jsonrpc->makeSuccess($result);
+    break;
+	case 'GET_INFO':
+		$config = $eqLogic->getConfig();
+		$result = array(
+			'type' => 'SET_INFO',
+			'payload' => array(
+				'cmds' => apiHelper::getCmdInfoData($config),
+				'scenarios' => apiHelper::getScenarioData($config),
+				'objects' => apiHelper::getObjectData($config)
+			)
+		);
+		log::add('JeedomConnect', 'info', 'Send info '.json_encode($result));
+		$jsonrpc->makeSuccess($result);
+		break;
   case 'GET_GEOFENCES':
-    $result = getGeofencesData($eqLogic);
+    $result = apiHelper::getGeofencesData($eqLogic);
     log::add('JeedomConnect', 'info', 'GEOFENCES '.json_encode($result));
     if (count($result['payload']['geofences']) > 0) {
       log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
@@ -188,97 +217,5 @@ switch ($method) {
 }
 
 
-
-function getInfoCmdList($eqLogic) {
-  $return = array();
-  foreach ($eqLogic->getConfig()['payload']['widgets'] as $widget) {
-    foreach ($widget as $item => $value) {
-      if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
-        array_push($return, $value['id']);
-      }
-    }
-  }
-  return array_unique($return);
-}
-
-function getScenarioList($eqLogic) {
-  $return = array();
-  foreach ($eqLogic->getConfig()['payload']['widgets'] as $widget) {
-    if ($widget['type'] == 'scenario') {
-      array_push($return, $widget['scenarioId']);
-    }
-  }
-  return $return;
-}
-
-function getCmdInfoData($eqLogic) {
-  $cmds = cmd::byIds(getInfoCmdList($eqLogic));
-  $result = array(
-    'type' => 'SET_CMD_INFO',
-    'payload' => array()
-  );
-
-  foreach ($cmds as $cmd) {
-    $state = $cmd->getCache(array('valueDate', 'value'));
-    $cmd_info = array(
-      'id' => $cmd->getId(),
-      'value' => $state['value'],
-      'modified' => strtotime($state['valueDate'])
-    );
-    array_push($result['payload'], $cmd_info);
-  }
-  return $result;
-
-}
-
-function getScenarioData($eqLogic, $all=false) {
-  $scIds = getScenarioList($eqLogic);
-  $result = array(
-    'type' => $all ? 'SET_ALL_SC' : 'SET_SC_INFO',
-    'payload' => array()
-  );
-
-  foreach (scenario::all() as $sc) {
-    if (in_array($sc->getId(), $scIds) || $all) {
-      $state = $sc->getCache(array('state', 'lastLaunch'));
-      $sc_info = array(
-        'id' => $sc->getId(),
-        'name' => $sc->getName(),
-        'object' => $sc->getObject() == null ? 'Aucun' : $sc->getObject()->getName(),
-        'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
-        'status' => $state['state'],
-        'lastLaunch' => strtotime($state['lastLaunch']),
-        'active' => $sc->getIsActive() ? 1 : 0
-      );
-      array_push($result['payload'], $sc_info);
-    }
-  }
-  return $result;
-}
-
-function getGeofencesData($eqLogic) {
-  $result = array(
-    'type' => 'SET_GEOFENCES',
-    'payload' => array(
-      'geofences' => array()
-    )
-  );
-  foreach ($eqLogic->getCmd('info') as $cmd) {
-    if (substr( $cmd->getLogicalId(), 0, 8 ) === "geofence") {
-      array_push($result['payload']['geofences'], array(
-        'identifier' => substr( $cmd->getLogicalId(), 9 ),
-        'extras' => array(
-          'name' => $cmd->getName()
-        ),
-        'radius' => $cmd->getConfiguration('radius'),
-        'latitude' => $cmd->getConfiguration('latitude'),
-        'longitude' => $cmd->getConfiguration('longitude'),
-        'notifyOnEntry' => true,
-        'notifyOnExit' => true
-      ));
-    }
-  }
-  return $result;
-}
 
 ?>

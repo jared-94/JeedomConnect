@@ -21,10 +21,58 @@ function openTab(evt, tabName) {
 	evt.currentTarget.className += " active";
 }
 
+function getIconModal(_options, _callback) {
+	$("#iconModal").dialog('destroy').remove();
+	if ($("#iconModal").length == 0) {
+    $('body').append('<div id="iconModal"></div>');
+    $("#iconModal").dialog({
+	  	title: _options.title,
+      closeText: '',
+      autoOpen: false,
+      modal: true,
+			height: (jQuery(window).height() - 150),
+      width: 1500
+    });
+		jQuery.ajaxSetup({
+      async: false
+    });
+    $('#iconModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect');
+    jQuery.ajaxSetup({
+      async: true
+    });
+	}
+
+	$("#iconModal").dialog({title: _options.title, buttons: {
+    "Annuler": function() {
+      $(this).dialog("close");
+    },
+    Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function() {
+				var icon = $('.iconSelected .iconSel').html();
+				icon = icon.replace(/"/g, "'")
+				var result = {};
+				result.html = icon;
+
+				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+		        _callback(result);
+		    }
+
+				$(this).dialog('close');
+			}
+		}
+	}});
+
+	$('#iconModal').dialog('open');
+
+}
+
 function getSimpleModal(_options, _callback) {
   if (!isset(_options)) {
     return;
   }
+	$("#simpleModal").dialog('destroy').remove();
   if ($("#simpleModal").length == 0) {
     $('body').append('<div id="simpleModal"></div>');
     $("#simpleModal").dialog({
@@ -34,6 +82,7 @@ function getSimpleModal(_options, _callback) {
       modal: true,
       width: 430
     });
+
     jQuery.ajaxSetup({
       async: false
     });
@@ -47,35 +96,63 @@ function getSimpleModal(_options, _callback) {
     "Annuler": function() {
       $(this).dialog("close");
     },
-    "Valider": function() {
-      var result = {};
-	  if (_options.fields.find(i => i.type == "enable")) {
-		  result.enable = $("#mod-enable-input").is(':checked');
-	  }
-	  if (_options.fields.find(i => i.type == "name")) {
-		  result.name = $("#mod-name-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "icon")) {
-			result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
-	  }
-	  if (_options.fields.find(i => i.type == "move")) {
-		  result.moveToId = $("#mod-move-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "expanded")) {
-		  result.expanded = $("#mod-expanded-input").is(':checked');
-	  }
-	  if (_options.fields.find(i => i.type == "widget")) {
-		  result.widgetId = $("#mod-widget-input").val();
-		  result.widgetName = $("#mod-widget-input option:selected").text();
-	  }
+    Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function() {
+	      var result = {};
+		  	if (_options.fields.find(i => i.type == "enable")) {
+			  	result.enable = $("#mod-enable-input").is(':checked');
+		  	}
+		  	if (_options.fields.find(i => i.type == "name")) {
+			  	result.name = $("#mod-name-input").val();
+		  	}
+		  	if (_options.fields.find(i => i.type == "icon")) {
+					//result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
+					result.icon = htmlToIcon($("#icon-div").html());
+		  	}
+		  	if (_options.fields.find(i => i.type == "move")) {
+			  	result.moveToId = $("#mod-move-input").val();
+		  	}
+		  	if (_options.fields.find(i => i.type == "expanded")) {
+			  	result.expanded = $("#mod-expanded-input").is(':checked');
+		  	}
+		  	if (_options.fields.find(i => i.type == "widget")) {
+			  	result.widgetId = $("#mod-widget-input").val();
+			  	result.widgetName = $("#mod-widget-input option:selected").text();
+		  	}
+				if (_options.fields.find(i => i.type == "object")) {
+			  	result.object = $("#object-select  option:selected").val();
+		  	}
+				if (_options.fields.find(i => i.type == "swipeUp")) {
+					let choice = $("#swipeUp-select option:selected").val();
+					if (choice == 'cmd') {
+						result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
+					} else if (choice == 'sc') {
+						result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
+					}
+		  	}
+				if (_options.fields.find(i => i.type == "swipeDown")) {
+					let choice = $("#swipeDown-select option:selected").val();
+					if (choice == 'cmd') {
+						result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
+					} else if (choice == 'sc') {
+						result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
+					}
+		  	}
+	    if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+	        _callback(result);
+	    }
+	    $(this).dialog('close');
 
-      if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-        _callback(result);
-      }
-      $(this).dialog('close');
-    }
-  }});
+	   }
+		} }});
+
   $('#simpleModal').dialog('open');
+	$('#simpleModal').keydown(function(e) { if (e.which == 13) {
+		$('#saveSimple').click();
+		return false;
+	}})
 };
 
 
@@ -199,6 +276,8 @@ function getWidgetModal(_options, _callback) {
 				throw {};
 			}
 			result[option.id] = $("#"+option.id+"-input").val();
+		} else if (option.category == "binary") {
+			result[option.id] = $("#"+option.id+"-input").is(':checked');
 		} else if (option.category == "stringList") {
 			if ($("#"+option.id+"-input").val() == 'none' & option.required) {
 				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
