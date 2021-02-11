@@ -1,4 +1,5 @@
 # Changelog JeedomConnect
+
 ## Version 0.15.4 Beta (11/02/2021)
 - Notification : comptibilité avec l'architecture X32
 - Option pour afficher la barre du haut
@@ -30,6 +31,9 @@
 - Résolution de divers bugs et améliorations mineures
 
 ## Version 0.14.3 (27/01/2021)
+=======
+## Version 0.14.3 (28/01/2021)
+
 - Correction bug status lumières
 - Ajout icônes groupe
 - Option pour inverser un binaire
