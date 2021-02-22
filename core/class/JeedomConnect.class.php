@@ -496,7 +496,7 @@ class JeedomConnectCmd extends cmd {
 		}
 		$eqLogic = $this->getEqLogic();
 		if (strpos(strtolower($this->getLogicalId()), 'notif') !== false) {
-			//log::add('JeedomConnect', 'info', json_encode($_options));
+			log::add('JeedomConnect', 'info', json_encode($_options));
 			$data = array(
 				'type' => 'DISPLAY_NOTIF',
 				'payload' => array(
@@ -507,6 +507,10 @@ class JeedomConnectCmd extends cmd {
 					'timeout' => $_options['timeout']
 				)
 			);
+			if (isset($_options["files"])) {
+				$data['payload']['picture'] = realpath($_options['files'][0]);
+
+      }
 			$eqLogic->sendNotif($this->getLogicalId(), $data);
 		}
 	}
