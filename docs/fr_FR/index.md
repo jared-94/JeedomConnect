@@ -29,7 +29,7 @@ Le plugin, ainsi que l'application sont complètement **gratuit** et le resteron
 - Possibilité de sécuriser toutes les action avec données biométriques
 - Personalisation poussée de l'interface
 - Notifications Push enrichies compatibles avec Ask
-- [Géolocalisation](#geoloc) avec gestion avancée de la batterie
+- [Géolocalisation](#geoloc) avec gestion avancée de la batterie (modes Geofencing et Tracking)
 - Communication via le protocole WebSocket à faible latence, ou bien en HTTP
 - Thème personalisable (couleur, mode sombre)
 
@@ -162,3 +162,4 @@ Vous pouvez ensuite aller sur `Gestion des lieux`.
 - Pour **définir une zone**, faites un appuie long sur la carte puis donner un nom et un rayon (en mètres). Le binaire est immédiatement créé côté Jeedom.
 - Pour **supprimer ou éditer une zone**, appuyez sur le marqueur puis sur le nom qui apparait.
 - Pour **déplacer une zone**, faites un appuie long sur le marqueur puis glisser.
+Jeedom Connect possède aussi une fonction de Tracking qui vous permet de connaitre à tout moment la position de votre appareil. Les coordonnées GPS (latitude,longitude) sont accessibles dans la commande `Position` de votre équipement.
