@@ -1,6 +1,11 @@
 # Changelog JeedomConnect
 
-## Version 0.15.4 Beta (11/02/2021)
+## Version 0.16.0 Beta (22/02/2021)
+- Notifications : Possibilité d'envoyer des images
+- Geolocalisation : mode Tracking pour le suivi constant de l'appareil (nouvelle commande `Position` dans les équipements)
+- Fix widgets non supprimés
+
+## Version 0.15.4 (11/02/2021)
 - Notification : comptibilité avec l'architecture X32
 - Option pour afficher la barre du haut
 

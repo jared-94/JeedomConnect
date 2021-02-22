@@ -21,6 +21,7 @@ function getSimpleModal(_options, _callback) {
   if (!isset(_options)) {
     return;
   }
+	$("#simpleModal").dialog('destroy').remove();
   if ($("#simpleModal").length == 0) {
     $('body').append('<div id="simpleModal"></div>');
     $("#simpleModal").dialog({
