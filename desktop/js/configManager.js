@@ -421,17 +421,17 @@ function deleteBottomTab(tabId) {
 		//remove all sub-elements
 		configData.payload.sections.slice().forEach(section => {
 			if (section.parentId == tabId) {
-				deleteTopTab(section.id);
+				removeTopTab(section.id);
 			}
 		});
 		configData.payload.groups.slice().forEach(group => {
 			if (group.parentId == tabId) {
-				deleteGroup(group.id);
+				removeGroup(group.id);
 			}
 		});
 		configData.payload.widgets.forEach(widget => {
 			if (widget.parentId == tabId) {
-				deleteWidget(widget.id);
+				removeWidget(widget.id);
 			}
 		});
 
@@ -514,30 +514,33 @@ function downTopTab(tabId) {
 
 function deleteTopTab(tabId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous vraiment supprimer ce menu ?"}] }, function(result) {
-		var tabToDelete = configData.payload.sections.find(tab => tab.id == tabId);
-		var index = configData.payload.sections.indexOf(tabToDelete);
-		var tabList = configData.payload.sections.filter(tab => tab.parentId == tabToDelete.parentId);
-		tabList.forEach(item => {
-			if (item.index > tabToDelete.index) {
-				item.index = item.index - 1;
-			}
-		});
-		configData.payload.sections.splice(index, 1);
-
-		configData.payload.groups.slice().forEach(group => {
-			if (group.parentId == tabId) {
-				deleteGroup(group.id);
-			}
-		});
-
-		configData.payload.widgets.forEach(widget => {
-			if (widget.parentId == tabId) {
-				deleteWidget(widget.id)
-			}
-		});
-
+		removeTopTab(tabId);
 		refreshTopTabContent();
   });
+}
+
+function removeTopTab(tabId) {
+	var tabToDelete = configData.payload.sections.find(tab => tab.id == tabId);
+	var index = configData.payload.sections.indexOf(tabToDelete);
+	var tabList = configData.payload.sections.filter(tab => tab.parentId == tabToDelete.parentId);
+	tabList.forEach(item => {
+		if (item.index > tabToDelete.index) {
+			item.index = item.index - 1;
+		}
+	});
+	configData.payload.sections.splice(index, 1);
+
+	configData.payload.groups.slice().forEach(group => {
+		if (group.parentId == tabId) {
+			removeGroup(group.id);
+		}
+	});
+
+	configData.payload.widgets.forEach(widget => {
+		if (widget.parentId == tabId) {
+			removeWidget(widget.id)
+		}
+	});
 }
 
 function moveTopTabModal(tabId) {
@@ -712,23 +715,27 @@ function downGroup(groupId) {
 
 function deleteGroup(groupId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Tous les widgets attachés à ce groupe seront supprimés. Voulez-vous continuer ?"}] }, function(result) {
-		var groupToDelete = configData.payload.groups.find(g => g.id == groupId);
-		var index = configData.payload.groups.indexOf(groupToDelete);
-		var rootElmts = getRootObjects(groupToDelete.parentId);
-		rootElmts.forEach(item => {
-			if (item.index > groupToDelete.index) {
-				item.index = item.index - 1;
-			}
-		});
-    configData.payload.groups.splice(index, 1);
-
-		configData.payload.widgets.slice().forEach(widget => {
-			if (widget.parentId == groupId) {
-				deleteWidget(widget.id);
-			}
-		});
+		removeGroup(groupId);
 		refreshWidgetsContent();
   });
+}
+
+function removeGroup(groupId) {
+	var groupToDelete = configData.payload.groups.find(g => g.id == groupId);
+	var index = configData.payload.groups.indexOf(groupToDelete);
+	var rootElmts = getRootObjects(groupToDelete.parentId);
+	rootElmts.forEach(item => {
+		if (item.index > groupToDelete.index) {
+			item.index = item.index - 1;
+		}
+	});
+	configData.payload.groups.splice(index, 1);
+
+	configData.payload.widgets.slice().forEach(widget => {
+		if (widget.parentId == groupId) {
+			removeWidget(widget.id);
+		}
+	});
 }
 
 function moveGroupModal(groupId) {
@@ -854,45 +861,48 @@ function downWidget(widgetId) {
 
 function deleteWidget(widgetId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {
-		var widgetToDelete = configData.payload.widgets.find(g => g.id == widgetId);
-		var index = configData.payload.widgets.indexOf(widgetToDelete);
-		var rootElmts = getRootObjects(widgetToDelete.parentId);
-		rootElmts.forEach(item => {
-			if (item.index > widgetToDelete.index) {
-				item.index = item.index - 1;
-			}
-		});
-    configData.payload.widgets.splice(index, 1);
-
-		//remove widget if in a group widgets
-		var groupList = [];
-		widgetsList.widgets.forEach(w => {
-			w.options.forEach(o => {
-				if (o.category == 'widgets') {
-					groupList.push({ type: w.type, optionId: o.id });
-				}
-			});
-		});
-		configData.payload.widgets.forEach((w, i) => {
-			var wConfig = groupList.find(g => g.type == w.type);
-			if (wConfig != undefined) {
-				if (w[wConfig.optionId] != undefined) {
-					var toRemove = w[wConfig.optionId].find(o => o.id == widgetId);
-					if (toRemove != undefined) {
-						index = w[wConfig.optionId].indexOf(toRemove);
-						configData.payload.widgets[i][wConfig.optionId].forEach(item => {
-							if (item.index > index) {
-								item.index = item.index - 1;
-							}
-						});
-						configData.payload.widgets[i][wConfig.optionId].splice(index, 1);
-					}
-				}
-			}
-		});
-
+		removeWidget(widgetId);
 		refreshWidgetsContent();
   });
+}
+
+function removeWidget(widgetId) {
+	var widgetToDelete = configData.payload.widgets.find(g => g.id == widgetId);
+	var index = configData.payload.widgets.indexOf(widgetToDelete);
+	var rootElmts = getRootObjects(widgetToDelete.parentId);
+	rootElmts.forEach(item => {
+		if (item.index > widgetToDelete.index) {
+			item.index = item.index - 1;
+		}
+	});
+	configData.payload.widgets.splice(index, 1);
+
+	//remove widget if in a group widgets
+	var groupList = [];
+	widgetsList.widgets.forEach(w => {
+		w.options.forEach(o => {
+			if (o.category == 'widgets') {
+				groupList.push({ type: w.type, optionId: o.id });
+			}
+		});
+	});
+	configData.payload.widgets.forEach((w, i) => {
+		var wConfig = groupList.find(g => g.type == w.type);
+		if (wConfig != undefined) {
+			if (w[wConfig.optionId] != undefined) {
+				var toRemove = w[wConfig.optionId].find(o => o.id == widgetId);
+				if (toRemove != undefined) {
+					index = w[wConfig.optionId].indexOf(toRemove);
+					configData.payload.widgets[i][wConfig.optionId].forEach(item => {
+						if (item.index > index) {
+							item.index = item.index - 1;
+						}
+					});
+					configData.payload.widgets[i][wConfig.optionId].splice(index, 1);
+				}
+			}
+		}
+	});
 }
 
 function moveWidgetModal(widgetId) {
