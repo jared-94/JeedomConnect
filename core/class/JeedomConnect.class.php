@@ -388,6 +388,12 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+	public function setCoordinates($lat, $lgt) {
+		$positionCmd = $this->getCmd(null, 'position');
+		$this->checkAndUpdateCmd('position', $lat . "," . $lgt);
+		$this->setGeofencesByCoordinates($lat, $lgt);
+	}
+
 	public function setGeofencesByCoordinates($lat, $lgt) {
 		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
 			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false ) {
@@ -450,8 +456,18 @@ class JeedomConnect extends eqLogic {
 			}
     }
 
-    public function postUpdate()
-    {
+    public function postUpdate() {
+			$positionCmd = $this->getCmd(null, 'position');
+				if (!is_object($positionCmd)) {
+					$positionCmd = new JeedomConnectCmd();
+					$positionCmd->setLogicalId('position');
+					$positionCmd->setEqLogic_id($this->getId());
+					$positionCmd->setType('info');
+					$positionCmd->setSubType('string');
+					$positionCmd->setIsVisible(1);
+				}
+				$positionCmd->setName(__('Position', __FILE__));
+				$positionCmd->save();
     }
 
     public function preRemove() {

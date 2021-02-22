@@ -182,7 +182,8 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'GEOLOC':
-  if (array_key_exists('geofence', $params) ) {
+		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude']);
+  /*if (array_key_exists('geofence', $params) ) {
     $geofenceCmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), 'geofence_' . $params['geofence']['identifier']);
     if (!is_object($geofenceCmd)) {
       log::add('JeedomConnect', 'error', "Can't find geofence command");
@@ -201,7 +202,7 @@ switch ($method) {
     }
   } else {
     $eqLogic->setGeofencesByCoordinates($params['coords']['latitude'], $params['coords']['longitude']);
-  }
+  }*/
   break;
   case 'ASK_REPLY':
     $answer = $params['answer'];
