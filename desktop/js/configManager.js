@@ -129,7 +129,8 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i>
+			<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
 			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list"></i> ${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
@@ -929,7 +930,7 @@ function addWidgetModal() {
   getWidgetModal({title:"Ajouter un widget"}, function(result) {
   	console.log(result)
 	  var parentId = $("#widgetsParents-select option:selected").attr('value');
-  	 var rootElmts = getRootObjects(parentId);
+  	var rootElmts = getRootObjects(parentId);
 
 	  var maxIndex = getMaxIndex(rootElmts);
 	  result.parentId = parentId && parseInt(parentId);
@@ -948,4 +949,19 @@ function editWidgetModal(widgetId) {
 	 console.log(result);
 	 refreshWidgetsContent();
   });
+}
+
+function duplicateWidget(widgetId) {
+	var widgetToDuplicate = configData.payload.widgets.find(w => w.id == widgetId);
+	var newWidget = JSON.parse(JSON.stringify(widgetToDuplicate));
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
+	var rootElmts = getRootObjects(parentId);
+
+	var maxIndex = getMaxIndex(rootElmts);
+	newWidget.index = maxIndex + 1;
+	newWidget.id = configData.idCounter;
+
+	configData.payload.widgets.push(newWidget);
+	incrementIdCounter();
+	refreshWidgetsContent();
 }
