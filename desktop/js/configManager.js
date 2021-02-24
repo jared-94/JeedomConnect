@@ -34,10 +34,8 @@ function refreshBottomTabData() {
 	});
 	var items = [];
 	$.each( tabs, function( key, val ) {
-		var icon = typeof(val.icon) == 'string' ? `mdi mdi-${val.icon}` : val.icon.source == 'md' ?
-			`mdi mdi-${val.icon.name}` : val.icon.source == 'fa' ? `fa fa-${val.icon.name}` : `icon ${val.icon.name}`;
 		items.push( `<li><a  onclick="editBottomTabModal('${val.id}');">
-			<i class="${icon}" aria-hidden="true" style="margin-right:15px;"></i>${val.name}</a>
+			${iconToHtml(val.icon)}<i style="margin-left:10px;"></i>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
@@ -297,37 +295,39 @@ function reIndexArray(array) {
 }
 
 function htmlToIcon(html) {
-	let tag = html.split('\"')[1].split(' ');
-	let source = '';
-	let name = '';
-	if (tag[0] == 'icon') {
-		source = 'jeedom';
-		name = tag[1];
-	} else if (tag[0] == 'mdi') {
-		source = 'md';
-		name = tag[1].substring(4);
-	} else if (tag[0] == 'fa') {
-		source = 'fa';
-		name = tag[1].substring(3)
+	let icon = {};
+	icon.source = html.attr("source");
+	icon.name = html.attr("name");
+	if (icon.source == 'fa') {
+		icon.prefix = html.attr("prefix");
 	}
-	let icon = { source, name };
+	if ((icon.source == 'jeedom' | icon.source == 'md' | icon.source == 'fa') & html.attr("color") != '') {
+		icon.color = html.attr("color");
+	}
+	if (icon.source == 'jc' | icon.source == 'user') {
+		icon.shadow = html.attr("shadow");
+	}
 	return icon;
 }
 
 function iconToHtml(icon) {
+	if (typeof(icon) == "string") { //for old config structure
+		icon = { source: 'md', name: icon };
+	}
 	let tag1 = '';
 	let tag2 = '';
 	if (icon.source == 'jeedom') {
-		tag1 = 'icon'
-		tag2 = icon.name;
+		return `<i source="jeedom" name="${icon.name}" ${icon.color ? "color="+icon.color : ''} class="icon ${icon.name}"></i>`;
 	} else if (icon.source == 'md') {
-		tag1 = 'mdi'
-		tag2 = 'mdi-' + icon.name;
+		return `<i source="md" name="${icon.name}" ${icon.color ? "color="+icon.color : ''} class="mdi mdi-${icon.name}"></i>`;
 	} else if (icon.source == 'fa') {
-		tag1 = 'fa'
-		tag2 = 'fa-' + icon.name;
+		return `<i source="fa" name="${icon.name}" prefix="${icon.prefix || 'fa'}" ${icon.color ? "color="+icon.color : ''} class="${icon.prefix || 'fa'} fa-${icon.name}"></i>`;
+	} else if (icon.source == 'jc') {
+		return `<img source="jc" name="${icon.name}" shadow="${icon.shadow}" src="plugins/JeedomConnect/data/img/${icon.name}" style="width: 25px;">`;
+	} else if (icon.source == 'user') {
+		return `<img source="user" name="${icon.name}" shadow="${icon.shadow}" src="plugins/JeedomConnect/data/img/user_files/${icon.name}" style="width: 25px;">`;
 	}
-	return `<i class="${tag1} ${tag2}"></i>`;
+	return '';
 }
 
 /* BOTTOM TAB FUNCTIONS */
