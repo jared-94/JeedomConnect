@@ -24,9 +24,82 @@ try {
         throw new \Exception(__('401 - Accès non autorisé', __FILE__));
     }
 
+	if (init('action') == 'saveWidgetConfig') {
+		log::add('JeedomConnect', 'debug', '-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
+		$eqLogic = JeedomConnect::byId(init('eqId'));
+		if (!is_object($eqLogic)) {
+			log::add('JeedomConnect', 'debug', 'Eq Id does not exist - create new one');
+			$eqLogic = new JeedomConnect();
+			$eqLogic->setEqType_name( 'JeedomConnect' );
+		}
+		foreach (init('config') as $key => $value) {
+			$eqLogic->setConfiguration($key, $value  );	
+		}
+		$eqLogic->setName(init('eqName') );
+		$eqLogic->save();
+		ajax::success();
+
+	}
+
+	if (init('action') == 'removeWidgetConfig') {
+		log::add('JeedomConnect', 'debug', 'removeWidgetConfig for id >' . init('eqId') . '<');
+		$eqLogic = JeedomConnect::byId(init('eqId'));
+		if ( is_object($eqLogic)) {
+			$eqLogic->remove();			
+		}
+		ajax::success();
+
+	}
+
+	if (init('action') == 'getWidgetConfig') {
+		$eqId = init('eqId');
+		
+		$eqLogic = JeedomConnect::byId($eqId);
+
+		if (!is_object($eqLogic)) {
+			ajax::error('Erreur - pas d\'équipement trouvé');
+		} 
+		else{
+			$widgetConf = $eqLogic->getConfiguration('widgetJC') ?? '';
+			$configJson = json_decode($widgetConf);
+
+			if ($configJson == null){
+				ajax::error('Erreur - pas de configuration pour ce widget');
+			}
+			else{
+				ajax::success($configJson);
+			}
+		}
+	}
+
+	if (init('action') == 'getWidgetConfigAll') {
+		log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ retrieve config for ALL widgets');
+		$eqLogics = JeedomConnect::byType('JeedomConnect');
+
+		if (is_null($eqLogics)) {
+			log::add('JeedomConnect', 'debug', 'no widget found');
+			ajax::error('Erreur - pas d\'équipement trouvé');
+		} 
+		else{
+			$result = array();
+			foreach ($eqLogics as $eqLogic) {
+				$type = $eqLogic->getConfiguration('type') ;
+				
+				if ( $type == "widget" ){
+					$monWidget = json_decode( $eqLogic->getConfiguration('widgetJC')) ;
+					$monWidget->id = intval($eqLogic->getId());
+					array_push($result, $monWidget ) ;
+				}	
+			}
+			
+			ajax::success($result);
+			
+		}
+	}
+
 
 	if (init('action') == 'saveConfig') {
-    $config = init('config');
+    	$config = init('config');
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config);
