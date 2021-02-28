@@ -79,3 +79,4 @@ if (!isConnect('admin')) {
 </div>
 
  <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');?>
+ <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');?>

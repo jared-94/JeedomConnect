@@ -115,7 +115,9 @@ class JeedomConnect extends eqLogic {
 
 	public function getConfig($replace = false) {
 
-		log::add('JeedomConnect', 'debug', '¤¤¤¤¤ trying to get config file for eqId : ' . $this->getId() ); 
+		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
+			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' ); 
+		}
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		$configFile = file_get_contents($config_file_path);
@@ -125,7 +127,9 @@ class JeedomConnect extends eqLogic {
 			log::add('JeedomConnect', 'debug', '¤¤¤¤¤ only send the config file without enrichment' ); 
 			return $jsonConfig;
 		}
+		log::add('JeedomConnect', 'debug', '¤¤¤¤¤ creating enriched config file' ); 
 
+		$roomIdList = array();
 		foreach ($jsonConfig['payload']['widgets'] as $key => $widget) {
 			$eqLogic = JeedomConnect::byId($widget['id']) ;
 
@@ -139,6 +143,10 @@ class JeedomConnect extends eqLogic {
 				} 
 				$widget['enable'] = true;
 				$widget['id'] = intval($widget['id']) ;
+
+				if (isset($widget['room'])){
+					array_push($roomIdList , $widget['room'] ) ;
+				}
 				
 				$jsonConfig['payload']['widgets'][$key] = $widget;
 
@@ -147,15 +155,32 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		// $widgetStringFinal = json_encode( $jsonConfig ) ;
-		// log::add('JeedomConnect', 'debug', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal ); 
+		$allRooms = array();
+		foreach ($roomIdList as $item ) {
+			$roomList = $this->getJeedomObject($item);
+			array_push($allRooms, $roomList);
+		}
+		$jsonConfig['payload']['rooms'] = $allRooms ;
+
+		$widgetStringFinal = json_encode( $jsonConfig ) ;
+		//log::add('testTLE', 'info', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal ); 
 		
-		//file_put_contents($config_file_path.'.new', $widgetStringFinal );			
+		file_put_contents($config_file_path.'.generated', $widgetStringFinal );			
 		
 		return $jsonConfig;
 	}
 
-	
+	public function getJeedomObject($id){
+		
+		$obj = jeeObject::byId($id) ;
+
+		if ( !is_object($obj)){
+			return null;
+		}
+		
+		$result = array("id" => intval( $obj->getId() ), "name" => $obj->getName() , "index" => $obj->getPosition() ) ;
+		return $result;
+	}
 
 	public function updateConfig() {
 		$jsonConfig = $this->getConfig();

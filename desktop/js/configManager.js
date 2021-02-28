@@ -123,7 +123,7 @@ function refreshWidgetsContent() {
 	});
 
 	items = [];
-	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
+	console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
 	$.each( rootElmts, function( key, value ) {
 		var val = allWidgetsDetail.find(w => w.id == value.id) ; 
 		if (val  !=undefined && val.type !== undefined) { //it is a widget
@@ -212,9 +212,11 @@ function getMaxIndex(array) {
 	return maxIndex;
 }
 
+// getRoomList();
+
 function getRoomName(id) {
 	if (id == 'global') { return 'Global'; }
-	const room = configData.payload.rooms.find(r => r.id == id);
+	const room = roomList.find(r => r.id == id);
 	if (room) {
 		return room.name;
 	} else {

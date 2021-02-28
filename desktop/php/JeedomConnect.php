@@ -61,7 +61,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			foreach ($eqLogics as $eqLogic) {
                 if ($eqLogic->getConfiguration('type','') == 'widget') {
                     $opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-                    echo '<div class="widgetDisplayCard cursor'.$opacity.'" data-widget_id="' . $eqLogic->getId() . '">';
+                    echo '<div class="widgetDisplayCard cursor '.$opacity.'" data-widget_id="' . $eqLogic->getId() . '">';
 					$img = $eqLogic->getConfiguration('imgPath','') ?: $plugin->getPathImgIcon() ;
                     echo '<img src="' . $img . '"/>';
                     echo '<br>';

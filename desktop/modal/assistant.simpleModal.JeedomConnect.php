@@ -97,7 +97,8 @@ function setSimpleModalData(options) {
 			<div class='col-xs-9'><div class='input-group'>
 			<select style="width:250px;" id="mod-widget-input">`
 
-			configData.payload.widgets.forEach(item => {
+			// configData.payload.widgets.forEach(item => {
+      allWidgetsDetail.forEach(item => {
 				if (option.choices.includes(item.type)) {
 					let name = getWidgetPath(item.id);
           room = getRoomName(item.room);

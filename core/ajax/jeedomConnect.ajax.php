@@ -24,6 +24,18 @@ try {
         throw new \Exception(__('401 - Accès non autorisé', __FILE__));
     }
 
+	if (init('action') == 'getJeedomObject') {
+		$list = array();
+		$options = '';
+		foreach ((jeeObject::buildTree(null, false)) as $object) {
+			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+			array_push($list, array("id" => intval( $object->getId() ), "name" => $object->getName() ) ) ; 
+		}
+		// echo $options;
+		ajax::success( array('details' => $list, 'options' => $options) );
+		
+	}
+
 	if (init('action') == 'saveWidgetConfig') {
 		log::add('JeedomConnect', 'debug', '-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
 		$eqLogic = JeedomConnect::byId(init('eqId'));
@@ -36,6 +48,17 @@ try {
 			$eqLogic->setConfiguration($key, $value  );	
 		}
 		$eqLogic->setName(init('eqName') );
+		if ( init('isEnable') == 'true' ) {
+			$eqLogic->setIsEnable(1);	
+		}else{
+			$eqLogic->setIsEnable(0);
+		}
+		if (init('room') != 'none' ) {
+			$eqLogic->setObject_id(init('room'));
+		}
+		else{
+			$eqLogic->setObject_id(null);
+		}
 		$eqLogic->save();
 		ajax::success();
 

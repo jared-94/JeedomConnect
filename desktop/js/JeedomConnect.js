@@ -55,7 +55,7 @@ $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '
 function editWidgetModal(widgetId,  removeAction, exit) {
   var widgetToEdit = allWidgetsDetail.find(w => w.id == widgetId);
   getWidgetModal({title:"Editer un widget", eqId : widgetId, widget:widgetToEdit, removeAction: removeAction, exit : exit}, function(result) {
-	 refreshWidgetsContent();
+	 if (! exit) refreshWidgetsContent();
    refreshWidgetDetails();
   });
 
@@ -365,16 +365,48 @@ var widgetsList = (function () {
   return json;
 })(); 
 
+var roomList ;
+var roomListOptions ;
+getRoomList()
+
+function getRoomList(){
+  $.post({
+		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+		data: {
+			'action': 'getJeedomObject'
+		},
+		cache: false,
+		dataType: 'json',
+		success: function( data ) {
+      console.log("roomList ajax received : ", data) ;
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({
+				  message: data.result,
+				  level: 'danger'
+				});
+			}
+			else{
+				roomList = data.result.details;
+				roomListOptions = data.result.options;
+				// console.log("roomList  : ", roomList);
+				// console.log("roomListOptions  : ", roomListOptions);
+			}
+		}
+	});
+}
+
 
 items = [];
 widgetsList.widgets.forEach(item => {
   items.push('<option value="'+item.type+'">'+item.name+'</option>');
 });
 $("#widgetsList-select").html(items.join(""));
+$("#room-input").html(roomListOptions);
 
 
 function setWidgetModalData(options) {
   refreshAddWidgets();
+  console.log("seWidgetMdal options : ", options); 
   if (options.widget !== undefined) {
      $('#widgetsList-select option[value="'+options.widget.type+'"]').prop('selected', true);
      refreshAddWidgets();
@@ -383,6 +415,11 @@ function setWidgetModalData(options) {
      $("#enable-input").prop('checked', enable);
      var blockDetail = options.widget.blockDetail ? "checked": "";
      $("#blockDetail-input").prop('checked', blockDetail);
+
+     //Room
+    if (options.widget.room !== undefined ) {
+      $('#room-input option[value="'+options.widget.room+'"]').prop('selected', true);
+    }
 
      $("#widgetOptions").attr('widget-id', options.eqId ?? '');
      
@@ -494,10 +531,23 @@ function refreshAddWidgets() {
   var items = [];
 
   //Enable
-  // option = `<li><div class='form-group'>
-  // 	<label class='col-xs-3 '>Actif</label>
-  // 	<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="enable-input" checked></div></div></div></li>`;
-  // items.push(option);
+   option = `<li><div class='form-group'>
+  	<label class='col-xs-3 '>Actif</label>
+  	<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="enable-input" checked></div></div></div></li>`;
+  items.push(option);
+
+  //Room
+  option = `<li><div class='form-group'>
+    <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
+    <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
+    <option value="none">Sélection  d'une pièce</option>`;
+  option += roomListOptions ;
+
+  if (type == 'room') {
+    option += `<option value="global">Global</option>`;
+  }
+  option += `</select></div></div></div></li>`;
+  items.push(option);
 
   widget.options.forEach(option => {
     var required = (option.required) ? "required" : "";
@@ -1232,8 +1282,17 @@ function downWidgetOption(id) {
     result.type = $("#widgetsList-select").val();
    result.blockDetail = $("#blockDetail-input").is(':checked');
   $('#widget-alert').hideAlert();
-      //$(this).dialog('close');
-    
+  //$(this).dialog('close');
+  
+  widgetEnable = $('#enable-input').is(":checked");
+  result.enable = widgetEnable;
+
+  widgetRoom = $('#room-input :selected').val() ;
+  if (widgetRoom != 'none') {
+    result.room = parseInt(widgetRoom);
+  }
+
+
   toSave = JSON.stringify(result)
   //console.log("result final ==> " , toSave);
 
@@ -1241,6 +1300,7 @@ function downWidgetOption(id) {
   
   widgetName = $("#name-input").val() ;
   widgetId = $("#widgetOptions").attr('widget-id') ;
+
   
   if (toSave !== null) {
     $.ajax({
@@ -1250,6 +1310,8 @@ function downWidgetOption(id) {
         action: "saveWidgetConfig",
         eqId: widgetId,
         eqName: widgetName,
+        room: widgetRoom,
+        isEnable: widgetEnable,
         config : {type : 'widget', widgetJC : toSave, 'imgPath' : widgetImg},
       },
       dataType: 'json',
