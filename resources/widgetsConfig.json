@@ -1172,13 +1172,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
@@ -1222,13 +1222,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image Ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
@@ -1273,13 +1273,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
@@ -1323,13 +1323,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image Ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
@@ -1400,13 +1400,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image Ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
@@ -1502,13 +1502,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image Ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
@@ -1558,13 +1558,13 @@
 			},
 			{
 				"id": "image0",
-				"name": "Image Fermé",
+				"name": "Image Fermée",
 				"required": false,
 				"category": "img"
 			},
 			{
 				"id": "image1",
-				"name": "Image Ouvert",
+				"name": "Image Ouverte",
 				"required": false,
 				"category": "img"
 			},
