@@ -104,16 +104,58 @@ class JeedomConnect extends eqLogic {
 			mkdir(self::$_config_dir);
 		}
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
-		file_put_contents($config_file, json_encode($config));
+		try {
+			log::add('JeedomConnect', 'debug', 'Saving conf in file : ' . $config_file ); 
+			file_put_contents($config_file, json_encode($config));			
+		} catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage()); 
+		}
+		
 	}
 
-	public function getConfig() {
-		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
-		$config = file_get_contents($config_file);
-		$jsonConfig = json_decode($config, true);
+	public function getConfig($replace = false) {
 
+		log::add('JeedomConnect', 'debug', '¤¤¤¤¤ trying to get config file for eqId : ' . $this->getId() ); 
+
+		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
+		$configFile = file_get_contents($config_file_path);
+		$jsonConfig = json_decode($configFile, true);
+
+		if ( ! $replace ){
+			log::add('JeedomConnect', 'debug', '¤¤¤¤¤ only send the config file without enrichment' ); 
+			return $jsonConfig;
+		}
+
+		foreach ($jsonConfig['payload']['widgets'] as $key => $widget) {
+			$eqLogic = JeedomConnect::byId($widget['id']) ;
+
+			$eqType = $eqLogic->getConfiguration('type'); 
+
+			if ( $eqType == 'widget') {
+				$widgetConf = json_decode($eqLogic->getConfiguration('widgetJC') );
+
+				foreach ($widgetConf as $key2 => $value2) {
+					$widget[$key2] = $value2;
+				} 
+				$widget['enable'] = true;
+				$widget['id'] = intval($widget['id']) ;
+				
+				$jsonConfig['payload']['widgets'][$key] = $widget;
+
+				$widgetString = json_encode( $widget ) ;
+				
+			}
+		}
+
+		// $widgetStringFinal = json_encode( $jsonConfig ) ;
+		// log::add('JeedomConnect', 'debug', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal ); 
+		
+		//file_put_contents($config_file_path.'.new', $widgetStringFinal );			
+		
 		return $jsonConfig;
 	}
+
+	
 
 	public function updateConfig() {
 		$jsonConfig = $this->getConfig();
@@ -425,14 +467,17 @@ class JeedomConnect extends eqLogic {
 
 
     public function preInsert() {
-			if ($this->getConfiguration('apiKey') == '') {
+		
+			if ($this->getConfiguration('apiKey') == '' && $this->getConfiguration('type') != 'widget') {
 				$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
 				$this->setLogicalId($this->getConfiguration('apiKey'));
 				$this->generateQRCode();
 			}
+
     }
 
     public function postInsert() {
+
 			$this->setIsEnable(1);
 			if ($this->getConfiguration('configVersion') == '') {
 				$this->setConfiguration('configVersion', 0);
@@ -440,6 +485,7 @@ class JeedomConnect extends eqLogic {
 			$this->save();
 			$this->saveConfig(self::$_initialConfig);
 			$this->saveNotifs(self::$_notifConfig);
+
     }
 
     public function preSave()
@@ -450,13 +496,16 @@ class JeedomConnect extends eqLogic {
     }
 
     public function preUpdate() {
+
 			if ($this->getConfiguration('scenariosEnabled') == '') {
 				$this->setConfiguration('scenariosEnabled', '1');
 				$this->save();
 			}
+
     }
 
     public function postUpdate() {
+
 			$positionCmd = $this->getCmd(null, 'position');
 				if (!is_object($positionCmd)) {
 					$positionCmd = new JeedomConnectCmd();
@@ -468,6 +517,7 @@ class JeedomConnect extends eqLogic {
 				}
 				$positionCmd->setName(__('Position', __FILE__));
 				$positionCmd->save();
+
     }
 
     public function preRemove() {
