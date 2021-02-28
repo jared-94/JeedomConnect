@@ -136,10 +136,8 @@ function getWidgetModal(_options, _callback) {
 
 
 $('.eqLogicAction[data-action=addWidget]').off('click').on('click', function() {
-  getWidgetModal({title:"Configuration du widget"});
+  getWidgetModal({title:"Configuration du widget", removeAction: false, exit : true});
 })
-
-
 
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
