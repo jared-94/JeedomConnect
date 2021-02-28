@@ -1,12 +1,15 @@
 var configData;
 var widgetsList;
 
+
 $.post({
 	url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
 	data: {'action': 'getConfig', 'apiKey': apiKey },
 	cache: false,
 	success: function( config ) {
+		//console.log("config : ", config);
 		configData = json_decode(config).result;
+		//console.log("configData : ", configData);
 		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
@@ -120,8 +123,10 @@ function refreshWidgetsContent() {
 	});
 
 	items = [];
-	$.each( rootElmts, function( key, val ) {
-		if (val.type !== undefined) { //it is a widget
+	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
+	$.each( rootElmts, function( key, value ) {
+		var val = allWidgetsDetail.find(w => w.id == value.id) ; 
+		if (val  !=undefined && val.type !== undefined) { //it is a widget
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
 			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
@@ -131,18 +136,19 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list"></i> ${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${val.id}');"></i></li>`);
-			var curWidgets = configData.payload.widgets.filter(w => w.parentId == val.id);
+			items.push( `<li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${value.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${value.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${value.id}');"></i></li>`);
+			var curWidgets = configData.payload.widgets.filter(w => w.parentId == value.id);
 			curWidgets = curWidgets.sort(function(s,t) {
 				return s.index - t.index;
 			});
 			items.push("<li><ul class='tabSubUL'>");
-			$.each(curWidgets, function (key, w) {
-				var img = widgetsList.widgets.find(i => w.type == i.type).img;
+			$.each(curWidgets, function (key, wid) {
+				var w = allWidgetsDetail.find(x => x.id == wid.id) ; 
+				var img = widgetsList.widgets.find(i => i.type == w.type).img;
 				items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
@@ -925,27 +931,68 @@ function moveWidgetModal(widgetId) {
   });
 }
 
+function selectWidgetModal() {
+  	result = {};
+  	var parentId = $("#widgetsParents-select option:selected").attr('value');
+  	var rootElmts = getRootObjects(parentId);
+
+	var maxIndex = getMaxIndex(rootElmts);
+	result.parentId = parentId && parseInt(parentId);
+	result.index = maxIndex + 1;
+
+	var widgetSelectedId = $("#selWidgetDetail option:selected").attr('data-widget-id');
+	result.id = parseInt(widgetSelectedId);
+
+	configData.payload.widgets.push(result);
+	incrementIdCounter();
+	refreshWidgetsContent();
+}
+
+
 function addWidgetModal() {
   getWidgetModal({title:"Ajouter un widget"}, function(result) {
-  	console.log(result)
-	  var parentId = $("#widgetsParents-select option:selected").attr('value');
-  	 var rootElmts = getRootObjects(parentId);
+  	//console.log(result)
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
+  	var rootElmts = getRootObjects(parentId);
 
-	  var maxIndex = getMaxIndex(rootElmts);
-	  result.parentId = parentId && parseInt(parentId);
-	  result.index = maxIndex + 1;
-	  result.id = configData.idCounter;
+	var maxIndex = getMaxIndex(rootElmts);
+	result.parentId = parentId && parseInt(parentId);
+	result.index = maxIndex + 1;
+	result.id = configData.idCounter;
 
-	  configData.payload.widgets.push(result);
-	  incrementIdCounter();
-	  refreshWidgetsContent();
+	configData.payload.widgets.push(result);
+	incrementIdCounter();
+	refreshWidgetsContent();
   });
 }
 
-function editWidgetModal(widgetId) {
-  var widgetToEdit = configData.payload.widgets.find(w => w.id == widgetId);
-  getWidgetModal({title:"Editer un widget", widget:widgetToEdit}, function(result) {
-	 console.log(result);
-	 refreshWidgetsContent();
-  });
-}
+
+
+// var allWidgetsDetail;
+
+// refreshWidgetDetails() ; 
+
+// function refreshWidgetDetails(){
+
+// 	$.post({
+// 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+// 		data: {
+// 			'action': 'getWidgetConfigAll'
+// 		},
+// 		cache: false,
+// 		dataType: 'json',
+// 		success: function( data ) {
+// 			if (data.state != 'ok') {
+// 				$('#div_alert').showAlert({
+// 				  message: data.result,
+// 				  level: 'danger'
+// 				});
+// 			}
+// 			else{
+// 				allWidgetsDetail = data.result;
+// 				//console.log("allWidgetsDetail : ", allWidgetsDetail);
+// 			}
+// 		}
+// 	});
+
+// }
