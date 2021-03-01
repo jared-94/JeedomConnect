@@ -669,8 +669,25 @@ class JeedomConnect extends eqLogic {
 
 				}
 
+				// review rooms info
+				// sort array by index in order to recreate a good index array
+				usort($configFile['payload']['rooms'], function($a, $b) {return strcmp($a['index'], $b['index']);});
+				$indexRoom = 0;
+				foreach($configFile['payload']['rooms'] as $key => $room){
+					
+					// set the main id to the jeedom object id
+					$room['id'] = $room['object'];
+					$room['index'] = $indexRoom;
+					unset($room['object']) ;
+
+					//save the new widget data into the original config array
+					$configFile['payload']['rooms'][$key] = $room;
+
+					$indexRoom ++;
+
+				}
+				
 				//add info about new format in file
-				//array_splice( $configFile, 1, 0, array('formatVersion' => '1.0') );
 				$configFile = array_merge( array_slice( $configFile, 0, 1 ), array('formatVersion' => '1.0'), array_slice( $configFile, 1 ) );
 				log::add('JeedomConnect', 'debug', 'final config file : ' . json_encode($configFile)  ); 
 
