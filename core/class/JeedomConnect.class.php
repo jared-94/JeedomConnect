@@ -674,16 +674,36 @@ class JeedomConnect extends eqLogic {
 				usort($configFile['payload']['rooms'], function($a, $b) {return strcmp($a['index'], $b['index']);});
 				$indexRoom = 0;
 				foreach($configFile['payload']['rooms'] as $key => $room){
-					
-					// set the main id to the jeedom object id
-					$room['id'] = $room['object'];
-					$room['index'] = $indexRoom;
-					unset($room['object']) ;
+					if ( array_key_exists('object', $room )
+							&& ! is_null($room['object']) ) {
 
-					//save the new widget data into the original config array
-					$configFile['payload']['rooms'][$key] = $room;
+						$roomObject = jeeObject::byId($room['object']);
 
-					$indexRoom ++;
+						if ( is_object($roomObject) ){
+							// set the name with the Jeedom One
+							$room['name'] = $roomObject->getName() ;
+						}
+						else{
+							// if object doesnt exist in jeedom, we remove it
+							unset($configFile['payload']['rooms'][$key]) ; 
+							continue;
+						}
+						
+						// set the main id to the jeedom object id
+						$room['id'] = $room['object'];
+						
+						$room['index'] = $indexRoom;
+						unset($room['object']) ;
+
+						//save the new widget data into the original config array
+						$configFile['payload']['rooms'][$key] = $room;
+
+						$indexRoom ++;
+					}
+					else{
+						// if no object then remove the room
+						unset($configFile['payload']['rooms'][$key]) ; 
+					}
 
 				}
 				
