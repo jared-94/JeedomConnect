@@ -143,7 +143,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Commentaire}}</label>
-								<div class="col-sm-3">
+								<div class="col-sm-7">
 									<textarea class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="commentaire" ></textarea>
 								</div>
 							</div>
@@ -162,8 +162,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
-								<div class="col-sm-4">
+								<label class="col-sm-6 control-label">{{Utilisateur}}</label>
+								<div class="col-sm-6">
 									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userHash">
 										<option value="">{{Aucun}}</option>
 										<?php
@@ -176,37 +176,39 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Assistant}}</label>
-								<div class="col-sm-4">
+								<label class="col-sm-6 control-label">{{Assistant}}</label>
+								<div class="col-sm-6">
 									<a class="btn btn-success" id="assistant-btn"><i class="fa fa-wrench"></i> {{Configurer l'appareil}}
 									</a>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Actions}}</label>
-								<div class="col-sm-4">
-									<input type="file" accept=".json" id="import-input" style="display:none;" >
-									<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
-									<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
+								<label class="col-sm-6 control-label">{{Actions}}</label>
+								<div class="col-sm-6 input-group" style="display:inline-flex;">
+									<span class="input-group-btn">
+										<input type="file" accept=".json" id="import-input" style="display:none;" >
+										<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
+										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
+									</span>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Appareil enregistré :}}</label>
-								<div class="col-sm-4">
-									<span class="eqLogicAttr label label-info" style="font-size:1em;" data-l1key="configuration" type="text" data-l2key="deviceName"></span>
+								<label class="col-sm-6 control-label">{{Appareil enregistré :}}</label>
+								<div class="col-sm-6" style="display:inline-flex;">
+									<span class="eqLogicAttr label" style="font-size:1em!important;margin-right:5px;" data-l1key="configuration" type="text" data-l2key="deviceName"></span>
 									<a class="btn btn-danger" id="removeDevice"><i class="fa fa-minus-circle"></i> {{Détacher}} </a>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Notifications}}</label>
-								<div class="col-sm-4">
+								<label class="col-sm-6 control-label">{{Notifications}}</label>
+								<div class="col-sm-6">
 									<a class="btn btn-success" id="notifConfig-btn"><i class="fa fa-wrench"></i> {{Configurer}}
 									</a>
 								</div>
 							</div>
 							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
-									<div class="col-sm-3">
+									<label class="col-sm-6 control-label">{{Accès scénarios}}</label>
+									<div class="col-sm-6">
 										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
 									</div>
 							</div>
@@ -222,8 +224,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<!-- Affiche l'icône du plugin par défaut mais vous pouvez y afficher les informations de votre choix -->
 						<div class="col-lg-5">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
-							<div class="form-group">
-								<div class="alert alert-info col-sm-7" >
+							<div class="form-group" >
+								<div class="alert alert-info" style="width:300px; margin: 10px auto;text-align:center;" >
 									Utilisez l'assistant de configuration pour gérer l'interface de l'application.<br/>
 									Dans la partie Login de l'application, scannez directement le QR Code.
 								</div>
@@ -241,7 +243,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								<div class="col-sm-3" style=" margin-left:185px; margin-top:10px;">
 									<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
 								</div>
-								<div class="alert alert-danger col-sm-4" style=" margin-left:120px; margin-top:80px; width:500px;">
+								<div class="alert alert-danger" style=" margin: 10px auto; margin-top:80px; width:400px;">
 									Veuillez re-générer le QR code si vous avez modifié :<br/>
 									* Les adresses dans la config du plugin<br/>
 									* L'utilisateur de cet équipement
