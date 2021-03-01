@@ -163,7 +163,7 @@ asort($widgetTypeAvail);
               <label class="col-sm-5 control-label" >{{Widget}}</label>
               <div class="col-sm-7">
                 <select id="selWidgetDetail" class="form-control">
-                  <option value="">{{Aucun}}</option>
+                  <option value="none" data-widget-id="none">{{Aucun}}</option>
                   <?php
                   echo $widgetAvailOptions ;
                   ?>

@@ -934,7 +934,14 @@ function moveWidgetModal(widgetId) {
 }
 
 function selectWidgetModal() {
-  	result = {};
+	$('#jc-assistant').hide();
+	var widgetSelectedId = $("#selWidgetDetail option:selected").attr('data-widget-id');
+	if ( widgetSelectedId == 'none'){
+		$('#jc-assistant').showAlert({message: 'Merci de sélectionner un widget', level: 'danger'});
+		return;
+	}
+
+	result = {};
   	var parentId = $("#widgetsParents-select option:selected").attr('value');
   	var rootElmts = getRootObjects(parentId);
 
