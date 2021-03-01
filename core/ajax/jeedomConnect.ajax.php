@@ -47,7 +47,11 @@ try {
 		foreach (init('config') as $key => $value) {
 			$eqLogic->setConfiguration($key, $value  );	
 		}
-		$eqLogic->setName(init('eqName') );
+
+		$logicalId = uniqid ('JCW') ; 
+		$eqLogic->setLogicalId($logicalId);
+		$eqLogic->setName( init('eqName') . ' ('. $logicalId .')');
+
 		if ( init('isEnable') == 'true' ) {
 			$eqLogic->setIsEnable(1);	
 		}else{

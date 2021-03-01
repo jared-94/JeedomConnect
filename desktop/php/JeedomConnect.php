@@ -56,7 +56,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<legend><i class="fas fa-table"></i> {{Mes widgets}}</legend>
 		<!-- Liste des widgets du plugin -->
 		<div class="eqLogicThumbnailContainer" style="min-height: 173px !important;">
-		<!-- <div class="eqLogicThumbnailContainer eqLogicThumbnailContainerWidget"> -->
 			<?php
 			foreach ($eqLogics as $eqLogic) {
                 if ($eqLogic->getConfiguration('type','') == 'widget') {
@@ -65,7 +64,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 					$img = $eqLogic->getConfiguration('imgPath','') ?: $plugin->getPathImgIcon() ;
                     echo '<img src="' . $img . '"/>';
                     echo '<br>';
-                    echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+                    echo '<span class="name">' . preg_replace('/\(JCW(\w+)\)/i', '', $eqLogic->getHumanName(true, true) ) . '</span>';
                     echo '</div>';
                 }
 			}
