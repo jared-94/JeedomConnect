@@ -182,6 +182,9 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
+
+
+
 	public function updateConfig() {
 		$jsonConfig = $this->getConfig();
 		$changed = false;
@@ -508,8 +511,11 @@ class JeedomConnect extends eqLogic {
 				$this->setConfiguration('configVersion', 0);
 			}
 			$this->save();
-			$this->saveConfig(self::$_initialConfig);
-			$this->saveNotifs(self::$_notifConfig);
+			
+			if ( $this->getConfiguration('type') != 'widget') {
+				$this->saveConfig(self::$_initialConfig);
+				$this->saveNotifs(self::$_notifConfig);
+			}
 
     }
 
