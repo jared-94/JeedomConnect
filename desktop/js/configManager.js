@@ -202,27 +202,6 @@ function resetConfig() {
 
 /*HELPER FUNCTIONS */
 
-function getMaxIndex(array) {
-	var maxIndex = -1;
-	array.forEach( item => {
-		if (item.index > maxIndex) {
-			maxIndex = item.index;
-		}
-	});
-	return maxIndex;
-}
-
-// getRoomList();
-
-function getRoomName(id) {
-	if (id == 'global') { return 'Global'; }
-	const room = roomList.find(r => r.id == id);
-	if (room) {
-		return room.name;
-	} else {
-		return undefined;
-	}
-}
 
 function getRootObjects(id) {
 	var widgets = configData.payload.widgets.filter(w => w.parentId == id);
@@ -230,36 +209,6 @@ function getRootObjects(id) {
 	return groups.concat(widgets);
 }
 
-function getWidgetPath(id) {
-	var widget = configData.payload.widgets.find(w => w.id == id);
-	var name = (' '+widget.name).slice(1);
-
-	if (widget.parentId === undefined | widget.parentId == null) {
-		return name;
-	}
-	var id = (' ' + widget.parentId.toString()).slice(1);
-	parent = configData.payload.groups.find(i => i.id == id);
-	if (parent) {
-		name = parent.name + " / " + name;
-		if (parent.parentId === undefined | parent.parentId == null) {
-			return name;
-		}
-		id = (' ' + parent.parentId.toString()).slice(1);
-	}
-	parent2 = configData.payload.sections.find(i => i.id == id);
-	if (parent2) {
-		name = parent2.name + " / " + name;
-		if (parent2.parentId === undefined | parent2.parentId == null) {
-			return name;
-		}
-		id = (' ' + parent2.parentId.toString()).slice(1);
-	}
-	parent3 = configData.payload.tabs.find(i => i.id == id);
-	if (parent3) {
-		name = parent3.name + " / " + name;
-	}
-	return name;
-}
 
 function getWidgetsParents() {
 	var items = [];
@@ -575,17 +524,13 @@ function moveTopTabModal(tabId) {
 /* ROOM FUNCTIONS */
 
 function addRoomModal() {
-  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}, {type: "object"}] }, function(result) {
-		var name = result.name;
-		if (name == '') { return; }
+  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "object"}] }, function(result) {
+		if ( result.object == 'none') return; 
 		var maxIndex = getMaxIndex(configData.payload.rooms);
 		var newRoom = {};
-		newRoom.name = name;
-		if (parseInt(result.object)) {
-			newRoom.object = parseInt(result.object);
-		}
 		newRoom.index = maxIndex + 1;
-		newRoom.id = configData.idCounter;
+		newRoom.name = result.name;
+		newRoom.id = parseInt(result.object); 
 
 		configData.payload.rooms.push(newRoom);
 		incrementIdCounter();
@@ -974,34 +919,3 @@ function addWidgetModal() {
 	refreshWidgetsContent();
   });
 }
-
-
-
-// var allWidgetsDetail;
-
-// refreshWidgetDetails() ; 
-
-// function refreshWidgetDetails(){
-
-// 	$.post({
-// 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-// 		data: {
-// 			'action': 'getWidgetConfigAll'
-// 		},
-// 		cache: false,
-// 		dataType: 'json',
-// 		success: function( data ) {
-// 			if (data.state != 'ok') {
-// 				$('#div_alert').showAlert({
-// 				  message: data.result,
-// 				  level: 'danger'
-// 				});
-// 			}
-// 			else{
-// 				allWidgetsDetail = data.result;
-// 				//console.log("allWidgetsDetail : ", allWidgetsDetail);
-// 			}
-// 		}
-// 	});
-
-// }

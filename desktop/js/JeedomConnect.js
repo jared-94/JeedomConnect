@@ -1389,72 +1389,126 @@ function removeWidget(){
 
 
 
+function getWidgetPath(id) {
+	console.log(" getWidgetPath id :  " + id ) ;
+	console.log(" getWidgetPath ==== tous les widgets ===> " , allWidgetsDetail) ;
+	var widget = allWidgetsDetail.find(w => w.id == id);
+	var name = (' '+widget.name).slice(1);
 
+	if (widget.parentId === undefined | widget.parentId == null) {
+		return name;
+	}
+	var id = (' ' + widget.parentId.toString()).slice(1);
+	parent = configData.payload.groups.find(i => i.id == id);
+	if (parent) {
+		name = parent.name + " / " + name;
+		if (parent.parentId === undefined | parent.parentId == null) {
+			return name;
+		}
+		id = (' ' + parent.parentId.toString()).slice(1);
+	}
+	parent2 = configData.payload.sections.find(i => i.id == id);
+	if (parent2) {
+		name = parent2.name + " / " + name;
+		if (parent2.parentId === undefined | parent2.parentId == null) {
+			return name;
+		}
+		id = (' ' + parent2.parentId.toString()).slice(1);
+	}
+	parent3 = configData.payload.tabs.find(i => i.id == id);
+	if (parent3) {
+		name = parent3.name + " / " + name;
+	}
+	return name;
+}
+
+
+// getRoomList();
+
+function getRoomName(id) {
+	if (id == 'global') { return 'Global'; }
+	const room = roomList.find(r => r.id == id);
+	if (room) {
+		return room.name;
+	} else {
+		return undefined;
+	}
+}
+
+function getMaxIndex(array) {
+	var maxIndex = -1;
+	array.forEach( item => {
+		if (item.index > maxIndex) {
+			maxIndex = item.index;
+		}
+	});
+	return maxIndex;
+}
 
 //********************************************/
 //************* TO REMOVE ??? ****************/
 //********************************************/
 
-$(".li_eqLogic").on('click', function (event) {
-  if (event.ctrlKey) {
-    var type = $('body').attr('data-page')
-    var url = '/index.php?v=d&m='+type+'&p='+type+'&id='+$(this).attr('data-eqlogic_id')
-    window.open(url).focus()
-  } else {
-    jeedom.eqLogic.cache.getCmd = Array();
-    if ($('.eqLogicThumbnailDisplay').html() != undefined) {
-      $('.eqLogicThumbnailDisplay').hide();
-    }
-    $('.eqLogic').hide();
-    if ('function' == typeof (prePrintEqLogic)) {
-      prePrintEqLogic($(this).attr('data-eqLogic_id'));
-    }
-    if (isset($(this).attr('data-eqLogic_type')) && isset($('.' + $(this).attr('data-eqLogic_type')))) {
-      $('.' + $(this).attr('data-eqLogic_type')).show();
-    } else {
-      $('.eqLogic').show();
-    }
-    $(this).addClass('active');
-    $('.nav-tabs a:not(.eqLogicAction)').first().click()
-    $.showLoading()
-    jeedom.eqLogic.print({
-      type: isset($(this).attr('data-eqLogic_type')) ? $(this).attr('data-eqLogic_type') : eqType,
-      id: $(this).attr('data-eqLogic_id'),
-      status : 1,
-      error: function (error) {
-        $.hideLoading();
-        $('#div_alert').showAlert({message: error.message, level: 'danger'});
-      },
-      success: function (data) {
-        $('body .eqLogicAttr').value('');
-        if(isset(data) && isset(data.timeout) && data.timeout == 0){
-          data.timeout = '';
-        }
-        $('body').setValues(data, '.eqLogicAttr');
-        if ('function' == typeof (printEqLogic)) {
-          printEqLogic(data);
-        }
-        if ('function' == typeof (addCmdToTable)) {
-          $('.cmd').remove();
-          for (var i in data.cmd) {
-            addCmdToTable(data.cmd[i]);
-          }
-        }
-        $('body').delegate('.cmd .cmdAttr[data-l1key=type]', 'change', function () {
-          jeedom.cmd.changeType($(this).closest('.cmd'));
-        });
+// $(".li_eqLogic").on('click', function (event) {
+//   if (event.ctrlKey) {
+//     var type = $('body').attr('data-page')
+//     var url = '/index.php?v=d&m='+type+'&p='+type+'&id='+$(this).attr('data-eqlogic_id')
+//     window.open(url).focus()
+//   } else {
+//     jeedom.eqLogic.cache.getCmd = Array();
+//     if ($('.eqLogicThumbnailDisplay').html() != undefined) {
+//       $('.eqLogicThumbnailDisplay').hide();
+//     }
+//     $('.eqLogic').hide();
+//     if ('function' == typeof (prePrintEqLogic)) {
+//       prePrintEqLogic($(this).attr('data-eqLogic_id'));
+//     }
+//     if (isset($(this).attr('data-eqLogic_type')) && isset($('.' + $(this).attr('data-eqLogic_type')))) {
+//       $('.' + $(this).attr('data-eqLogic_type')).show();
+//     } else {
+//       $('.eqLogic').show();
+//     }
+//     $(this).addClass('active');
+//     $('.nav-tabs a:not(.eqLogicAction)').first().click()
+//     $.showLoading()
+//     jeedom.eqLogic.print({
+//       type: isset($(this).attr('data-eqLogic_type')) ? $(this).attr('data-eqLogic_type') : eqType,
+//       id: $(this).attr('data-eqLogic_id'),
+//       status : 1,
+//       error: function (error) {
+//         $.hideLoading();
+//         $('#div_alert').showAlert({message: error.message, level: 'danger'});
+//       },
+//       success: function (data) {
+//         $('body .eqLogicAttr').value('');
+//         if(isset(data) && isset(data.timeout) && data.timeout == 0){
+//           data.timeout = '';
+//         }
+//         $('body').setValues(data, '.eqLogicAttr');
+//         if ('function' == typeof (printEqLogic)) {
+//           printEqLogic(data);
+//         }
+//         if ('function' == typeof (addCmdToTable)) {
+//           $('.cmd').remove();
+//           for (var i in data.cmd) {
+//             addCmdToTable(data.cmd[i]);
+//           }
+//         }
+//         $('body').delegate('.cmd .cmdAttr[data-l1key=type]', 'change', function () {
+//           jeedom.cmd.changeType($(this).closest('.cmd'));
+//         });
 
-        $('body').delegate('.cmd .cmdAttr[data-l1key=subType]', 'change', function () {
-          jeedom.cmd.changeSubType($(this).closest('.cmd'));
-        });
-        addOrUpdateUrl('id',data.id);
-        $.hideLoading();
-        modifyWithoutSave = false;
-        setTimeout(function(){
-          modifyWithoutSave = false;
-        },1000)
-      }
-    });
-  }
-  return false;
-});
+//         $('body').delegate('.cmd .cmdAttr[data-l1key=subType]', 'change', function () {
+//           jeedom.cmd.changeSubType($(this).closest('.cmd'));
+//         });
+//         addOrUpdateUrl('id',data.id);
+//         $.hideLoading();
+//         modifyWithoutSave = false;
+//         setTimeout(function(){
+//           modifyWithoutSave = false;
+//         },1000)
+//       }
+//     });
+//   }
+//   return false;
+// });
