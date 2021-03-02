@@ -186,6 +186,7 @@ function resetConfig() {
 	getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"La configuration va être remise à zéro. Voulez-vous continuer ?"}] }, function(result) {
 		configData = {
 				'type':  'JEEDOM_CONFIG',
+				'formatVersion' : '1.0',
 				'idCounter': 0,
 				'payload': {
 					'configVersion': 0,
