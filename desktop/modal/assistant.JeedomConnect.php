@@ -48,7 +48,10 @@ foreach ($eqLogics as $eqLogic) {
       $json = json_decode($conf);
       $type = $json->type;
       $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ; 
-      $widgetAvailOptions .= '<option value="'.$eqLogic->getId().'" data-widget-id="'.$eqLogic->getId().'" data-type="'.$type.'">' . $eqLogic->getName() . '</option>';;
+      $parentObject = $eqLogic->getObject();
+      $objName = is_object($parentObject) ? ' (' . $parentObject->getName() . ')' : '';
+      $name = preg_replace('/\(JCW(\w+)\)/i', '', $eqLogic->getName() )  . $objName ;
+      $widgetAvailOptions .= '<option value="'.$eqLogic->getId().'" data-widget-id="'.$eqLogic->getId().'" data-type="'.$type.'">' . $name . '</option>' ;
   }
 }
 

@@ -381,7 +381,7 @@ class JeedomConnect extends eqLogic {
 
 	public function sendNotif($notifId, $data) {
 		if ($this->getConfiguration('token') == null) {
-			log::add('JeedomConnect', 'info', "No token defnied. Please connect your device first");
+			log::add('JeedomConnect', 'info', "No token defined. Please connect your device first");
 			return;
 		}
 		$postData = array(
