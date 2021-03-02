@@ -529,7 +529,7 @@ class JeedomConnect extends eqLogic {
 
     public function preUpdate() {
 
-			if ($this->getConfiguration('scenariosEnabled') == '') {
+			if ($this->getConfiguration('scenariosEnabled') == '' && $this->getConfiguration('type') != 'widget') {
 				$this->setConfiguration('scenariosEnabled', '1');
 				$this->save();
 			}
@@ -753,7 +753,7 @@ class JeedomConnect extends eqLogic {
 				copy($originalFile, $backupFile );
 
 				// save the file
-				file_put_contents($originalFile, json_encode($configFile) );	
+				file_put_contents($originalFile, json_encode($configFile , JSON_PRETTY_PRINT) );	
 			}
 			else{
 				log::add('JeedomConnect', 'debug', 'Configuration file already in the new format');
