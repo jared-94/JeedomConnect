@@ -1289,7 +1289,13 @@ function downWidgetOption(id) {
 
   widgetRoom = $('#room-input :selected').val() ;
   if (widgetRoom != 'none') {
-    result.room = parseInt(widgetRoom);
+    if (widgetRoom == 'global')
+    {
+      result.room = 'global';
+    }
+    else{
+      result.room = parseInt(widgetRoom);
+    }
   }
 
 

@@ -683,6 +683,10 @@ class JeedomConnect extends eqLogic {
 							// set the name with the Jeedom One
 							$room['name'] = $roomObject->getName() ;
 						}
+						elseif ($room['name'] == 'global') {
+							// do nothing
+							$room['name'] = $room['name'] ;
+						}
 						else{
 							// if object doesnt exist in jeedom, we remove it
 							unset($configFile['payload']['rooms'][$key]) ; 
