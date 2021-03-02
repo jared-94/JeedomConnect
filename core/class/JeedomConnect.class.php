@@ -144,7 +144,6 @@ class JeedomConnect extends eqLogic {
 				foreach ($widgetConf as $key2 => $value2) {
 					$widget[$key2] = $value2;
 				} 
-				$widget['enable'] = true;
 				$widget['id'] = intval($widget['id']) ;
 
 				if (isset($widget['room'])){
