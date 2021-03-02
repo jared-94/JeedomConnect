@@ -486,37 +486,37 @@ class JeedomConnect extends eqLogic {
 
 	private function getDistance($lat1, $lon1, $lat2, $lon2) {
 		$theta = $lon1 - $lon2;
-  	$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-  	$dist = acos($dist);
-  	$dist = rad2deg($dist);
-  	$dist = ($dist * 60 * 1.1515) * 1609.344;
-  	return floor($dist);
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+		$dist = acos($dist);
+		$dist = rad2deg($dist);
+		$dist = ($dist * 60 * 1.1515) * 1609.344;
+		return floor($dist);
 	}
 
 
 
     public function preInsert() {
 		
-			if ($this->getConfiguration('apiKey') == '' && $this->getConfiguration('type') != 'widget') {
-				$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
-				$this->setLogicalId($this->getConfiguration('apiKey'));
-				$this->generateQRCode();
-			}
+		if ($this->getConfiguration('apiKey') == '' && $this->getConfiguration('type') != 'widget') {
+			$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
+			$this->setLogicalId($this->getConfiguration('apiKey'));
+			$this->generateQRCode();
+		}
 
     }
 
     public function postInsert() {
 
+		if ( $this->getConfiguration('type') != 'widget') {
 			$this->setIsEnable(1);
 			if ($this->getConfiguration('configVersion') == '') {
 				$this->setConfiguration('configVersion', 0);
 			}
 			$this->save();
 
-			if ( $this->getConfiguration('type') != 'widget') {
-				$this->saveConfig(self::$_initialConfig);
-				$this->saveNotifs(self::$_notifConfig);
-			}
+			$this->saveConfig(self::$_initialConfig);
+			$this->saveNotifs(self::$_notifConfig);
+		}
 
     }
 
@@ -529,14 +529,16 @@ class JeedomConnect extends eqLogic {
 
     public function preUpdate() {
 
-			if ($this->getConfiguration('scenariosEnabled') == '' && $this->getConfiguration('type') != 'widget') {
-				$this->setConfiguration('scenariosEnabled', '1');
-				$this->save();
-			}
+		if ($this->getConfiguration('scenariosEnabled') == '' && $this->getConfiguration('type') != 'widget') {
+			$this->setConfiguration('scenariosEnabled', '1');
+			$this->save();
+		}
 
     }
 
     public function postUpdate() {
+
+		if ( $this->getConfiguration('type') != 'widget' ) {
 
 			$positionCmd = $this->getCmd(null, 'position');
 				if (!is_object($positionCmd)) {
@@ -549,6 +551,7 @@ class JeedomConnect extends eqLogic {
 				}
 				$positionCmd->setName(__('Position', __FILE__));
 				$positionCmd->save();
+		}
 
     }
 
