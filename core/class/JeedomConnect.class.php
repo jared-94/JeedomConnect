@@ -597,6 +597,9 @@ class JeedomConnect extends eqLogic {
 				}
 				log::add('JeedomConnect', 'debug', 'all rooms/object matching : ' . json_encode($existingRooms) );
 				
+				$widgetsIncluded = array();
+				$widgetsMatching = array();
+
 				// for each widget in config file create the associate widget equipment
 				foreach($configFile['payload']['widgets'] as $key => $widget){
 					
@@ -651,6 +654,8 @@ class JeedomConnect extends eqLogic {
 					
 					unset($widget['parentId']);
 					unset($widget['index']);
+
+					$previousId = $widget['id'];
 					unset($widget['id']);
 					// save json config on a dedicated config var 
 					$eqLogic->setConfiguration('widgetJC', json_encode($widget)  );	
@@ -663,10 +668,38 @@ class JeedomConnect extends eqLogic {
 					
 					// retrieve the eqLogic ID
 					$newWidget['id'] = intval($eqLogic->getId()) ;
+					$widgetsMatching[$previousId] = $eqLogic->getId();
+
+					if ( array_key_exists('widgets', $widget ) ){
+						array_push($widgetsIncluded, $eqLogic->getId() ) ;
+					}
 
 					//save the new widget data into the original config array
 					$configFile['payload']['widgets'][$key] = $newWidget;
 
+				}
+
+				// for each widget which includes other widgets (group, favourite,..)
+				// we need to update the widget ID
+				foreach($widgetsIncluded as $widget){
+					$eqLogic = JeedomConnect::byId($widget) ; 
+					$conf = json_decode($eqLogic->getConfiguration('widgetJC', ''), true );
+
+					foreach($conf['widgets'] as $index => $obj){
+						$newObj = array();
+						foreach ($obj as $key => $value) {
+							if ( $key == 'id'){
+								$newObj['id'] = $widgetsMatching[$value];
+							}
+							else{
+								$newObj[$key] = $value;
+							}
+						}
+						$conf['widgets'][$index] = $newObj ;
+					}
+
+					$eqLogic->setConfiguration('widgetJC', json_encode($conf) );
+					$eqLogic->save();
 				}
 
 				// review rooms info
