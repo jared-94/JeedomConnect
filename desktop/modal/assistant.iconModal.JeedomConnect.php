@@ -193,7 +193,7 @@ sendVarToJS('selectedIcon', [
             if ($name == "." || $name == "..") { continue; }
             $div .= '<div class="divIconSel divImgSel">';
             $div .= '<div class="cursor iconSel"><img source="user" name="'.$name.'" class="img-responsive" src="plugins/JeedomConnect/data/img/user_files/'. $name . '"/></div>';
-            $div .= '<div class="iconDesc">' . $name . '</div>';
+            $div .= '<div class="iconDesc">' . substr($name, 0, 15) . '</div>';
             $div .= '</div>';
           }
           echo $div;
