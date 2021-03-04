@@ -29,8 +29,15 @@ class apiHelper {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
       foreach ($widget as $item => $value) {
-        if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
+        if ($value['type'] == 'info') {
           array_push($return, $value['id']);
+        }
+        if ($item == 'moreInfos') {
+          foreach ($value as $i => $info) {
+            if ($info['type'] == 'cmd') {
+              array_push($return, $info['id']);
+            }
+          }
         }
       }
     }

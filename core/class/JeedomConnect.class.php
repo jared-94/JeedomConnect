@@ -508,7 +508,11 @@ class JeedomConnectCmd extends cmd {
 				)
 			);
 			if (isset($_options["files"])) {
-				$data['payload']['picture'] = realpath($_options['files'][0]);
+				$files = array();
+				foreach ($_options["files"] as $file) {
+					array_push($files, realpath($file));
+				}
+				$data['payload']['files'] = $files;
 
       }
 			$eqLogic->sendNotif($this->getLogicalId(), $data);

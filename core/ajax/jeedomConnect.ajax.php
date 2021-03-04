@@ -114,7 +114,8 @@ try {
       'minValue' => $cmd->getConfiguration('minValue'),
       'maxValue' => $cmd->getConfiguration('maxValue'),
       'unit' => $cmd->getUnite(),
-      'value' => $cmd->getValue()
+      'value' => $cmd->getValue(),
+      'icon' => $cmd->getDisplay('icon')
     ));
   }
 

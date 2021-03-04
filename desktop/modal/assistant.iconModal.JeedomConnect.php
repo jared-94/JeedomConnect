@@ -363,7 +363,7 @@ $(function() {
     $('#iconModal ul li a').first().click();
   } else {
     $(`#iconModal ul li a[href="#${selectedIcon.source}"]`).click();
-    $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${selectedIcon.name}"]`).closest('.divIconSel').addClass('iconSelected');
+    $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
     setTimeout(function() {
 			elem = $('div.divIconSel.iconSelected')
 			if (elem.position()) {
@@ -372,6 +372,14 @@ $(function() {
 				container.animate({scrollTop: pos-20})
 			}
 		}, 250)
+  }
+
+  if (selectedIcon.color != 0) {
+    $("#mod-color-picker").val("#" + selectedIcon.color);
+    $("#mod-color-input").val("#" + selectedIcon.color);
+  }
+  if (selectedIcon.shadow === "true") {
+    $("#bw-input").prop('checked', true);
   }
 
 

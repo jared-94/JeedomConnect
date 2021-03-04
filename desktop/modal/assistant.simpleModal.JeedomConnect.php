@@ -185,7 +185,6 @@ function swipeSelected(type) {
 
 function selectSimpleCmd(name) {
   jeedom.cmd.getSelectModal({cmd: {type: 'action', subType: 'other'}}, function(result) {
-    console.log(result)
     $("#"+name+"-cmd-input").val(result.human);
     $("#"+name+"-cmd-input").attr('cmdId', result.cmd.id);
   })
