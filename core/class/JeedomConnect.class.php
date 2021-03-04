@@ -18,6 +18,7 @@
 
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
+require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php'; 
 
 class JeedomConnect extends eqLogic {
 
@@ -115,7 +116,7 @@ class JeedomConnect extends eqLogic {
 		
 	}
 
-	public function getConfig($replace = false) {
+	public function getConfig($replace = false) {	
 
 		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
 			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' ); 
@@ -130,16 +131,18 @@ class JeedomConnect extends eqLogic {
 			log::add('JeedomConnect', 'debug', '¤¤¤¤¤ only send the config file without enrichment for apikey ' . $this->getConfiguration('apiKey') ); 
 			return $jsonConfig;
 		}
-		log::add('JeedomConnect', 'debug', '¤¤¤¤¤ creating enriched config file' ); 
-
+		
 		$roomIdList = array();
-		foreach ($jsonConfig['payload']['widgets'] as $key => $widget) {
-			$eqLogic = JeedomConnect::byId($widget['id']) ;
-
-			$eqType = $eqLogic->getConfiguration('type'); 
-
-			if ( $eqType == 'widget') {
-				$widgetConf = json_decode($eqLogic->getConfiguration('widgetJC') );
+		foreach ($jsonConfig['payload']['widgets'] as $key => $widget) {		
+			$widgetData = JeedomConnectWidget::getWidgets( $widget['id'] );
+			
+			if ( empty( $widgetData )  ) {
+				// ajax::error('Erreur - pas d\'équipement trouvé');
+				log::add('JeedomConnect', 'debug', 'Erreur - pas de widget trouvé avec l\'id ' . $widget['id']);
+			} 
+			else{
+				$configJson = $widgetData[0]['widgetJC'] ?? '';
+				$widgetConf = json_decode($configJson, true);
 
 				foreach ($widgetConf as $key2 => $value2) {
 					$widget[$key2] = $value2;
@@ -588,6 +591,7 @@ class JeedomConnect extends eqLogic {
 			//if the configFile is not defined with the new format
 			// ie : exist key formatVersion
 			if (! array_key_exists('formatVersion', $configFile) ) {
+				$newConfWidget = array() ; 
 				
 				// create array matching between 
 				// JC room ID <=> jeedom Object ID
@@ -610,11 +614,6 @@ class JeedomConnect extends eqLogic {
 					$newWidget['parentId'] = $widget['parentId'];
 					$newWidget['index'] = $widget['index'];
 
-					// create new jeedom eqLogic
-					$eqLogic = new JeedomConnect();
-					$eqLogic->setEqType_name( 'JeedomConnect' );
-					$eqLogic->setConfiguration('type', 'widget'  );	//set type as widget
-
 					// retrieve the img to display for the widget based on the type
 					$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
 					$imgPath = '';
@@ -624,56 +623,37 @@ class JeedomConnect extends eqLogic {
 							break;
 						}
 					}
-					$eqLogic->setConfiguration('imgPath', $imgPath ); 
+					$newConfWidget['imgPath'] = $imgPath ; 
 					
-					if ( $widget['enable'] == 'true' ) {
-						$eqLogic->setIsEnable(1);	
-					}else{
-						$eqLogic->setIsEnable(0);
-					}
-
-					// do not show widget on dashboard 
-					$eqLogic->setIsVisible(0);
-
 					// attached the widget to the jeedom object
 					if (array_key_exists('room', $widget) 
 							&& is_int($widget['room'] ) 
 								&& array_key_exists($widget['room'], $existingRooms ) ) {
-						$eqLogic->setObject_id($existingRooms[$widget['room']]);
 						$widget['room'] = $existingRooms[$widget['room']] ;
 					}
 					else{
-						$eqLogic->setObject_id(null);
 						$widget['room'] = null;
 					}
 
 					//generate a random logicalId
-					$logicalId = uniqid ('JCW') ; 
-					$eqLogic->setLogicalId($logicalId);
-
-					// for unicity issue, we add the logicalId to the name
-					$eqLogic->setName( $widget['name'] . ' ('. $logicalId .')');
+					$widgetId = JeedomConnectWidget::incrementIndex();
 					
 					unset($widget['parentId']);
 					unset($widget['index']);
 
 					$previousId = $widget['id'];
-					unset($widget['id']);
+					$widget['id'] = $widgetId ;
 					// save json config on a dedicated config var 
-					$eqLogic->setConfiguration('widgetJC', json_encode($widget)  );	
+					$newConfWidget['widgetJC'] = json_encode($widget) ;	
 
-					try {
-						$eqLogic->save();
-					} catch (Exception $e) {
-						log::add('JeedomConnect', 'error', 'creation widget error : ' . $e->getMessage() ); 
-					}
+					JeedomConnectWidget::saveConfig($newConfWidget, $widgetId) ;
 					
 					// retrieve the eqLogic ID
-					$newWidget['id'] = intval($eqLogic->getId()) ;
-					$widgetsMatching[$previousId] = $eqLogic->getId();
+					$newWidget['id'] = intval($widgetId) ;
+					$widgetsMatching[$previousId] = $widgetId;
 
 					if ( array_key_exists('widgets', $widget ) ){
-						array_push($widgetsIncluded, $eqLogic->getId() ) ;
+						array_push($widgetsIncluded, $widgetId ) ;
 					}
 
 					//save the new widget data into the original config array
@@ -684,8 +664,8 @@ class JeedomConnect extends eqLogic {
 				// for each widget which includes other widgets (group, favourite,..)
 				// we need to update the widget ID
 				foreach($widgetsIncluded as $widget){
-					$eqLogic = JeedomConnect::byId($widget) ; 
-					$conf = json_decode($eqLogic->getConfiguration('widgetJC', ''), true );
+					$widgetJC = JeedomConnectWidget::getConfiguration($widget, 'widgetJC');
+					$conf = json_decode($widgetJC, true );
 
 					foreach($conf['widgets'] as $index => $obj){
 						$newObj = array();
@@ -700,8 +680,7 @@ class JeedomConnect extends eqLogic {
 						$conf['widgets'][$index] = $newObj ;
 					}
 
-					$eqLogic->setConfiguration('widgetJC', json_encode($conf) );
-					$eqLogic->save();
+					JeedomConnectWidget::setConfiguration($widget, 'widgetJC', json_encode($conf) );
 				}
 
 				// review rooms info
@@ -765,9 +744,10 @@ class JeedomConnect extends eqLogic {
 		return;
 	}
 
-
-
 }
+
+
+
 
 class JeedomConnectCmd extends cmd {
 

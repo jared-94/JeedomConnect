@@ -38,23 +38,25 @@ foreach ($widgetsConfigFile['widgets'] as $widget ) {
   $widgetsConfigGlobal[$widget['type']]=$widget['name'];
 }
 
-
 //  prepare list of Widget Already Created
 $widgetAvailOptions = '';
 $widgetTypeAvail = [];
-foreach ($eqLogics as $eqLogic) {
-  if ($eqLogic->getConfiguration('type','') == 'widget') {
-      $conf = $eqLogic->getConfiguration('widgetJC','') ;
-      $json = json_decode($conf);
-      $type = $json->type;
-      $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ; 
-      $parentObject = $eqLogic->getObject();
-      $objName = is_object($parentObject) ? ' (' . $parentObject->getName() . ')' : '';
-      $name = preg_replace('/\(JCW(\w+)\)/i', '', $eqLogic->getName() )  . $objName ;
-      $widgetAvailOptions .= '<option value="'.$eqLogic->getId().'" data-widget-id="'.$eqLogic->getId().'" data-type="'.$type.'">' . $name . '</option>' ;
-  }
-}
+$widgetArray= JeedomConnectWidget::getWidgets();
 
+$listWidget = '';
+foreach ($widgetArray as $widget) {
+	
+	$img = $widget['img'] ;
+	
+	$type = $widget['type'];
+	$widgetName = $widget['name'] ; 
+	$widgetRoom = $widget['roomName'] == 'Aucun' ? '' :  ' (' . $widget['roomName'] . ')' ;
+	$id = $widget['id']; 
+
+  $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ; 
+	$widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'">' . $widgetName . $widgetRoom . '</option>' ;
+
+}
 asort($widgetTypeAvail);
 
 

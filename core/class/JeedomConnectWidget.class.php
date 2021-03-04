@@ -107,7 +107,7 @@ class JeedomConnectWidget extends config {
 
 			array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
 
-			log::add(self::$_plugin_id, 'info', ' final result sent >' . json_encode($widgetArray) );
+			log::add(self::$_plugin_id, 'debug', ' final result sent >' . json_encode($widgetArray) );
 		}
 		return $widgetArray;
 

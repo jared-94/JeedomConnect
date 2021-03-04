@@ -6,6 +6,30 @@ if (!isConnect('admin')) {
 $plugin = plugin::byId('JeedomConnect');
 sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
+
+$widgetArray= JeedomConnectWidget::getWidgets();
+
+$listWidget = '';
+foreach ($widgetArray as $widget) {
+	
+	$img = $widget['img'] ;
+	
+	$opacity = $widget['enable'] ? '' : 'disableCard';
+	$widgetName = $widget['name'] ; 
+	$widgetRoom = $widget['roomName'] ; ;
+	$id = $widget['id']; 
+
+	$name = '<span class="name"><span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong></span>' ;
+
+	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" data-widget_id="' . $id . '">';
+	$listWidget .= '<img src="' . $img . '"/>';
+	$listWidget .= '<br>';
+	$listWidget .= '<span class="name">' . $name . '</span>';
+	$listWidget .= '</div>';
+
+}
+
+
 ?>
 
 <div class="row row-overflow">
@@ -42,14 +66,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<div class="eqLogicThumbnailContainer">
 			<?php
 			foreach ($eqLogics as $eqLogic) {
-                if ($eqLogic->getConfiguration('type','') != 'widget') {
-                    $opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-                    echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
-                    echo '<img src="' . $plugin->getPathImgIcon() . '"/>';
-                    echo '<br>';
-                    echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-                    echo '</div>';
-                }
+				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+				echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
+				echo '<img src="' . $plugin->getPathImgIcon() . '"/>';
+				echo '<br>';
+				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+				echo '</div>';
 			}
 			?>
 		</div>
@@ -57,17 +79,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<!-- Liste des widgets du plugin -->
 		<div class="eqLogicThumbnailContainer" style="min-height: 173px !important;">
 			<?php
-			foreach ($eqLogics as $eqLogic) {
-                if ($eqLogic->getConfiguration('type','') == 'widget') {
-                    $opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-                    echo '<div class="widgetDisplayCard cursor '.$opacity.'" data-widget_id="' . $eqLogic->getId() . '">';
-					$img = $eqLogic->getConfiguration('imgPath','') ?: $plugin->getPathImgIcon() ;
-                    echo '<img src="' . $img . '"/>';
-                    echo '<br>';
-                    echo '<span class="name">' . preg_replace('/\(JCW(\w+)\)/i', '', $eqLogic->getHumanName(true, true) ) . '</span>';
-                    echo '</div>';
-                }
-			}
+			echo $listWidget ;
 			?>
 		</div>
 	</div> <!-- /.eqLogicThumbnailDisplay -->
