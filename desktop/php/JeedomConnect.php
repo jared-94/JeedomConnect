@@ -75,6 +75,14 @@ foreach ($widgetArray as $widget) {
 			}
 			?>
 		</div>
+
+		<!-- Champ de recherche widget -->
+		<div class="input-group" style="margin:10px 5px;">
+			<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchWidget"/>
+			<div class="input-group-btn">
+				<a id="bt_resetSearchWidget" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
+			</div>
+		</div>
 		<legend><i class="fas fa-table"></i> {{Mes widgets}}</legend>
 		<!-- Liste des widgets du plugin -->
 		<div class="eqLogicThumbnailContainer" style="min-height: 173px !important;">

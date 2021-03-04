@@ -241,6 +241,31 @@ $("#removeDevice").click(function() {
  });
 
 
+$('#in_searchWidget').off('keyup').keyup(function() {
+  var search = $(this).value()
+  if (search == '') {
+    $('.widgetDisplayCard').show()
+    $('.eqLogicThumbnailContainer').packery()
+    return
+  }
+  $('.widgetDisplayCard').hide()
+  search = normTextLower(search)
+  var text
+  $('.widgetDisplayCard .name').each(function() {
+    text = normTextLower($(this).text())
+    if (text.indexOf(search) >= 0) {
+      $(this).closest('.widgetDisplayCard').show()
+    }
+  })
+  $('.eqLogicThumbnailContainer').packery()
+})
+
+$('#bt_resetSearchWidget').on('click', function() {
+  $('#in_searchWidget').val('').keyup()
+})
+
+
+
 function addCmdToTable(_cmd) {
   if (!isset(_cmd)) {
     var _cmd = {configuration: {}};
