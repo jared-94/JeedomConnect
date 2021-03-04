@@ -1300,7 +1300,7 @@ function downWidgetOption(id) {
 
 
   toSave = JSON.stringify(result)
-  //console.log("result final ==> " , toSave);
+  //console.log("envoie du widgetJC ==> " , toSave);
 
   widgetImg = $("#widgetImg").attr("src") ; 
   
@@ -1315,10 +1315,8 @@ function downWidgetOption(id) {
       data: {
         action: "saveWidgetConfig",
         eqId: widgetId,
-        eqName: widgetName,
-        room: widgetRoom,
-        isEnable: widgetEnable,
-        config : {type : 'widget', widgetJC : toSave, 'imgPath' : widgetImg},
+        widgetJC : toSave, 
+        imgPath : widgetImg
       },
       dataType: 'json',
       error: function(error) {
