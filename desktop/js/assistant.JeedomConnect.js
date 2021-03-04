@@ -277,7 +277,6 @@ function getWidgetModal(_options, _callback) {
       var result = _options.widget ? _options.widget : {};
 
 	  var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
-		console.log('valide moreInfos :', moreInfos)
 		let infoCmd = moreInfos.slice();
 		$('input[cmdType="info"]').each((i, el) => {
 			infoCmd.push({id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title });
@@ -408,7 +407,6 @@ function getWidgetModal(_options, _callback) {
 };
 
 function parseString(string, infos) {
-	console.log('parse string', string, infos)
 	let result = string;
   if (typeof(string) != "string") { return string; }
   const match = string.match(/#.*?#/g);
@@ -419,6 +417,5 @@ function parseString(string, infos) {
       result = result.replace(item, "#"+info.id+"#");
     }
   });
-	console.log('parse result', result)
   return result;
 }
