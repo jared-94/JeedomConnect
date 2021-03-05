@@ -179,6 +179,7 @@ if (!isConnect('admin')) {
 				 }
 			 });
 		}
+    refreshStrings();
 	}
 
 	items = [];
