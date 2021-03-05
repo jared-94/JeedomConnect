@@ -67,6 +67,7 @@ function getWidgetModal(_options, _callback) {
   if (!isset(_options)) {
     return;
   }
+  $("#widgetModal").dialog('destroy').remove();
   if ($("#widgetModal").length == 0) {
     $('body').append('<div id="widgetModal"></div>');
 
@@ -75,7 +76,7 @@ function getWidgetModal(_options, _callback) {
       closeText: '',
       autoOpen: false,
       modal: true,
-      width: 1050,
+      width: 1250,
 	  	height: 0.8*$(window).height()
     });
     jQuery.ajaxSetup({
@@ -390,6 +391,9 @@ var widgetsList = (function () {
   return json;
 })(); 
 
+//used for moreInfos
+var moreInfos = [];
+
 var roomList ;
 var roomListOptions ;
 getRoomList()
@@ -431,7 +435,7 @@ $("#room-input").html(roomListOptions);
 
 function setWidgetModalData(options) {
   refreshAddWidgets();
-  console.log("seWidgetMdal options : ", options); 
+  //console.log("seWidgetMdal options : ", options); 
   if (options.widget !== undefined) {
      $('#widgetsList-select option[value="'+options.widget.type+'"]').prop('selected', true);
      refreshAddWidgets();
@@ -446,7 +450,10 @@ function setWidgetModalData(options) {
       $('#room-input option[value="'+options.widget.room+'"]').prop('selected', true);
     }
 
-     $("#widgetOptions").attr('widget-id', options.eqId ?? '');
+    moreInfos = options.widget.moreInfos || [];
+    refreshMoreInfos();
+
+    $("#widgetOptions").attr('widget-id', options.eqId ?? '');
      
      var widgetConfig = widgetsList.widgets.find(i => i.type == options.widget.type);
      //console.log("widgetsList => ", widgetsList) ; 
@@ -464,6 +471,8 @@ function setWidgetModalData(options) {
            success: function (data) {
              $("#"+option.id+"-input").val(data);
              $("#"+option.id+"-input").attr('title', data);
+             refreshImgListOption();
+             refreshInfoSelect();
            }
          });
          $("#"+option.id+"-input").attr('cmdType', options.widget[option.id].type);
@@ -523,6 +532,7 @@ function setWidgetModalData(options) {
           $('#subtitle-input option[value="custom"]').prop('selected', true);
           $("#subtitle-input-value").val(options.widget.subtitle)
           $("#subtitle-input-value").css('display', 'block');
+          $("#subtitle-select").show();
          }
        } else if (option.category == "widgets" & options.widget[option.id] !== undefined) {
          widgetsCat = options.widget[option.id];
@@ -532,26 +542,37 @@ function setWidgetModalData(options) {
          refreshCmdListOption(JSON.stringify(option.options));
        } else if (option.category == "ifImgs" & options.widget[option.id] !== undefined) {
          imgCat = options.widget[option.id];
-         refreshImgListOption(JSON.stringify(option.infos));
+         refreshImgListOption();
        } else if (option.category == "img" & options.widget[option.id] !== undefined ) {
-        $("#"+option.id).attr("value", options.widget[option.id]);
-        $("#"+option.id).attr("src", "plugins/JeedomConnect/data/img/"+options.widget[option.id]);
-        $("#"+option.id).css("display", "");
-        $("#"+option.id+"-remove").css("display", "");
+        $("#icon-div-"+option.id).html(iconToHtml(options.widget[option.id]));
        }
      });
   }
+  refreshStrings();
 }
 
 function refreshAddWidgets() {
   widgetsCat = [];
   cmdCat = [];
   imgCat = [];
+  moreInfos = [];
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/"+widget.img);
 
   $("#widgetDescription").html(widget.description);
+
+  if (widget.variables) {
+    let varDescr = `Variables disponibles : <ul>`;
+    widget.variables.forEach(v => {
+      varDescr += `<li>#${v.name}# : ${v.descr}</li>`;
+    });
+    varDescr += '</ul>';
+    $("#widgetVariables").html(varDescr);
+    $("#widgetVariables").show();
+  } else {
+    $("#widgetVariables").hide();
+  }
 
   var items = [];
 
@@ -618,10 +639,23 @@ function refreshAddWidgets() {
      curOption += "</div></div></li>";
 
     } else if (option.category == "string") {
-      curOption += `<div class='input-group'><input style="width:340px;" id="${option.id}-input" value=''>
-    </div>
-    </div></div></li>`;
-  } else if (option.category == "binary") {
+      curOption += `<div class='input-group'>
+        <div style="display:flex"><input style="width:340px;" id="${option.id}-input" value=''>`;
+          if (option.id == 'name') {
+            curOption += `
+              <div class="dropdown" id="name-select">
+              <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+              <i class="fas fa-plus-square"></i> </a>
+              <ul class="dropdown-menu infos-select" input="${option.id}-input">`;
+            if (widget.variables) {
+              widget.variables.forEach(v => {
+                curOption += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+              });
+            }
+            curOption += `</ul></div></div>`
+          }
+      curOption += `</div></div></div></li>`;
+    } else if (option.category == "binary") {
       curOption += `<div class='input-group'><input type="checkbox" style="width:150px;" id="${option.id}-input"></div>
          </div></div></li>`;
     } else if (option.category == "stringList") {
@@ -633,18 +667,30 @@ function refreshAddWidgets() {
         curOption += `<option value="${item.id}">${item.name}</option>`;
       })
       if (option.id == "subtitle") {
-        curOption += `<option value="custom">Personalisé</option>`;
-      }
+        curOption += `<option value="custom">Personalisé</option></select>`;
+        curOption += `<div style="display:flex">
+  					<input style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'>`;
 
-      curOption += `</select>
-        <input style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'>
-        </div></div></div></li>`;
+        curOption += `
+            <div class="dropdown" id="subtitle-select" style=" display:none;">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+            <i class="fas fa-plus-square"></i> </a>
+            <ul class="dropdown-menu infos-select" input="subtitle-input-value">`;
+        if (widget.variables) {
+          widget.variables.forEach(v => {
+            curOption += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+          });
+        }
+        curOption += `</ul></div></div>`
+      } else {
+        curOption += '</select>';
+      }
+      curOption += `</div></div></div></li>`;
     } else if (option.category == "img") {
       curOption += `<span class="input-group-btn">
-              <img id="${option.id}" src="" style="width:30px; height:30px; margin-top:-15px; display:none;" />
-              <i class="mdi mdi-minus-circle" id="${option.id}-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:none;" aria-hidden="true" onclick="removeImage('${option.id}')"></i>
               <a class="btn btn-success roundedRight" onclick="imagePicker('${option.id}')"><i class="fas fa-check-square">
               </i> Choisir </a>
+              <a id="icon-div-${option.id}" onclick="removeImage('${option.id}')"></a>
               </span></div></div></li>`;
 
 
@@ -674,7 +720,7 @@ function refreshAddWidgets() {
       curOption += `</div></div></li>`;
     } else if (option.category == "ifImgs") {
       curOption += `<span class="input-group-btn">
-              <a class="btn btn-default roundedRight" onclick="addImgOption('${JSON.stringify(option.infos).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
+              <a class="btn btn-default roundedRight" onclick="addImgOption()"><i class="fas fa-plus-square">
               </i> Ajouter</a></span><div id="imgList-option"></div>`;
       curOption += `</div></div></li>`;
     } else if (option.category == "scenario") {
@@ -687,11 +733,27 @@ function refreshAddWidgets() {
     return;
   }
 
-
     items.push(curOption);
 
-
   });
+
+  //More infos
+  if (!["widgets-summary", "room", "favorites"].includes(widget.type)) {
+    moreDiv = `<li><div class='form-group'>
+      <label class='col-xs-3 '>Ajouter des infos</label>
+      <div class='col-xs-9'>
+      <div class="description">Permet d'ajouter des infos utilisables dans les images sous conditions</div>
+      <div class='input-group'>
+      <span class="input-group-btn">
+        <a class="btn btn-default roundedRight" onclick="addMoreCmd()"><i class="fas fa-plus-square">
+        </i> Ajouter une commande</a>
+          </span>
+          </div>
+        <div id="moreInfos-div"></div>
+      </div></div></li>`;
+    items.push(moreDiv);
+  }
+
   //Details access
   option = `<li><div class='form-group'>
     <label class='col-xs-3 '>Bloquer vue détails</label>
@@ -704,69 +766,14 @@ function refreshAddWidgets() {
 
 
 function imagePicker(id) {
-  getImageModal({title: "Choisir une image", selected: $("#"+id).attr("value") } , function(result) {
-    $("#"+id).attr("value", result);
-    $("#"+id).attr("src", "plugins/JeedomConnect/data/img/"+result);
-    $("#"+id).css("display", "");
-    $("#"+id+"-remove").css("display", "");
+  getIconModal({ title: "Choisir une icône ou une image", withIcon: "1", withImg: "1", icon: htmlToIcon($("#icon-div-"+id).children().first()) }, (result) => {
+    $("#icon-div-"+id).html(iconToHtml(result));
   });
 }
 
 function removeImage(id) {
-  $("#"+id).attr("src", "");
-  $("#"+id).attr("value", "");
-  $("#"+id).css("display", "none");
-  $("#"+id+"-remove").css("display", "none");
+  $("#icon-div-"+id).empty();
 }
-
-
-function getImageModal(_options, _callback) {
-  if (!isset(_options)) {
-    return;
-  }
-  if ($("#imageModal").length == 0) {
-    $('body').append('<div id="imageModal"></div>');
-    $("#imageModal").dialog({
-	  title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
-      width: 450
-    });
-    jQuery.ajaxSetup({
-      async: false
-    });
-    $('#imageModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.imageModal.JeedomConnect');
-    jQuery.ajaxSetup({
-      async: true
-    });
-  }
-  setImageModalData(_options.selected);
-
-  $("#imageModal").dialog({
-	  buttons: [{
-		text: "Annuler",
-		click: function() {
-			$(this).dialog("close");
-		}
-	  },
-	  {
-		text: "Valider",
-		id: "validateImg",
-		click: function() {
-			var result = $(".selected").attr('id');
-			if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-				_callback(result);
-			}
-			$(this).dialog('close');
-		}
-	  }]
-	});
-
-
-
-  $('#imageModal').dialog('open');
-};
 
 
 
@@ -828,7 +835,8 @@ function refreshCmdData(name, id, value) {
        refreshCmdData(value, data.result.value, 'undefined');
      }
 
-
+     refreshImgListOption();
+     refreshInfoSelect();
    }
   });
 }
@@ -861,9 +869,11 @@ function selectScenario(name) {
 
 function subtitleSelected() {
   if ($("#subtitle-input").val() == 'custom') {
-    $("#subtitle-input-value").css('display', 'block');
+    $("#subtitle-input-value").show();
+    $("#subtitle-select").show();
   } else {
-    $("#subtitle-input-value").css('display', 'none');
+    $("#subtitle-input-value").hide();
+    $("#subtitle-select").hide();
     $("#subtitle-input-value").val($("#subtitle-input").val());
   }
 }
@@ -894,49 +904,29 @@ function refreshCmdListOption(optionsJson) {
     return s.index - t.index;
   });
   cmdCat.forEach(item => {
-    curOption += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="cmdList-${item.id}">
-          <input style="width:240px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='' disabled>
-          <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-          <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>`
+    curOption += `<div class='input-group' style="display:flex;" id="cmdList-${item.id}">
+						<input style="width:240px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='' disabled>`;
     if (options.type == 'action') {
         curOption += `<div style="text-align:end;">
           <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${item.id}">
-          <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  ></div>
-          </li><div style="margin-top:-20px;">`;
+          <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  ></div>`;
 
     }
-    if (options.hasIcon) {
-      var value = item.icon ? typeof(item.icon) == 'string' ? item.icon : item.icon.name : '';
-      var source = item.icon ? typeof(item.icon) == 'string' ? 'md' : item.icon.source : 'md';
-      curOption += `<div class='input-group'><label class="xs-col-3">Icône : </label>
-        <input style="width:120px;" id="${item.id}-icon-input" value="${value}">
-        <select style="width:50px;margin-left:5px;" id="${item.id}-icon-source-input" value=''>
-          <option value="md" ${source == 'md' && 'selected'}>MD</option>
-          <option value="fa" ${source == 'fa' && 'selected'}>FA</option>
-          </select>
-        </div>`;
-    }
-    if (options.hasImage) {
+    if (options.hasIcon | options.hasImage) {
       curOption += `
-      <div class='input-group'> <label class="xs-col-3">Image : </label><span class="input-group-btn">
-              <img id="${item.id}" src="${item.image ? 'plugins/JeedomConnect/data/img/'+item.image : ''}" style="width:30px; height:30px;margin-top:-15px; display:${item.image ? '': 'none'};" value="${item.image || ''}" />
-              <i class="mdi mdi-minus-circle" id="${item.id}-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:${item.image ? '': 'none'};" aria-hidden="true" onclick="removeImage('${item.id}')"></i>
+      <div class='input-group'> <span class="input-group-btn">
               <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}')"><i class="fas fa-check-square">
-              </i> Choisir </a>
-              </span> </div>`;
+              </i> Icône </a>
+              <a id="icon-div-${item.id}" onclick="removeImage('${item.id}')">${iconToHtml(item.image)}</a>
+      </span> </div>`;
     }
-    curOption += '</div>'
+    curOption += `<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+    <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+    <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+    </div>`
     if (item.type == 'action') {
-      curOption += '</div>'
+      curOption += '</div>';
     }
-    getHumanName({
-      id: item.id,
-      error: function (error) {},
-      success: function (data) {
-        $("#"+item.id+"-input").val(data);
-      }
-    });
   });
   $("#cmdList-option").html(curOption);
   cmdCat.forEach(item => {
@@ -944,10 +934,29 @@ function refreshCmdListOption(optionsJson) {
   $("#confirm-"+item.id).prop('checked', confirm);
   var secure = item.secure ? "checked": "";
   $("#secure-"+item.id).prop('checked', secure);
+  getCmd({
+    id: item.id,
+    success: function (data) {
+      $("#"+item.id+"-input").val("#"+data.result.humanName+"#");
+      if (!isIcon(item.image)) {
+        item.image = jeedomIconToIcon(data.result.icon);
+        $("#icon-div-"+item.id).html(iconToHtml(item.image));
+      }
+    }
+  });
 })
 }
 
+function saveCmdList() {
+  cmdCat.forEach(item => {
+    item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
+    item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
+    item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
+  });
+}
+
 function addCmdOption(optionsJson) {
+  saveCmdList();
   var options = JSON.parse(optionsJson);
   var cmd = {};
   if (options.type) {
@@ -967,6 +976,7 @@ function addCmdOption(optionsJson) {
 }
 
 function deleteCmdOption(id, optionsJson) {
+  saveCmdList();
   var cmdToDelete = cmdCat.find(i => i.id == id);
   var index = cmdCat.indexOf(cmdToDelete);
   cmdCat.forEach(item => {
@@ -979,10 +989,7 @@ function deleteCmdOption(id, optionsJson) {
 }
 
 function upCmdOption(id, optionsJson) {
-  cmdCat.forEach(item => {
-    item.image = $("#cmdList-"+item.id+" img").first().attr("value");
-    item.icon = $("#"+item.id+"-icon-input").val();
-  });
+  saveCmdList();
   var cmdToMove = cmdCat.find(i => i.id == parseInt(id));
   var index = parseInt(cmdToMove.index);
   if (index == 0) {
@@ -995,10 +1002,7 @@ function upCmdOption(id, optionsJson) {
 }
 
 function downCmdOption(id, optionsJson) {
-  cmdCat.forEach(item => {
-    item.image = $("#cmdList-"+item.id+" img").first().attr("value");
-    item.icon = $("#"+item.id+"-icon-input").val();
-  });
+  saveCmdList();
   var cmdToMove = cmdCat.find(i => i.id == parseInt(id));
   var index = parseInt(cmdToMove.index);
   if (index == getMaxIndex(cmdCat)) {
@@ -1010,22 +1014,118 @@ function downCmdOption(id, optionsJson) {
   refreshCmdListOption(optionsJson);
 }
 
-// Image list
-function refreshImgListOption(optionsJson) {
-  var options = JSON.parse(optionsJson);
+//More Infos
+
+function refreshMoreInfos() {
+  let div = '';
+  moreInfos.forEach(item => {
+    div += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}">
+          <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.human}' disabled>
+          <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
+          <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" value='${item.name}'>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:145px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
+          </div>`;
+  });
+  $("#moreInfos-div").html(div);
+  refreshImgListOption();
+  refreshInfoSelect();
+}
+
+function addMoreCmd() {
+  jeedom.cmd.getSelectModal({cmd: {type: 'info' } }, function(result) {
+    let name = result.human.replace(/#/g, '');
+    name = name.split('[')[name.split('[').length - 1].slice(0, -1);
+    moreInfos.push({ type: 'cmd', id: result.cmd.id, human: result.human, name  });
+    saveImgOption();
+    refreshMoreInfos();
+  });
+}
+
+function deleteMoreInfo(id) {
+  var infoToDelete = moreInfos.find(i => i.id == id);
+  var index = moreInfos.indexOf(infoToDelete);
+  moreInfos.splice(index, 1);
+  refreshMoreInfos();
+}
+
+// Infos select
+function refreshInfoSelect() {
+  let infosOptionHtml = '';
+  var type = $("#widgetsList-select").val();
+  var widget = widgetsList.widgets.find(i => i.type == type);
+  if (widget.variables) {
+    widget.variables.forEach(v => {
+      infosOptionHtml += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)">
+        <a href="#">#${v.name}#</a></li>`;
+    });
+  }
+  $('input[cmdType="info"]').each((i, el) => {
+    infosOptionHtml += `<li info="${$("input[id="+el.id+"]").attr('cmdid')}" onclick="infoSelected('${el.title}', this)">
+      <a href="#">${el.title}</a></li>`;
+  });
+  moreInfos.forEach(i => {
+    infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
+      <a href="#">${i.human}</a></li>`;
+  });
+  $(".infos-select").html(infosOptionHtml);
+
+  refreshStrings();
+}
+
+function infoSelected(value, el) {
+  let inputId = $(el).parent().attr("input")
+  $("#"+inputId).val( $("#"+inputId).val() + value);
+}
+
+function refreshStrings() {
+  const infoCmd = moreInfos.slice();
+  $('input[cmdType="info"]').each((i, el) => {
+    infoCmd.push({id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title });
+  });
+  $("#name-input").val(idToHuman($("#name-input").val(), infoCmd));
+  $("#subtitle-input-value").val(idToHuman($("#subtitle-input-value").val(), infoCmd));
+}
+
+function idToHuman(string, infos) {
+  let result = string;
+  if (typeof(string) != "string") { return string; }
+  const match = string.match(/#.*?#/g);
+  if (!match) { return string; }
+  match.forEach(item => {
+    const info = infos.find(i => i.id == item.replace(/\#/g, ""));
+    if (info) {
+      result = result.replace(item, info.human);
+    }
+  });
+  return result;
+}
+
+// Image condition list
+function refreshImgListOption() {
+  var options = [];
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
   curOption = "";
+  //get all info
+  $('input[cmdType="info"]').each((i, el) => {
+    options.push({ type: 'cmd', id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title})
+  });
+  options = options.concat(moreInfos);
+  if (widget.variables) {
+    widget.variables.forEach(v => {
+      options.push({ type: 'var', id: v.name, human: `#${v.name}#`})
+    });
+  }
+
   imgCat.sort(function(s,t) {
     return s.index - t.index;
   });
+
   imgCat.forEach(item => {
-    curOption += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="imgList-${item.index}">
-    Si :<select id="info-${item.index}" style="width:100px;height:31px;margin-left:5px;">`;
+    curOption += `<div class='input-group' id="imgList-${item.index}">
+    Si :<select id="info-${item.index}" style="width:250px;height:31px;margin-left:5px;">`;
     options.forEach(info => {
-      var infoCmd = widget.options.find(o => o.id == info);
-      var infoName = infoCmd ? infoCmd.name : info;
-      curOption += `<option value="${info}" ${item.info == info && "selected"}>${infoName}</option>`;
+      curOption += `<option value="${info.id}" type="${info.type}" ${item.info == undefined ? '' : item.info.id == info.id && "selected"}>${info.human}</option>`;
     });
     curOption += `</select> <select id="operator-${item.index}" style="width:50px;height:31px; margin-left:5px;">
       <option value="=" ${item.operator == "=" && "selected"}>=</option>
@@ -1035,35 +1135,39 @@ function refreshImgListOption(optionsJson) {
 
     curOption +=`<input style="width:150px;height:31px;margin-left:5px;" class=' roundedLeft' id="${item.index}-value" value='${item.value || ''}' >`
     curOption += `
-      <div class='input-group'> <label class="xs-col-3">Image : </label><span class="input-group-btn">
-              <img id="${item.index}" src="${item.image ? 'plugins/JeedomConnect/data/img/'+item.image : ''}" style="width:30px; height:30px;margin-top:-15px; display:${item.image ? '': 'none'};" value="${item.image || ''}" />
-              <i class="mdi mdi-minus-circle" id="${item.index}-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:${item.image ? '': 'none'};" aria-hidden="true" onclick="removeImage('${item.index}')"></i>
-              <a class="btn btn-success roundedRight" onclick="imagePicker('${item.index}')"><i class="fas fa-check-square">
-              </i> Choisir </a>
-              </span>
-              <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-              <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-              <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-              </div>`;
+          <span class="input-group-btn">
+              <a class="btn btn-success roundedRight" onclick="imagePicker('${item.index}')"><i class="fas fa-plus-square">
+              </i> Image </a>
+              <a id="icon-div-${item.index}" onclick="removeImage('${item.index}')">${iconToHtml(item.image)}</a>
+          </span>
+              <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
+              <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i>
+              <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
+        `;
 
     curOption += '</div>'
   });
   $("#imgList-option").html(curOption);
 }
 
-function addImgOption(infos) {
+function saveImgOption() {
   imgCat.forEach(item => {
-    item.image = $("#imgList-"+item.index+" img").first().attr("value");
-    item.info = $("#info-"+item.index).val();
+    item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
+    item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };;
     item.operator = $("#operator-"+item.index).val();
     item.value = $("#"+item.index+"-value").val();
   });
-  var maxIndex = getMaxIndex(imgCat);
-  imgCat.push({index: maxIndex+1 });
-  refreshImgListOption(infos);
 }
 
-function deleteImgOption(id, optionsJson) {
+function addImgOption() {
+  saveImgOption();
+  var maxIndex = getMaxIndex(imgCat);
+  imgCat.push({index: maxIndex+1 });
+  refreshImgListOption();
+}
+
+function deleteImgOption(id) {
+  saveImgOption();
   var imgToDelete = imgCat.find(i => i.index == id);
   var index = imgCat.indexOf(imgToDelete);
   imgCat.splice(index, 1);
@@ -1073,16 +1177,11 @@ function deleteImgOption(id, optionsJson) {
   }
   });
 
-  refreshImgListOption(optionsJson);
+  refreshImgListOption();
 }
 
-function upImgOption(id, optionsJson) {
-  imgCat.forEach(item => {
-    item.image = $("#imgList-"+item.index+" img").first().attr("value");
-    item.info = $("#info-"+item.index).val();
-    item.operator = $("#operator-"+item.index).val();
-    item.value = $("#"+item.index+"-value").val();
-  });
+function upImgOption(id) {
+  saveImgOption();
   var imgToMove = imgCat.find(i => i.index == parseInt(id));
   var index = parseInt(imgToMove.index);
   if (index == 0) {
@@ -1091,16 +1190,11 @@ function upImgOption(id, optionsJson) {
   var otherImg = imgCat.find(i => i.index == index - 1);
   imgToMove.index = index - 1;
   otherImg.index = index;
-  refreshImgListOption(optionsJson);
+  refreshImgListOption();
 }
 
-function downImgOption(id, optionsJson) {
-  imgCat.forEach(item => {
-    item.image = $("#imgList-"+item.index+" img").first().attr("value");
-    item.info = $("#info-"+item.index).val();
-    item.operator = $("#operator-"+item.index).val();
-    item.value = $("#"+item.index+"-value").val();
-  });
+function downImgOption(id) {
+  saveImgOption();
   var imgToMove = imgCat.find(i => i.index == parseInt(id));
   var index = parseInt(imgToMove.index);
   if (index == getMaxIndex(imgCat)) {
@@ -1109,7 +1203,7 @@ function downImgOption(id, optionsJson) {
   var otherImg = imgCat.find(i => i.index == index + 1);
   imgToMove.index = index + 1;
   otherImg.index = index;
-  refreshImgListOption(optionsJson);
+  refreshImgListOption();
 }
 
 
@@ -1187,6 +1281,18 @@ function downWidgetOption(id) {
    });
  }
 
+ function jeedomIconToIcon(html) {
+  if (html.startsWith("<i ")) {
+    let tag1 = html.split("\"")[1].split(" ")[0];
+    let tag2 = html.split("\"")[1].split(" ")[1];
+    if (tag1 == 'icon') {
+      return { source: 'jeedom', name: tag2};
+    } else if (tag1.startsWith('fa')) {
+      return { source: 'fa', prefix: tag1, name: tag2.replace("fa-", "")};
+    }
+  }
+}
+
  function getScenarioHumanName(_params) {
  var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
 
@@ -1203,6 +1309,11 @@ function downWidgetOption(id) {
  function saveWidget(exit) {
   var result = {};
   var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+  let infoCmd = moreInfos.slice();
+  $('input[cmdType="info"]').each((i, el) => {
+    infoCmd.push({id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title });
+  });
+
   widgetConfig.options.forEach(option => {
   if (option.category == "cmd") {
     if ($("#"+option.id+"-input").attr('cmdId') == '' & option.required) {
@@ -1235,9 +1346,9 @@ function downWidgetOption(id) {
   } else if (option.category == "string") {
     if ($("#"+option.id+"-input").val() == '' & option.required) {
       $('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-      return {};
+      throw {} ; //return {}; ??? 
     }
-    result[option.id] = $("#"+option.id+"-input").val();
+    result[option.id] = parseString($("#"+option.id+"-input").val(), infoCmd);
   } else if (option.category == "binary") {
     result[option.id] = $("#"+option.id+"-input").is(':checked');
   } else if (option.category == "stringList") {
@@ -1247,7 +1358,7 @@ function downWidgetOption(id) {
     }
     if ($("#"+option.id+"-input").val() != 'none') {
       if (option.id == 'subtitle') {
-        result[option.id] = $("#subtitle-input-value").val();
+        result[option.id] = parseString($("#subtitle-input-value").val(), infoCmd);
       } else {
         result[option.id] = $("#"+option.id+"-input").val();
       }
@@ -1266,13 +1377,9 @@ function downWidgetOption(id) {
       throw {};
     }
     cmdCat.forEach(item => {
-      if (option.options.hasImage) {
-        item.image = $("#cmdList-"+item.id+" img").first().attr("value");
-        if (item.image == "") { delete item.image; }
-      }
-      if (option.options.hasIcon) {
-        item.icon = { name: $("#"+item.id+"-icon-input").val().trim(), source: $("#"+item.id+"-icon-source-input").val()}
-        if (item.icon.name == "") { delete item.icon; }
+      if (option.options.hasImage | option.options.hasIcon) {
+        item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
+        if (item.image == {}) { delete item.image; }
       }
       if (option.options.type == 'action') {
         item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
@@ -1286,26 +1393,23 @@ function downWidgetOption(id) {
       throw {};
     }
     imgCat.forEach(item => {
-      item.image = $("#imgList-"+item.index+" img").first().attr("value");
-      item.info = $("#info-"+item.index).val();
+      item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
+      item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
       item.operator = $("#operator-"+item.index).val();
       item.value = $("#"+item.index+"-value").val();
     });
     result[option.id] = imgCat;
   }	else if (option.category == "img") {
-    if ($("#"+option.id).attr("value") == '' & option.required) {
-      $('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-      throw {};
-    }
-    if ($("#"+option.id).attr("value") != "") {
-      result[option.id] = $("#"+option.id).attr("value");
-    } else {
-      result[option.id] = undefined;
-    }
+    let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
+			if (icon.source == undefined & option.required) {
+				$('#widget-alert').showAlert({message: "L'image est obligatoire", level: 'danger'});
+				throw {};
+			}
+			result[option.id] = icon.source != undefined ? icon : undefined;
   }
   });
-    result.type = $("#widgetsList-select").val();
-   result.blockDetail = $("#blockDetail-input").is(':checked');
+  result.type = $("#widgetsList-select").val();
+  result.blockDetail = $("#blockDetail-input").is(':checked');
   $('#widget-alert').hideAlert();
   //$(this).dialog('close');
   
@@ -1323,6 +1427,14 @@ function downWidgetOption(id) {
     }
   }
 
+
+  if (moreInfos.length > 0) {
+    result.moreInfos = [];
+    moreInfos.forEach(info => {
+      info.name = $("#"+info.id+"-name-input").val();
+      result.moreInfos.push(info);
+    });
+  }
 
   toSave = JSON.stringify(result)
   //console.log("envoie du widgetJC ==> " , toSave);
@@ -1472,6 +1584,20 @@ function getMaxIndex(array) {
 		}
 	});
 	return maxIndex;
+}
+
+function parseString(string, infos) {
+	let result = string;
+  if (typeof(string) != "string") { return string; }
+  const match = string.match(/#.*?#/g);
+  if (!match) { return string; }
+  match.forEach(item => {
+    const info = infos.find(i => i.human == item);
+    if (info) {
+      result = result.replace(item, "#"+info.id+"#");
+    }
+  });
+  return result;
 }
 
 //********************************************/

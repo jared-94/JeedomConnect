@@ -60,6 +60,13 @@ try {
 
 	}
 
+	if (init('action') == 'duplicateWidgetConfig') {
+		log::add('JeedomConnect', 'debug', '-- manage fx ajax duplicateWidgetConfig for id >' . init('eqId') . '<');
+		$newId = JeedomConnectWidget::duplicateWidget(init('eqId'));
+		ajax::success(array('duplicateId' => $newId) );
+
+	}
+
 	if (init('action') == 'getWidgetConfig') {
 		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
 		$widget = JeedomConnectWidget::getWidgets(init('eqId'));
