@@ -25,7 +25,7 @@ if (!isConnect('admin')) {
     color: red;
   }
 </style>
-
+<div style="display: none;" id="div_simpleModalAlert"></div>
 <form class="form-horizontal" style="overflow: hidden;">
   <div id="simpleModalAlert" style="display:none"></div>
   <ul id="modalOptions" style="padding-left:10px; list-style-type: none;">
@@ -69,7 +69,7 @@ function setSimpleModalData(options) {
 			<label class='col-xs-3  required' >Icone</label>
 			<div class='col-xs-9'><div class='input-group'>
       <a class='btn btn-default btn-sm cursor bt_selectTrigger'
-        tooltip='Choisir une icone' onclick="getIcon();">
+        tooltip='Choisir une icone' onclick="getSimpleIcon();">
       <i class='fas fa-flag'></i> Icône </a>
       <a id="icon-div">${icon} </a>
         </div></div>
@@ -187,7 +187,6 @@ function swipeSelected(type) {
 
 function selectSimpleCmd(name) {
   jeedom.cmd.getSelectModal({cmd: {type: 'action', subType: 'other'}}, function(result) {
-    console.log(result)
     $("#"+name+"-cmd-input").val(result.human);
     $("#"+name+"-cmd-input").attr('cmdId', result.cmd.id);
   })
@@ -228,9 +227,9 @@ function getSimpleCmd({id, error, success}) {
   });
 }
 
-function getIcon(name) {
-  getIconModal({ title: "Choisir une icône"}, (result) => {
-    $("#icon-div").html(result.html);
+function getSimpleIcon(name) {
+  getIconModal({ title: "Choisir une icône", withIcon: "1", withImg: "0", icon: htmlToIcon($("#icon-div").children().first()) }, (result) => {
+    $("#icon-div").html(iconToHtml(result));
   })
 }
 

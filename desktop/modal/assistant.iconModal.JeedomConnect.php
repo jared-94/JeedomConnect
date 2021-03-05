@@ -18,324 +18,264 @@ if (!isConnect('admin')) {
     throw new Exception('{{401 - Accès non autorisé}}');
 }
 
+sendVarToJS('selectedIcon', [
+	'source' => init('source', 0),
+	'name' => init('name', 0),
+	'color' => init('color', 0),
+  'shadow' => init('shadow', 0)
+]);
+
 ?>
-<style>
-  .row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
 
-.column {
-  float: left;
-  width: 25%;
-  padding: 10px;
-}
+<div style="display: none;" id="div_iconSelectorAlert"></div>
+<ul class="nav nav-tabs" role="tablist">
+  <?php if (init('withIcon') == "1") { ?>
+	<li role="presentation" class="active"><a href="#jeedom" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-icons"></i> {{Icônes Jeedom}}</a></li>
+	<li role="presentation"><a href="#md" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-icons"></i> {{Icônes Material Design}}</a></li>
+  <li role="presentation"><a href="#fa" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-icons"></i> {{Icônes Font Awesome}}</a></li>
+  <?php } ?>
+  <?php if (init('withImg') == "1") { ?>
+  <li role="presentation" <?php if (init('withIcon') != "1") { echo 'class="active"'; } ?>>
+    <a href="#jc" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-image"></i> {{Images Jeedom Connect}}</a></li>
+  <li role="presentation"><a href="#user" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-image"></i> {{Images Persos}}</a></li>
+  <?php } ?>
+</ul>
 
-/* Style the images inside the grid */
-.column img {
-  opacity: 0.8;
-  cursor: pointer;
-}
-
-.selected {
-	border: solid;
-	border-color: red;
-}
-</style>
 <div class="tab-content" style="overflow-y:scroll;">
+  <!-- Jeedom icons -->
+    <div role="tabpanel" class="tab-pane active" id="tabicon" source="jeedom" style="width:calc(100% - 20px); display:none">
+      <?php
+      $scanPaths = array('core/css/icon');
+      $div = '';
+      foreach ($scanPaths as $root) {
+        $ls = ls($root, '*');
+        foreach ($ls as $dir) {
+          $root .= '/';
+          if (!is_dir($root . $dir) || !file_exists($root . $dir . '/style.css')) {
+            continue;
+          }
+          $fontfile = $root . $dir . 'fonts/' . substr($dir, 0, -1) . '.ttf';
+          if (!file_exists($fontfile)) continue;
 
-<input type="file" accept="image/*" id="file-input" style="display:none;" >
+          $css = file_get_contents($root . $dir . '/style.css');
+          $research = strtolower(str_replace('/', '', $dir));
+          preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
+          $div .= '<div class="iconCategory"><legend>' . str_replace('/', '', $dir) . '</legend>';
 
-
-
-<div class="panel-group" id="accordionIcon">
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	<h3 class="panel-title">
-	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="false" id="jeeCon-a">Icônes Jeedom</a>
-	</h3>
-	</div>
-
-	<div id="jeeCon" class="panel-collapse collapse">
-	   <div class="panel-body">
-	      <div>
-
-
-          <div role="tabpanel" class="tab-pane active" id="tabicon" style="width:calc(100% - 20px)">
-          		<?php
-          		$scanPaths = array('core/css/icon');
-          		$div = '';
-          		foreach ($scanPaths as $root) {
-          			$ls = ls($root, '*');
-          			foreach ($ls as $dir) {
-          				$root .= '/';
-          				if (!is_dir($root . $dir) || !file_exists($root . $dir . '/style.css')) {
-          					continue;
-          				}
-          				$fontfile = $root . $dir . 'fonts/' . substr($dir, 0, -1) . '.ttf';
-          				if (!file_exists($fontfile)) continue;
-
-          				$css = file_get_contents($root . $dir . '/style.css');
-          				$research = strtolower(str_replace('/', '', $dir));
-          				preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
-          				$div .= '<div class="iconCategory"><legend>' . str_replace('/', '', $dir) . '</legend>';
-
-          				$number = 1;
-          				foreach ($matches as $match) {
-          					if (isset($match[0])) {
-          						if ($number == 1) {
-          							$div .= '<div class="row">';
-          						}
-          						$div .= '<div class="col-lg-1 divIconSel">';
-          						$icon = str_replace(array(':', '.'), '', $match[0]);
-          						$div .= '<span class="iconSel"><i class=\'icon ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
-          						$div .= '</div>';
-          						$number++;
-          					}
-          				}
-          				if($number != 0){
-          					$div .= '</div>';
-          				}
-          				$div .= '</div>';
-          			}
-          		}
-          		echo $div;
-          		?>
-	    </div>
-	    </div>
-	    </div>
-    </div>
+          $number = 1;
+          foreach ($matches as $match) {
+            if (isset($match[0])) {
+              if ($number == 1) {
+                $div .= '<div class="row">';
+              }
+              $div .= '<div class="col-lg-1 divIconSel">';
+              $icon = str_replace(array(':', '.'), '', $match[0]);
+              $div .= '<span class="iconSel"><i source="jeedom" name="'.$icon.'" class=\'icon ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
+              $div .= '</div>';
+              $number++;
+            }
+          }
+          if($number != 0){
+            $div .= '</div>';
+          }
+          $div .= '</div>';
+        }
+      }
+      echo $div;
+      ?>
     </div>
 
     <!-- Material -->
-      <div class="panel panel-default">
-    	<div class="panel-heading">
-    	<h3 class="panel-title">
-    	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="false" id="mdCon-a">Icônes Material Design</a>
-    	</h3>
-    	</div>
-    	<div id="mdCon" class="panel-collapse collapse">
-    	   <div class="panel-body">
-    	      <div>
-              <div role="tabpanel" class="tab-pane active" id="tabicon" style="width:calc(100% - 20px)">
-              		<?php
-              		$div = '';
-              		$dir = 'plugins/JeedomConnect/desktop/css';
+    <div role="tabpanel" class="tab-pane" id="tabicon" source="md" style="width:calc(100% - 20px); display:none">
+      <?php
+      $div = '';
+      $dir = 'plugins/JeedomConnect/desktop/css/md/css';
 
+          $css = file_get_contents($dir . '/materialdesignicons.css');
+          $research = 'mdi';
+          preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
+          $div .= '<div class="iconCategory">';
 
-              				$css = file_get_contents($dir . '/materialdesignicons.css');
-              				$research = 'mdi';
-              				preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
-              				$div .= '<div class="iconCategory"><legend>' . $research . '</legend>';
+          $number = 1;
+          foreach ($matches as $match) {
+            if (isset($match[0])) {
+              if ($number == 1) {
+                $div .= '<div class="row">';
+              }
+              $div .= '<div class="col-lg-1 divIconSel">';
+              $icon = str_replace(array(':', '.', 'mdi-'), '', $match[0]);
+              $div .= '<span class="iconSel"><i source="md" name="'.$icon.'" class=\'mdi mdi-' . $icon . '\'></i></span><br/><span class="iconDesc">' . 'mdi-' .$icon . '</span>';
+              $div .= '</div>';
+              $number++;
+            }
+          }
+          if($number != 0){
+            $div .= '</div>';
+          }
+          $div .= '</div>';
+      echo $div;
+      ?>
+    </div>
 
-              				$number = 1;
-              				foreach ($matches as $match) {
-              					if (isset($match[0])) {
-              						if ($number == 1) {
-              							$div .= '<div class="row">';
-              						}
-              						$div .= '<div class="col-lg-1 divIconSel">';
-              						$icon = str_replace(array(':', '.'), '', $match[0]);
-              						$div .= '<span class="iconSel"><i class=\'mdi ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
-              						$div .= '</div>';
-              						$number++;
-              					}
-              				}
-              				if($number != 0){
-              					$div .= '</div>';
-              				}
-              				$div .= '</div>';
+    <!-- FA -->
+    <div role="tabpanel" class="tab-pane active" id="tabicon" source="fa" style="width:calc(100% - 20px); display:none">
+      <?php
 
+      $div = '';
+      $dir = 'plugins/JeedomConnect/desktop/css';
 
-              		echo $div;
-              		?>
-    	    </div>
-    	    </div>
-    	    </div>
+      $solid = json_decode(file_get_contents($dir . '/fa-solid.json'), true);
+      foreach ($solid as $name => $data) {
+        $solid[$name] = 'fas';
+      }
+      $brand = json_decode(file_get_contents($dir . '/fa-brand.json'), true);
+      foreach ($brand as $name => $data) {
+        $brand[$name] = 'fab';
+      }
+      $icons = array_merge($solid, $brand);
+      ksort($icons);
+      $div .= '<div class="iconCategory">';
+
+      $number = 1;
+      foreach ($icons as $name => $data) {
+          if ($number == 1) {
+            $div .= '<div class="row">';
+          }
+          $div .= '<div class="col-lg-1 divIconSel">';
+          $div .= '<span class="iconSel"><i source="fa" name="'.$name.'" prefix="'.$data.'" class=\'' . $data . ' fa-' . $name . '\'></i></span><br/><span class="iconDesc">fa-' . $name . '</span>';
+          $div .= '</div>';
+          $number++;
+      }
+      if($number != 0){
+        $div .= '</div>';
+      }
+      $div .= '</div>';
+      echo $div;
+      ?>
+    </div>
+
+    <!-- JC -->
+    <div role="tabpanel" class="tab-pane active" id="tabimg" source="jc" style="width:calc(100% - 20px); display:none">
+      <div class="imgContainer">
+			  <div id="div_imageGallery">
+          <?php
+          $div = '';
+          $dir = __DIR__ . '/../../data/img';
+          $files = scandir($dir);
+
+          foreach ($files as $key => $name) {
+            if ($name == "." || $name == ".." || $name == "user_files") { continue; }
+            $div .= '<div class="divIconSel divImgSel">';
+            $div .= '<div class="cursor iconSel"><img source="jc" name="'.$name.'" class="img-responsive" src="plugins/JeedomConnect/data/img/'. $name . '"/></div>';
+            $div .= '<div class="iconDesc">' . $name . '</div>';
+            $div .= '</div>';
+          }
+          echo $div;
+          ?>
         </div>
+      </div>
+    </div>
+
+    <!-- USER -->
+    <div role="tabpanel" class="tab-pane active" id="tabimg" source="user" style="width:calc(100% - 20px); display:none">
+      <div class="imgContainer">
+        <span class="btn btn-default btn-file pull-right">
+				  <i class="fas fa-plus-square"></i> Ajouter<input id="bt_uploadImg" type="file" name="file" multiple="multiple" data-path="" style="display: inline-block;">
+			  </span>
+
+			  <div id="div_imageGallery" source="user">
+          <?php
+          $div = '';
+          $dir = __DIR__ . '/../../data/img/user_files';
+          $files = scandir($dir);
+
+          foreach ($files as $key => $name) {
+            if ($name == "." || $name == "..") { continue; }
+            $div .= '<div class="divIconSel divImgSel">';
+            $div .= '<div class="cursor iconSel"><img source="user" name="'.$name.'" class="img-responsive" src="plugins/JeedomConnect/data/img/user_files/'. $name . '"/></div>';
+            $div .= '<div class="iconDesc">' . substr($name, 0, 15) . '</div>';
+            $div .= '</div>';
+          }
+          echo $div;
+          ?>
         </div>
-
-        <!-- FA -->
-          <div class="panel panel-default">
-        	<div class="panel-heading">
-        	<h3 class="panel-title">
-        	   <a class="accordion-toggle" data-toggle="collapse" data-parent="" aria-expanded="false" id="faCon-a">Icônes FontAwesome</a>
-        	</h3>
-        	</div>
-        	<div id="faCon" class="panel-collapse collapse">
-        	   <div class="panel-body">
-        	      <div>
-                  <div role="tabpanel" class="tab-pane active" id="tabicon" style="width:calc(100% - 20px)">
-                  		<?php
-                  		$div = '';
-                  		$dir = 'plugins/JeedomConnect/desktop/css';
-
-
-                  				$css = file_get_contents($dir . '/fontawesome.css');
-                  				$research = 'fa';
-                  				preg_match_all("/\." . $research . "-(.*?):/", $css, $matches, PREG_SET_ORDER);
-                  				$div .= '<div class="iconCategory"><legend>' . $research . '</legend>';
-
-                  				$number = 1;
-                  				foreach ($matches as $match) {
-                  					if (isset($match[0])) {
-                  						if ($number == 1) {
-                  							$div .= '<div class="row">';
-                  						}
-                  						$div .= '<div class="col-lg-1 divIconSel">';
-                  						$icon = str_replace(array(':', '.'), '', $match[0]);
-                  						$div .= '<span class="iconSel"><i class=\'fa ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
-                  						$div .= '</div>';
-                  						$number++;
-                  					}
-                  				}
-                  				if($number != 0){
-                  					$div .= '</div>';
-                  				}
-                  				$div .= '</div>';
-
-
-                  		echo $div;
-                  		?>
-        	    </div>
-        	    </div>
-        	    </div>
-            </div>
-            </div>
+      </div>
+    </div>
 
 	</div>
 
-
-
-
-
-
-</div>
-
-
-
-<!--
-<br/>
-Images internes
-<div class="row" id="internal-div"></div>
-Images personnelles
-<a class="btn btn-default roundedRight" onclick="addImage()">
-	<i class="fas fa-plus-square"></i>
-	Ajouter
-</a>
-
-<div class="row" id="user-div"></div>
--->
 <div id="mySearch" class="input-group" style="margin-left:6px;margin-top:6px">
+  <div id="icon-params-div" class="input-group" style="display:none">
+    <label style="float:left; margin-top:5px">Couleur :</label>
+    <input class="form-control roundedLeft" style="width : 100px;margin-left:10px;" type="color" id="mod-color-picker" value='' onchange="iconColorDefined(this)">
+			<input class="form-control roundedLeft" style="width : 100px;"  id="mod-color-input" value=''>
+	</div>
+  <div id="img-params-div" class="input-group" style="display:none">
+    <label style="float:left">Noir et blanc :</label>
+			<input class="form-control roundedLeft" style="margin-left:5px" id="bw-input" type="checkbox">
+	</div>
 
-  <input class="form-control" placeholder="{{Rechercher}}" id="in_searchIconSelector">
+    <input class="form-control" placeholder="{{Rechercher}}" id="in_searchIconSelector">
   <div class="input-group-btn">
-    <a id="bt_resetSearch" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i> </a>
+    <a id="bt_resetSearch" class="btn roundedRight" style="width:30px; margin-top:32px;"><i class="fas fa-times"></i> </a>
   </div>
 </div>
 
 </div>
 
 
-
 <script>
 
-function addImage() {
-	$("#file-input").click();
-}
-
-$("#file-input").change(function() {
-	var fd = new FormData();
-	if($(this).prop('files').length > 0)
-    {
-        file =$(this).prop('files')[0];
-        fd.append("file", file);
-		fd.append("action", "uploadImg");
-		console.log(fd)
-		$.post({
-            url: 'plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php',
-            data: fd,
-            contentType: false,
-            processData: false,
-            success: function(response){
-				setImageModalData();
-            },
-        });
-
-    }
-});
-
-function selectImage(img) {
-	$(".selected").removeClass("selected");
-	$(img).addClass("selected");
-	$( "#validateImg").click();
-}
-function setImageModalData(selected) {
-	$.post({
-        url: 'plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php',
-		data: { 'action': 'getImgList' },
-		cache: false,
-        success: function(response){
-            files = $.parseJSON(response).result;
-			internalContent = "";
-			for (var key in files.internal) {
-				if (files.internal[key] == selected) {
-					internalContent += `<div class="column">
-					<img src="plugins/JeedomConnect/data/img/${files.internal[key]}" id="${files.internal[key]}" style="width:40px" class="selected" onclick="selectImage(this);">
-					</div>`;
-				} else {
-					internalContent += `<div class="column">
-					<img src="plugins/JeedomConnect/data/img/${files.internal[key]}" id="${files.internal[key]}" style="width:40px" onclick="selectImage(this);">
-					</div>`;
-				}
-
+$('#bt_uploadImg').fileupload({
+    add: function (e, data) {
+			let currentPath = $('#bt_uploadImg').attr('data-path');
+			data.url = 'core/ajax/jeedom.ajax.php?action=uploadImageIcon&filepath=plugins/JeedomConnect/data/img/user_files/';
+      data.submit();
+    },
+		done: function(e, data) {
+			if (data.result.state != 'ok') {
+				$('#div_iconSelectorAlert').showAlert({message: data.result.result, level: 'danger'});
+				return;
 			}
-			$("#internal-div").html(internalContent);
-			userContent = "";
-			for (var key in files.user) {
-				if (files.user[key] == selected) {
-					userContent += `<div class="column">
-					<img src="plugins/JeedomConnect/data/img/user_files/${files.user[key]}" id="user_files/${files.user[key]}" class="selected" style="width:40px" onclick="selectImage(this);">
-					</div>`;
-				} else {
-					userContent += `<div class="column">
-					<img src="plugins/JeedomConnect/data/img/user_files/${files.user[key]}" id="user_files/${files.user[key]}"  style="width:40px" onclick="selectImage(this);">
-					</div>`;
-				}
-			}
-			$("#user-div").html(userContent);
-        },
-    });
-}
+      var name = data.result.result.filepath.replace(/^.*[\\\/]/, '');
+      div = '<div class="divIconSel divImgSel">';
+      div += '<div class="cursor iconSel"><img class="img-responsive" src="plugins/JeedomConnect/data/img/user_files/' + name + '" /></div>';
+      div += '<div class="iconDesc">' + name + '</div>';
+      div += '</div>';
+      $("#div_imageGallery[source='user']").append(div);
+
+			$('#div_iconSelectorAlert').showAlert({message: 'Fichier(s) ajouté(s) avec succès', level: 'success'});
+		}
+	});
 
 
-$("#jeeCon-a").on( "click", function() {
-  $("#jeeCon").toggleClass( "collapse" )
-});
+  $('.divIconSel').on('click', function() {
+  	$('.divIconSel').removeClass('iconSelected');
+  	$(this).closest('.divIconSel').addClass('iconSelected');
+  });
 
-$("#mdCon-a").on( "click", function() {
-  $("#mdCon").toggleClass( "collapse" )
-});
-$("#faCon-a").on( "click", function() {
-  $("#faCon").toggleClass( "collapse" )
-});
+  function iconColorDefined(c) {
+    $("#mod-color-input").val(c.value);
+  }
 
-$('.divIconSel').on('click', function() {
-	$('.divIconSel').removeClass('iconSelected');
-	$(this).closest('.divIconSel').addClass('iconSelected');
-});
+  function setIconParams() {
+    $("#icon-params-div").show();
+    $("#img-params-div").hide();
+  }
+
+  function setImgParams() {
+    $("#icon-params-div").hide();
+    $("#img-params-div").show();
+  }
+
 
 //searching
 $('#in_searchIconSelector').on('keyup',function() {
 
 	var search = $(this).value()
-  if (search.length < 2) { return; }
+  if (search.length == 1) { return; }
   $('.divIconSel').show()
 	$('.iconCategory').show()
-  $("#jeeCon").removeClass( "collapse" )
-  $("#mdCon").removeClass( "collapse" )
-  $("#faCon").removeClass( "collapse" )
 
 	if (search != '') {
 		search = normTextLower(search)
@@ -361,18 +301,88 @@ $('#in_searchIconSelector').on('keyup',function() {
 })
 
 $('#bt_resetSearch').on('click', function() {
-  $("#jeeCon").addClass( "collapse" )
-  $("#mdCon").addClass( "collapse" )
-  $("#faCon").addClass( "collapse" )
 	$('#in_searchIconSelector').val('').keyup()
 })
 
+$('#iconModal ul li a[href="#md"]').click(function() {
+  $('.tab-pane[source="jeedom"]').hide();
+  $('.tab-pane[source="fa"]').hide();
+  $('.tab-pane[source="jc"]').hide();
+  $('.tab-pane[source="user"]').hide();
+	$('.tab-pane[source="md"]').show();
+  setIconParams();
+  $('#in_searchIconSelector').keyup();
+})
+
+$('#iconModal ul li a[href="#jeedom"]').click(function() {
+  $('.tab-pane[source="md"]').hide();
+  $('.tab-pane[source="fa"]').hide();
+  $('.tab-pane[source="jc"]').hide();
+  $('.tab-pane[source="user"]').hide();
+  $('.tab-pane[source="jeedom"]').show();
+  setIconParams();
+  $('#in_searchIconSelector').keyup();
+})
+
+$('#iconModal ul li a[href="#fa"]').click(function() {
+  $('.tab-pane[source="jeedom"]').hide();
+  $('.tab-pane[source="md"]').hide();
+  $('.tab-pane[source="jc"]').hide();
+  $('.tab-pane[source="user"]').hide();
+  $('.tab-pane[source="fa"]').show();
+  setIconParams();
+  $('#in_searchIconSelector').keyup();
+})
+
+$('#iconModal ul li a[href="#jc"]').click(function() {
+  $('.tab-pane[source="jeedom"]').hide();
+  $('.tab-pane[source="md"]').hide();
+  $('.tab-pane[source="fa"]').hide();
+  $('.tab-pane[source="user"]').hide();
+  $('.tab-pane[source="jc"]').show();
+  setImgParams();
+  $('#in_searchIconSelector').keyup();
+})
+
+$('#iconModal ul li a[href="#user"]').click(function() {
+  $('.tab-pane[source="jeedom"]').hide();
+  $('.tab-pane[source="md"]').hide();
+  $('.tab-pane[source="fa"]').hide();
+  $('.tab-pane[source="jc"]').hide();
+  $('.tab-pane[source="user"]').show();
+  setImgParams();
+  $('#in_searchIconSelector').keyup();
+})
 
 $(function() {
   var buttonSet = $('.ui-dialog[aria-describedby="iconModal"]').find('.ui-dialog-buttonpane')
 	buttonSet.find('#mySearch').remove()
 	var mySearch = $('.ui-dialog[aria-describedby="iconModal"]').find('#mySearch')
 	buttonSet.append(mySearch)
+  if (selectedIcon.source == 0) {
+    $('#iconModal ul li a').first().click();
+  } else {
+    $(`#iconModal ul li a[href="#${selectedIcon.source}"]`).click();
+    $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
+    setTimeout(function() {
+			elem = $('div.divIconSel.iconSelected')
+			if (elem.position()) {
+				container = $('#iconModal > .tab-content')
+				pos = elem.position().top + container.scrollTop() - container.position().top
+				container.animate({scrollTop: pos-20})
+			}
+		}, 250)
+  }
+
+  if (selectedIcon.color != 0) {
+    $("#mod-color-picker").val("#" + selectedIcon.color);
+    $("#mod-color-input").val("#" + selectedIcon.color);
+  }
+  if (selectedIcon.shadow === "true") {
+    $("#bw-input").prop('checked', true);
+  }
+
+
 });
 
 </script>

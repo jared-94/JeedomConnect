@@ -37,10 +37,8 @@ function refreshBottomTabData() {
 	});
 	var items = [];
 	$.each( tabs, function( key, val ) {
-		var icon = typeof(val.icon) == 'string' ? `mdi mdi-${val.icon}` : val.icon.source == 'md' ?
-			`mdi mdi-${val.icon.name}` : val.icon.source == 'fa' ? `fa fa-${val.icon.name}` : `icon ${val.icon.name}`;
 		items.push( `<li><a  onclick="editBottomTabModal('${val.id}');">
-			<i class="${icon}" aria-hidden="true" style="margin-right:15px;"></i>${val.name}</a>
+			${iconToHtml(val.icon)}<i style="margin-left:10px;"></i>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
@@ -134,7 +132,8 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i>
+			<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
 			items.push( `<li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
@@ -256,37 +255,57 @@ function reIndexArray(array) {
 }
 
 function htmlToIcon(html) {
-	let tag = html.split('\"')[1].split(' ');
-	let source = '';
-	let name = '';
-	if (tag[0] == 'icon') {
-		source = 'jeedom';
-		name = tag[1];
-	} else if (tag[0] == 'mdi') {
-		source = 'md';
-		name = tag[1].substring(4);
-	} else if (tag[0] == 'fa') {
-		source = 'fa';
-		name = tag[1].substring(3)
+	let icon = {};
+	icon.source = html.attr("source");
+	icon.name = html.attr("name");
+	if (icon.source == 'fa') {
+		icon.prefix = html.attr("prefix");
 	}
-	let icon = { source, name };
+	if ((icon.source == 'jeedom' | icon.source == 'md' | icon.source == 'fa') & typeof(html.attr("style")) == "string") {
+		icon.color = html.attr("style").split(":")[1];
+	}
+	if (icon.source == 'jc' | icon.source == 'user') {
+		let tags = html.attr("style").split(";");
+		if (tags.includes('filter:grayscale(100%)')) {
+			icon.shadow = true;
+		}
+	}
+
 	return icon;
 }
 
 function iconToHtml(icon) {
-	let tag1 = '';
-	let tag2 = '';
-	if (icon.source == 'jeedom') {
-		tag1 = 'icon'
-		tag2 = icon.name;
-	} else if (icon.source == 'md') {
-		tag1 = 'mdi'
-		tag2 = 'mdi-' + icon.name;
-	} else if (icon.source == 'fa') {
-		tag1 = 'fa'
-		tag2 = 'fa-' + icon.name;
+	if (icon == undefined) { return ''; }
+	if (typeof(icon) == "string") { //for old config structure
+		if (icon.startsWith('user_files')) {
+			icon = { source: 'user', name: icon.substring(icon.lastIndexOf("/") + 1) };
+		} else if (icon.lastIndexOf(".") > -1) {
+			icon = { source: 'jc', name: icon };
+		} else {
+			icon = { source: 'md', name: icon };
+		}
 	}
-	return `<i class="${tag1} ${tag2}"></i>`;
+	if (icon.source == 'jeedom') {
+		return `<i source="jeedom" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="icon ${icon.name}"></i>`;
+	} else if (icon.source == 'md') {
+		return `<i source="md" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="mdi mdi-${icon.name}"></i>`;
+	} else if (icon.source == 'fa') {
+		return `<i source="fa" name="${icon.name}" prefix="${icon.prefix || 'fa'}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="${icon.prefix || 'fa'} fa-${icon.name}"></i>`;
+	} else if (icon.source == 'jc') {
+		return `<img source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
+	} else if (icon.source == 'user') {
+		return `<img source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/user_files/${icon.name}">`;
+	}
+	return '';
+}
+
+function isIcon(icon) {
+	if (icon == undefined) { return false; }
+	if (typeof(icon) == "string") { return true; }
+	if (typeof(icon) == "object") {
+		if (icon.source != undefined & icon.name != undefined) { return true; }
+	}
+	return false;
 }
 
 /* BOTTOM TAB FUNCTIONS */
@@ -921,4 +940,19 @@ function addWidgetModal() {
 	incrementIdCounter();
 	refreshWidgetsContent();
   });
+}
+
+function duplicateWidget(widgetId) {
+	var widgetToDuplicate = configData.payload.widgets.find(w => w.id == widgetId);
+	var newWidget = JSON.parse(JSON.stringify(widgetToDuplicate));
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
+	var rootElmts = getRootObjects(parentId);
+
+	var maxIndex = getMaxIndex(rootElmts);
+	newWidget.index = maxIndex + 1;
+	newWidget.id = configData.idCounter;
+
+	configData.payload.widgets.push(newWidget);
+	incrementIdCounter();
+	refreshWidgetsContent();
 }

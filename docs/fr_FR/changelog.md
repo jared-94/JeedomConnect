@@ -1,5 +1,8 @@
 # Changelog JeedomConnect
+<<<<<<< HEAD
+=======
 
+>>>>>>> 54434f88b30187ea89d0d0a6fc960c4598827e2e
 ## Version 0.16.0 Beta (22/02/2021)
 - Notifications : Possibilité d'envoyer des images
 - Geolocalisation : mode Tracking pour le suivi constant de l'appareil (nouvelle commande `Position` dans les équipements)
@@ -36,9 +39,6 @@
 - Résolution de divers bugs et améliorations mineures
 
 ## Version 0.14.3 (27/01/2021)
-=======
-## Version 0.14.3 (28/01/2021)
-
 - Correction bug status lumières
 - Ajout icônes groupe
 - Option pour inverser un binaire

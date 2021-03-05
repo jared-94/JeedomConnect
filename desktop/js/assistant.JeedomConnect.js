@@ -36,7 +36,21 @@ function getIconModal(_options, _callback) {
 		jQuery.ajaxSetup({
       async: false
     });
-    $('#iconModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect');
+		let params = `&withIcon=${_options.withIcon}&withImg=${_options.withImg}`;
+		if (_options.icon.source) {
+			params += `&source=${_options.icon.source}`;
+		}
+		if (_options.icon.name) {
+			params += `&name=${encodeURI(_options.icon.name)}`;
+		}
+		if (_options.icon.color) {
+			params += `&color=${_options.icon.color.substring(1)}`;
+		}
+		if (_options.icon.shadow) {
+			params += `&shadow=${_options.icon.shadow}`;
+		}
+
+    $('#iconModal').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
     jQuery.ajaxSetup({
       async: true
     });
@@ -51,9 +65,23 @@ function getIconModal(_options, _callback) {
 			id: "saveSimple",
 			click: function() {
 				var icon = $('.iconSelected .iconSel').html();
-				icon = icon.replace(/"/g, "'")
-				var result = {};
-				result.html = icon;
+				if (icon === undefined) {
+					$('#div_iconSelectorAlert').showAlert({message: 'Aucune icône sélectionnée', level: 'danger'});
+					return;
+				}
+
+				let result = {};
+				result.source = $('.iconSelected .iconSel').children().first().attr("source");
+				result.name = $('.iconSelected .iconSel').children().first().attr("name");
+				if (result.source == 'fa') {
+					result.prefix = $('.iconSelected .iconSel').children().first().attr("prefix");
+				}
+				if ((result.source == 'jeedom' | result.source == 'md' | result.source == 'fa') & $("#mod-color-input").val() != '') {
+					result.color = $("#mod-color-input").val();
+				}
+				if (result.source == 'jc' | result.source == 'user') {
+					result.shadow = $("#bw-input").is(':checked');
+				}
 
 				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
 		        _callback(result);
@@ -103,30 +131,38 @@ function getSimpleModal(_options, _callback) {
 			click: function() {
 				$('#simpleModalAlert').hide();
 				var result = {};
-				if (_options.fields.find(i => i.type == "enable")) {
-					result.enable = $("#mod-enable-input").is(':checked');
-				}
-				if (_options.fields.find(i => i.type == "name")) {
-					result.name = $("#mod-name-input").val();
-				}
-				if (_options.fields.find(i => i.type == "icon")) {
-						//result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
-						result.icon = htmlToIcon($("#icon-div").html());
-				}
-				if (_options.fields.find(i => i.type == "move")) {
-					result.moveToId = $("#mod-move-input").val();
-				}
-				if (_options.fields.find(i => i.type == "expanded")) {
-					result.expanded = $("#mod-expanded-input").is(':checked');
-				}
-				if (_options.fields.find(i => i.type == "widget")) {
-					if ( $("#mod-widget-input").val() == undefined){
+		  	if (_options.fields.find(i => i.type == "enable")) {
+			  	result.enable = $("#mod-enable-input").is(':checked');
+		  	}
+		  	if (_options.fields.find(i => i.type == "name")) {
+					if ($("#mod-name-input").val() == '') {
+						$('#div_simpleModalAlert').showAlert({message: 'Le nom est obligatoire', level: 'danger'});
+						throw {};
+					}
+			  	result.name = $("#mod-name-input").val();
+		  	}
+		  	if (_options.fields.find(i => i.type == "icon")) {
+					let icon = htmlToIcon($("#icon-div").children().first());
+					if (icon.source == undefined) {
+						$('#div_simpleModalAlert').showAlert({message: "L'icône est obligatoire", level: 'danger'});
+						throw {};
+					}
+					result.icon = htmlToIcon($("#icon-div").children().first());
+		  	}
+		  	if (_options.fields.find(i => i.type == "move")) {
+			  	result.moveToId = $("#mod-move-input").val();
+		  	}
+		  	if (_options.fields.find(i => i.type == "expanded")) {
+			  	result.expanded = $("#mod-expanded-input").is(':checked');
+		  	}
+		  	if (_options.fields.find(i => i.type == "widget")) {
+          if ( $("#mod-widget-input").val() == undefined){
 						$('#simpleModalAlert').showAlert({message: 'Choix obligatoire', level: 'danger'});
 						return;
 					}
-					result.widgetId = $("#mod-widget-input").val();
-					result.widgetName = $("#mod-widget-input option:selected").text();
-				}
+			  	result.widgetId = $("#mod-widget-input").val();
+			  	result.widgetName = $("#mod-widget-input option:selected").text();
+		  	}
 				if (_options.fields.find(i => i.type == "object")) {
 					result.object = $("#object-select  option:selected").val();
 					result.name = $("#object-select  option:selected").text();
@@ -170,4 +206,3 @@ $('#selWidgetType').on('change', function() {
 	$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
 	
 });
-

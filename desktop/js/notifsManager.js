@@ -104,6 +104,52 @@ function getMaxIndex(array) {
 	return maxIndex;
 }
 
+function htmlToIcon(html) {
+	let icon = {};
+	icon.source = html.attr("source");
+	icon.name = html.attr("name");
+	if (icon.source == 'fa') {
+		icon.prefix = html.attr("prefix");
+	}
+	if ((icon.source == 'jeedom' | icon.source == 'md' | icon.source == 'fa') & typeof(html.attr("style")) == "string") {
+		icon.color = html.attr("style").split(":")[1];
+	}
+	if (icon.source == 'jc' | icon.source == 'user') {
+		let tags = html.attr("style").split(";");
+		if (tags.includes('filter:grayscale(100%)')) {
+			icon.shadow = true;
+		}
+	}
+
+	return icon;
+}
+
+function iconToHtml(icon) {
+	if (icon == undefined) { return ''; }
+	if (typeof(icon) == "string") { //for old config structure
+		if (icon.startsWith('user_files')) {
+			icon = { source: 'user', name: icon.substring(icon.lastIndexOf("/") + 1) };
+		} else if (icon.lastIndexOf(".") > -1) {
+			icon = { source: 'jc', name: icon };
+		} else {
+			icon = { source: 'md', name: icon };
+		}
+	}
+	if (icon.source == 'jeedom') {
+		return `<i source="jeedom" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="icon ${icon.name}"></i>`;
+	} else if (icon.source == 'md') {
+		return `<i source="md" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="mdi mdi-${icon.name}"></i>`;
+	} else if (icon.source == 'fa') {
+		return `<i source="fa" name="${icon.name}" prefix="${icon.prefix || 'fa'}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="${icon.prefix || 'fa'} fa-${icon.name}"></i>`;
+	} else if (icon.source == 'jc') {
+		return `<img source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
+	} else if (icon.source == 'user') {
+		return `<img source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/user_files/${icon.name}">`;
+	}
+	return '';
+}
+
+
 
 
 /* CHANNELS TAB FUNCTIONS */

@@ -5,6 +5,10 @@
 		"name": "Lumière On/Off",
 		"img": "light100.png",
 		"description": "Gère une lumière simple à deux états allumé/éteind",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -58,16 +62,15 @@
 				"description": "Puissance en watts"
 			},
 			{
-				"id": "imageOn",
-				"name": "Image ON",
-				"required": false,
+				"id": "image",
+				"name": "Image",
 				"category": "img"
 			},
 			{
-				"id": "imageOff",
-				"name": "Image OFF",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -84,6 +87,10 @@
 		"name": "Lumière à variation",
 		"img": "light80.png",
 		"description": "Gère une lumière à intensité variable",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -171,16 +178,16 @@
 				"description": "Puissance en watts"
 			},
 			{
-				"id": "imageOn",
-				"name": "Image ON",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "imageOff",
-				"name": "Image OFF",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -197,6 +204,10 @@
 		"name": "Lumière de couleurs",
 		"img": "icon_wheel.png",
 		"description": "Gère une lumière à couleurs",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -311,16 +322,16 @@
 				"description": "Commande Grabber pour les LEDS TV"
 			},
 			{
-				"id": "imageOn",
-				"name": "Image ON",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "imageOff",
-				"name": "Image OFF",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -337,6 +348,13 @@
 		"name": "Groupe de lumières",
 		"img": "groupLight.png",
 		"description": "Gère un groupe de plusieurs widgets lumières",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
+			{ "name": "onNb", "descr": "Nombre de lumières allumées" },
+			{ "name": "offNb", "descr": "Nombre de lumières éteintes" },
+			{ "name": "total", "descr": "Nombre de lumières" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -359,15 +377,6 @@
 				"category": "widgets",
 				"whiteList": ["single-light-switch", "single-light-dim", "single-light-color"],
 				"description": "Liste des lumières à gérer"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
 			},
 			{
 				"id": "autoManOnAction",
@@ -399,16 +408,16 @@
 				"description": "Gestion automatique des lumières"
 			},
 			{
-				"id": "imageOn",
-				"name": "Image ON",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "imageOff",
-				"name": "Image OFF",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -425,6 +434,10 @@
 		"name": "Prise",
 		"img": "plug6.png",
 		"description": "Widget pour gérer une prise électrique",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -477,11 +490,16 @@
 				"description": "Puissance en watts"
 			},
 			{
+				"id": "image",
+				"name": "Image",
+				"required": false,
+				"category": "img"
+			},
+			{
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo", "powerInfo" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -498,6 +516,14 @@
 		"name": "Groupe de prises",
 		"img": "plug6.png",
 		"description": "Gère un groupe de plusieurs widgets prises",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
+			{ "name": "onNb", "descr": "Nombre de prises allumées" },
+			{ "name": "offNb", "descr": "Nombre de prises éteintes" },
+			{ "name": "total", "descr": "Nombre de prises" },
+			{ "name": "power", "descr": "Puissance totale" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -522,11 +548,16 @@
 				"description": "Liste des prises à gérer"
 			},
 			{
+				"id": "image",
+				"name": "Image",
+				"required": false,
+				"category": "img"
+			},
+			{
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "Status", "Puissance totale" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -543,6 +574,11 @@
 		"name": "Scénario",
 		"img": "scenario.png",
 		"description": "Gestion d'un scénario",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "active", "descr": "Scénario actif (0 ou 1)" },
+			{ "name": "running", "descr": "En cours d'exécution (0 ou 1)" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -570,6 +606,12 @@
 				"name": "Image",
 				"required": false,
 				"category": "img"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs"
 			}
 		]
 	},
@@ -654,6 +696,9 @@
 		"name": "Luminosité",
 		"img": "brightness.png",
 		"description": "Donne la luminosité en Lux",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -682,15 +727,13 @@
 				"id": "image",
 				"name": "Image",
 				"required": false,
-				"category": "img",
-				"description": "Information supplémentaire affichée sur le widget"
+				"category": "img"
 			},
 			{
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -707,6 +750,9 @@
 		"name": "Humidité",
 		"img": "humidity.png",
 		"description": "Donne l'humidité en %",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -735,15 +781,13 @@
 				"id": "image",
 				"name": "Image",
 				"required": false,
-				"category": "img",
-				"description": "Information supplémentaire affichée sur le widget"
+				"category": "img"
 			},
 			{
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -760,6 +804,9 @@
 		"name": "Température",
 		"img": "temperature.png",
 		"description": "Affiche la température en °C",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -795,8 +842,7 @@
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -813,6 +859,9 @@
 		"name": "Puissance",
 		"img": "power.png",
 		"description": "Donne la puissance consomée en W",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -848,8 +897,7 @@
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -866,6 +914,11 @@
 		"name": "Thermostat",
 		"img": "thermostatOff.png",
 		"description": "Gère un thermostat. Compatible avec le plugin officiel",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"},
+			{ "name": "lockText", "descr": "Etat 'Vérouillé' ou 'Déverrouillé'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -945,7 +998,7 @@
 				"name": "Modes",
 				"required": false,
 				"category": "cmdList",
-				"options": {"type": "action", "subtype": "other", "hasIcon": false, "hasImage": true, "hasName": false }
+				"options": {"type": "action", "subtype": "other", "hasIcon": true, "hasImage": true, "hasName": false }
 			},
 			{
 				"id": "powerInfo",
@@ -986,6 +1039,12 @@
 				"category": "img"
 			},
 			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs"
+			},
+			{
 				"id": "display",
 				"name": "Affichage forcé",
 				"required": false,
@@ -1000,6 +1059,10 @@
 		"name": "Climatiseur",
 		"img": "cold.png",
 		"description": "Gère un climatiseur",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"}
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1041,8 +1104,7 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"subtype": "binary",
-				"description": "Etat du climatisuer (binaire)."
+				"description": "Etat du climatisuer (binaire ou numérique)."
 			},
 			{
 				"id": "setpointAction",
@@ -1109,7 +1171,7 @@
 				"category": "cmd",
 				"type": "info",
 				"subtype": "numeric",
-				"description": "Info qui donne la vitesse de ventilation (entier de 1 à 4)"
+				"description": "Info qui donne la vitesse de ventilation"
 			},
 			{
 				"id": "fanSpeedAction",
@@ -1120,16 +1182,16 @@
 				"subtype": "slider"
 			},
 			{
-				"id": "imageOn",
-				"name": "Image ON",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "imageOff",
-				"name": "Image OFF",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1146,6 +1208,9 @@
 		"name": "Porte",
 		"img": "doorOn.png",
 		"description": "Donne l'état ouvert/fermé d'une porte",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1171,16 +1236,16 @@
 				"description": "Etat de la porte"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+        "id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1197,6 +1262,12 @@
 		"name": "Groupe de portes",
 		"img": "groupDoor.png",
 		"description": "Gère un groupe de plusieurs widgets portes",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "openNb", "descr": "Nombre de portes ouvertes" },
+			{ "name": "closedNb", "descr": "Nombre de portes fermées" },
+			{ "name": "total", "descr": "Nombre de portes" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1221,16 +1292,16 @@
 				"description": "Liste des portes à gérer"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1247,6 +1318,9 @@
 		"name": "Fenêtre",
 		"img": "windowClosed.png",
 		"description": "Donne l'état ouvert/fermé d'une fenêtre",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1272,16 +1346,16 @@
 				"description": "Etat de la fenêtre"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1298,6 +1372,11 @@
 		"name": "Groupe de fenêtres",
 		"img": "groupWindows.png",
 		"description": "Gère un groupe de plusieurs widgets fenêtres",
+		"variables": [
+			{ "name": "openNb", "descr": "Nombre de fenêtres ouvertes" },
+			{ "name": "closedNb", "descr": "Nombre de fenêtres fermées" },
+			{ "name": "total", "descr": "Nombre de fenêtres" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1322,16 +1401,16 @@
 				"description": "Liste des fenêtres à gérer"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1348,6 +1427,10 @@
 		"name": "Portail coulissant",
 		"img": "gateOpen.png",
 		"description": "Gère un portail coulissant",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Ouvert', 'Fermé' ou 'Piéton'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1399,22 +1482,16 @@
 				"description": "Fermeture partielle (piéton) du portail"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
-			},
-			{
-				"id": "image2",
-				"name": "Image Piéton",
-				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1431,6 +1508,10 @@
 		"name": "Volet",
 		"img": "shutter50.png",
 		"description": "Gère un volet roulant",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status 'Ouvert' ou 'Fermé'" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1501,22 +1582,16 @@
 				"description": "Puissance en watts"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
-			},
-			{
-				"id": "image2",
-				"name": "Image Partiel",
-				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1533,6 +1608,12 @@
 		"name": "Groupe de volets",
 		"img": "groupShutter.png",
 		"description": "Gère un groupe de plusieurs widgets volets",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "openNb", "descr": "Nombre de volets ouvertes" },
+			{ "name": "closedNb", "descr": "Nombre de volets fermées" },
+			{ "name": "total", "descr": "Nombre de volets" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1557,22 +1638,16 @@
 				"description": "Liste des volets à gérer"
 			},
 			{
-				"id": "image0",
-				"name": "Image Fermée",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Ouverte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
-			},
-			{
-				"id": "image2",
-				"name": "Image Partiel",
-				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1589,6 +1664,9 @@
 		"name": "PIR",
 		"img": "pirOff.png",
 		"description": "Donne l'état d'un capteur de mouvements",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1614,16 +1692,16 @@
 				"description": "Etat du capteur"
 			},
 			{
-				"id": "image0",
-				"name": "Image Normal",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image Alerte",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1640,6 +1718,12 @@
 		"name": "Groupe de PIR",
 		"img": "groupPIR.png",
 		"description": "Gère un groupe de plusieurs capteurs de mouvements",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "alertNb", "descr": "Nombre de PIR en alerte" },
+			{ "name": "normalNb", "descr": "Nombre de PIR au repos" },
+			{ "name": "total", "descr": "Nombre de PIR" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1664,22 +1748,16 @@
 				"description": "Liste des capteurs à gérer"
 			},
 			{
-				"id": "image0",
-				"name": "Image tous inactifs",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image tous actifs",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
-			},
-			{
-				"id": "image2",
-				"name": "Image partielle",
-				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1696,6 +1774,10 @@
 		"name": "Alarme",
 		"img": "alarm_red.png",
 		"description": "Gère une alarme",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "statusText", "descr": "Status de l'alarme" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1766,32 +1848,16 @@
 				"description": "Durée en minutes avant activation"
 			},
 			{
-				"id": "imageAlarm",
-				"name": "Image Alarme",
+				"id": "image",
+				"name": "Image",
 				"required": false,
-				"category": "img",
-				"description": "Image lorsque l'alarme est en cours"
+				"category": "img"
 			},
 			{
-				"id": "imageArmed",
-				"name": "Image Armé",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img",
-				"description": "Image lorsque l'alarme est armée"
-			},
-			{
-				"id": "imageDisarmed",
-				"name": "Image Désarmé",
-				"required": false,
-				"category": "img",
-				"description": "Image lorsque l'alarme est désarmée"
-			},
-			{
-				"id": "imagePartial",
-				"name": "Image Activation",
-				"required": false,
-				"category": "img",
-				"description": "Image lors du délais d'activation/désactivation"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1808,6 +1874,12 @@
 		"name": "Groupe d'alarmes",
 		"img": "groupAlarm.png",
 		"description": "Gère un groupe d'alarmes",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "armedNb", "descr": "Nombre d'alarmes armées'" },
+			{ "name": "alarmNb", "descr": "Nombre d'alarme en alerte'" },
+			{ "name": "total", "descr": "Nombre de'alarmes dans le groupe" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1832,32 +1904,16 @@
 				"description": "Liste des alarmes à gérer"
 			},
 			{
-				"id": "imageAlarm",
-				"name": "Image Alarme",
+				"id": "image",
+				"name": "Image",
 				"required": false,
-				"category": "img",
-				"description": "Image lorsqu'une alarme est en cours"
+				"category": "img"
 			},
 			{
-				"id": "imageArmed",
-				"name": "Image Armé",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img",
-				"description": "Image lorsque les alarmes sont armées"
-			},
-			{
-				"id": "imageDisarmed",
-				"name": "Image Désarmé",
-				"required": false,
-				"category": "img",
-				"description": "Image lorsque les alarmes sont désarmées"
-			},
-			{
-				"id": "imagePartial",
-				"name": "Image Partiel",
-				"required": false,
-				"category": "img",
-				"description": "Image lors d'un état mixte des alarmes"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1874,6 +1930,9 @@
 		"name": "Générique binaire",
 		"img": "information.png",
 		"description": "Widget générique pour afficher les infos d'une commande binaire",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1899,20 +1958,6 @@
 				"description": "Etat de la commande"
 			},
 			{
-				"id": "image0",
-				"name": "Image 0",
-				"required": false,
-				"category": "img",
-				"description": "Image affichée lorsque la valeur est 0"
-			},
-			{
-				"id": "image1",
-				"name": "Image 1",
-				"required": false,
-				"category": "img",
-				"description": "Image affichée lorsque la valeur est 1"
-			},
-			{
 				"id": "text0",
 				"name": "Texte 0",
 				"required": false,
@@ -1925,6 +1970,18 @@
 				"required": false,
 				"category": "string",
 				"description": "Texte affiché lorsque la valeur est 1"
+			},
+			{
+				"id": "image",
+				"name": "Image",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1941,6 +1998,12 @@
 		"name": "Groupe de génériques binaires",
 		"img": "groupBinary.png",
 		"description": "Gère un groupe de plusieurs widgets générique info binaire",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" },
+			{ "name": "nb0", "descr": "Nombre de binaires valant 0" },
+			{ "name": "nb1", "descr": "Nombre de binaires valant 1" },
+			{ "name": "total", "descr": "Nombre de binaires" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -1965,22 +2028,16 @@
 				"description": "Liste des génériques binaires à gérer"
 			},
 			{
-				"id": "image0",
-				"name": "Image tous nuls",
+				"id": "image",
+				"name": "Image",
 				"required": false,
 				"category": "img"
 			},
 			{
-				"id": "image1",
-				"name": "Image tous 1",
+				"id":  "statusImages",
+				"name": "Images sous conditions",
 				"required": false,
-				"category": "img"
-			},
-			{
-				"id": "image2",
-				"name": "Image partielle",
-				"required": false,
-				"category": "img"
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -1997,6 +2054,9 @@
 		"name": "Générique numérique",
 		"img": "information.png",
 		"description": "Widget générique pour afficher les infos d'une commande info numérique",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -2050,6 +2110,9 @@
 		"name": "Générique texte",
 		"img": "information.png",
 		"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -2078,8 +2141,13 @@
 				"id": "image",
 				"name": "Image",
 				"required": false,
-				"category": "img",
-				"description": "Image affichée"
+				"category": "img"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -2096,6 +2164,9 @@
 		"name": "Générique switch",
 		"img": "switch.png",
 		"description": "Widget générique pour un switch (commande ON/OFF)",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -2141,20 +2212,6 @@
 				"description": "Etat de la commande"
 			},
 			{
-				"id": "imageOn",
-				"name": "Image 0",
-				"required": false,
-				"category": "img",
-				"description": "Image affichée lorsque la valeur est 0"
-			},
-			{
-				"id": "imageOff",
-				"name": "Image 1",
-				"required": false,
-				"category": "img",
-				"description": "Image affichée lorsque la valeur est 1"
-			},
-			{
 				"id": "text0",
 				"name": "Texte 0",
 				"required": false,
@@ -2167,6 +2224,18 @@
 				"required": false,
 				"category": "string",
 				"description": "Texte affiché lorsque la valeur est 1"
+			},
+			{
+				"id": "image",
+				"name": "Image",
+				"required": false,
+				"category": "img"
+			},
+			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -2183,6 +2252,9 @@
 		"name": "Générique slider",
 		"img": "meter.png",
 		"description": "Gère un slider",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -2217,11 +2289,16 @@
 				"description": "Etat du slider (numérique)"
 			},
 			{
+				"id": "image",
+				"name": "Image",
+				"required": false,
+				"category": "img"
+			},
+			{
 				"id":  "statusImages",
 				"name": "Images sous conditions",
 				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo" ]
+				"category": "ifImgs"
 			},
 			{
 				"id": "display",
@@ -2238,6 +2315,9 @@
 		"name": "Générique actions",
 		"img": "powerButton.png",
 		"description": "Permet des lancer des commandes action (de type other)",
+		"variables": [
+			{ "name": "room", "descr": "Pièce" }
+		],
 		"options": [
 			{
 				"id": "name",
@@ -2267,6 +2347,12 @@
 				"category": "img"
 			},
 			{
+				"id":  "statusImages",
+				"name": "Images sous conditions",
+				"required": false,
+				"category": "ifImgs"
+			},
+			{
 				"id": "display",
 				"name": "Affichage forcé",
 				"required": false,
@@ -2281,6 +2367,9 @@
 			"name": "Mode",
 			"img": "mode.png",
 			"description": "Affiche une liste de modes et permet de les sélectionner",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
 			"options": [
 				{
 					"id": "name",
@@ -2317,6 +2406,70 @@
 					"name": "Image",
 					"required": false,
 					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "webview",
+			"name": "Web View",
+			"img": "web.png",
+			"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web.<br/>Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "url",
+					"name": "URL",
+					"required": true,
+					"category": "string",
+					"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
+				},
+				{
+					"id":  "headerHide",
+					"name": "Cacher la barre du haut",
+					"required": false,
+					"category": "binary"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "display",
