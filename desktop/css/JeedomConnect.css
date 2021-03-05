@@ -1,0 +1,61 @@
+.widgetDisplayCard {
+    border: none !important;
+    background: transparent !important;
+    padding-top: 0!important;
+    text-align: center;
+  }
+
+  .widgetDisplayCard div.cursor {
+    margin-bottom: 5px !important;
+    padding: 5px !important;
+  }
+  
+  .eqLogicThumbnailContainer .widgetDisplayCard {
+    height: 168px !important;
+  }
+  
+  .widgetDisplayCard {
+    margin-bottom: 10px !important;
+    height: 168px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
+  
+  .widgetDisplayCard .name {
+    word-break: break-word !important;
+    font-size: 12px !important;
+    position: relative;
+    top: 3px !important;
+  }
+  
+  .widgetDisplayCard > span.name strong {
+    position: relative;
+    top: 3px !important;
+    display: block;
+    height: 28px !important;
+    overflow: hidden;
+  }
+  
+  .widgetDisplayCard img {
+    max-height: 99px;
+    width: auto !important;
+    max-width: 75px !important;
+    overflow: hidden;
+    vertical-align: baseline;
+  }
+
+  /* Disabled */
+  .widgetDisplayCard:not(.disableCard) {
+    opacity: 1 !important;
+    transition-property: opacity;
+    transition-duration: 0.6s;
+  }
+  
+  .widgetDisplayCard.disableCard,
+  .widgetDisplayCard.disableCard > .name > .label {
+    opacity: 0.4;
+  }
+  .widgetDisplayCard.disableCard:hover {
+    opacity: 0.8;
+  }

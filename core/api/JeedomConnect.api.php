@@ -47,6 +47,32 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG') {
 
 
 switch ($method) {
+  case 'GET_AVAILABLE_EQUIPEMENT':
+		$eqLogics = JeedomConnect::byType('JeedomConnect');
+
+		if (is_null($eqLogics)) {
+			throw new Exception(__("No equipment available", __FILE__), -32699);
+		} 
+		else{
+			$result = array();
+			foreach ($eqLogics as $eqLogic) {
+				$type = $eqLogic->getConfiguration('type') ;
+				
+				if ( $type == "widget" ){
+          $monWidget->logicalId = $eqLogic->getLogicalId() ;
+					$monWidget->id = intval($eqLogic->getId());
+					$monWidget->enable = $eqLogic->isEnable();
+					array_push($result, $monWidget ) ;
+				}	
+			}
+    }
+
+    $jsonrpc->makeSuccess(array(
+      'type' => 'AVAILABLE_EQUIPEMENT',
+      'payload' => $result
+    ));
+    break;
+  
   case 'GET_PLUGIN_CONFIG':
 		$user = user::byHash($params['userHash']);
 		if ($user == null) {
@@ -93,7 +119,7 @@ switch ($method) {
 		}
 		$eqLogic->setConfiguration('userHash', $params['userHash']);
 		$eqLogic->save();
-		$config = $eqLogic->getConfig();
+		$config = $eqLogic->getConfig(true);
 
     $result = array(
       'type' => 'WELCOME',
@@ -124,14 +150,14 @@ switch ($method) {
     ));
 		break;
   case 'GET_CONFIG':
-		$result = $eqLogic->getConfig();
+		$result = $eqLogic->getConfig(true);
 		$result['payload']['summaryConfig'] = config::byKey('object:summary');
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_CMD_INFO':
     $result = array(
 	    'type' => 'SET_CMD_INFO',
-	    'payload' => apiHelper::getCmdInfoData($eqLogic->getConfig())
+	    'payload' => apiHelper::getCmdInfoData($eqLogic->getConfig(true))
 	  );
     log::add('JeedomConnect', 'debug', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
@@ -139,7 +165,7 @@ switch ($method) {
   case 'GET_SC_INFO':
     $result = array(
 	    'type' => 'SET_SC_INFO',
-	    'payload' => apiHelper::getScenarioData($eqLogic->getConfig())
+	    'payload' => apiHelper::getScenarioData($eqLogic->getConfig(true))
 	  );
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
@@ -147,13 +173,13 @@ switch ($method) {
 	case 'GET_OBJ_INFO':
     $result = array(
 	    'type' => 'SET_OBJ_INFO',
-	    'payload' => apiHelper::getObjectData($eqLogic->getConfig())
+	    'payload' => apiHelper::getObjectData($eqLogic->getConfig(true))
 	  );
     log::add('JeedomConnect', 'info', 'Send objects '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
 	case 'GET_INFO':
-		$config = $eqLogic->getConfig();
+		$config = $eqLogic->getConfig(true);
 		$result = array(
 			'type' => 'SET_INFO',
 			'payload' => array(

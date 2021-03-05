@@ -44,8 +44,11 @@ class ConnectLogic implements MessageComponentInterface
     public function __construct($pluginVersion, $appRequire) {
 			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$apiKey = $eqLogic->getConfiguration('apiKey');
-				array_push($this->apiKeyList, $apiKey);
-				$this->configList[$apiKey] = $eqLogic->getConfig();
+				if ( $apiKey !=  ''){
+					\log::add('JeedomConnect', 'debug', 'checking apiKey : ' . $apiKey ); 
+					array_push($this->apiKeyList, $apiKey);
+					$this->configList[$apiKey] = $eqLogic->getConfig(true);
+				}
 			}
       $this->unauthenticatedClients = new \SplObjectStorage;
       $this->authenticatedClients = new \SplObjectStorage;
@@ -74,7 +77,7 @@ class ConnectLogic implements MessageComponentInterface
           }
         }
       }
-			$this->lookForNewConfig();
+		$this->lookForNewConfig();
       if ($this->hasAuthenticatedClients) {
         // Read events from Jeedom
         $events = \event::changes($this->lastReadTimestamp);
@@ -361,7 +364,7 @@ class ConnectLogic implements MessageComponentInterface
 				$configVersion = $eqLogic->getConfiguration('configVersion');
 				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
 					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
-					$this->configList[$apiKey] = $eqLogic->getConfig();
+					$this->configList[$apiKey] = $eqLogic->getConfig(true);
 					array_push($this->apiKeyList, $apiKey);
 					foreach ($this->authenticatedClients as $client) {
 						if ($client->apiKey == $apiKey) {
@@ -376,7 +379,7 @@ class ConnectLogic implements MessageComponentInterface
 			} else {
 				\log::add('JeedomConnect', 'info', "New device with key ".$apiKey);
 				array_push($this->apiKeyList, $apiKey);
-				$this->configList[$apiKey] = $eqLogic->getConfig();
+				$this->configList[$apiKey] = $eqLogic->getConfig(true);
 			}
 		}
 		//Remove deleted configs
