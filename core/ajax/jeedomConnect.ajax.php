@@ -18,15 +18,91 @@
 
 try {
     require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
+    require_once dirname(__FILE__) . '/../class/JeedomConnectWidget.class.php';
     include_file('core', 'authentification', 'php');
 
     if (!isConnect('admin')) {
         throw new \Exception(__('401 - Accès non autorisé', __FILE__));
     }
 
+	if (init('action') == 'getJeedomObject') {
+		$list = array();
+		$options = '';
+		foreach ((jeeObject::buildTree(null, false)) as $object) {
+			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+			array_push($list, array("id" => intval( $object->getId() ), "name" => $object->getName() ) ) ; 
+		}
+		// echo $options;
+		ajax::success( array('details' => $list, 'options' => $options) );
+		
+	}
+
+	if (init('action') == 'saveWidgetConfig') {
+		log::add('JeedomConnect', 'debug', '-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
+		
+		$id = init('eqId') ?: JeedomConnectWidget::incrementIndex();
+		$newConfWidget = array();
+		$newConfWidget['imgPath'] = init('imgPath') ;
+		$jcTemp = json_decode(init('widgetJC'), true)	;
+		$jcTemp['id'] = intval($id);
+		$newConfWidget['widgetJC'] = json_encode($jcTemp);
+		
+		JeedomConnectWidget::saveConfig($newConfWidget, $id) ;
+		
+		ajax::success();
+
+	}
+
+	if (init('action') == 'removeWidgetConfig') {
+		log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig for id >' . init('eqId') . '<');
+		JeedomConnectWidget::removeWidget(init('eqId'));
+		ajax::success();
+
+	}
+
+	if (init('action') == 'getWidgetConfig') {
+		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
+		$widget = JeedomConnectWidget::getWidgets(init('eqId'));
+
+		if ( $widget == '' ) {
+			ajax::error('Erreur - pas d\'équipement trouvé');
+		} 
+		else{
+			$widgetConf = $widget['widgetJC'] ?? '';
+			$configJson = json_decode($widgetConf);
+
+			if ($configJson == null){
+				ajax::error('Erreur - pas de configuration pour ce widget');
+			}
+			else{
+				ajax::success($configJson);
+			}
+		}
+	}
+
+	if (init('action') == 'getWidgetConfigAll') {
+		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
+		$widgets = JeedomConnectWidget::getWidgets();
+
+		if ($widgets == '') {
+			log::add('JeedomConnect', 'debug', 'no widgets found');
+			ajax::error('Erreur - pas d\'équipement trouvé');
+		} 
+		else{
+			$result = array();
+			foreach ($widgets as $widget) {
+				$monWidget = json_decode( $widget['widgetJC'], true) ;
+				array_push($result, $monWidget ) ;
+			}
+			log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($result) );
+			ajax::success($result);
+			
+		}
+	}
+
 
 	if (init('action') == 'saveConfig') {
-    $config = init('config');
+    	$config = init('config');
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config);

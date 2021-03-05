@@ -1236,7 +1236,7 @@
 				"description": "Etat de la porte"
 			},
 			{
-				"id": "image",
+        "id": "image",
 				"name": "Image",
 				"required": false,
 				"category": "img"

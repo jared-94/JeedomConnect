@@ -1,12 +1,15 @@
 var configData;
 var widgetsList;
 
+
 $.post({
 	url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
 	data: {'action': 'getConfig', 'apiKey': apiKey },
 	cache: false,
 	success: function( config ) {
+		//console.log("config : ", config);
 		configData = json_decode(config).result;
+		//console.log("configData : ", configData);
 		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
@@ -87,7 +90,7 @@ function refreshRoomData() {
 	});
 	var items = [];
 	$.each( rooms, function( key, val ) {
-		items.push( `<li><a  onclick="editRoomModal('${val.id}');">${val.name}</a>
+		items.push( `<li><a>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
@@ -118,8 +121,10 @@ function refreshWidgetsContent() {
 	});
 
 	items = [];
-	$.each( rootElmts, function( key, val ) {
-		if (val.type !== undefined) { //it is a widget
+	console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
+	$.each( rootElmts, function( key, value ) {
+		var val = allWidgetsDetail.find(w => w.id == value.id) ; 
+		if (val  !=undefined && val.type !== undefined) { //it is a widget
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
 			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
@@ -130,23 +135,26 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i>
 			<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<li><a  onclick="editGroupModal('${val.id}');"><i class="fa fa-list"></i> ${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${val.id}');"></i></li>`);
-			var curWidgets = configData.payload.widgets.filter(w => w.parentId == val.id);
+			items.push( `<li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${value.id}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${value.id}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${value.id}');"></i></li>`);
+			var curWidgets = configData.payload.widgets.filter(w => w.parentId == value.id);
 			curWidgets = curWidgets.sort(function(s,t) {
 				return s.index - t.index;
 			});
 			items.push("<li><ul class='tabSubUL'>");
-			$.each(curWidgets, function (key, w) {
-				var img = widgetsList.widgets.find(i => w.type == i.type).img;
-				items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
-			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
+			$.each(curWidgets, function (key, wid) {
+				var w = allWidgetsDetail.find(x => x.id == wid.id) ; 
+				if ( w != undefined){
+					var img = widgetsList.widgets.find(i => i.type == w.type).img;
+					items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
+				<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
+				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
+				<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
+				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
+				}
 			});
 			items.push("</ul></li>");
 		}
@@ -179,6 +187,7 @@ function resetConfig() {
 	getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"La configuration va être remise à zéro. Voulez-vous continuer ?"}] }, function(result) {
 		configData = {
 				'type':  'JEEDOM_CONFIG',
+				'formatVersion' : '1.0',
 				'idCounter': 0,
 				'payload': {
 					'configVersion': 0,
@@ -195,25 +204,6 @@ function resetConfig() {
 
 /*HELPER FUNCTIONS */
 
-function getMaxIndex(array) {
-	var maxIndex = -1;
-	array.forEach( item => {
-		if (item.index > maxIndex) {
-			maxIndex = item.index;
-		}
-	});
-	return maxIndex;
-}
-
-function getRoomName(id) {
-	if (id == 'global') { return 'Global'; }
-	const room = configData.payload.rooms.find(r => r.id == id);
-	if (room) {
-		return room.name;
-	} else {
-		return undefined;
-	}
-}
 
 function getRootObjects(id) {
 	var widgets = configData.payload.widgets.filter(w => w.parentId == id);
@@ -221,36 +211,6 @@ function getRootObjects(id) {
 	return groups.concat(widgets);
 }
 
-function getWidgetPath(id) {
-	var widget = configData.payload.widgets.find(w => w.id == id);
-	var name = (' '+widget.name).slice(1);
-
-	if (widget.parentId === undefined | widget.parentId == null) {
-		return name;
-	}
-	var id = (' ' + widget.parentId.toString()).slice(1);
-	parent = configData.payload.groups.find(i => i.id == id);
-	if (parent) {
-		name = parent.name + " / " + name;
-		if (parent.parentId === undefined | parent.parentId == null) {
-			return name;
-		}
-		id = (' ' + parent.parentId.toString()).slice(1);
-	}
-	parent2 = configData.payload.sections.find(i => i.id == id);
-	if (parent2) {
-		name = parent2.name + " / " + name;
-		if (parent2.parentId === undefined | parent2.parentId == null) {
-			return name;
-		}
-		id = (' ' + parent2.parentId.toString()).slice(1);
-	}
-	parent3 = configData.payload.tabs.find(i => i.id == id);
-	if (parent3) {
-		name = parent3.name + " / " + name;
-	}
-	return name;
-}
 
 function getWidgetsParents() {
 	var items = [];
@@ -586,17 +546,13 @@ function moveTopTabModal(tabId) {
 /* ROOM FUNCTIONS */
 
 function addRoomModal() {
-  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "name"}, {type: "object"}] }, function(result) {
-		var name = result.name;
-		if (name == '') { return; }
+  getSimpleModal({title: "Ajouter une pièce", fields:[{type: "object"}] }, function(result) {
+		if ( result.object == 'none') return; 
 		var maxIndex = getMaxIndex(configData.payload.rooms);
 		var newRoom = {};
-		newRoom.name = name;
-		if (parseInt(result.object)) {
-			newRoom.object = parseInt(result.object);
-		}
 		newRoom.index = maxIndex + 1;
-		newRoom.id = configData.idCounter;
+		newRoom.name = result.name.replace(/\u00a0/g, "");
+		newRoom.id = parseInt(result.object); 
 
 		configData.payload.rooms.push(newRoom);
 		incrementIdCounter();
@@ -944,28 +900,45 @@ function moveWidgetModal(widgetId) {
   });
 }
 
-function addWidgetModal() {
-  getWidgetModal({title:"Ajouter un widget"}, function(result) {
-  	console.log(result)
-	  var parentId = $("#widgetsParents-select option:selected").attr('value');
+function selectWidgetModal() {
+	$('#jc-assistant').hide();
+	var widgetSelectedId = $("#selWidgetDetail option:selected").attr('data-widget-id');
+	if ( widgetSelectedId == 'none'){
+		$('#jc-assistant').showAlert({message: 'Merci de sélectionner un widget', level: 'danger'});
+		return;
+	}
+
+	result = {};
+  	var parentId = $("#widgetsParents-select option:selected").attr('value');
   	var rootElmts = getRootObjects(parentId);
 
-	  var maxIndex = getMaxIndex(rootElmts);
-	  result.parentId = parentId && parseInt(parentId);
-	  result.index = maxIndex + 1;
-	  result.id = configData.idCounter;
+	var maxIndex = getMaxIndex(rootElmts);
+	result.parentId = parentId && parseInt(parentId);
+	result.index = maxIndex + 1;
 
-	  configData.payload.widgets.push(result);
-	  incrementIdCounter();
-	  refreshWidgetsContent();
-  });
+	var widgetSelectedId = $("#selWidgetDetail option:selected").attr('data-widget-id');
+	result.id = parseInt(widgetSelectedId);
+
+	configData.payload.widgets.push(result);
+	incrementIdCounter();
+	refreshWidgetsContent();
 }
 
-function editWidgetModal(widgetId) {
-  var widgetToEdit = configData.payload.widgets.find(w => w.id == widgetId);
-  getWidgetModal({title:"Editer un widget", widget:widgetToEdit}, function(result) {
-	 console.log(result);
-	 refreshWidgetsContent();
+
+function addWidgetModal() {
+  getWidgetModal({title:"Ajouter un widget"}, function(result) {
+  	//console.log(result)
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
+  	var rootElmts = getRootObjects(parentId);
+
+	var maxIndex = getMaxIndex(rootElmts);
+	result.parentId = parentId && parseInt(parentId);
+	result.index = maxIndex + 1;
+	result.id = configData.idCounter;
+
+	configData.payload.widgets.push(result);
+	incrementIdCounter();
+	refreshWidgetsContent();
   });
 }
 
