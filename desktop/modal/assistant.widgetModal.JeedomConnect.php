@@ -48,12 +48,14 @@ if (!isConnect('admin')) {
 
 <div>
   	<div style="display:none;" id="widget-alert"></div>
-  	<div class="input-group pull-right" style="display:inline-flex;">
+  	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
 		<span class="input-group-btn">
 			<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-			<!-- <a class="btn btn-sm btn-danger roundedRight" data-action="remove" onclick="removeWidget()"><i class="fas fa-minus-circle"></i> {{Supprimer}}
-			</a><a class="btn btn-sm btn-success " data-action="save" onclick="saveWidget()"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
-			</a> -->
+			<a class="btn btn-sm btn-default roundedRight duplicateWidget" onclick="duplicateWidget()"><i class="far fa-copy"></i> {{Dupliquer}}
+			</a><a class="btn btn-sm btn-danger roundedRight removeWidget" onclick="removeWidget()"><i class="fas fa-minus-circle"></i> {{Supprimer}}
+			</a><a class="btn btn-sm btn-warning roundedRight hideWidget" onclick="hideWidget()"><i class="fas fa-times"></i> {{Annuler}}
+			</a><a class="btn btn-sm btn-success saveWidget" onclick="saveWidget()"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
+			</a>
 		</span>
 	</div>
 	<div class="col-sm-12">
