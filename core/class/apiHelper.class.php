@@ -29,18 +29,20 @@ class apiHelper {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
       foreach ($widget as $item => $value) {
-        if (array_key_exists('type', $value)) {
-          if ($value['type'] == 'info') {
-            array_push($return, $value['id']);
-          }
-        }        
-        if ($item == 'moreInfos') {
-          foreach ($value as $i => $info) {
-            if ($info['type'] == 'cmd') {
-              array_push($return, $info['id']);
+        if (is_array($value)) {
+          if (array_key_exists('type', $value)) {
+            if ($value['type'] == 'info') {
+              array_push($return, $value['id']);
             }
           }
-        }
+          if ($item == 'moreInfos') {
+            foreach ($value as $i => $info) {
+              if ($info['type'] == 'cmd') {
+                array_push($return, $info['id']);
+              }
+            }
+          }
+        }        
       }
     }
     return array_unique($return);
