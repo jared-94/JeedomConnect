@@ -140,8 +140,14 @@ class JeedomConnectWidget extends config {
 	public static function duplicateWidget($widgetId){
 
 		log::add(self::$_plugin_id, 'debug', 'duplicating widget id : ' . $widgetId ) ;
-		$config = self::getConfiguration($widgetId);
-		$newId = self::saveConfig($config);
+		$configInit = self::getConfiguration($widgetId);
+
+		$config = json_decode($configInit, true);
+
+		$newId = self::incrementIndex();
+		$config['widgetJC']['id'] = $newId ;
+
+		self::saveConfig(json_encode($config), $newId);
 		return $newId;
 
 	}
