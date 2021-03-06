@@ -642,8 +642,8 @@ class JeedomConnect extends eqLogic {
 					
 					// attached the widget to the jeedom object
 					if (array_key_exists('room', $widget) 
-							&& is_int($widget['room'] ) 
-								&& array_key_exists($widget['room'], $existingRooms ) ) {
+							&& ! is_null($widget['room'] ) 
+								&& array_key_exists(intval($widget['room']), $existingRooms ) ) {
 						$widget['room'] = $existingRooms[$widget['room']] ;
 					}
 					else{
