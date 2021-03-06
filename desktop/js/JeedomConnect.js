@@ -387,7 +387,7 @@ function getRoomList(){
 		cache: false,
 		dataType: 'json',
 		success: function( data ) {
-      console.log("roomList ajax received : ", data) ;
+      //console.log("roomList ajax received : ", data) ;
 			if (data.state != 'ok') {
 				$('#div_alert').showAlert({
 				  message: data.result,
@@ -1530,8 +1530,8 @@ function removeWidget(){
 
 
 function getWidgetPath(id) {
-	console.log(" getWidgetPath id :  " + id ) ;
-	console.log(" getWidgetPath ==== tous les widgets ===> " , allWidgetsDetail) ;
+	//console.log(" getWidgetPath id :  " + id ) ;
+	//console.log(" getWidgetPath ==== tous les widgets ===> " , allWidgetsDetail) ;
 	var widget = allWidgetsDetail.find(w => w.id == id);
 	var name = (' '+widget.name).slice(1);
 

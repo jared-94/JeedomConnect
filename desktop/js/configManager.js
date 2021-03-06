@@ -121,7 +121,7 @@ function refreshWidgetsContent() {
 	});
 
 	items = [];
-	console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
+	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
 	$.each( rootElmts, function( key, value ) {
 		var val = allWidgetsDetail.find(w => w.id == value.id) ; 
 		if (val  !=undefined && val.type !== undefined) { //it is a widget
@@ -132,8 +132,8 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i>
-			<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
+			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
 			items.push( `<li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
@@ -168,7 +168,7 @@ function incrementIdCounter() {
 
 function save(){
 	configData['payload'].configVersion += 1;
-	console.log(configData);
+	//console.log(configData);
 	$.post({
             url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
             data: {'action': 'saveConfig', 'config': JSON.stringify(configData), 'apiKey': apiKey },
@@ -176,7 +176,7 @@ function save(){
                $('#jc-assistant').showAlert({message: 'Configuration sauvegardée', level: 'success'});
             },
             error: function (error) {
-             console.log(error);
+             //console.log(error);
 			 $('#jc-assistant').showAlert({message: 'Erreur lors de la sauvegarde', level: 'danger'});
             }
     });
