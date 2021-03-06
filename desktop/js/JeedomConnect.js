@@ -1585,6 +1585,17 @@ function getMaxIndex(array) {
 	return maxIndex;
 }
 
+
+function getMaxId(array , defaut = -1 ) {
+	var maxId = defaut;
+	array.forEach( item => {
+		if (item.id > maxId) {
+			maxId = item.id;
+		}
+	});
+	return maxId;
+}
+
 function parseString(string, infos) {
 	let result = string;
   if (typeof(string) != "string") { return string; }

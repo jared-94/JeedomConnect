@@ -585,7 +585,8 @@ function addGroupModal() {
 		newGroup.enable = result.enable;
 		newGroup.parentId = parentId && parseInt(parentId);
 		newGroup.index = maxIndex + 1;
-		newGroup.id = configData.idCounter;
+		var maxGroupId = getMaxId(configData.payload.groups , 999000)
+		newGroup.id = maxGroupId +1 ;
 
 		configData.payload.groups.push(newGroup);
 		incrementIdCounter();
@@ -871,7 +872,7 @@ function selectWidgetModal() {
 	refreshWidgetsContent();
 }
 
-
+/*
 function addWidgetModal() {
   getWidgetModal({title:"Ajouter un widget"}, function(result) {
   	//console.log(result)
@@ -888,39 +889,19 @@ function addWidgetModal() {
 	refreshWidgetsContent();
   });
 }
+*/
 
 function duplicateWidget(widgetId) {
-	$.post({
-		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-		data: {
-			'action': 'duplicateWidgetConfig',
-			eqId: widgetId, 
-		},
-		cache: false,
-		dataType: 'json',
-		success: function( data ) {
-      	console.log("duplicateWidget ajax received : ", data) ;
-			if (data.state != 'ok') {
-				$('#div_alert').showAlert({
-				  message: data.result,
-				  level: 'danger'
-				});
-			}
-			else{
-				var widgetToDuplicate = configData.payload.widgets.find(w => w.id == widgetId);
-				var newWidget = JSON.parse(JSON.stringify(widgetToDuplicate));
-				var parentId = $("#widgetsParents-select option:selected").attr('value');
-				var rootElmts = getRootObjects(parentId);
+	var widgetToDuplicate = configData.payload.widgets.find(w => w.id == widgetId);
+	var newWidget = JSON.parse(JSON.stringify(widgetToDuplicate));
+	var parentId = $("#widgetsParents-select option:selected").attr('value');
+	var rootElmts = getRootObjects(parentId);
 
-				var maxIndex = getMaxIndex(rootElmts);
-				newWidget.index = maxIndex + 1;
-				newWidget.id = data.result.duplicateId;
+	var maxIndex = getMaxIndex(rootElmts);
+	newWidget.index = maxIndex + 1;
+	newWidget.id = widgetToDuplicate.id;
 
-				configData.payload.widgets.push(newWidget);
-				incrementIdCounter();
-				refreshWidgetsContent();
-			}
-		}
-	});
-	
+	configData.payload.widgets.push(newWidget);
+	incrementIdCounter();
+	refreshWidgetsContent();
 }
