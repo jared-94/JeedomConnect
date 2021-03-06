@@ -46,6 +46,8 @@ if (!isConnect('admin')) {
   }
 </style>
 
+<link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
+
 <div>
   	<div style="display:none;" id="widget-alert"></div>
   	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
