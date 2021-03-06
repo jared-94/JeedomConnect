@@ -109,7 +109,7 @@ class JeedomConnect extends eqLogic {
 		$config_file = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
 		try {
 			log::add('JeedomConnect', 'debug', 'Saving conf in file : ' . $config_file ); 
-			file_put_contents($config_file, json_encode($config));			
+			file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));			
 		} catch (Exception $e) {
 			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage()); 
 		}
