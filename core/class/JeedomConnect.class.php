@@ -500,7 +500,7 @@ class JeedomConnect extends eqLogic {
 
     public function preInsert() {
 		
-		if ($this->getConfiguration('apiKey') == '' && $this->getConfiguration('type') != 'widget') {
+		if ($this->getConfiguration('apiKey') == '') {
 			$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
 			$this->setLogicalId($this->getConfiguration('apiKey'));
 			$this->generateQRCode();
@@ -510,16 +510,14 @@ class JeedomConnect extends eqLogic {
 
     public function postInsert() {
 
-		if ( $this->getConfiguration('type') != 'widget') {
-			$this->setIsEnable(1);
-			if ($this->getConfiguration('configVersion') == '') {
-				$this->setConfiguration('configVersion', 0);
-			}
-			$this->save();
-
-			$this->saveConfig(self::$_initialConfig);
-			$this->saveNotifs(self::$_notifConfig);
+		$this->setIsEnable(1);
+		if ($this->getConfiguration('configVersion') == '') {
+			$this->setConfiguration('configVersion', 0);
 		}
+		$this->save();
+
+		$this->saveConfig(self::$_initialConfig);
+		$this->saveNotifs(self::$_notifConfig);
 
     }
 
@@ -532,7 +530,7 @@ class JeedomConnect extends eqLogic {
 
     public function preUpdate() {
 
-		if ($this->getConfiguration('scenariosEnabled') == '' && $this->getConfiguration('type') != 'widget') {
+		if ($this->getConfiguration('scenariosEnabled') == '' ) {
 			$this->setConfiguration('scenariosEnabled', '1');
 			$this->save();
 		}
@@ -540,8 +538,6 @@ class JeedomConnect extends eqLogic {
     }
 
     public function postUpdate() {
-
-		if ( $this->getConfiguration('type') != 'widget' ) {
 
 			$positionCmd = $this->getCmd(null, 'position');
 				if (!is_object($positionCmd)) {
@@ -554,8 +550,6 @@ class JeedomConnect extends eqLogic {
 				}
 				$positionCmd->setName(__('Position', __FILE__));
 				$positionCmd->save();
-		}
-
     }
 
     public function preRemove() {
@@ -581,8 +575,8 @@ class JeedomConnect extends eqLogic {
 
 		log::add('JeedomConnect', 'debug', 'starting configuration migration for new format');
 
-		//if equipment is defined as widget
-		if ( $this->getConfiguration('type') != 'widget' ){
+		//check if equipment is enable
+		if ( $this->getIsEnable() ){
 
 			//get the config file brut 
 			$configFile = $this->getConfig(false)  ;
@@ -603,6 +597,20 @@ class JeedomConnect extends eqLogic {
 				}
 				log::add('JeedomConnect', 'debug', 'all rooms/object matching : ' . json_encode($existingRooms) );
 				
+				// manage group, and provide new id
+				$groupIndex = 999000;
+				$existingGroups = array();
+				foreach($configFile['payload']['groups'] as $key => $group){
+					
+					$newGroup = $group;
+					$existingGroups[$group['id']] = $groupIndex;
+					$newGroup['id'] = $groupIndex;
+					
+					$configFile['payload']['groups'][$key] = $newGroup;
+					$groupIndex += 1 ;
+				}
+
+
 				$widgetsIncluded = array();
 				$widgetsMatching = array();
 
@@ -611,7 +619,14 @@ class JeedomConnect extends eqLogic {
 					
 					// create config widget with new format
 					$newWidget = array();
-					$newWidget['parentId'] = $widget['parentId'];
+					
+					// check if parentId is a group one, if so then apply the new group Id
+					if ( array_key_exists($widget['parentId'], $existingGroups ) ) {
+						$newWidget['parentId'] = $existingGroups[$widget['parentId']] ;
+					}
+					else{
+						$newWidget['parentId'] = $widget['parentId'];
+					}
 					$newWidget['index'] = $widget['index'];
 
 					// retrieve the img to display for the widget based on the type
