@@ -165,7 +165,7 @@ class JeedomConnect extends eqLogic {
 		}
 		$jsonConfig['payload']['rooms'] = $allRooms ;
 
-		$widgetStringFinal = json_encode( $jsonConfig ) ;
+		$widgetStringFinal = json_encode( $jsonConfig , JSON_PRETTY_PRINT) ;
 		//log::add('testTLE', 'info', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal ); 
 		
 		file_put_contents($config_file_path.'.generated', $widgetStringFinal );			
