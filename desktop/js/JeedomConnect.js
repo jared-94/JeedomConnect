@@ -1463,6 +1463,9 @@ function downWidgetOption(id) {
           else{
             refreshWidgetDetails();
             refreshWidgetsContent();
+            if ( $( "#selWidgetDetail" ).length > 0 ) {
+                $( "#selWidgetDetail option[data-widget-id="+widgetId+"]" ).text(widgetName);              
+            }
             $("#widgetModal").dialog('destroy').remove();
           }
         }
