@@ -572,15 +572,14 @@ class JeedomConnect extends eqLogic {
 
 
 	public function moveToNewConfig(){
-
-		log::add('JeedomConnect', 'debug', 'starting configuration migration for new format');
+		log::add('JeedomConnect_migration', 'info', 'starting configuration migration for new format - equipement "' . $this->getName() . '"');
 
 		//check if equipment is enable
 		if ( $this->getIsEnable() ){
 
 			//get the config file brut 
 			$configFile = $this->getConfig(false)  ;
-			log::add('JeedomConnect', 'debug', 'original configFile : ' . json_encode($configFile)  ); 
+			log::add('JeedomConnect_migration', 'info', 'original JSON configFile : ' . json_encode($configFile)  ); 
 
 			//if the configFile is not defined with the new format
 			// ie : exist key formatVersion
@@ -595,11 +594,12 @@ class JeedomConnect extends eqLogic {
 						$existingRooms[$room['id']] = $room['object'];
 					}
 				}
-				log::add('JeedomConnect', 'debug', 'all rooms/object matching : ' . json_encode($existingRooms) );
+				log::add('JeedomConnect_migration', 'info', 'all rooms/object matching : ' . json_encode($existingRooms) );
 				
 				// manage group, and provide new id
 				$groupIndex = 999000;
 				$existingGroups = array();
+				log::add('JeedomConnect_migration', 'info', 'Group objects -- BEFORE : ' . json_encode($configFile['payload']['groups']) );
 				foreach($configFile['payload']['groups'] as $key => $group){
 					
 					$newGroup = $group;
@@ -609,6 +609,7 @@ class JeedomConnect extends eqLogic {
 					$configFile['payload']['groups'][$key] = $newGroup;
 					$groupIndex += 1 ;
 				}
+				log::add('JeedomConnect_migration', 'info', 'Group objects with new Ids-- AFTER : ' . json_encode($configFile['payload']['groups']) );
 
 
 				$widgetsIncluded = array();
@@ -616,6 +617,7 @@ class JeedomConnect extends eqLogic {
 
 				// for each widget in config file create the associate widget equipment
 				foreach($configFile['payload']['widgets'] as $key => $widget){
+					log::add('JeedomConnect_migration', 'info', 'starting migration for widget "' . $widget['name'] . '"' );
 					
 					// create config widget with new format
 					$newWidget = array();
@@ -649,7 +651,7 @@ class JeedomConnect extends eqLogic {
 					else{
 						$widget['room'] = null;
 					}
-
+					
 					//generate a random logicalId
 					$widgetId = JeedomConnectWidget::incrementIndex();
 					
@@ -674,19 +676,24 @@ class JeedomConnect extends eqLogic {
 					//save the new widget data into the original config array
 					$configFile['payload']['widgets'][$key] = $newWidget;
 
+					log::add('JeedomConnect_migration', 'info', 'conf saved [DB] for widget ' . json_encode($widget) );
+					log::add('JeedomConnect_migration', 'info', 'conf saved [file] for widget "' . json_encode($newWidget) . '"' );
+
 				}
 
 				// for each widget which includes other widgets (group, favourite,..)
 				// we need to update the widget ID
+				log::add('JeedomConnect_migration', 'info', 'checking widget included into other widgets');
 				foreach($widgetsIncluded as $widget){
 					$widgetJC = JeedomConnectWidget::getConfiguration($widget, 'widgetJC');
 					$conf = json_decode($widgetJC, true );
-
+					log::add('JeedomConnect_migration', 'info', 'working on widget "' .$conf['name'] . '" [id:' . $conf['id'] .']' );
 					foreach($conf['widgets'] as $index => $obj){
 						$newObj = array();
 						foreach ($obj as $key => $value) {
 							if ( $key == 'id'){
 								$newObj['id'] = $widgetsMatching[$value];
+								log::add('JeedomConnect_migration', 'info', 'replacing widget child id "'.$value . '" with new Id "'. $widgetsMatching[$value] .'"');
 							}
 							else{
 								$newObj[$key] = $value;
@@ -702,59 +709,70 @@ class JeedomConnect extends eqLogic {
 				// sort array by index in order to recreate a good index array
 				usort($configFile['payload']['rooms'], function($a, $b) {return strcmp($a['index'], $b['index']);});
 				$indexRoom = 0;
+				$indexRoomToRemove = array();
+				$newRoomsArray = array();
+				log::add('JeedomConnect_migration', 'info', 'updating rooms ');
 				foreach($configFile['payload']['rooms'] as $key => $room){
 					if ( array_key_exists('object', $room )
 							&& ! is_null($room['object']) ) {
+						
+						log::add('JeedomConnect_migration', 'info', 'working on room "' .$room['name']. '"' );
 
 						$roomObject = jeeObject::byId($room['object']);
 
 						if ( is_object($roomObject) ){
 							// set the name with the Jeedom One
-							$room['name'] = $roomObject->getName() ;
+							$currentRoom['name'] = $roomObject->getName() ;
 						}
 						elseif ($room['name'] == 'global') {
 							// do nothing
-							$room['name'] = $room['name'] ;
+							$currentRoom['name'] = $room['name'] ;
 						}
 						else{
 							// if object doesnt exist in jeedom, we remove it
-							unset($configFile['payload']['rooms'][$key]) ; 
+							log::add('JeedomConnect_migration', 'info', 'Room '.$room['name'].' is not migrated as it is not attached to an existing jeedom object [objectId incorrect]' ) ;
 							continue;
 						}
 						
 						// set the main id to the jeedom object id
-						$room['id'] = $room['object'];
+						$currentRoom['id'] = $room['object'];
 						
-						$room['index'] = $indexRoom;
-						unset($room['object']) ;
+						$currentRoom['index'] = $indexRoom;
 
+						log::add('JeedomConnect_migration', 'info', 'new info -- name : "' .$currentRoom['name']. '"  -- id : ' . $currentRoom['id'] );
+						
 						//save the new widget data into the original config array
-						$configFile['payload']['rooms'][$key] = $room;
+						array_push($newRoomsArray, $currentRoom);
 
 						$indexRoom ++;
 					}
 					else{
-						// if no object then remove the room
-						unset($configFile['payload']['rooms'][$key]) ; 
+						log::add('JeedomConnect_migration', 'info', 'Room "'.$room['name'].'" is not migrated as it is not attached to an existing jeedom object' ) ;
 					}
-
 				}
-				
+
+				$configFile['payload']['rooms'] = $newRoomsArray ;
+
 				//add info about new format in file
 				$configFile = array_merge( array_slice( $configFile, 0, 1 ), array('formatVersion' => '1.0'), array_slice( $configFile, 1 ) );
-				log::add('JeedomConnect', 'debug', 'final config file : ' . json_encode($configFile)  ); 
+				log::add('JeedomConnect_migration', 'info', 'final config file : ' . json_encode($configFile)  ); 
 
 				// make a backup file
 				$originalFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json' ;
 				$backupFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json.bkp' ;
 				copy($originalFile, $backupFile );
+				log::add('JeedomConnect_migration', 'info', 'backup file created -- ' . $backupFile) ;
 
 				// save the file
 				file_put_contents($originalFile, json_encode($configFile , JSON_PRETTY_PRINT) );	
+				log::add('JeedomConnect_migration', 'info', 'new configuration file saved ') ;
 			}
 			else{
-				log::add('JeedomConnect', 'debug', 'Configuration file already in the new format');
+				log::add('JeedomConnect_migration', 'info', 'Configuration file already into new format');
 			}
+		}
+		else{
+			log::add('JeedomConnect_migration', 'info', 'configuration for equipement "'.$this->getName().'" not migrated because equipement disabled');
 		}
 		return;
 	}
