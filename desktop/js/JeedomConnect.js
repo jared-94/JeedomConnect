@@ -17,7 +17,7 @@
 
 var allWidgetsDetail;
 
-refreshWidgetDetails() ; 
+refreshWidgetDetails() ;
 
 function refreshWidgetDetails(){
   $.post({
@@ -49,7 +49,7 @@ $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '
 
     var eqId = $(this).attr('data-widget_id');
     editWidgetModal(eqId, true, true);
-    
+
 })
 
 
@@ -92,11 +92,11 @@ function getWidgetModal(_options, _callback) {
 
   if (_options.removeAction == true){
     $('.widgetMenu .duplicateWidget').show();
-    
+
   }
   else{
     $('.widgetMenu .removeWidget').hide();
-    
+
   }
 
   if (_options.exit == true){
@@ -186,8 +186,8 @@ $("#qrcode-regenerate").click(function() {
 	$.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: {
-      'action': 'generateQRcode', 
-      'id': $('.eqLogicAttr[data-l1key=id]').value() 
+      'action': 'generateQRcode',
+      'id': $('.eqLogicAttr[data-l1key=id]').value()
     },
     success: function () {
       $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + key + '.png?'+ new Date().getTime());
@@ -202,8 +202,8 @@ $("#removeDevice").click(function() {
 	$.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: {
-      'action': 'removeDevice', 
-      'id': $('.eqLogicAttr[data-l1key=id]').value() 
+      'action': 'removeDevice',
+      'id': $('.eqLogicAttr[data-l1key=id]').value()
     },
     success: function () {
       $('.eqLogicAttr[data-l1key=configuration][data-l2key=deviceName]').html('');
@@ -369,7 +369,7 @@ var widgetsList = (function () {
     }
   });
   return json;
-})(); 
+})();
 
 //used for moreInfos
 var moreInfos = [];
@@ -415,7 +415,7 @@ $("#room-input").html(roomListOptions);
 
 function setWidgetModalData(options) {
   refreshAddWidgets();
-  //console.log("seWidgetMdal options : ", options); 
+  //console.log("seWidgetMdal options : ", options);
   if (options.widget !== undefined) {
      $('#widgetsList-select option[value="'+options.widget.type+'"]').prop('selected', true);
      refreshAddWidgets();
@@ -434,10 +434,10 @@ function setWidgetModalData(options) {
     refreshMoreInfos();
 
     $("#widgetOptions").attr('widget-id', options.eqId ?? '');
-     
+
      var widgetConfig = widgetsList.widgets.find(i => i.type == options.widget.type);
-     //console.log("widgetsList => ", widgetsList) ; 
-     //console.log("widgetConfig => ", widgetConfig) ; 
+     //console.log("widgetsList => ", widgetsList) ;
+     //console.log("widgetConfig => ", widgetConfig) ;
      widgetConfig.options.forEach(option => {
        if (option.category == "string" & options.widget[option.id] !== undefined ) {
          $("#"+option.id+"-input").val(options.widget[option.id]);
@@ -1327,7 +1327,7 @@ function downWidgetOption(id) {
   } else if (option.category == "string") {
     if ($("#"+option.id+"-input").val() == '' & option.required) {
       $('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-      throw {}; 
+      throw {};
     }
     result[option.id] = parseString($("#"+option.id+"-input").val(), infoCmd);
   } else if (option.category == "binary") {
@@ -1393,7 +1393,7 @@ function downWidgetOption(id) {
   result.blockDetail = $("#blockDetail-input").is(':checked');
   $('#widget-alert').hideAlert();
   //$(this).dialog('close');
-  
+
   widgetEnable = $('#enable-input').is(":checked");
   result.enable = widgetEnable;
 
@@ -1420,12 +1420,12 @@ function downWidgetOption(id) {
   toSave = JSON.stringify(result)
   //console.log("envoie du widgetJC ==> " , toSave);
 
-  widgetImg = $("#widgetImg").attr("src") ; 
-  
+  widgetImg = $("#widgetImg").attr("src") ;
+
   widgetName = $("#name-input").val() ;
   widgetId = $("#widgetOptions").attr('widget-id') ;
 
-  
+
   if (toSave !== null) {
     $.ajax({
       type: "POST",
@@ -1433,7 +1433,7 @@ function downWidgetOption(id) {
       data: {
         action: "saveWidgetConfig",
         eqId: widgetId,
-        widgetJC : toSave, 
+        widgetJC : toSave,
         imgPath : widgetImg
       },
       dataType: 'json',
@@ -1464,7 +1464,7 @@ function downWidgetOption(id) {
             refreshWidgetDetails();
             refreshWidgetsContent();
             if ( $( "#selWidgetDetail" ).length > 0 ) {
-                $( "#selWidgetDetail option[data-widget-id="+widgetId+"]" ).text(widgetName);              
+                $( "#selWidgetDetail option[data-widget-id="+widgetId+"]" ).text(widgetName);
             }
             $("#widgetModal").dialog('destroy').remove();
           }
@@ -1473,7 +1473,7 @@ function downWidgetOption(id) {
     })
 
   }
-  
+
 }
 
 function hideWidget(){
@@ -1492,42 +1492,43 @@ function duplicateWidget(){
 }
 
 function removeWidget(){
-  $('#widget-alert').hideAlert();
-  widgetId = $("#widgetOptions").attr('widget-id') ;
-  
-  $.ajax({
-    type: "POST",
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-      action: "removeWidgetConfig",
-      eqId: widgetId
-    },
-    dataType: 'json',
-    error: function(error) {
-      $('#div_alert').showAlert({message: error.message, level: 'danger'});
-    },
-    success: function(data) {
-      if (data.state != 'ok') {
-        $('#div_alert').showAlert({
-          message: data.result,
-          level: 'danger'
-        });
-      }
-      else{
-        var vars = getUrlVars()
-        var url = 'index.php?'
-        for (var i in vars) {
-          if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-            url += i + '=' + vars[i].replace('#', '') + '&'
-          }
-        }
-        modifyWithoutSave = false
-        url += '&saveSuccessFull=1'
-        loadPage(url)
-      }
-    }
-  })
+  getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {
+    $('#widget-alert').hideAlert();
+    widgetId = $("#widgetOptions").attr('widget-id') ;
 
+    $.ajax({
+      type: "POST",
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        action: "removeWidgetConfig",
+        eqId: widgetId
+      },
+      dataType: 'json',
+      error: function(error) {
+        $('#div_alert').showAlert({message: error.message, level: 'danger'});
+      },
+      success: function(data) {
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
+        }
+        else{
+          var vars = getUrlVars()
+          var url = 'index.php?'
+          for (var i in vars) {
+            if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
+              url += i + '=' + vars[i].replace('#', '') + '&'
+            }
+          }
+          modifyWithoutSave = false
+          url += '&saveSuccessFull=1'
+          loadPage(url)
+        }
+      }
+    })
+  });
 }
 
 
