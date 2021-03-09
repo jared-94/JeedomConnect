@@ -1104,7 +1104,7 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"description": "Etat du climatisuer (binaire ou numérique)."
+				"description": "Etat du climatiseur (binaire ou numérique)."
 			},
 			{
 				"id": "setpointAction",
