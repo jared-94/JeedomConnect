@@ -96,7 +96,7 @@ class JeedomConnectWidget extends config {
 				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
 				$widgetItem['roomId'] = $widgetJC['room'] ?? '' ;
 				$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']) ;
-				$widgetItem['roomName'] = (! is_null($widgetRoomObjet)) ? $widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName() : 'Aucun';
+				$widgetItem['roomName'] = (! is_null($widgetRoomObjet)) ? ( $widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName() ) : 'Aucun';
 				$widgetItem['id'] = $widgetJC['id'] ?? 'none' ;
 
 				array_push($widgetArray, $widgetItem);
@@ -128,12 +128,48 @@ class JeedomConnectWidget extends config {
 
 	}
 
-	public static function removeWidget($widgetId){
+	public static function removeWidget($idToRemove){
 
-		log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $widgetId ) ;
-		self::remove('widget::'.$widgetId, self::$_plugin_id);
-		return true;
+		// remove the widget ID inside json file config of each JC equipement
+		foreach (JeedomConnect::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getConfiguration('apiKey');
+			if ( $apiKey !=  ''){
+				$eqLogic->removeWidgetConf($idToRemove);
+			}
+		}
 
+		// remove the widget ID inside widgets of a widget (favourite, group, ...)
+		$allWidgets = self::getAllConfigurations() ;
+		log::add('JeedomConnect', 'info', 'all widget : ' . json_encode($allWidgets) );
+		foreach ($allWidgets as $widget) {
+			$hasChanged = false;
+			$conf = json_decode($widget['conf']['widgetJC'], true) ;
+			
+			if ( ! array_key_exists('widgets', $conf ) ){
+				continue;
+			}
+
+			foreach($conf['widgets'] as $index => $obj){
+				
+				if ( $obj['id'] == $idToRemove){
+					log::add('JeedomConnect', 'info', 'removing obj id : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' .$widget['id'] );
+					unset($conf['widgets'][$index]);
+					$hasChanged = true;
+				}
+				
+			}
+			
+			$conf['widgets'] = array_values($conf['widgets']);
+			if ($hasChanged) self::setConfiguration(str_replace('widget::','',$widget['id']), 'widgetJC', json_encode($conf) );
+			
+		}
+		
+		
+		// finally remove the widget config itself
+		log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $idToRemove ) ;
+		self::remove('widget::'.$idToRemove, self::$_plugin_id);
+		
+		return true; 
 
 	}
 

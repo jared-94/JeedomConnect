@@ -565,6 +565,40 @@ class JeedomConnect extends eqLogic {
     }
 
 
+	
+	public function removeWidgetConf($idToRemove){
+
+		$remove = false;
+
+		$conf = $this->getConfig();
+		
+		log::add('JeedomConnect', 'debug', 'Removing widget in equipement config file -- ' . json_encode($conf) );
+		if ( $conf ){ 
+			foreach ($conf['payload']['widgets'] as $key => $value) {
+				if ($value['id'] == $idToRemove){
+					log::add('JeedomConnect', 'debug', 'Removing that widget item config -- ' . json_encode($value));
+					unset($conf['payload']['widgets'][$key]);
+					$remove = true;
+				}
+			}
+
+			if ($remove) {
+				$conf['payload']['widgets'] = array_values($conf['payload']['widgets']);
+				log::add('JeedomConnect', 'info', 'Widget ID '.$idToRemove. ' has been removed on equipement ' . $this->getName() );
+				return self::saveConfig($conf);
+			}
+			else{
+				log::add('JeedomConnect', 'info', 'Widget ID '.$idToRemove. ' not found in equipement ' . $this->getName() );
+			}
+		}
+		else{
+			log::add('JeedomConnect', 'warning', 'No config content retrieved');
+		}
+		return;
+
+	}									 
+
+
 	/**
 	 ************************************************************************
 	 ****************** FUNCTION TO UPDATE CONF FILE FORMAT *****************
