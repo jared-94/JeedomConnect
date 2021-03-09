@@ -9,6 +9,31 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray= JeedomConnectWidget::getWidgets();
 
+
+$orderBy = $_GET['jcOrderBy'] ?? 'object'; 
+switch ($orderBy) {
+	case 'name':
+		$widgetName = array_column($widgetArray, 'name');
+		array_multisort($widgetName, SORT_ASC, $widgetArray);
+		break;
+	
+	case 'type':
+		$widgetType = array_column($widgetArray, 'type');
+		$widgetName = array_column($widgetArray, 'name');
+		array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+		break;
+
+	default:
+		// $roomName  = array_column($widgetArray, 'roomName');
+		// $widgetName = array_column($widgetArray, 'name');
+
+		// array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+		break;
+}
+
+$allConfig = JeedomConnect::getWidgetParam();
+$widgetTypeArray = array();
+
 $listWidget = '';
 foreach ($widgetArray as $widget) {
 	
@@ -18,16 +43,48 @@ foreach ($widgetArray as $widget) {
 	$widgetName = $widget['name'] ; 
 	$widgetRoom = $widget['roomName'] ; ;
 	$id = $widget['id']; 
+	$widgetType = $widget['type']; 
 
-	$name = '<span class="name"><span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong></span>' ;
+	//used later by the filter select item
+	if(!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType]=$allConfig[$widgetType];
 
-	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" data-widget_id="' . $id . '">';
+	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong>' ;
+
+	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 	$listWidget .= '<img src="' . $img . '"/>';
 	$listWidget .= '<br>';
 	$listWidget .= '<span class="name">' . $name . '</span>';
 	$listWidget .= '</div>';
 
 }
+
+
+$optionsOrderBy = '' ;
+$orderByArray = array (
+		"object" => "Pièce",
+		"name" => "Nom",
+		"type" => "Type"
+	);
+
+foreach ($orderByArray as $key => $value) {
+	$selected = ($key ==  $orderBy) ? 'selected' : '';
+	$optionsOrderBy .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+}
+
+
+$typeSelectionParam = $_GET['jcFilterBy'] ?? ''; 
+
+asort($widgetTypeArray);
+$typeSelection2 = '';
+$hasSelected = false ;
+foreach ($widgetTypeArray as $key => $value) {
+	$selected = ($key ==  $typeSelectionParam) ? 'selected' : '' ;
+	$hasSelected = $hasSelected || ($key ==  $typeSelectionParam) ;
+	$typeSelection2 .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+}
+$sel = $hasSelected ? '' : 'selected' ;
+$typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2 ;
+
 
 
 ?>
@@ -54,6 +111,9 @@ foreach ($widgetArray as $widget) {
 				<span>{{Configuration}}</span>
 			</div>
 		</div>
+
+		<!--   PANEL DES EQUIPEMENTS  -->
+		<legend style="margin-top:10px"><i class="fas fa-mobile-alt fa-lg"></i> {{Mes appareils}}</legend>
 		<!-- Champ de recherche -->
 		<div class="input-group" style="margin:10px 5px;">
 			<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic"/>
@@ -61,7 +121,6 @@ foreach ($widgetArray as $widget) {
 				<a id="bt_resetSearch" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>
 		</div>
-		<legend><i class="fas fa-mobile-alt fa-lg"></i> {{Mes appareils}}</legend>
 		<!-- Liste des équipements du plugin -->
 		<div class="eqLogicThumbnailContainer">
 			<?php
@@ -75,7 +134,28 @@ foreach ($widgetArray as $widget) {
 			}
 			?>
 		</div>
+		<!--  FIN --- PANEL DES EQUIPEMENTS  -->
 
+		<!--   PANEL DES WIDGETS  -->
+		<legend><i class="fas fa-table"></i> {{Mes widgets}}
+			
+			<div class="pull-right" >
+			<span style="margin-right:10px">{{Trie}}
+				<select id="widgetOrder" onchange="updateOrderWidget()" style="width:100px">
+					<?php
+						echo $optionsOrderBy;
+					?>
+				</select>
+			</span>
+			<span>{{Filtre}}
+				<select id="widgetTypeSelect" style="width:auto">
+					<?php
+						echo $typeSelection;
+					?>
+				</select>
+			</span>	
+			</div>
+		</legend>
 		<!-- Champ de recherche widget -->
 		<div class="input-group" style="margin:10px 5px;">
 			<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchWidget"/>
@@ -83,14 +163,14 @@ foreach ($widgetArray as $widget) {
 				<a id="bt_resetSearchWidget" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>
 		</div>
-		<legend><i class="fas fa-table"></i> {{Mes widgets}}</legend>
 		<!-- Liste des widgets du plugin -->
-		<div class="eqLogicThumbnailContainer" style="min-height: 173px !important;">
+		<div class="eqLogicThumbnailContainer" id="widgetsList-div">
 			<?php
 			echo $listWidget ;
 			?>
 		</div>
 	</div> <!-- /.eqLogicThumbnailDisplay -->
+	<!--  FIN ---  PANEL DES WIDGETS  -->
 
 	<!-- Page de présentation de l'équipement -->
 	<div class="col-xs-12 eqLogic" style="display: none;">
@@ -99,7 +179,6 @@ foreach ($widgetArray as $widget) {
 			<span class="input-group-btn">
 				<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
 				<a class="btn btn-sm btn-default eqLogicAction roundedLeft" data-action="configure"><i class="fas fa-cogs"></i><span class="hidden-xs"> {{Configuration avancée}}</span>
-				</a><a class="btn btn-sm btn-default eqLogicAction" data-action="copy"><i class="fas fa-copy"></i><span class="hidden-xs">  {{Dupliquer}}</span>
 				</a><a class="btn btn-sm btn-success eqLogicAction" data-action="save"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
 				</a><a class="btn btn-sm btn-danger eqLogicAction roundedRight" data-action="remove"><i class="fas fa-minus-circle"></i> {{Supprimer}}
 				</a>
@@ -161,12 +240,7 @@ foreach ($widgetArray as $widget) {
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Commentaire}}</label>
-								<div class="col-sm-7">
-									<textarea class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="commentaire" ></textarea>
-								</div>
-							</div>
+							
 							<div class="form-group" style="display:none;">
 								<label class="col-sm-3 control-label" >{{Type}}</label>
 								<div class="col-sm-7">
@@ -177,13 +251,11 @@ foreach ($widgetArray as $widget) {
 							</div>
 							<br>
 
-
-							<div class="col-sm-6">
 							<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>
 
 							<div class="form-group">
-								<label class="col-sm-6 control-label">{{Utilisateur}}</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
+								<div class="col-sm-7">
 									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userHash">
 										<option value="">{{Aucun}}</option>
 										<?php
@@ -196,48 +268,61 @@ foreach ($widgetArray as $widget) {
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-6 control-label">{{Assistant}}</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">{{Assistant}}</label>
+								<div class="col-sm-7">
 									<a class="btn btn-success" id="assistant-btn"><i class="fa fa-wrench"></i> {{Configurer l'appareil}}
 									</a>
 								</div>
 							</div>
+
 							<div class="form-group">
-								<label class="col-sm-6 control-label">{{Actions}}</label>
-								<div class="col-sm-6 input-group" style="display:inline-flex;">
+								<label class="col-sm-3 control-label">{{Configuration}}</label>
+								<div class="col-sm-7 input-group" style="display:inline-flex;">
 									<span class="input-group-btn">
 										<input type="file" accept=".json" id="import-input" style="display:none;" >
 										<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
 										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
+										&nbsp;&nbsp;<i class="fas fa-question-circle cursor floatright" title="Partagez votre configuration sur un autre équipement"></i>
 									</span>
+									
 								</div>
 							</div>
+
 							<div class="form-group">
-								<label class="col-sm-6 control-label">{{Appareil enregistré :}}</label>
-								<div class="col-sm-6" style="display:inline-flex;">
+								<label class="col-sm-3 control-label">{{Appareil enregistré}}</label>
+								<div class="col-sm-7" style="display:inline-flex;">
 									<span class="eqLogicAttr label" style="font-size:1em!important;margin-right:5px;" data-l1key="configuration" type="text" data-l2key="deviceName"></span>
 									<a class="btn btn-danger" id="removeDevice"><i class="fa fa-minus-circle"></i> {{Détacher}} </a>
 								</div>
 							</div>
+
 							<div class="form-group">
-								<label class="col-sm-6 control-label">{{Notifications}}</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">{{Notifications}}</label>
+								<div class="col-sm-7">
 									<a class="btn btn-success" id="notifConfig-btn"><i class="fa fa-wrench"></i> {{Configurer}}
 									</a>
 								</div>
 							</div>
+							
 							<div class="form-group">
-									<label class="col-sm-6 control-label">{{Accès scénarios}}</label>
-									<div class="col-sm-6">
+									<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
+									<div class="col-sm-7">
 										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
 									</div>
 							</div>
-						</div>
-
-
-
-							
-							
+						
+					
+							<legend><i class="fa fa-bug"></i>  {{Partager le fichier de configuration}}</legend>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
+								<div class="col-sm-7 input-group" style="display:inline-flex;">
+									<span class="input-group-btn">
+										<a class="btn btn-default" id="exportAll-btn"><i class="fa fa-file-export"></i> {{Partager}}</a>
+										&nbsp;&nbsp;<i class="fas fa-question-circle cursor floatright" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
+									</span>
+								</div>
+							</div>
+								
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->

@@ -90,13 +90,15 @@ function getWidgetModal(_options, _callback) {
   }
   setWidgetModalData(_options);
 
-  if (_options.removeAction == true){
-    $('.widgetMenu .duplicateWidget').show();
+  if (_options.removeAction != true){
+    $('.widgetMenu .removeWidget').hide();
+  }
 
+  if ( $('#widgetOptions').attr('widget-id') == undefined || $('#widgetOptions').attr('widget-id') == ''){
+    $('.widgetMenu .duplicateWidget').hide();
   }
   else{
-    $('.widgetMenu .removeWidget').hide();
-
+    $('.widgetMenu .duplicateWidget').show();
   }
 
   if (_options.exit == true){
@@ -145,6 +147,41 @@ $("#export-btn").click(function() {
 	a.click();
 	a.remove();
 });
+
+$("#exportAll-btn").click(function() {
+
+  var apiKey = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+
+  $.post({
+		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+		data: {
+      'action': 'getConfig', 
+      'apiKey': apiKey , 
+      all : true
+    },
+		dataType: 'json',
+		success: function( data ) {
+      //console.log("roomList ajax received : ", data) ;
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({
+				  message: data.result,
+				  level: 'danger'
+				});
+			}
+			else{
+				var a = document.createElement("a");
+        a.href = 'plugins/JeedomConnect/data/configs/'+apiKey+'.json.generated';
+        a.download = apiKey+'_GENERATED.json';
+        a.click();
+        a.remove();
+			}
+		}
+	});
+  
+	
+});
+
+
 
 $("#import-btn").click(function() {
 	$("#import-input").click();
@@ -246,7 +283,6 @@ $('#bt_resetSearchWidget').on('click', function() {
 })
 
 
-
 function addCmdToTable(_cmd) {
   if (!isset(_cmd)) {
     var _cmd = {configuration: {}};
@@ -344,6 +380,7 @@ function addCmdToTable(_cmd) {
 
   }
 }
+
 
 
 
@@ -543,7 +580,7 @@ function refreshAddWidgets() {
   $("#widgetDescription").html(widget.description);
 
   if (widget.variables) {
-    let varDescr = `Variables disponibles : <ul>`;
+    let varDescr = `Variables disponibles : <ul style="padding-left: 15px;">`;
     widget.variables.forEach(v => {
       varDescr += `<li>#${v.name}# : ${v.descr}</li>`;
     });
@@ -1487,6 +1524,7 @@ function duplicateWidget(){
 
   $('.widgetMenu .duplicateWidget').hide()
   $('.widgetMenu .removeWidget').hide()
+  $('#widget-alert').showAlert({message: 'Le widget est prêt à être dupliqué. Pensez à sauvegarder !', level: 'success'});
   // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 
 }
@@ -1613,3 +1651,67 @@ function parseString(string, infos) {
   });
   return result;
 }
+
+
+function updateOrderWidget(){
+  
+  var type = $("#widgetOrder").val();
+  console.log("choix tri : " + type);
+
+  var vars = getUrlVars()
+  var url = 'index.php?'
+  for (var i in vars) {
+    if (i != 'jcOrderBy') {
+      url += i + '=' + vars[i].replace('#', '') + '&'
+    }
+  }
+  url += 'jcOrderBy='+type;
+  loadPage(url)
+
+}
+
+
+$('#widgetOrder_NOTWORKING').on('change', function() {
+	var type = $("#widgetOrder").val();
+  
+  $.post({
+		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+		data: {
+			action: 'orderWidget',
+      orderBy: type
+		},
+		cache: false,
+		dataType: 'json',
+    async: false,
+		success: function( data ) {
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({
+				  message: data.result,
+				  level: 'danger'
+				});
+			}
+			else{
+				// $('.eqLogicThumbnailContainer').hide() ;
+        $('#widgetsList-div').html(data.result.widgets);
+        // $('.eqLogicThumbnailContainer').show() ;
+        $('.eqLogicThumbnailContainer').packery();
+
+			}
+		}
+	});
+
+  
+	
+});
+
+
+$('#widgetTypeSelect').on('change', function() {
+	var typeSelected = this.value ;
+
+  $( '.widgetDisplayCard' ).show();
+  if ( typeSelected != 'none'){
+	  $( '.widgetDisplayCard' ).not( "[data-widget_type=" + typeSelected + "]" ).hide();
+  }
+  $('.eqLogicThumbnailContainer').packery();
+	
+});

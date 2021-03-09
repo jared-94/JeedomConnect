@@ -565,7 +565,16 @@ class JeedomConnect extends eqLogic {
     }
 
 
-	
+	public static function getWidgetParam(){
+		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
+		
+		$result = array();
+		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+			$result[$config['type']] = $config['name'];
+		}
+		return $result;
+	}
+
 	public function removeWidgetConf($idToRemove){
 
 		$remove = false;

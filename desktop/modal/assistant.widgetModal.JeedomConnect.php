@@ -67,7 +67,7 @@ if (!isConnect('admin')) {
 			</select>
 			<img id="widgetImg" />
 			<div class="alert alert-info" id="widgetDescription"></div>
-      <div class="alert alert-info" id="widgetVariables"></div>
+      		<div class="alert alert-info" id="widgetVariables"></div>
 		</div>
 
 		<div class="col-sm-10 borderLef">
