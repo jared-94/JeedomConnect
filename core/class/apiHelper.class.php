@@ -42,7 +42,7 @@ class apiHelper {
               }
             }
           }
-        }        
+        }
       }
     }
     return array_unique($return);
@@ -102,8 +102,8 @@ class apiHelper {
   public static function getObjectList($config) {
   	$return = array();
   	foreach ($config['payload']['rooms'] as $room) {
-  			if (array_key_exists("object", $room)) {
-  				array_push($return, $room['object']);
+  			if (array_key_exists("id", $room)) {
+  				array_push($return, $room['id']);
   			}
   	}
   	return array_unique($return);

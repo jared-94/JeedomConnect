@@ -45,7 +45,7 @@ class ConnectLogic implements MessageComponentInterface
 			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$apiKey = $eqLogic->getConfiguration('apiKey');
 				if ( $apiKey !=  ''){
-					\log::add('JeedomConnect', 'debug', 'checking apiKey : ' . $apiKey ); 
+					\log::add('JeedomConnect', 'debug', 'checking apiKey : ' . $apiKey );
 					array_push($this->apiKeyList, $apiKey);
 					$this->configList[$apiKey] = $eqLogic->getConfig(true);
 				}
@@ -459,18 +459,8 @@ class ConnectLogic implements MessageComponentInterface
 		}
 	}
 
-	private function getObjects($config) {
-		$return = array();
-		foreach ($config['payload']['rooms'] as $room) {
-				if (array_key_exists("object", $room)) {
-					array_push($return, $room['object']);
-				}
-		}
-		return array_unique($return);
-	}
-
 	public function sendSummaries($client) {
-		$objIds = $this->getObjects($this->configList[$client->apiKey]);
+		$objIds = \apiHelper::getObjectData($this->configList[$client->apiKey]);
 		$result = array(
 			'type' => 'SET_CMD_INFO',
 			'payload' => array()
