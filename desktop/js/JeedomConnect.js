@@ -1493,6 +1493,7 @@ function downWidgetOption(id) {
   }
   });
   result.type = $("#widgetsList-select").val();
+  widgetType = $("#widgetsList-select").val();
   result.blockDetail = $("#blockDetail-input").is(':checked');
   $('#widget-alert').hideAlert();
   //$(this).dialog('close');
@@ -1501,6 +1502,7 @@ function downWidgetOption(id) {
   result.enable = widgetEnable;
 
   widgetRoom = $('#room-input :selected').val() ;
+  widgetRoomName = $('#room-input :selected').text() ;
   if (widgetRoom != 'none') {
     if (widgetRoom == 'global')
     {
@@ -1566,8 +1568,23 @@ function downWidgetOption(id) {
           else{
             refreshWidgetDetails();
             refreshWidgetsContent();
+            
             if ( $( "#selWidgetDetail" ).length > 0 ) {
-                $( "#selWidgetDetail option[data-widget-id="+widgetId+"]" ).text(widgetName);
+                //if it's a new widget
+                if (widgetId == undefined || widgetId == ''){
+
+                  if (widgetRoomName!='') widgetRoomName = ' ('+ widgetRoomName.replace(/(?:^[\s\u00a0]+)|(?:[\s\u00a0]+$)/g, '') +')';
+                  widgetId = parseInt(data.result.id) ;
+                  $('#selWidgetDetail')
+                        .append($("<option></option>")
+                        .attr("value",widgetId)
+                        .attr("data-widget-id",widgetId)
+                        .attr("data-type",widgetType)
+                        .text(widgetName +widgetRoomName) );
+                }
+                else{  //if it's just an update
+                  $( "#selWidgetDetail option[data-widget-id="+widgetId+"]" ).text(widgetName);
+                }
             }
             $("#widgetModal").dialog('destroy').remove();
           }

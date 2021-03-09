@@ -97,7 +97,7 @@ try {
 		
 		JeedomConnectWidget::saveConfig($newConfWidget, $id) ;
 		
-		ajax::success();
+		ajax::success(array('id' => $id));
 
 	}
 
