@@ -66,10 +66,10 @@ if (!isConnect('admin')) {
 			<select name="widgetsList" id="widgetsList-select"  onchange="refreshAddWidgets();">
 			</select>
 			<img id="widgetImg" />
-			<div class="alert alert-info" id="widgetDescription">
-			</div>
+			<div class="alert alert-info" id="widgetDescription"></div>
+      <div class="alert alert-info" id="widgetVariables"></div>
 		</div>
-		
+
 		<div class="col-sm-10 borderLef">
 			<h3 style="margin-left:25px;">Options du widget</h3><br>
 			<div style="margin-left:25px; font-size:12px; margin-top:-20px; margin-bottom:15px;">Les options marquées d'une étoile sont obligatoires.</div>
@@ -79,7 +79,7 @@ if (!isConnect('admin')) {
 			</form>
 		</div>
   	</div>
-  	
+
 </div>
 
  <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');?>
