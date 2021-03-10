@@ -514,7 +514,7 @@
 	{
 		"type": "group-plug",
 		"name": "Groupe de prises",
-		"img": "plug6.png",
+		"img": "groupPlug.png",
 		"description": "Gère un groupe de plusieurs widgets prises",
 		"variables": [
 			{ "name": "room", "descr": "Pièce" },
