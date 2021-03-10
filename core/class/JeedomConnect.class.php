@@ -133,6 +133,9 @@ class JeedomConnect extends eqLogic {
 		}
 
 		$roomIdList = array();
+		$widgetList = array();
+		$widgetIdInGroup = array();
+		$maxIndex = 0;
 		foreach ($jsonConfig['payload']['widgets'] as $key => $widget) {
 			$widgetData = JeedomConnectWidget::getWidgets( $widget['id'] );
 
@@ -148,15 +151,58 @@ class JeedomConnect extends eqLogic {
 					$widget[$key2] = $value2;
 				}
 				$widget['id'] = intval($widget['id']) ;
+				array_push($widgetList, $widget['id'] );
+
+				if (isset($widget['widgets'])){
+					foreach ($widget['widgets'] as $itemGroup) {
+						array_push($widgetIdInGroup, $itemGroup['id'] );
+					}
+				}
 
 				if (isset($widget['room'])){
 					array_push($roomIdList , $widget['room'] ) ;
 				}
 
 				$jsonConfig['payload']['widgets'][$key] = $widget;
+				$maxIndex = $key;
 
 			}
 		}
+
+		// remove duplicate id
+		$widgetIdInGroup = array_unique($widgetIdInGroup);
+		// check if for each widgetId found in a group, the widget itself has his configuration 
+		// already detailed in the config file, if not, then add it
+		foreach ($widgetIdInGroup as $item) {
+			if ( ! in_array($item, $widgetList)){
+				log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
+				$widgetData = JeedomConnectWidget::getWidgets( $item );
+
+				if ( empty( $widgetData )  ) {
+					// ajax::error('Erreur - pas d\'équipement trouvé');
+				}
+				else{
+					$configJson = $widgetData[0]['widgetJC'] ?? '';
+					$widgetConf = json_decode($configJson, true);
+
+					foreach ($widgetConf as $key2 => $value2) {
+						$widget[$key2] = $value2;
+					}
+					$widget['id'] = intval($widget['id']) ;
+					$widget['parentId'] = null ;
+					$widget['index'] = 999999999 ;
+					
+					if (isset($widget['room'])){
+						array_push($roomIdList , $widget['room'] ) ;
+					}
+
+					$maxIndex = $maxIndex +1;
+					$jsonConfig['payload']['widgets'][$maxIndex] = $widget;
+
+				}
+			}
+		}
+
 
 		$allRooms = array();
 		foreach (array_unique($roomIdList) as $item ) {
