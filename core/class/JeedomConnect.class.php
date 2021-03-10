@@ -575,7 +575,7 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
-	public function removeWidgetConf($idToRemove){
+	public function removeWidgetConf($idToRemoveList){
 
 		$remove = false;
 
@@ -584,7 +584,7 @@ class JeedomConnect extends eqLogic {
 		log::add('JeedomConnect', 'debug', 'Removing widget in equipement config file -- ' . json_encode($conf) );
 		if ( $conf ){
 			foreach ($conf['payload']['widgets'] as $key => $value) {
-				if ($value['id'] == $idToRemove){
+				if ( in_array( $value['id'] , $idToRemoveList ) ){
 					log::add('JeedomConnect', 'debug', 'Removing that widget item config -- ' . json_encode($value));
 					unset($conf['payload']['widgets'][$key]);
 					$remove = true;
@@ -593,11 +593,11 @@ class JeedomConnect extends eqLogic {
 
 			if ($remove) {
 				$conf['payload']['widgets'] = array_values($conf['payload']['widgets']);
-				log::add('JeedomConnect', 'info', 'Widget ID '.$idToRemove. ' has been removed on equipement ' . $this->getName() );
+				log::add('JeedomConnect', 'info', 'Widget ID '.json_encode($idToRemoveList). ' has been removed on equipement ' . $this->getName() );
 				return self::saveConfig($conf);
 			}
 			else{
-				log::add('JeedomConnect', 'info', 'Widget ID '.$idToRemove. ' not found in equipement ' . $this->getName() );
+				log::add('JeedomConnect', 'info', 'Widget ID '.json_encode($idToRemoveList). ' not found in equipement ' . $this->getName() );
 			}
 		}
 		else{
@@ -614,7 +614,6 @@ class JeedomConnect extends eqLogic {
 	 ******************    AND CREATE WIDGET ACCORDINGLY    *****************
 	 ************************************************************************
 	 */
-
 
 	public function moveToNewConfig(){
 		log::add('JeedomConnect_migration', 'info', 'starting configuration migration for new format - equipement "' . $this->getName() . '"');

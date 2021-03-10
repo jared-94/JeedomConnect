@@ -128,13 +128,27 @@ class JeedomConnectWidget extends config {
 
 	}
 
-	public static function removeWidget($idToRemove){
+	public static function removeWidget($idToRemove=''){
+		if ( ! $idToRemove ){
+			log::add('JeedomConnect', 'warning', 'Removing widget(s) -- no data received -- abort');
+			return;
+		}
+
+		if ( is_array($idToRemove)){
+			log::add('JeedomConnect', 'info', 'Removing widget(s) -- data received : (array) ' . json_encode($idToRemove) );
+			$arrayIdToRemove= $idToRemove ;
+		}
+		else{
+			log::add('JeedomConnect', 'info', 'Removing widget -- data received : (int) ' . json_encode($idToRemove) );
+			$arrayIdToRemove= array( $idToRemove );
+		}
+
 
 		// remove the widget ID inside json file config of each JC equipement
 		foreach (JeedomConnect::byType('JeedomConnect') as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			if ( $apiKey !=  ''){
-				$eqLogic->removeWidgetConf($idToRemove);
+				$eqLogic->removeWidgetConf($arrayIdToRemove);
 			}
 		}
 
@@ -151,7 +165,7 @@ class JeedomConnectWidget extends config {
 
 			foreach($conf['widgets'] as $index => $obj){
 				
-				if ( $obj['id'] == $idToRemove){
+				if ( in_array( $obj['id'] ,  $arrayIdToRemove ) ){
 					log::add('JeedomConnect', 'info', 'removing obj id : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' .$widget['id'] );
 					unset($conf['widgets'][$index]);
 					$hasChanged = true;
@@ -164,12 +178,13 @@ class JeedomConnectWidget extends config {
 			
 		}
 		
+		foreach ($arrayIdToRemove as $idToRemove ) {
+			// finally remove the widget config itself
+			log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $idToRemove ) ;
+			self::remove('widget::'.$idToRemove, self::$_plugin_id);	
+		}
 		
-		// finally remove the widget config itself
-		log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $idToRemove ) ;
-		self::remove('widget::'.$idToRemove, self::$_plugin_id);
-		
-		return true; 
+		return; 
 
 	}
 
