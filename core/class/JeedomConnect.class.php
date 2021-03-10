@@ -464,25 +464,25 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function setCoordinates($lat, $lgt) {
+	public function setCoordinates($lat, $lgt, $timestamp) {
 		$positionCmd = $this->getCmd(null, 'position');
-		$this->checkAndUpdateCmd('position', $lat . "," . $lgt);
-		$this->setGeofencesByCoordinates($lat, $lgt);
+		$positionCmd->event($lat . "," . $lgt, date('Y-m-d H:i:s', strtotime($timestamp)));
+		$this->setGeofencesByCoordinates($lat, $lgt, $timestamp);
 	}
 
-	public function setGeofencesByCoordinates($lat, $lgt) {
+	public function setGeofencesByCoordinates($lat, $lgt, $timestamp) {
 		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
 			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false ) {
 				$dist = $this->getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
 				if ($dist < $cmd->getConfiguration('radius')) {
 					if ($cmd->execCmd() != 1) {
 						log::add('JeedomConnect', 'debug', "Set 1 for geofence " . $cmd->getName());
-						$cmd->event(1);
+						$cmd->event(1, date('Y-m-d H:i:s', strtotime($timestamp)));
 					}
 				} else {
 					if ($cmd->execCmd() != 0) {
 						log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $cmd->getName());
-						$cmd->event(0);
+						$cmd->event(0, date('Y-m-d H:i:s', strtotime($timestamp)));
 					}
 				}
 			}
@@ -567,7 +567,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function getWidgetParam(){
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
-		
+
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
 			$result[$config['type']] = $config['name'];
@@ -580,9 +580,9 @@ class JeedomConnect extends eqLogic {
 		$remove = false;
 
 		$conf = $this->getConfig();
-		
+
 		log::add('JeedomConnect', 'debug', 'Removing widget in equipement config file -- ' . json_encode($conf) );
-		if ( $conf ){ 
+		if ( $conf ){
 			foreach ($conf['payload']['widgets'] as $key => $value) {
 				if ($value['id'] == $idToRemove){
 					log::add('JeedomConnect', 'debug', 'Removing that widget item config -- ' . json_encode($value));
@@ -605,7 +605,7 @@ class JeedomConnect extends eqLogic {
 		}
 		return;
 
-	}									 
+	}
 
 
 	/**

@@ -52,18 +52,18 @@ switch ($method) {
 
 		if (is_null($eqLogics)) {
 			throw new Exception(__("No equipment available", __FILE__), -32699);
-		} 
+		}
 		else{
 			$result = array();
 			foreach ($eqLogics as $eqLogic) {
 				$type = $eqLogic->getConfiguration('type') ;
-				
+
 				if ( $type == "widget" ){
           $monWidget->logicalId = $eqLogic->getLogicalId() ;
 					$monWidget->id = intval($eqLogic->getId());
 					$monWidget->enable = $eqLogic->isEnable();
 					array_push($result, $monWidget ) ;
-				}	
+				}
 			}
     }
 
@@ -72,7 +72,7 @@ switch ($method) {
       'payload' => $result
     ));
     break;
-  
+
   case 'GET_PLUGIN_CONFIG':
 		$user = user::byHash($params['userHash']);
 		if ($user == null) {
@@ -208,7 +208,7 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'GEOLOC':
-		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude']);
+		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['timestamp']);
   /*if (array_key_exists('geofence', $params) ) {
     $geofenceCmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), 'geofence_' . $params['geofence']['identifier']);
     if (!is_object($geofenceCmd)) {
