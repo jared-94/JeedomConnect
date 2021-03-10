@@ -1613,7 +1613,9 @@ function duplicateWidget(){
 }
 
 function removeWidget(){
-  getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {
+  var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>" ;
+  getSimpleModal({title: "Confirmation", fields:[{type: "string",
+    value:"Voulez-vous supprimer ce widget ?<br>"+ warning +" La suppression retire ce widget de l'ensemble des équipements "+ warning }] }, function(result) {
     $('#widget-alert').hideAlert();
     widgetId = $("#widgetOptions").attr('widget-id') ;
 
