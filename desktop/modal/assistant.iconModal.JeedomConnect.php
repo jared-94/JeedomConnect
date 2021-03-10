@@ -274,14 +274,14 @@ $('#in_searchIconSelector').on('keyup',function() {
 
 	var search = $(this).value()
   if (search.length == 1) { return; }
-  $('.divIconSel').show()
-	$('.iconCategory').show()
+  $('.divIconSel').css({'display': ''})
+	$('.iconCategory').css({'display': ''})
 
 	if (search != '') {
 		search = normTextLower(search)
 		$('.iconDesc').each(function() {
 			if ($(this).text().indexOf(search) == -1) {
-				$(this).closest('.divIconSel').hide()
+				$(this).closest('.divIconSel').css({'display': 'none'})
 			}
 		})
 	}
@@ -290,13 +290,13 @@ $('#in_searchIconSelector').on('keyup',function() {
 	$('.iconCategory').each(function() {
 		var hide = true
 		if ($(this).find('.divIconSel:visible').length == 0) {
-			$(this).hide()
+			$(this).css({'display': 'none'})
 		} else {
 			somethingFound +=1
 		}
 	})
 	if (somethingFound == 0) {
-		$('.generalCategory').show()
+		$('.generalCategory').css({'display': ''})
 	}
 })
 

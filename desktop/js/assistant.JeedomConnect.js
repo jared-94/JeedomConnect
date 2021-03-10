@@ -30,8 +30,8 @@ function getIconModal(_options, _callback) {
       closeText: '',
       autoOpen: false,
       modal: true,
-			height: (jQuery(window).height() - 150),
-      width: 1500
+			height: jQuery(window).height() - 150,
+      width: jQuery(window).width() - 50 < 1500 ? jQuery(window).width() - 50 : 1500
     });
 		jQuery.ajaxSetup({
       async: false
@@ -110,7 +110,7 @@ function getSimpleModal(_options, _callback) {
       modal: true,
       width: 430
     });
-	
+
     jQuery.ajaxSetup({
       async: false
     });
@@ -204,7 +204,7 @@ $('#selWidgetType').on('change', function() {
 	var typeSelected = this.value ;
 
 	$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
-	
+
 });
 
 
