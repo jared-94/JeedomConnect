@@ -45,16 +45,16 @@ $widgetArray= JeedomConnectWidget::getWidgets();
 
 $listWidget = '';
 foreach ($widgetArray as $widget) {
-	
-	$img = $widget['img'] ;
-	
-	$type = $widget['type'];
-	$widgetName = $widget['name'] ; 
-	$widgetRoom = $widget['roomName'] == 'Aucun' ? '' :  ' (' . $widget['roomName'] . ')' ;
-	$id = $widget['id']; 
 
-  $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ; 
-	$widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'">' . $widgetName . $widgetRoom . '</option>' ;
+	$img = $widget['img'] ;
+
+	$type = $widget['type'];
+	$widgetName = $widget['name'] ;
+	$widgetRoom = $widget['roomName'] == 'Aucun' ? '' :  ' (' . $widget['roomName'] . ')' ;
+	$id = $widget['id'];
+
+  $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ;
+	$widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'">' . $widgetName . $widgetRoom . ' ['.$id.']</option>' ;
 
 }
 asort($widgetTypeAvail);
@@ -72,7 +72,7 @@ asort($widgetTypeAvail);
 <a class="btn btn-danger pull-right" onclick="resetConfig()"><i class="fa fa-times-circle"></i> {{Réinitialiser}}</a>
 
 <div id="widgetConfContainer" class="col-sm-12">
-  
+
   <div id="detailMenu" class="col-sm-2 " style="margin-right: 20px;">
     <legend> {{Configuration Jeedom Connect}}</legend>
     <div class="tab fixed">
@@ -126,12 +126,12 @@ asort($widgetTypeAvail);
     </div>
     <div class="rightContent">
       <div class="alert alert-info">
-      Vous pouvez définir ici des noms de pièces auxquelles seront attachés vos widgets.
+      Vous pouvez définir ici des pièces auxquelles seront attachés vos widgets.
       </div>
     </div>
   </div>
 
-  
+
   <div id="widgetsTab" class="col-sm-12 tabcontent">
     <div  class="col-sm-7">
       <form class="form-horizontal">
@@ -142,7 +142,7 @@ asort($widgetTypeAvail);
               <div class="col-sm-7">
                 <select name="widgetsParents" id="widgetsParents-select" style="width:300px" onchange="refreshWidgetsContent()"></select>
               </div>
-            </div>    
+            </div>
 
             <div class="form-group">
               <label class="col-sm-5 control-label" >{{Type de Widget}}</label>
@@ -170,8 +170,8 @@ asort($widgetTypeAvail);
                 </select>
               </div>
             </div>
-          
-            
+
+
             <div class="input-group " style="display:inline-flex;">
               <span class="input-group-btn">
                 <!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
@@ -180,7 +180,7 @@ asort($widgetTypeAvail);
               </span>
             </div>
 
-          
+
             <ul id="widgetsUL" class="tabsLargeUL"></ul>
         </fieldset>
       </form>

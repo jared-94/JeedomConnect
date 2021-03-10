@@ -10,13 +10,13 @@ $eqLogics = eqLogic::byType($plugin->getId());
 $widgetArray= JeedomConnectWidget::getWidgets();
 
 
-$orderBy = $_GET['jcOrderBy'] ?? 'object'; 
+$orderBy = $_GET['jcOrderBy'] ?? 'object';
 switch ($orderBy) {
 	case 'name':
 		$widgetName = array_column($widgetArray, 'name');
 		array_multisort($widgetName, SORT_ASC, $widgetArray);
 		break;
-	
+
 	case 'type':
 		$widgetType = array_column($widgetArray, 'type');
 		$widgetName = array_column($widgetArray, 'name');
@@ -36,21 +36,21 @@ $widgetTypeArray = array();
 
 $listWidget = '';
 foreach ($widgetArray as $widget) {
-	
+
 	$img = $widget['img'] ;
-	
+
 	$opacity = $widget['enable'] ? '' : 'disableCard';
-	$widgetName = $widget['name'] ; 
+	$widgetName = $widget['name'] ;
 	$widgetRoom = $widget['roomName'] ; ;
-	$id = $widget['id']; 
-	$widgetType = $widget['type']; 
+	$id = $widget['id'];
+	$widgetType = $widget['type'];
 
 	//used later by the filter select item
 	if(!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType]=$allConfig[$widgetType];
 
 	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong>' ;
 
-	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" title="id='.$id.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 	$listWidget .= '<img src="' . $img . '"/>';
 	$listWidget .= '<br>';
 	$listWidget .= '<span class="name">' . $name . '</span>';
@@ -72,7 +72,7 @@ foreach ($orderByArray as $key => $value) {
 }
 
 
-$typeSelectionParam = $_GET['jcFilterBy'] ?? ''; 
+$typeSelectionParam = $_GET['jcFilterBy'] ?? '';
 
 asort($widgetTypeArray);
 $typeSelection2 = '';
@@ -138,7 +138,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 
 		<!--   PANEL DES WIDGETS  -->
 		<legend><i class="fas fa-table"></i> {{Mes widgets}}
-			
+
 			<div class="pull-right" >
 			<span style="margin-right:10px">{{Trie}}
 				<select id="widgetOrder" onchange="updateOrderWidget()" style="width:100px">
@@ -153,7 +153,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 						echo $typeSelection;
 					?>
 				</select>
-			</span>	
+			</span>
 			</div>
 		</legend>
 		<!-- Champ de recherche widget -->
@@ -240,7 +240,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
 								</div>
 							</div>
-							
+
 							<div class="form-group" style="display:none;">
 								<label class="col-sm-3 control-label" >{{Type}}</label>
 								<div class="col-sm-7">
@@ -284,7 +284,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
 										&nbsp;&nbsp;<i class="fas fa-question-circle cursor floatright" title="Partagez votre configuration sur un autre équipement"></i>
 									</span>
-									
+
 								</div>
 							</div>
 
@@ -303,15 +303,15 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									</a>
 								</div>
 							</div>
-							
+
 							<div class="form-group">
 									<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
 									<div class="col-sm-7">
 										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
 									</div>
 							</div>
-						
-					
+
+
 							<legend><i class="fa fa-bug"></i>  {{Partager le fichier de configuration}}</legend>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
@@ -322,7 +322,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									</span>
 								</div>
 							</div>
-								
+
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->

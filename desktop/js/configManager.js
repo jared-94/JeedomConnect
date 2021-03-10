@@ -123,10 +123,10 @@ function refreshWidgetsContent() {
 	items = [];
 	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
 	$.each( rootElmts, function( key, value ) {
-		var val = allWidgetsDetail.find(w => w.id == value.id) ; 
+		var val = allWidgetsDetail.find(w => w.id == value.id) ;
 		if (val  !=undefined && val.type !== undefined) { //it is a widget
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
-			items.push( `<li><a  onclick="editWidgetModal('${val.id}');">
+			items.push( `<li><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
@@ -146,7 +146,7 @@ function refreshWidgetsContent() {
 			});
 			items.push("<li><ul class='tabSubUL'>");
 			$.each(curWidgets, function (key, wid) {
-				var w = allWidgetsDetail.find(x => x.id == wid.id) ; 
+				var w = allWidgetsDetail.find(x => x.id == wid.id) ;
 				if ( w != undefined){
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
 					items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
@@ -494,12 +494,12 @@ function moveTopTabModal(tabId) {
 
 function addRoomModal() {
   getSimpleModal({title: "Ajouter une pièce", fields:[{type: "object"}] }, function(result) {
-		if ( result.object == 'none') return; 
+		if ( result.object == 'none') return;
 		var maxIndex = getMaxIndex(configData.payload.rooms);
 		var newRoom = {};
 		newRoom.index = maxIndex + 1;
 		newRoom.name = result.name.replace(/\u00a0/g, "");
-		newRoom.id = parseInt(result.object); 
+		newRoom.id = parseInt(result.object);
 
 		configData.payload.rooms.push(newRoom);
 		incrementIdCounter();
