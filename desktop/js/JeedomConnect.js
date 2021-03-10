@@ -155,8 +155,8 @@ $("#exportAll-btn").click(function() {
   $.post({
 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
 		data: {
-      'action': 'getConfig', 
-      'apiKey': apiKey , 
+      'action': 'getConfig',
+      'apiKey': apiKey ,
       all : true
     },
 		dataType: 'json',
@@ -177,8 +177,8 @@ $("#exportAll-btn").click(function() {
 			}
 		}
 	});
-  
-	
+
+
 });
 
 
@@ -346,7 +346,7 @@ function addCmdToTable(_cmd) {
      }
    });
  }
- 
+
 
 /*
 function addCmdToTable(_cmd) {
@@ -465,6 +465,7 @@ var widgetsList = (function () {
   $.ajax({
     'async': false,
     'global': false,
+    'cache': false,
     'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
@@ -1568,7 +1569,7 @@ function downWidgetOption(id) {
           else{
             refreshWidgetDetails();
             refreshWidgetsContent();
-            
+
             if ( $( "#selWidgetDetail" ).length > 0 ) {
                 //if it's a new widget
                 if (widgetId == undefined || widgetId == ''){
@@ -1739,7 +1740,7 @@ function parseString(string, infos) {
 
 
 function updateOrderWidget(){
-  
+
   var type = $("#widgetOrder").val();
   console.log("choix tri : " + type);
 
@@ -1758,7 +1759,7 @@ function updateOrderWidget(){
 
 $('#widgetOrder_NOTWORKING').on('change', function() {
 	var type = $("#widgetOrder").val();
-  
+
   $.post({
 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
 		data: {
@@ -1785,8 +1786,8 @@ $('#widgetOrder_NOTWORKING').on('change', function() {
 		}
 	});
 
-  
-	
+
+
 });
 
 
@@ -1798,5 +1799,5 @@ $('#widgetTypeSelect').on('change', function() {
 	  $( '.widgetDisplayCard' ).not( "[data-widget_type=" + typeSelected + "]" ).hide();
   }
   $('.eqLogicThumbnailContainer').packery();
-	
+
 });
