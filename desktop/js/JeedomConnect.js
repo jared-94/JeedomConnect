@@ -139,7 +139,7 @@ $("#notifConfig-btn").click(function(){
     $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId='+$('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
 });
 
-$("#export-btn").click(function() {
+$('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function() {
 	var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 	var a = document.createElement("a");
 	a.href = 'plugins/JeedomConnect/data/configs/'+key+'.json';
@@ -148,8 +148,7 @@ $("#export-btn").click(function() {
 	a.remove();
 });
 
-$("#exportAll-btn").click(function() {
-
+$('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn', function() {
   var apiKey = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 
   $.post({

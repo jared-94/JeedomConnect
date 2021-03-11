@@ -197,7 +197,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 				<!-- Paramètres généraux de l'équipement -->
 				<form class="form-horizontal">
 					<fieldset>
-						<div class="col-lg-7">
+						<div class="col-lg-7 jeedomConnect">
 							<legend><i class="fas fa-wrench"></i> {{Général}}</legend>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
@@ -282,7 +282,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 										<input type="file" accept=".json" id="import-input" style="display:none;" >
 										<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
 										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
-										&nbsp;&nbsp;<i class="fas fa-question-circle cursor floatright" title="Partagez votre configuration sur un autre équipement"></i>
+										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Partagez votre configuration sur un autre équipement"></i>
 									</span>
 
 								</div>
@@ -318,7 +318,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 								<div class="col-sm-7 input-group" style="display:inline-flex;">
 									<span class="input-group-btn">
 										<a class="btn btn-default" id="exportAll-btn"><i class="fa fa-file-export"></i> {{Partager}}</a>
-										&nbsp;&nbsp;<i class="fas fa-question-circle cursor floatright" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
+										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
 									</span>
 								</div>
 							</div>
