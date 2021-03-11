@@ -176,28 +176,25 @@ class JeedomConnect extends eqLogic {
 		foreach ($widgetIdInGroup as $item) {
 			if ( ! in_array($item, $widgetList)){
 				log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
-				$widgetData = JeedomConnectWidget::getWidgets( $item );
+				$newWidgetData = JeedomConnectWidget::getWidgets( $item );
 
-				if ( empty( $widgetData )  ) {
+				if ( empty( $newWidgetData )  ) {
 					// ajax::error('Erreur - pas d\'équipement trouvé');
 				}
 				else{
-					$configJson = $widgetData[0]['widgetJC'] ?? '';
-					$widgetConf = json_decode($configJson, true);
+					$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
+					$newWidgetConf = json_decode($newWidgetJC, true);
 
-					foreach ($widgetConf as $key2 => $value2) {
-						$widget[$key2] = $value2;
-					}
-					$widget['id'] = intval($widget['id']) ;
-					$widget['parentId'] = null ;
-					$widget['index'] = 999999999 ;
+					$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
+					$newWidgetConf['parentId'] = null ;
+					$newWidgetConf['index'] = 999999999 ;
 					
-					if (isset($widget['room'])){
-						array_push($roomIdList , $widget['room'] ) ;
+					if (isset($newWidgetConf['room'])){
+						array_push($roomIdList , $newWidgetConf['room'] ) ;
 					}
 
 					$maxIndex = $maxIndex +1;
-					$jsonConfig['payload']['widgets'][$maxIndex] = $widget;
+					$jsonConfig['payload']['widgets'][$maxIndex] = $newWidgetConf;
 
 				}
 			}
