@@ -67,34 +67,88 @@ $('.jeedomConnect').off('click', '#reinitAllEq').on('click', '#reinitAllEq', fun
 
 $('.jeedomConnect').off('click', '#listWidget').on('click', '#listWidget', function() {
 
-    var onlyUnused = $('#unusedOnly').is(':checked') ;
+    var optionSelected = $('input[name=filter]:checked').attr('id');
+    console.log("option selected ==> " + optionSelected);
     $('.actions-detail').hideAlert();
     $('.resultListWidget').hideAlert();
     
-    getSimpleModal({title: "Confirmation", fields:[{type: "string",
-        value:warning +" Confirmez ? "+ warning }] }, function(result) {
-        $.post({
-            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-            data: {
-                action: 'reinitEquipement'
-            },
-            cache: false,
-            dataType: 'json',
-            success: function( data ) {
-                if (data.state != 'ok') {
-                    $('.actions-detail').showAlert({
-                    message: data.result,
-                    level: 'danger'
-                    });
+    $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+            action: 'countWigdetUsage'
+        },
+        cache: false,
+        dataType: 'json',
+        success: function( data ) {
+            console.log('result : ' , data )
+            if (data.state != 'ok') {
+                $('.actions-detail').showAlert({
+                message: data.result,
+                level: 'danger'
+                });
+            }
+            else{
+
+                var resultUnused = data.result.unused;
+                var resultUnexisting = data.result.unexisting;
+                var resultCount = data.result.count;
+                var typeAlert = 'success' ;
+                if ( optionSelected == 'unusedOnly' ){
+                    if (resultUnused.length > 0){
+                        msgFinal = 'Voici les widget non utilisés <br>' + data.result.unused.join(", ") ; 
+                    }
+                    else{
+                        msgFinal = 'Tous les widgets sont utilisés !'; 
+                    }
+                }
+                else if ( optionSelected == 'unexistingOnly' ){
+                    if (resultUnexisting.length > 0){
+                        msgFinal = '<u>Voici des widgets inexistants mais présents dans vos fichiers de configuration </u><br><br>' + resultUnexisting.join(", ") ;
+                        typeAlert = 'warning' ;
+                    }
+                    else{
+                        msgFinal = 'Tous les widgets utilisés dans les équipements sont bien existants dans la configuration :)';
+                    }
                 }
                 else{
-                    $('.actions-detail').showAlert({
-                        message: data.result.eqLogic + ' équipements ont été réinitialisés',
-                        level: 'success'
-                    });
+                    var msgUnexisting = '';
+                    var msgCount = '';
+
+                    if ( ! jQuery.isEmptyObject(resultCount) ){
+                        msgCount = '<u>Voici le compte de chaque widget </u><br><br>' + JSON.stringify(data.result.count) ;
+
+                        var html = "<table><thead><tr><th>Id</th><th>Count</th></thead><tbody>";
+                        $.each(data.result.count, function (id, count) {
+                            html += "<tr><td>" + id + "</td><td>" + count + "</td></tr>"
+                        })
+                        //msgCount += html ;
+
+                    }
+
+                    if (resultUnexisting.length > 0){
+                        msgUnexisting = '<u>Voici des widgets inexistants mais présents dans vos fichiers de configuration </u><br><br>' + resultUnexisting.join(", ") ;
+                        typeAlert = 'warning' ;
+                    }
+
+                    if ( msgCount == '' && msgUnexisting != '' ){
+                        msgFinal = msgUnexisting;
+                    }
+                    else if ( msgCount != '' && msgUnexisting == '' ){
+                        msgFinal = msgCount;
+                    }
+                    else{
+                        msgFinal = msgCount + '<br><br>'+"-".repeat(30)+'<br><br>'+ msgUnexisting;
+                    }
+                    
                 }
+
+                
+                $('.resultListWidget').showAlert({
+                    message: msgFinal,
+                    level: typeAlert
+                });
             }
-        });
+        }
     });
 
 })

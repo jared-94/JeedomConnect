@@ -57,7 +57,8 @@ class JeedomConnectWidget extends config {
 
 		$result = array();
 		foreach( config::searchKey('widget', self::$_plugin_id )  as $config){
-			$newConf['id'] = $config['key'];
+			$newConf['key'] = $config['key'];
+			$newConf['id'] = str_replace( 'widget::', '', $config['key']) ;
 			$newConf['conf'] = $config['value'];
 
 			array_push($result, $newConf);
@@ -179,13 +180,16 @@ class JeedomConnectWidget extends config {
 		}
 		
 		foreach ($arrayIdToRemove as $idToRemove ) {
-			// finally remove the widget config itself
-			log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $idToRemove ) ;
-			self::remove('widget::'.$idToRemove, self::$_plugin_id);	
+			self::removeWidgetConf('widget::'.$idToRemove);	
 		}
 		
 		return; 
 
+	}
+
+	public static function removeWidgetConf($idToRemove) {
+		log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $idToRemove ) ;
+		self::remove($idToRemove, self::$_plugin_id);	
 	}
 
 	public static function duplicateWidget($widgetId){
@@ -204,6 +208,55 @@ class JeedomConnectWidget extends config {
 	}
 
 
+	public static function countWidgetByEq(){
 
+		// init an array with all available widget Id
+		$allWidgets = self::getAllConfigurations();
+		$widgetList = array();
+		foreach ($allWidgets as $widget) {
+			if ( ! array_key_exists($widget['id'],$widgetList)  )  $widgetList[$widget['id']] = 0;
+
+			if ( array_key_exists('widgets', $widget) ){
+				foreach ($widget['widgets'] as $sousWidget) {
+					if ( ! array_key_exists($sousWidget['id'],$widgetList)  ){
+						$widgetList[$sousWidget['id']] = 0;
+					}
+				}
+			}
+		}
+
+		$unexistingId = array();
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			if ( $eqLogic->getIsEnable() ){
+				
+				$conf = $eqLogic->getConfig(true);
+				
+				foreach ($conf['payload']['widgets'] as $key => $value) {
+					if ( array_key_exists($value['id'],$widgetList)  ){
+						$widgetList[$value['id']] ++ ;
+					}
+					else{
+						array_push($unexistingId, $value['id']) ;
+					}
+
+					
+				}
+			}
+			else{
+				log::add(self::$_plugin_id, 'debug', 'Equipment excluded because disable : ' . $eqLogic->getName() . ' ['. $eqLogic->getId() .']' ) ;
+			}
+		}
+
+		$onlyUnused  = array_filter($widgetList, function($k) {
+											return $k == 0;
+										}) ;
+
+		log::add(self::$_plugin_id, 'debug', 'final result count : ' . json_encode($widgetList) );
+		log::add(self::$_plugin_id, 'debug', 'onlyUnused   : ' . json_encode(array_keys($onlyUnused)  ) );
+		log::add(self::$_plugin_id, 'debug', 'list of unexisting widget Id : ' . json_encode($unexistingId) );
+
+		return array('count' => $widgetList, 'unused' => array_keys($onlyUnused), 'unexisting' => $unexistingId );
+
+	}
 
 }

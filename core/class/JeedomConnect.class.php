@@ -653,6 +653,11 @@ class JeedomConnect extends eqLogic {
 
 	}
 
+	public function resetConfigFile(){
+		log::add('JeedomConnect', 'debug', 'reseting configuration for equipment "' . $this->getName() . '" ['.$this->getConfiguration('apiKey').']');
+		self::saveConfig(self::$_initialConfig);
+	}
+
 
 	/**
 	 ************************************************************************

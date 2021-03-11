@@ -26,7 +26,7 @@ if (!isConnect()) {
 }
 
 ?>
-<form class="form-horizontal">
+<form class="form-horizontal jeedomConnect">
   <div class="alert alert-success" style="text-align:center;">
   <a href="https://github.com/jared-94/JeedomConnect/releases/latest"
     style="color: white !important;" target="_blank">Télécharger la dernière version de l'application pour Android</a>
@@ -56,7 +56,7 @@ if (!isConnect()) {
         La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
 			</div>
       <div class="form-group">
-			     <label class="col-lg-6 control-label">{{Activer la connexion par Websocket }}</label>
+			     <label class="col-lg-6 control-label">{{Activer la connexion par Websocket}}</label>
 			     <div class="col-sm-1">
 				         <input type="checkbox" class="configKey form-control" data-l1key="useWs"/>
 			     </div>
@@ -81,5 +81,62 @@ if (!isConnect()) {
 					         placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
           </div>
       </div>
+
+      <br/>
+      <!-- BEGIN DANGER ZONE -->
+      <div class="alert alert-danger" style="text-align:center;">
+          <i class="fas fa-skull-crossbones"></i>&nbsp;&nbsp;&nbsp;&nbsp;{{Attention vous entrez en zone de Dangers !}}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-skull-crossbones"></i>
+			</div>
+      <div class="actions-detail" style="text-align:center;">
+        </div>
+
+      <div class="form-group">
+        <label class="col-sm-6 control-label">{{Réinitialiser l'ensemble des équipements}}
+          <sup>
+              <i class="fas fa-question-circle floatright" title="Fait une réinitialisation de l'ensemble des équipements.<br>Vous aurez donc des appareils vierges."></i>
+          </sup>
+        </label>
+        <div class="col-sm-1">
+          <a class="btn btn-danger" id="reinitAllEq"><i class="fas fa-exclamation-triangle"></i> {{Réinitialiser}}
+          </a>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-6 control-label">{{Suppprimer l'intégralité des widgets}}
+          <sup>
+              <i class="fas fa-question-circle floatright" title="Supprime tous les widgets,<br>et réinitialise la configuration de tous les équipements<br>Vos équipements seront vierges et devrez recréer tous vos widgets."></i>
+          </sup>
+        </label>
+        <div class="col-sm-1">
+          <a class="btn btn-danger" id="removeAllWidgets"><i class="fas fa-exclamation-triangle"></i> {{Supprimer}}
+          </a>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-6 control-label">{{Utilisation des widgets}}
+          <sup>
+              <i class="fas fa-question-circle floatright" title="Permet de savoir dans combien d'équipement, chaque widget est utilisé."></i>
+          </sup>
+        </label>
+        <div class="col-sm-1">
+          <a class="btn btn-default" id="listWidget"><i class="fas fa-clipboard-list"></i> {{Lister}}
+          </a>
+        </div>
+        <div class="col-sm-5 filterOption"> N'afficher que les widgets 
+          <label class="radio-inline"><input type="radio" name="filter" id="unusedOnly"/> non-utilisés</label>
+          <label class="radio-inline"><input type="radio" name="filter" id="unexistingOnly"/> non-existants</label>
+          <label class="radio-inline"><input type="radio" name="filter" id="all" checked/> tous</label>
+        </div>
+      </div>
+      <div class="resultListWidget">
+      </div>
+
+
+      <!-- END DANGER ZONE -->
+
     </fieldset>
 </form>
+
+<?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect');?>

@@ -101,11 +101,49 @@ try {
 
 	}
 
-	if (init('action') == 'removeWidgetConfig') {
-		log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig for id >' . init('eqId') . '<');
-		JeedomConnectWidget::removeWidget(init('eqId'));
-		ajax::success();
+	if (init('action') == 'reinitEquipement') {
+		$nbEq = 0;
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$eqLogic->resetConfigFile();
+			$nbEq ++;
+		}
+		
+		ajax::success(array('eqLogic' => $nbEq));
+	}
 
+	if (init('action') == 'countWigdetUsage') {
+		$data = JeedomConnectWidget::countWidgetByEq();
+		ajax::success($data);
+	}
+
+	if (init('action') == 'removeWidgetConfig') {
+		$allConfig = (init('all') !== null) && init('all') ;
+
+		if ( $allConfig ){
+			log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig -- ALL widgets will be removed');
+			$allWidgets = JeedomConnectWidget::getAllConfigurations();
+			$nb = 0;
+			foreach ($allWidgets as $widget ) {
+				JeedomConnectWidget::removeWidgetConf($widget['key']);	
+				$nb ++;
+			}
+			log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig -- widget index reinit');
+			JeedomConnectWidget::removeWidgetConf('index::max');
+			
+			$nbEq = 0;
+			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$eqLogic->resetConfigFile();
+				$nbEq ++;
+			}
+			
+			ajax::success(array('widget' => $nb, 'eqLogic' => $nbEq));
+		}
+		else{
+			log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig for id >' . init('eqId') . '<');
+			JeedomConnectWidget::removeWidget(init('eqId'));
+			ajax::success();
+		}
+		
 	}
 
 	if (init('action') == 'duplicateWidgetConfig') {
