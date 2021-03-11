@@ -129,10 +129,10 @@ function refreshWidgetsContent() {
 			items.push( `<li><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}');"></i>
-			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}');"></i>
-			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}');"></i></li>`);
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}','${value.parentId}','${value.index}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}','${value.parentId}','${value.index}');"></i>
+			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}','${value.parentId}','${value.index}');"></i>
+			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
 			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
 			items.push( `<li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
@@ -150,10 +150,10 @@ function refreshWidgetsContent() {
 				if ( w != undefined){
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
 					items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
-				<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}');"></i>
-				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}');"></i>
-				<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}');"></i>
-				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}');"></i></li>`);
+				<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
+				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
+				<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
+				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}','${wid.parentId}','${wid.index}');"></i></li>`);
 				}
 			});
 			items.push("</ul></li>");
@@ -357,7 +357,7 @@ function deleteBottomTab(tabId) {
 		});
 		configData.payload.widgets.forEach(widget => {
 			if (widget.parentId == tabId) {
-				removeWidget(widget.id);
+				removeWidget(widget.id, widget.parentId, widget.index);
 			}
 		});
 
@@ -464,7 +464,7 @@ function removeTopTab(tabId) {
 
 	configData.payload.widgets.forEach(widget => {
 		if (widget.parentId == tabId) {
-			removeWidget(widget.id)
+			removeWidget(widget.id, widget.parentId, widget.index)
 		}
 	});
 }
@@ -656,7 +656,7 @@ function removeGroup(groupId) {
 
 	configData.payload.widgets.slice().forEach(widget => {
 		if (widget.parentId == groupId) {
-			removeWidget(widget.id);
+			removeWidget(widget.id, widget.parentId, widget.index);
 		}
 	});
 }
@@ -683,13 +683,11 @@ function moveGroupModal(groupId) {
 
 /* WIDGETS */
 
-function upWidget(widgetId) {
+function upWidget(widgetId, widgetParentId, widgetIndex) {
 	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
-
-	var widgetToMove = rootElmts.find(w => w.id == widgetId);
-	if (widgetToMove !== undefined) { //widget is not in a group
-	  var widgetIndex = widgetToMove.index;
+	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+	if (configData.payload.groups.find(g => g.id == widgetParentId) === undefined) { //widget is not in a group
 	  if (widgetIndex == 0) {
 			console.log("can't move this widget");
 			return;
@@ -709,9 +707,7 @@ function upWidget(widgetId) {
 	    otherElmt.index = widgetIndex;
 	  }
 	} else {
-		widgetToMove = configData.payload.widgets.find(w => w.id == widgetId);
-		group = rootElmts.find(g => g.id == widgetToMove.parentId);
-		var widgetIndex = widgetToMove.index;
+		group = configData.payload.groups.find(g => g.id == widgetParentId);
 	  if (widgetIndex == 0) { //exit from group
 			rootElmts.forEach(item => {
 		  	if (item.index > group.index) {
@@ -733,13 +729,12 @@ function upWidget(widgetId) {
 	refreshWidgetsContent();
 }
 
-function downWidget(widgetId) {
+function downWidget(widgetId, widgetParentId, widgetIndex) {
 	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
 
-	var widgetToMove = rootElmts.find(w => w.id == widgetId);
-	if (widgetToMove !== undefined) { //widget is not in a group
-	  var widgetIndex = widgetToMove.index;
+	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+	if (configData.payload.groups.find(g => g.id == widgetParentId) === undefined) { //widget is not in a group
 	  if (widgetIndex == getMaxIndex(rootElmts)) {
 			console.log("can't move this widget");
 			return;
@@ -760,10 +755,8 @@ function downWidget(widgetId) {
 	    otherElmt.index = widgetIndex;
 	  }
 	} else {
-		widgetToMove = configData.payload.widgets.find(w => w.id == widgetId);
 		var widgetsList = configData.payload.widgets.filter(w => w.parentId == widgetToMove.parentId);
-		group = rootElmts.find(g => g.id == widgetToMove.parentId);
-		var widgetIndex = widgetToMove.index;
+		group = configData.payload.groups.find(g => g.id == widgetParentId);
 	  if (widgetIndex == getMaxIndex(widgetsList)) { // exit from group
 		  rootElmts.forEach(item => {
 		    if (item.index > group.index) {
@@ -782,25 +775,25 @@ function downWidget(widgetId) {
 	refreshWidgetsContent();
 }
 
-function deleteWidget(widgetId) {
+function deleteWidget(widgetId, widgetParentId, widgetIndex) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {
-		removeWidget(widgetId);
+		removeWidget(widgetId, widgetParentId, widgetIndex);
 		refreshWidgetsContent();
   });
 }
 
-function removeWidget(widgetId) {
-	var widgetToDelete = configData.payload.widgets.find(g => g.id == widgetId);
-	var index = configData.payload.widgets.indexOf(widgetToDelete);
-	var rootElmts = getRootObjects(widgetToDelete.parentId);
+function removeWidget(widgetId, widgetParentId, widgetIndex) {
+	configData.payload.widgets = configData.payload.widgets.filter(w => w.id != widgetId | w.index != widgetIndex | w.parentId != widgetParentId)
+
+	var rootElmts = getRootObjects(widgetParentId);
 	rootElmts.forEach(item => {
-		if (item.index > widgetToDelete.index) {
+		if (item.index > widgetIndex) {
 			item.index = item.index - 1;
 		}
 	});
-	configData.payload.widgets.splice(index, 1);
 
 	//remove widget if in a group widgets
+	/*
 	var groupList = [];
 	widgetsList.widgets.forEach(w => {
 		w.options.forEach(o => {
@@ -826,13 +819,14 @@ function removeWidget(widgetId) {
 			}
 		}
 	});
+	*/
 }
 
-function moveWidgetModal(widgetId) {
+function moveWidgetModal(widgetId, widgetParentId, widgetIndex) {
   getSimpleModal({title: "Déplacer un widget", fields:[{type: "move",value:getWidgetsParents()}] }, function(result) {
 	var parentId = result.moveToId;
 	if (parentId === null) { return; }
-	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId);
+	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
 	var rootElmts = getRootObjects(widgetToMove.parentId);
 	rootElmts.forEach(item => {
 		if (item.index > widgetToMove.index) {
