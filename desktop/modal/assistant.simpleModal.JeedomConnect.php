@@ -104,7 +104,7 @@ function setSimpleModalData(options) {
 					let name = getWidgetPath(item.id);
           room = getRoomName(item.room);
           if (room) { name = name +' (' + room + ')'}
-					widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name}</option>`;
+					widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name} [${item.id}]</option>`;
 				}
 			})
 			widget += `</select></div></div></div></li>`;

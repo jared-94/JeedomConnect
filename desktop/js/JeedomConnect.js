@@ -970,7 +970,7 @@ function refreshWidgetOption() {
   widgetsCat.forEach(item => {
     var name = getWidgetPath(item.id);
     curOption += `<div class='input-group'>
-          <input style="width:240px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${name}' disabled>
+          <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}' disabled>
           <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidgetOption('${item.id}');"></i>
     <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidgetOption('${item.id}');"></i>
     <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteWidgetOption('${item.id}');"></i></li>
