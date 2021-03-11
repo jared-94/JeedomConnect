@@ -27,7 +27,6 @@ function JeedomConnect_update() {
 
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->updateConfig();
-    $eqLogic->moveToNewConfig();
   }
 
 }

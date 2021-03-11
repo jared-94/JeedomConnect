@@ -666,206 +666,203 @@ class JeedomConnect extends eqLogic {
 	public function moveToNewConfig(){
 		log::add('JeedomConnect_migration', 'info', 'starting configuration migration for new format - equipement "' . $this->getName() . '"');
 
-		//check if equipment is enable
-		if ( $this->getIsEnable() ){
+		//get the config file brut
+		$configFile = $this->getConfig(false)  ;
+		log::add('JeedomConnect_migration', 'info', 'original JSON configFile : ' . json_encode($configFile)  );
 
-			//get the config file brut
-			$configFile = $this->getConfig(false)  ;
-			log::add('JeedomConnect_migration', 'info', 'original JSON configFile : ' . json_encode($configFile)  );
+		//if the configFile is not defined with the new format
+		// ie : exist key formatVersion
+		if ($configFile == '' ){
+			log::add('JeedomConnect_migration', 'warning', 'no configuration file found');
+		}
+		elseif( ! array_key_exists('formatVersion', $configFile) ) {
+			$newConfWidget = array() ;
 
-			//if the configFile is not defined with the new format
-			// ie : exist key formatVersion
-			if (! array_key_exists('formatVersion', $configFile) ) {
-				$newConfWidget = array() ;
+			// create array matching between
+			// JC room ID <=> jeedom Object ID
+			$existingRooms = array();
+			foreach($configFile['payload']['rooms'] as $room){
+				if ( array_key_exists('object', $room) ){
+					$existingRooms[$room['id']] = $room['object'];
+				}
+			}
+			log::add('JeedomConnect_migration', 'info', 'all rooms/object matching : ' . json_encode($existingRooms) );
 
-				// create array matching between
-				// JC room ID <=> jeedom Object ID
-				$existingRooms = array();
-				foreach($configFile['payload']['rooms'] as $room){
-					if ( array_key_exists('object', $room) ){
-						$existingRooms[$room['id']] = $room['object'];
+			// manage group, and provide new id
+			$groupIndex = 999000;
+			$existingGroups = array();
+			log::add('JeedomConnect_migration', 'info', 'Group objects -- BEFORE : ' . json_encode($configFile['payload']['groups']) );
+			foreach($configFile['payload']['groups'] as $key => $group){
+
+				$newGroup = $group;
+				$existingGroups[$group['id']] = $groupIndex;
+				$newGroup['id'] = $groupIndex;
+
+				$configFile['payload']['groups'][$key] = $newGroup;
+				$groupIndex += 1 ;
+			}
+			log::add('JeedomConnect_migration', 'info', 'Group objects with new Ids-- AFTER : ' . json_encode($configFile['payload']['groups']) );
+
+
+			$widgetsIncluded = array();
+			$widgetsMatching = array();
+
+			// for each widget in config file create the associate widget equipment
+			foreach($configFile['payload']['widgets'] as $key => $widget){
+				log::add('JeedomConnect_migration', 'info', 'starting migration for widget "' . $widget['name'] . '"' );
+
+				// create config widget with new format
+				$newWidget = array();
+
+				// check if parentId is a group one, if so then apply the new group Id
+				if ( array_key_exists($widget['parentId'], $existingGroups ) ) {
+					$newWidget['parentId'] = $existingGroups[$widget['parentId']] ;
+				}
+				else{
+					$newWidget['parentId'] = $widget['parentId'];
+				}
+				$newWidget['index'] = $widget['index'];
+
+				// retrieve the img to display for the widget based on the type
+				$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
+				$imgPath = '';
+				foreach ($widgetsConfigJonFile['widgets'] as $config) {
+					if ( $config['type'] == $widget['type']){
+						$imgPath = 'plugins/JeedomConnect/data/img/'. $config['img'];
+						break;
 					}
 				}
-				log::add('JeedomConnect_migration', 'info', 'all rooms/object matching : ' . json_encode($existingRooms) );
+				$newConfWidget['imgPath'] = $imgPath ;
 
-				// manage group, and provide new id
-				$groupIndex = 999000;
-				$existingGroups = array();
-				log::add('JeedomConnect_migration', 'info', 'Group objects -- BEFORE : ' . json_encode($configFile['payload']['groups']) );
-				foreach($configFile['payload']['groups'] as $key => $group){
-
-					$newGroup = $group;
-					$existingGroups[$group['id']] = $groupIndex;
-					$newGroup['id'] = $groupIndex;
-
-					$configFile['payload']['groups'][$key] = $newGroup;
-					$groupIndex += 1 ;
+				// attached the widget to the jeedom object
+				if (array_key_exists('room', $widget)
+						&& ! is_null($widget['room'] )
+							&& array_key_exists(intval($widget['room']), $existingRooms ) ) {
+					$widget['room'] = $existingRooms[$widget['room']] ;
 				}
-				log::add('JeedomConnect_migration', 'info', 'Group objects with new Ids-- AFTER : ' . json_encode($configFile['payload']['groups']) );
-
-
-				$widgetsIncluded = array();
-				$widgetsMatching = array();
-
-				// for each widget in config file create the associate widget equipment
-				foreach($configFile['payload']['widgets'] as $key => $widget){
-					log::add('JeedomConnect_migration', 'info', 'starting migration for widget "' . $widget['name'] . '"' );
-
-					// create config widget with new format
-					$newWidget = array();
-
-					// check if parentId is a group one, if so then apply the new group Id
-					if ( array_key_exists($widget['parentId'], $existingGroups ) ) {
-						$newWidget['parentId'] = $existingGroups[$widget['parentId']] ;
-					}
-					else{
-						$newWidget['parentId'] = $widget['parentId'];
-					}
-					$newWidget['index'] = $widget['index'];
-
-					// retrieve the img to display for the widget based on the type
-					$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
-					$imgPath = '';
-					foreach ($widgetsConfigJonFile['widgets'] as $config) {
-						if ( $config['type'] == $widget['type']){
-							$imgPath = 'plugins/JeedomConnect/data/img/'. $config['img'];
-							break;
-						}
-					}
-					$newConfWidget['imgPath'] = $imgPath ;
-
-					// attached the widget to the jeedom object
-					if (array_key_exists('room', $widget)
-							&& ! is_null($widget['room'] )
-								&& array_key_exists(intval($widget['room']), $existingRooms ) ) {
-						$widget['room'] = $existingRooms[$widget['room']] ;
-					}
-					else{
-						$widget['room'] = $widget['room'] == 'global' ? 'global' : null;
-					}
-
-					//generate a random logicalId
-					$widgetId = JeedomConnectWidget::incrementIndex();
-
-					unset($widget['parentId']);
-					unset($widget['index']);
-
-					$previousId = $widget['id'];
-					$widget['id'] = $widgetId ;
-					// save json config on a dedicated config var
-					$newConfWidget['widgetJC'] = json_encode($widget) ;
-
-					JeedomConnectWidget::saveConfig($newConfWidget, $widgetId) ;
-
-					// retrieve the eqLogic ID
-					$newWidget['id'] = intval($widgetId) ;
-					$widgetsMatching[$previousId] = $widgetId;
-
-					if ( array_key_exists('widgets', $widget ) ){
-						array_push($widgetsIncluded, $widgetId ) ;
-					}
-
-					//save the new widget data into the original config array
-					$configFile['payload']['widgets'][$key] = $newWidget;
-
-					log::add('JeedomConnect_migration', 'info', 'conf saved [DB] for widget ' . json_encode($widget) );
-					log::add('JeedomConnect_migration', 'info', 'conf saved [file] for widget "' . json_encode($newWidget) . '"' );
-
+				else{
+					$widget['room'] = $widget['room'] == 'global' ? 'global' : null;
 				}
 
-				// for each widget which includes other widgets (group, favourite,..)
-				// we need to update the widget ID
-				log::add('JeedomConnect_migration', 'info', 'checking widget included into other widgets');
-				foreach($widgetsIncluded as $widget){
-					$widgetJC = JeedomConnectWidget::getConfiguration($widget, 'widgetJC');
-					$conf = json_decode($widgetJC, true );
-					log::add('JeedomConnect_migration', 'info', 'working on widget "' .$conf['name'] . '" [id:' . $conf['id'] .']' );
-					foreach($conf['widgets'] as $index => $obj){
-						$newObj = array();
-						foreach ($obj as $key => $value) {
-							if ( $key == 'id'){
-								$newObj['id'] = $widgetsMatching[$value];
-								log::add('JeedomConnect_migration', 'info', 'replacing widget child id "'.$value . '" with new Id "'. $widgetsMatching[$value] .'"');
-							}
-							else{
-								$newObj[$key] = $value;
-							}
-						}
-						$conf['widgets'][$index] = $newObj ;
-					}
+				//generate a random logicalId
+				$widgetId = JeedomConnectWidget::incrementIndex();
 
-					JeedomConnectWidget::setConfiguration($widget, 'widgetJC', json_encode($conf) );
+				unset($widget['parentId']);
+				unset($widget['index']);
+
+				$previousId = $widget['id'];
+				$widget['id'] = $widgetId ;
+				// save json config on a dedicated config var
+				$newConfWidget['widgetJC'] = json_encode($widget) ;
+
+				JeedomConnectWidget::saveConfig($newConfWidget, $widgetId) ;
+
+				// retrieve the eqLogic ID
+				$newWidget['id'] = intval($widgetId) ;
+				$widgetsMatching[$previousId] = $widgetId;
+
+				if ( array_key_exists('widgets', $widget ) ){
+					array_push($widgetsIncluded, $widgetId ) ;
 				}
 
-				// review rooms info
-				// sort array by index in order to recreate a good index array
-				usort($configFile['payload']['rooms'], function($a, $b) {return strcmp($a['index'], $b['index']);});
-				$indexRoom = 0;
-				$indexRoomToRemove = array();
-				$newRoomsArray = array();
-				log::add('JeedomConnect_migration', 'info', 'updating rooms ');
-				foreach($configFile['payload']['rooms'] as $key => $room){
-					if ( array_key_exists('object', $room )
-							&& ! is_null($room['object']) ) {
+				//save the new widget data into the original config array
+				$configFile['payload']['widgets'][$key] = $newWidget;
 
-						log::add('JeedomConnect_migration', 'info', 'working on room "' .$room['name']. '"' );
+				log::add('JeedomConnect_migration', 'info', 'conf saved [DB] for widget ' . json_encode($widget) );
+				log::add('JeedomConnect_migration', 'info', 'conf saved [file] for widget "' . json_encode($newWidget) . '"' );
 
-						$roomObject = jeeObject::byId($room['object']);
+			}
 
-						if ( is_object($roomObject) ){
-							// set the name with the Jeedom One
-							$currentRoom['name'] = $roomObject->getName() ;
-						}
-						elseif ($room['name'] == 'global') {
-							// do nothing
-							$currentRoom['name'] = $room['name'] ;
+			// for each widget which includes other widgets (group, favourite,..)
+			// we need to update the widget ID
+			log::add('JeedomConnect_migration', 'info', 'checking widget included into other widgets');
+			foreach($widgetsIncluded as $widget){
+				$widgetJC = JeedomConnectWidget::getConfiguration($widget, 'widgetJC');
+				$conf = json_decode($widgetJC, true );
+				log::add('JeedomConnect_migration', 'info', 'working on widget "' .$conf['name'] . '" [id:' . $conf['id'] .']' );
+				foreach($conf['widgets'] as $index => $obj){
+					$newObj = array();
+					foreach ($obj as $key => $value) {
+						if ( $key == 'id'){
+							$newObj['id'] = $widgetsMatching[$value];
+							log::add('JeedomConnect_migration', 'info', 'replacing widget child id "'.$value . '" with new Id "'. $widgetsMatching[$value] .'"');
 						}
 						else{
-							// if object doesnt exist in jeedom, we remove it
-							log::add('JeedomConnect_migration', 'info', 'Room '.$room['name'].' is not migrated as it is not attached to an existing jeedom object [objectId incorrect]' ) ;
-							continue;
+							$newObj[$key] = $value;
 						}
-
-						// set the main id to the jeedom object id
-						$currentRoom['id'] = $room['object'];
-
-						$currentRoom['index'] = $indexRoom;
-
-						log::add('JeedomConnect_migration', 'info', 'new info -- name : "' .$currentRoom['name']. '"  -- id : ' . $currentRoom['id'] );
-
-						//save the new widget data into the original config array
-						array_push($newRoomsArray, $currentRoom);
-
-						$indexRoom ++;
 					}
-					else{
-						log::add('JeedomConnect_migration', 'info', 'Room "'.$room['name'].'" is not migrated as it is not attached to an existing jeedom object' ) ;
-					}
+					$conf['widgets'][$index] = $newObj ;
 				}
 
-				$configFile['payload']['rooms'] = $newRoomsArray ;
-
-				//add info about new format in file
-				$configFile = array_merge( array_slice( $configFile, 0, 1 ), array('formatVersion' => '1.0'), array_slice( $configFile, 1 ) );
-				log::add('JeedomConnect_migration', 'info', 'final config file : ' . json_encode($configFile)  );
-
-				// make a backup file
-				$originalFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json' ;
-				$backupFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json.bkp' ;
-				copy($originalFile, $backupFile );
-				log::add('JeedomConnect_migration', 'info', 'backup file created -- ' . $backupFile) ;
-
-				// save the file
-				file_put_contents($originalFile, json_encode($configFile , JSON_PRETTY_PRINT) );
-				log::add('JeedomConnect_migration', 'info', 'new configuration file saved ') ;
+				JeedomConnectWidget::setConfiguration($widget, 'widgetJC', json_encode($conf) );
 			}
-			else{
-				log::add('JeedomConnect_migration', 'info', 'Configuration file already into new format');
+
+			// review rooms info
+			// sort array by index in order to recreate a good index array
+			usort($configFile['payload']['rooms'], function($a, $b) {return strcmp($a['index'], $b['index']);});
+			$indexRoom = 0;
+			$indexRoomToRemove = array();
+			$newRoomsArray = array();
+			log::add('JeedomConnect_migration', 'info', 'updating rooms ');
+			foreach($configFile['payload']['rooms'] as $key => $room){
+				if ( array_key_exists('object', $room )
+						&& ! is_null($room['object']) ) {
+
+					log::add('JeedomConnect_migration', 'info', 'working on room "' .$room['name']. '"' );
+
+					$roomObject = jeeObject::byId($room['object']);
+
+					if ( is_object($roomObject) ){
+						// set the name with the Jeedom One
+						$currentRoom['name'] = $roomObject->getName() ;
+					}
+					elseif ($room['name'] == 'global') {
+						// do nothing
+						$currentRoom['name'] = $room['name'] ;
+					}
+					else{
+						// if object doesnt exist in jeedom, we remove it
+						log::add('JeedomConnect_migration', 'info', 'Room '.$room['name'].' is not migrated as it is not attached to an existing jeedom object [objectId incorrect]' ) ;
+						continue;
+					}
+
+					// set the main id to the jeedom object id
+					$currentRoom['id'] = $room['object'];
+
+					$currentRoom['index'] = $indexRoom;
+
+					log::add('JeedomConnect_migration', 'info', 'new info -- name : "' .$currentRoom['name']. '"  -- id : ' . $currentRoom['id'] );
+
+					//save the new widget data into the original config array
+					array_push($newRoomsArray, $currentRoom);
+
+					$indexRoom ++;
+				}
+				else{
+					log::add('JeedomConnect_migration', 'info', 'Room "'.$room['name'].'" is not migrated as it is not attached to an existing jeedom object' ) ;
+				}
 			}
+
+			$configFile['payload']['rooms'] = $newRoomsArray ;
+
+			//add info about new format in file
+			$configFile = array_merge( array_slice( $configFile, 0, 1 ), array('formatVersion' => '1.0'), array_slice( $configFile, 1 ) );
+			log::add('JeedomConnect_migration', 'info', 'final config file : ' . json_encode($configFile)  );
+
+			// make a backup file
+			$originalFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json' ;
+			$backupFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json.bkp' ;
+			copy($originalFile, $backupFile );
+			log::add('JeedomConnect_migration', 'info', 'backup file created -- ' . $backupFile) ;
+
+			// save the file
+			file_put_contents($originalFile, json_encode($configFile , JSON_PRETTY_PRINT) );
+			log::add('JeedomConnect_migration', 'info', 'new configuration file saved ') ;
 		}
 		else{
-			log::add('JeedomConnect_migration', 'info', 'configuration for equipement "'.$this->getName().'" not migrated because equipement disabled');
+			log::add('JeedomConnect_migration', 'info', 'Configuration file already into new format');
 		}
+		
 		return;
 	}
 

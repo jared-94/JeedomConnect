@@ -101,6 +101,24 @@ try {
 
 	}
 
+	if (init('action') == 'migrateConfiguration') {
+
+		$scope = init('scope') ?? '' ; 
+		$more = false;
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			if ( ( $scope == 'all' ) || ( ( $scope == 'enableOnly' ) && $eqLogic->getIsEnable() ) ){
+				log::add('JeedomConnect_migration', 'info', 'migrate conf for equipment ' . $eqLogic->getName() ) ;
+				$eqLogic->moveToNewConfig();
+			}
+			else{
+				log::add('JeedomConnect_migration', 'info', 'configuration for equipement "'.$eqLogic->getName().'" not migrated because equipement disabled');
+				$more = true;
+			}
+		}
+		
+		ajax::success(array('more' => $more ));
+	}
+
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
