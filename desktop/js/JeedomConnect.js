@@ -268,9 +268,11 @@ $('#in_searchWidget').off('keyup').keyup(function() {
   $('.widgetDisplayCard').hide()
   search = normTextLower(search)
   var text
-  $('.widgetDisplayCard .name').each(function() {
-    text = normTextLower($(this).text())
-    if (text.indexOf(search) >= 0) {
+  var widgetId
+  $('.widgetDisplayCard').each(function() {
+    text = normTextLower($(this).children('.name').text())
+    widgetId = normTextLower($(this).attr('data-widget_id'))
+    if (text.indexOf(search) >= 0 || widgetId.indexOf(search) >= 0) {
       $(this).closest('.widgetDisplayCard').show()
     }
   })
