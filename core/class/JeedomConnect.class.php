@@ -740,8 +740,11 @@ class JeedomConnect extends eqLogic {
 							&& array_key_exists(intval($widget['room']), $existingRooms ) ) {
 					$widget['room'] = $existingRooms[$widget['room']] ;
 				}
+				else if ($widget['room'] == 'global') {
+					$widget['room'] = 'global' ;
+				}
 				else{
-					$widget['room'] = $widget['room'] == 'global' ? 'global' : null;
+					unset($widget['room']);
 				}
 
 				//generate a random logicalId
