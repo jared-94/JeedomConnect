@@ -29,7 +29,7 @@ $existOldFormat = false;
 foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 
   $configFile = $eqLogic->getConfig(false)  ;
-  if( ! array_key_exists('formatVersion', $configFile) ) $existOldFormat = true;
+  if( ! is_null($configFile) && ! array_key_exists('formatVersion', $configFile) ) $existOldFormat = true;
   
 }
 
