@@ -171,7 +171,7 @@ class JeedomConnect extends eqLogic {
 
 		// remove duplicate id
 		$widgetIdInGroup = array_unique($widgetIdInGroup);
-		// check if for each widgetId found in a group, the widget itself has his configuration 
+		// check if for each widgetId found in a group, the widget itself has his configuration
 		// already detailed in the config file, if not, then add it
 		foreach ($widgetIdInGroup as $item) {
 			if ( ! in_array($item, $widgetList)){
@@ -188,7 +188,7 @@ class JeedomConnect extends eqLogic {
 					$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
 					$newWidgetConf['parentId'] = null ;
 					$newWidgetConf['index'] = 999999999 ;
-					
+
 					if (isset($newWidgetConf['room'])){
 						array_push($roomIdList , $newWidgetConf['room'] ) ;
 					}
@@ -389,10 +389,10 @@ class JeedomConnect extends eqLogic {
 		if (!is_dir(self::$_qr_dir)) {
 				mkdir(self::$_qr_dir);
 		}
-		$user = user::byHash($this->getConfiguration('userHash'));
+		$user = user::byId($this->getConfiguration('userId'));
 		if ($user == null) {
 			$user = user::all()[0];
-			$this->setConfiguration('userHash', $user->getHash());
+			$this->setConfiguration('userId', $user->getId());
 		}
 
 		$connectData = array(
@@ -862,7 +862,7 @@ class JeedomConnect extends eqLogic {
 		else{
 			log::add('JeedomConnect_migration', 'info', 'Configuration file already into new format');
 		}
-		
+
 		return;
 	}
 

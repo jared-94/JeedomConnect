@@ -256,11 +256,11 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
 								<div class="col-sm-7">
-									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userHash">
+									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userId">
 										<option value="">{{Aucun}}</option>
 										<?php
 										foreach (user::all() as $user) {
-											echo '<option value="' . $user->getHash() . '">' . $user->getLogin() . '</option>';
+											echo '<option value="' . $user->getId() . '">' . $user->getLogin() . '</option>';
 										}
 										?>
 									</select>

@@ -40,7 +40,7 @@ if ($method == 'GEOLOC') {
 
 $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
-if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG') {
+if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT') {
   log::add('JeedomConnect', 'debug', "Can't find eqLogic");
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
 }
@@ -48,7 +48,7 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG') {
 
 switch ($method) {
   case 'GET_AVAILABLE_EQUIPEMENT':
-		$eqLogics = JeedomConnect::byType('JeedomConnect');
+		$eqLogics = eqLogic::byType('JeedomConnect');
 
 		if (is_null($eqLogics)) {
 			throw new Exception(__("No equipment available", __FILE__), -32699);
@@ -56,14 +56,11 @@ switch ($method) {
 		else{
 			$result = array();
 			foreach ($eqLogics as $eqLogic) {
-				$type = $eqLogic->getConfiguration('type') ;
-
-				if ( $type == "widget" ){
-          $monWidget->logicalId = $eqLogic->getLogicalId() ;
-					$monWidget->id = intval($eqLogic->getId());
-					$monWidget->enable = $eqLogic->isEnable();
-					array_push($result, $monWidget ) ;
-				}
+				array_push($result, array(
+					'logicalId' => $eqLogic->getLogicalId(),
+					'name' => $eqLogic->getName(),
+					'enable' => $eqLogic->getIsEnable()
+				) ) ;
 			}
     }
 
@@ -74,11 +71,6 @@ switch ($method) {
     break;
 
   case 'GET_PLUGIN_CONFIG':
-		$user = user::byHash($params['userHash']);
-		if ($user == null) {
-			log::add('JeedomConnect', 'debug', "user not valid");
-		  throw new Exception(__("User not valid", __FILE__), -32699);
-		}
     $jsonrpc->makeSuccess(array(
       'type' => 'PLUGIN_CONFIG',
       'payload' => apiHelper::getPluginConfig()
@@ -102,7 +94,7 @@ switch ($method) {
     //check version requierement
     if (version_compare($params['appVersion'], $versionJson->require, "<")) {
       log::add('JeedomConnect', 'warning', "Failed to connect : bad version requierement");
-      $jsonrpc->makeSuccess(array( 'type' => 'APP_VERSION_ERROR' ));
+      $jsonrpc->makeSuccess(array( 'type' => 'APP_VERSION_ERROR', 'payload' => array( 'appRequire' => $versionJson->require) ));
       return;
     }
     if (version_compare($versionJson->version, $params['pluginRequire'], "<")) {
@@ -110,21 +102,27 @@ switch ($method) {
       $jsonrpc->makeSuccess(array( 'type' => 'PLUGIN_VERSION_ERROR' ));
       return;
     }
-
-		//check userHash
-		$user = \user::byHash($params['userHash']);
+		$user = user::byId($eqLogic->getConfiguration('userId'));
 		if ($user == null) {
-			log::add('JeedomConnect', 'debug', "user not valid");
-			throw new Exception(__("User not valid", __FILE__), -32699);
+			$user = user::all()[0];
+			$eqLogic->setConfiguration('userId', $user->getId());
+			$eqLogic->save();
 		}
-		$eqLogic->setConfiguration('userHash', $params['userHash']);
-		$eqLogic->save();
+
 		$config = $eqLogic->getConfig(true);
+
+		//check config format version
+		if( ! array_key_exists('formatVersion', $config) ) {
+			log::add('JeedomConnect', 'warning', "Failed to connect : bad format version");
+      $jsonrpc->makeSuccess(array( 'type' => 'FORMAT_VERSION_ERROR' ));
+      return;
+		}
 
     $result = array(
       'type' => 'WELCOME',
       'payload' => array(
         'pluginVersion' => $versionJson->version,
+				'userHash' => $user->getHash(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 				'pluginConfig' => apiHelper::getPluginConfig(),

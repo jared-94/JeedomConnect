@@ -158,7 +158,7 @@ class ConnectLogic implements MessageComponentInterface
 			//check version requierement
 			if (version_compare($objectMsg->appVersion, $this->appRequire, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad version requierement");
-				$result = array( 'type' => 'APP_VERSION_ERROR' );
+				$result = array( 'type' => 'APP_VERSION_ERROR', 'payload' => array( 'appRequire' => $versionJson->require) );
 				$conn->send(json_encode($result));
 				$conn->close();
 				return;
@@ -179,14 +179,21 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 
-			//check userHash
-			$user = \user::byHash($objectMsg->userHash);
+			$user = \user::byId($eqLogic->getConfiguration('userId'));
 			if ($user == null) {
-				\log::add('JeedomConnect', 'debug', "user not valid");
-			  $conn->close();
+				$user = \user::all()[0];
+				$eqLogic->setConfiguration('userId', $user->getId());
+				$eqLogic->save();
 			}
-			$eqLogic->setConfiguration('userHash', $objectMsg->userHash);
-			$eqLogic->save();
+
+			//check config format version
+			if( ! array_key_exists('formatVersion', $this->configList[$objectMsg->apiKey]) ) {
+				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad bad format version");
+				$result = array( 'type' => 'FORMAT_VERSION_ERROR' );
+				$conn->send(json_encode($result));
+				$conn->close();
+	      return;
+			}
 
       $conn->apiKey = $objectMsg->apiKey;
 			$conn->eqLogic = $eqLogic;
@@ -197,6 +204,7 @@ class ConnectLogic implements MessageComponentInterface
 				'type' => 'WELCOME',
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
+					'userHash' => $user->getHash(),
 					'configVersion' => $this->configList[$objectMsg->apiKey]['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
