@@ -3,7 +3,7 @@
 	"name" : "Jeedom Connect",
 	"description" : "Plugin d'échange avec l'application Jeedom Connect",
 	"licence" : "AGPL",
-	"author" : "jared et tomitomas",
+	"author" : "JARED-94 et TOMITOMAS",
 	"require" : "3.3",
 	"category" : "communication",
 	"documentation": "https://jared-94.github.io/JeedomConnectDoc/fr_FR/",
