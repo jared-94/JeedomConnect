@@ -140,16 +140,32 @@ $("#notifConfig-btn").click(function(){
 });
 
 $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function() {
-	var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+	var dt = new Date();
+  var dd = String(dt.getDate()).padStart(2, '0');
+  var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = dt.getFullYear();
+
+  today = yyyy + mm + dd ;
+  var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+  
+  var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 	var a = document.createElement("a");
 	a.href = 'plugins/JeedomConnect/data/configs/'+key+'.json';
-	a.download = key+'.json';
+	a.download = key+'_'+today+ '_'+time+'.json';
 	a.click();
 	a.remove();
 });
 
 $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn', function() {
   var apiKey = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+
+  var dt = new Date();
+  var dd = String(dt.getDate()).padStart(2, '0');
+  var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = dt.getFullYear();
+
+  today = yyyy + mm + dd ;
+  var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
 
   $.post({
 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -170,7 +186,7 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
 			else{
 				var a = document.createElement("a");
         a.href = 'plugins/JeedomConnect/data/configs/'+apiKey+'.json.generated';
-        a.download = apiKey+'_GENERATED.json';
+        a.download = apiKey+'_'+today+ '_'+time+'_GENERATED.json';
         a.click();
         a.remove();
 			}
