@@ -232,13 +232,15 @@ try {
     $apiKey = init('apiKey');
     $eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 	$allConfig = (init('all') !== null) && init('all') ;
+	$saveGenerated = (init('all') !== null) && init('all') ;
     if (!is_object($eqLogic)) {
-			ajax::error('Erreur');
-		} else {
-      //$eqLogic->updateConfig();
-			$configJson = $eqLogic->getConfig($allConfig);
-			ajax::success($configJson);
-		}
+		ajax::error('Erreur - no equipment found');
+	} 
+	else {
+		//$eqLogic->updateConfig();
+		$configJson = $eqLogic->getConfig($allConfig, $saveGenerated);
+		ajax::success($configJson);
+	}
   }
 
   if (init('action') == 'getNotifs') {

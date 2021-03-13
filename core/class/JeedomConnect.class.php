@@ -116,7 +116,7 @@ class JeedomConnect extends eqLogic {
 
 	}
 
-	public function getConfig($replace = false) {
+	public function getConfig($replace = false, $saveGenerated = false) {
 
 		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
 			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' );
@@ -214,12 +214,11 @@ class JeedomConnect extends eqLogic {
 		// }
 		// $jsonConfig['payload']['rooms'] = $allRooms ;
 
-		$widgetStringFinal = json_encode( $jsonConfig , JSON_PRETTY_PRINT) ;
+		// $widgetStringFinal = json_encode( $jsonConfig , JSON_PRETTY_PRINT) ;
 		//log::add('testTLE', 'info', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal );
+		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
 
-		file_put_contents($config_file_path.'.generated', $widgetStringFinal );
-
-		$jsonConfig = json_decode($widgetStringFinal, true);
+		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
 	}
 
@@ -231,7 +230,7 @@ class JeedomConnect extends eqLogic {
 			return null;
 		}
 
-		$result = array("id" => intval( $obj->getId() ), "name" => $obj->getName() , "index" => $obj->getPosition() ) ;
+		$result = array("id" => intval( $obj->getId() ), "name" => $obj->getName() ) ;
 		return $result;
 	}
 
