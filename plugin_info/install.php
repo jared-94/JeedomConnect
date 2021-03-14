@@ -19,6 +19,9 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function JeedomConnect_install() {
+
+  JeedomConnect::displayMessageInfo();
+
 }
 
 function JeedomConnect_update() {
@@ -28,6 +31,11 @@ function JeedomConnect_update() {
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->updateConfig();
   }
+
+  // message::add( 'JeedomConnect',  'Installation terminée.<br>Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement. Merci de lire <a href=\"https://jared-94.github.io/JeedomConnectDoc/fr_FR/\" target=\"_blank\">la doc</a>.') ;
+  message::add( 'JeedomConnect',  'Installation terminée. Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement -- pensez à lire la doc : https://jared-94.github.io/JeedomConnectDoc/fr_FR/') ;
+	
+  JeedomConnect::displayMessageInfo();
 
 }
 

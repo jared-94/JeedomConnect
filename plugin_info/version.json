@@ -1,5 +1,7 @@
 {
 	"version": "0.18.0",
 	"require": "0.18.0",
-	"apkLink" : "https://github.com/jared-94/JeedomConnectDoc/raw/master/resources/apk/beta/JeedomConnect-0.18.0-beta.apk"
+	"mainUrl" : "https://github.com/jared-94/JeedomConnectDoc/raw/master/resources/apk/",
+	"apkName" : "JeedomConnect-0.18.0-beta.apk", 
+	"typeVersion" : "beta"
 }

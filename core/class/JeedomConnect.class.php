@@ -57,6 +57,7 @@ class JeedomConnect extends eqLogic {
 	);
 
 	public static $_resources_dir = __DIR__ . '/../../resources/';
+	public static $_plugin_info_dir = __DIR__ . '/../../plugin_info/';
 	public static $_data_dir = __DIR__ . '/../../data/';
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
 	public static $_qr_dir = __DIR__ . '/../../data/qrcodes/';
@@ -658,6 +659,25 @@ class JeedomConnect extends eqLogic {
 		self::saveConfig(self::$_initialConfig);
 	}
 
+
+
+	public static function getPluginInfo(){
+
+		$pluginInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'version.json'), true);
+
+		return $pluginInfo ; 
+
+	}
+
+	public static function displayMessageInfo(){
+
+		$pluginInfo = self::getPluginInfo();
+		
+		$apkVersionRequired = $pluginInfo['require'] ;
+		$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ; 
+		if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en téléchargement ici : '.$apkUrl) ;
+
+	}
 
 	/**
 	 ************************************************************************

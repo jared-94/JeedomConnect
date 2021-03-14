@@ -33,14 +33,25 @@ foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
   
 }
 
+$pluginVersion = JeedomConnect::getPluginInfo();
+$apkLink = $pluginVersion['mainUrl'] . $pluginVersion['typeVersion'];
+
 ?>
 <form class="form-horizontal jeedomConnect">
-  <div class="alert alert-success" style="text-align:center;">
-  <a href="https://github.com/jared-94/JeedomConnect/releases/latest"
-    style="color: white !important;" target="_blank">Télécharger la dernière version de l'application pour Android</a>
+  <div style="text-align:center;margin-bottom:10px;">
+    <div style="margin-bottom:10px;">
+      <span  class="alert alert-success">
+        <a href="<?=$apkLink?>"  style="color: white !important;padding: 0px 10px;" target="_blank">Télécharger l'application pour Android</a>
+      </span>
+    </div>
+
+    <div>
+      <span>(Veuillez à télécharger la version de l'application correspondante à la version de votre plugin ! Plus d'informations sur la page documentation du plugin.)</span>
+    </div>
   </div>
+  
   <div class="alert alert-info" style="text-align:center;">
-    Les paramètres c-dessous doivent être configurés correctement pour le bon fonctionnement de l'application.<br/>
+    Les paramètres ci-dessous doivent être configurés correctement pour le bon fonctionnement de l'application.<br/>
     Les paramètres liés au websocket ne sont nécessaires que si vous l'activez.
     Si vous n'utilisez pas le websocket, vous pouvez désactiver le démon.<br/>
     Après tout changement ici, veuillez redémarrer l'application.
