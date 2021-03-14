@@ -675,8 +675,10 @@ class JeedomConnect extends eqLogic {
 		
 		$apkVersionRequired = $pluginInfo['require'] ;
 		$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ; 
-		if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en téléchargement ici : '.$apkUrl) ;
-
+		
+		$lien = htmlentities('<a href="'.$apkUrl.'" target="_blank">téléchargement ici</a>') ;
+		if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en -->> ' . $lien ) ;
+	
 	}
 
 	/**
