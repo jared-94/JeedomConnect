@@ -96,6 +96,13 @@ try {
 		$newConfWidget['widgetJC'] = json_encode($jcTemp);
 		
 		JeedomConnectWidget::saveConfig($newConfWidget, $id) ;
+
+		if (! is_null(init('eqId'))  && init('eqId') != '' ){
+			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$eqLogic->checkEqAndUpdateConfig(init('eqId')) ;
+			}
+		}
+
 		
 		ajax::success(array('id' => $id));
 
