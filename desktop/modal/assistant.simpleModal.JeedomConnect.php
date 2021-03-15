@@ -27,16 +27,17 @@ if (!isConnect('admin')) {
 </style>
 <div style="display: none;" id="div_simpleModalAlert"></div>
 <form class="form-horizontal" style="overflow: hidden;">
+  <div id="simpleModalAlert" style="display:none"></div>
   <ul id="modalOptions" style="padding-left:10px; list-style-type: none;">
     <li id="object-li" style="display:none;">
       <div class='form-group'>
       <label class='col-xs-3 ' >Objet</label>
       <div class='col-xs-9'>
         <select id="object-select" onchange="objectSelected();">
-          <option value="">{{Aucun}}</option>
+          <option value="none">{{Aucun}}</option>
           <?php
-          foreach (jeeObject::all() as $object) {
-            echo '<option value="' . $object->getId() . '">' . $object->getName() . '</option>';
+          foreach ((jeeObject::buildTree(null, false)) as $object) {
+            echo '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
           }
           ?>
         </select>
@@ -97,12 +98,13 @@ function setSimpleModalData(options) {
 			<div class='col-xs-9'><div class='input-group'>
 			<select style="width:250px;" id="mod-widget-input">`
 
-			configData.payload.widgets.forEach(item => {
+			// configData.payload.widgets.forEach(item => {
+      allWidgetsDetail.forEach(item => {
 				if (option.choices.includes(item.type)) {
 					let name = getWidgetPath(item.id);
           room = getRoomName(item.room);
           if (room) { name = name +' (' + room + ')'}
-					widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name}</option>`;
+					widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name} [${item.id}]</option>`;
 				}
 			})
 			widget += `</select></div></div></div></li>`;

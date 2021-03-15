@@ -41,19 +41,22 @@ class ConnectLogic implements MessageComponentInterface
     /**
      * Notifier constructor
      */
-    public function __construct($pluginVersion, $appRequire) {
+    public function __construct($versionJson) {
 			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$apiKey = $eqLogic->getConfiguration('apiKey');
-				array_push($this->apiKeyList, $apiKey);
-				$this->configList[$apiKey] = $eqLogic->getConfig();
+				if ( $apiKey !=  ''){
+					\log::add('JeedomConnect', 'debug', 'checking apiKey : ' . $apiKey );
+					array_push($this->apiKeyList, $apiKey);
+					$this->configList[$apiKey] = $eqLogic->getConfig(true);
+				}
 			}
       $this->unauthenticatedClients = new \SplObjectStorage;
       $this->authenticatedClients = new \SplObjectStorage;
       $this->hasAuthenticatedClients = false;
       $this->hasUnauthenticatedClients = false;
       $this->authDelay = 2;
-			$this->pluginVersion = $pluginVersion;
-			$this->appRequire = $appRequire;
+			$this->pluginVersion = $versionJson->version;
+			$this->appRequire = $versionJson->require;
       $this->lastReadTimestamp = time();
     }
 
@@ -74,7 +77,7 @@ class ConnectLogic implements MessageComponentInterface
           }
         }
       }
-			$this->lookForNewConfig();
+		$this->lookForNewConfig();
       if ($this->hasAuthenticatedClients) {
         // Read events from Jeedom
         $events = \event::changes($this->lastReadTimestamp);
@@ -155,7 +158,9 @@ class ConnectLogic implements MessageComponentInterface
 			//check version requierement
 			if (version_compare($objectMsg->appVersion, $this->appRequire, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad version requierement");
-				$result = array( 'type' => 'APP_VERSION_ERROR' );
+				$result = array(
+					'type' => 'APP_VERSION_ERROR',
+					'payload' => \JeedomConnect::getPluginInfo() );
 				$conn->send(json_encode($result));
 				$conn->close();
 				return;
@@ -176,14 +181,21 @@ class ConnectLogic implements MessageComponentInterface
 				}
 			}
 
-			//check userHash
-			$user = \user::byHash($objectMsg->userHash);
+			$user = \user::byId($eqLogic->getConfiguration('userId'));
 			if ($user == null) {
-				\log::add('JeedomConnect', 'debug', "user not valid");
-			  $conn->close();
+				$user = \user::all()[0];
+				$eqLogic->setConfiguration('userId', $user->getId());
+				$eqLogic->save();
 			}
-			$eqLogic->setConfiguration('userHash', $objectMsg->userHash);
-			$eqLogic->save();
+
+			//check config format version
+			if( ! array_key_exists('formatVersion', $this->configList[$objectMsg->apiKey]) ) {
+				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad bad format version");
+				$result = array( 'type' => 'FORMAT_VERSION_ERROR' );
+				$conn->send(json_encode($result));
+				$conn->close();
+	      return;
+			}
 
       $conn->apiKey = $objectMsg->apiKey;
 			$conn->eqLogic = $eqLogic;
@@ -194,6 +206,7 @@ class ConnectLogic implements MessageComponentInterface
 				'type' => 'WELCOME',
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
+					'userHash' => $user->getHash(),
 					'configVersion' => $this->configList[$objectMsg->apiKey]['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
@@ -246,6 +259,7 @@ class ConnectLogic implements MessageComponentInterface
 		if ($msg == null) {
 			return;
 		}
+		if (!array_key_exists('type', $msg)) { return; }
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
 				$cmd = \cmd::byId($msg['payload']['id']);
@@ -361,7 +375,8 @@ class ConnectLogic implements MessageComponentInterface
 				$configVersion = $eqLogic->getConfiguration('configVersion');
 				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
 					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
-					$this->configList[$apiKey] = $eqLogic->getConfig();
+					$this->configList[$apiKey] = $eqLogic->getConfig(true);
+					$this->configList[$apiKey]['payload']['configVersion'] = $configVersion;
 					array_push($this->apiKeyList, $apiKey);
 					foreach ($this->authenticatedClients as $client) {
 						if ($client->apiKey == $apiKey) {
@@ -376,7 +391,7 @@ class ConnectLogic implements MessageComponentInterface
 			} else {
 				\log::add('JeedomConnect', 'info', "New device with key ".$apiKey);
 				array_push($this->apiKeyList, $apiKey);
-				$this->configList[$apiKey] = $eqLogic->getConfig();
+				$this->configList[$apiKey] = $eqLogic->getConfig(true);
 			}
 		}
 		//Remove deleted configs
@@ -456,18 +471,8 @@ class ConnectLogic implements MessageComponentInterface
 		}
 	}
 
-	private function getObjects($config) {
-		$return = array();
-		foreach ($config['payload']['rooms'] as $room) {
-				if (array_key_exists("object", $room)) {
-					array_push($return, $room['object']);
-				}
-		}
-		return array_unique($return);
-	}
-
 	public function sendSummaries($client) {
-		$objIds = $this->getObjects($this->configList[$client->apiKey]);
+		$objIds = \apiHelper::getObjectData($this->configList[$client->apiKey]);
 		$result = array(
 			'type' => 'SET_CMD_INFO',
 			'payload' => array()

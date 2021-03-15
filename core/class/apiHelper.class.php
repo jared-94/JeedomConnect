@@ -42,6 +42,13 @@ class apiHelper {
               }
             }
           }
+          if ($item == 'moreInfos') {
+            foreach ($value as $i => $info) {
+              if ($info['type'] == 'cmd') {
+                array_push($return, $info['id']);
+              }
+            }
+          }
         }        
       }
     }
@@ -69,8 +76,10 @@ class apiHelper {
   public static function getScenarioList($config) {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
-      if ($widget['type'] == 'scenario') {
-        array_push($return, $widget['scenarioId']);
+      if (array_key_exists('type', $widget)) {
+        if ($widget['type'] == 'scenario') {
+          array_push($return, $widget['scenarioId']);
+        }
       }
     }
     return array_unique($return);
@@ -102,8 +111,8 @@ class apiHelper {
   public static function getObjectList($config) {
   	$return = array();
   	foreach ($config['payload']['rooms'] as $room) {
-  			if (array_key_exists("object", $room)) {
-  				array_push($return, $room['object']);
+  			if (array_key_exists("id", $room)) {
+  				array_push($return, $room['id']);
   			}
   	}
   	return array_unique($return);
@@ -220,7 +229,7 @@ class apiHelper {
    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
    if ($configVersion != $config['payload']['configVersion']) {
      log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
-     return $eqLogic->getConfig();
+     return $eqLogic->getConfig(true);
     }
     return false;
  }
