@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Code venant du plugin gratuit auto Login. Il a été réadapter pour correspondre au plugin JeeMate
- *
  */
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
@@ -49,7 +46,7 @@ class apiHelper {
               }
             }
           }
-        }        
+        }
       }
     }
     return array_unique($return);

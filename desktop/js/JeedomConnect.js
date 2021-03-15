@@ -147,7 +147,7 @@ $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', funct
 
   today = yyyy + mm + dd ;
   var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
-  
+
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 	var a = document.createElement("a");
 	a.href = 'plugins/JeedomConnect/data/configs/'+key+'.json';
@@ -788,11 +788,11 @@ function refreshAddWidgets() {
       }
       curOption += `</div></div></div></li>`;
     } else if (option.category == "img") {
-      curOption += `<span class="input-group-btn">
+      curOption += `
               <a class="btn btn-success roundedRight" onclick="imagePicker('${option.id}')"><i class="fas fa-check-square">
               </i> Choisir </a>
               <a id="icon-div-${option.id}" onclick="removeImage('${option.id}')"></a>
-              </span></div></div></li>`;
+              </div></div></li>`;
 
 
     } else if (option.category == "widgets") {
@@ -1015,11 +1015,11 @@ function refreshCmdListOption(optionsJson) {
     }
     if (options.hasIcon | options.hasImage) {
       curOption += `
-      <div class='input-group'> <span class="input-group-btn">
+      <div class='input-group'>
               <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}')"><i class="fas fa-check-square">
               </i> Icône </a>
               <a id="icon-div-${item.id}" onclick="removeImage('${item.id}')">${iconToHtml(item.image)}</a>
-      </span> </div>`;
+       </div>`;
     }
     curOption += `<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
     <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
@@ -1236,11 +1236,10 @@ function refreshImgListOption() {
 
     curOption +=`<input style="width:150px;height:31px;margin-left:5px;" class=' roundedLeft' id="${item.index}-value" value='${item.value || ''}' >`
     curOption += `
-          <span class="input-group-btn">
+
               <a class="btn btn-success roundedRight" onclick="imagePicker('${item.index}')"><i class="fas fa-plus-square">
               </i> Image </a>
-              <a id="icon-div-${item.index}" onclick="removeImage('${item.index}')">${iconToHtml(item.image)}</a>
-          </span>
+              <a id="icon-div-${item.index}" onclick="removeImage('${item.index}')">${iconToHtml(item.image)}</a>          
               <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
               <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i>
               <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
