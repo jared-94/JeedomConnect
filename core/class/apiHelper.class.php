@@ -42,7 +42,14 @@ class apiHelper {
               }
             }
           }
-        }
+          if ($item == 'moreInfos') {
+            foreach ($value as $i => $info) {
+              if ($info['type'] == 'cmd') {
+                array_push($return, $info['id']);
+              }
+            }
+          }
+        }        
       }
     }
     return array_unique($return);

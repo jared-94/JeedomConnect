@@ -104,7 +104,7 @@ if (!isConnect('admin')) {
         <span class="input-group-btn">
             <a class="btn btn-success roundedRight" onclick="imagePicker()"><i class="fas fa-check-square">
             </i> Choisir </a>
-            <a id="icon-div" onclick="removeImage()">${iconToHtml(notif.image)}</a>
+            <a id="icon-div" onclick="removeImage()">${notif ? iconToHtml(notif.image) : ''}</a>
         </span></div></div></li>`;
 
     items.push(imageHtml);
