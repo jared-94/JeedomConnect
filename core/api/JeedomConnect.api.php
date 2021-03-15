@@ -94,7 +94,9 @@ switch ($method) {
     //check version requierement
     if (version_compare($params['appVersion'], $versionJson->require, "<")) {
       log::add('JeedomConnect', 'warning', "Failed to connect : bad version requierement");
-      $jsonrpc->makeSuccess(array( 'type' => 'APP_VERSION_ERROR', 'payload' => array( 'appRequire' => $versionJson->require) ));
+      $jsonrpc->makeSuccess(array(
+				'type' => 'APP_VERSION_ERROR',
+				'payload' => JeedomConnect::getPluginInfo() ));
       return;
     }
     if (version_compare($versionJson->version, $params['pluginRequire'], "<")) {

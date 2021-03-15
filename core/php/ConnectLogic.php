@@ -41,7 +41,7 @@ class ConnectLogic implements MessageComponentInterface
     /**
      * Notifier constructor
      */
-    public function __construct($pluginVersion, $appRequire) {
+    public function __construct($versionJson) {
 			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$apiKey = $eqLogic->getConfiguration('apiKey');
 				if ( $apiKey !=  ''){
@@ -55,8 +55,8 @@ class ConnectLogic implements MessageComponentInterface
       $this->hasAuthenticatedClients = false;
       $this->hasUnauthenticatedClients = false;
       $this->authDelay = 2;
-			$this->pluginVersion = $pluginVersion;
-			$this->appRequire = $appRequire;
+			$this->pluginVersion = $versionJson->version;
+			$this->appRequire = $versionJson->require;
       $this->lastReadTimestamp = time();
     }
 
@@ -158,7 +158,9 @@ class ConnectLogic implements MessageComponentInterface
 			//check version requierement
 			if (version_compare($objectMsg->appVersion, $this->appRequire, "<")) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad version requierement");
-				$result = array( 'type' => 'APP_VERSION_ERROR', 'payload' => array( 'appRequire' => $versionJson->require) );
+				$result = array(
+					'type' => 'APP_VERSION_ERROR',
+					'payload' => \JeedomConnect::getPluginInfo() );
 				$conn->send(json_encode($result));
 				$conn->close();
 				return;
@@ -257,6 +259,7 @@ class ConnectLogic implements MessageComponentInterface
 		if ($msg == null) {
 			return;
 		}
+		if (!array_key_exists('type', $msg)) { return; }
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
 				$cmd = \cmd::byId($msg['payload']['id']);
@@ -373,6 +376,7 @@ class ConnectLogic implements MessageComponentInterface
 				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
 					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
 					$this->configList[$apiKey] = $eqLogic->getConfig(true);
+					$this->configList[$apiKey]['payload']['configVersion'] = $configVersion;
 					array_push($this->apiKeyList, $apiKey);
 					foreach ($this->authenticatedClients as $client) {
 						if ($client->apiKey == $apiKey) {

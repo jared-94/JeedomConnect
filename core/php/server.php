@@ -13,7 +13,7 @@ $port = intval(config::byKey('port', 'JeedomConnect', 8090));
 $versionPath = dirname(__FILE__) . '/../../plugin_info/version.json';
 $versionJson = json_decode(file_get_contents($versionPath));
 
-$connectLogic = new ConnectLogic($versionJson->version, $versionJson->require);
+$connectLogic = new ConnectLogic($versionJson);
 
 
 // Create socket server

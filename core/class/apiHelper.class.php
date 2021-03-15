@@ -69,8 +69,10 @@ class apiHelper {
   public static function getScenarioList($config) {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
-      if ($widget['type'] == 'scenario') {
-        array_push($return, $widget['scenarioId']);
+      if (array_key_exists('type', $widget)) {
+        if ($widget['type'] == 'scenario') {
+          array_push($return, $widget['scenarioId']);
+        }
       }
     }
     return array_unique($return);
