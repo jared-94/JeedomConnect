@@ -413,7 +413,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	private function getDistance($lat1, $lon1, $lat2, $lon2) {
+	public function getDistance($lat1, $lon1, $lat2, $lon2) {
 		$theta = $lon1 - $lon2;
   	$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
   	$dist = acos($dist);
@@ -508,7 +508,11 @@ class JeedomConnectCmd extends cmd {
 				)
 			);
 			if (isset($_options["files"])) {
-				$data['payload']['picture'] = realpath($_options['files'][0]);
+				$files = array();
+				foreach ($_options["files"] as $file) {
+					array_push($files, realpath($file));
+				}
+				$data['payload']['files'] = $files;
 
       }
 			$eqLogic->sendNotif($this->getLogicalId(), $data);

@@ -401,12 +401,12 @@ class ConnectLogic implements MessageComponentInterface
 				'type' => 'CMD_INFO',
 				'payload' => array()
 			);
-			$infoIds = $this->getInfoCmds($config);
+			$infoIds = \apiHelper::getInfoCmdList($config);
 			$result_sc = array(
 				'type' => 'SC_INFO',
 				'payload' => array()
 			);
-			$scIds = $this->getScenarioIds($config);
+			$scIds = \apiHelper::getScenarioList($config);
 			$result_obj = array(
 				'type' => 'OBJ_INFO',
 				'payload' => array()
@@ -456,28 +456,6 @@ class ConnectLogic implements MessageComponentInterface
 		}
 	}
 
-	private function getInfoCmds($config) {
-		$return = array();
-		foreach ($config['payload']['widgets'] as $widget) {
-			foreach ($widget as $item => $value) {
-				if (substr_compare($item, 'Info', strlen($item)-4, 4) === 0) {
-					array_push($return, $value['id']);
-				}
-			}
-		}
-		return array_unique($return);
-	}
-
-	private function getScenarioIds($config) {
-		$return = array();
-		foreach ($config['payload']['widgets'] as $widget) {
-			if ($widget['type'] == 'scenario') {
-				array_push($return, $widget['scenarioId']);
-			}
-		}
-		return array_unique($return);
-	}
-
 	private function getObjects($config) {
 		$return = array();
 		foreach ($config['payload']['rooms'] as $room) {
@@ -518,7 +496,7 @@ class ConnectLogic implements MessageComponentInterface
 
 	public function sendScenarioInfo($client, $all=false) {
 		$client->sendAllSc = $all;
-		$scIds = $this->getScenarioIds($this->configList[$client->apiKey]);
+		$scIds = \apiHelper::getScenarioList($this->configList[$client->apiKey]);
 		$result = array(
 			'type' => $all ? 'SET_ALL_SC' : 'SET_SC_INFO',
 			'payload' => array()

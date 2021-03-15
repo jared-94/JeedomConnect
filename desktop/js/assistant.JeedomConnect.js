@@ -36,7 +36,21 @@ function getIconModal(_options, _callback) {
 		jQuery.ajaxSetup({
       async: false
     });
-    $('#iconModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect');
+		let params = `&withIcon=${_options.withIcon}&withImg=${_options.withImg}`;
+		if (_options.icon.source) {
+			params += `&source=${_options.icon.source}`;
+		}
+		if (_options.icon.name) {
+			params += `&name=${encodeURI(_options.icon.name)}`;
+		}
+		if (_options.icon.color) {
+			params += `&color=${_options.icon.color.substring(1)}`;
+		}
+		if (_options.icon.shadow) {
+			params += `&shadow=${_options.icon.shadow}`;
+		}
+
+    $('#iconModal').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
     jQuery.ajaxSetup({
       async: true
     });
@@ -51,9 +65,23 @@ function getIconModal(_options, _callback) {
 			id: "saveSimple",
 			click: function() {
 				var icon = $('.iconSelected .iconSel').html();
-				icon = icon.replace(/"/g, "'")
-				var result = {};
-				result.html = icon;
+				if (icon === undefined) {
+					$('#div_iconSelectorAlert').showAlert({message: 'Aucune icône sélectionnée', level: 'danger'});
+					return;
+				}
+
+				let result = {};
+				result.source = $('.iconSelected .iconSel').children().first().attr("source");
+				result.name = $('.iconSelected .iconSel').children().first().attr("name");
+				if (result.source == 'fa') {
+					result.prefix = $('.iconSelected .iconSel').children().first().attr("prefix");
+				}
+				if ((result.source == 'jeedom' | result.source == 'md' | result.source == 'fa') & $("#mod-color-input").val() != '') {
+					result.color = $("#mod-color-input").val();
+				}
+				if (result.source == 'jc' | result.source == 'user') {
+					result.shadow = $("#bw-input").is(':checked');
+				}
 
 				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
 		        _callback(result);
@@ -105,11 +133,19 @@ function getSimpleModal(_options, _callback) {
 			  	result.enable = $("#mod-enable-input").is(':checked');
 		  	}
 		  	if (_options.fields.find(i => i.type == "name")) {
+					if ($("#mod-name-input").val() == '') {
+						$('#div_simpleModalAlert').showAlert({message: 'Le nom est obligatoire', level: 'danger'});
+						throw {};
+					}
 			  	result.name = $("#mod-name-input").val();
 		  	}
 		  	if (_options.fields.find(i => i.type == "icon")) {
-					//result.icon = { name: $("#mod-icon-input").val().trim(), source: $("#icon-source-input").val()}
-					result.icon = htmlToIcon($("#icon-div").html());
+					let icon = htmlToIcon($("#icon-div").children().first());
+					if (icon.source == undefined) {
+						$('#div_simpleModalAlert').showAlert({message: "L'icône est obligatoire", level: 'danger'});
+						throw {};
+					}
+					result.icon = htmlToIcon($("#icon-div").children().first());
 		  	}
 		  	if (_options.fields.find(i => i.type == "move")) {
 			  	result.moveToId = $("#mod-move-input").val();
@@ -211,6 +247,7 @@ function getWidgetModal(_options, _callback) {
   if (!isset(_options)) {
     return;
   }
+	$("#widgetModal").dialog('destroy').remove();
   if ($("#widgetModal").length == 0) {
     $('body').append('<div id="widgetModal"></div>');
 
@@ -219,7 +256,7 @@ function getWidgetModal(_options, _callback) {
       closeText: '',
       autoOpen: false,
       modal: true,
-      width: 1050,
+      width: 1250,
 	  	height: 0.8*$(window).height()
     });
     jQuery.ajaxSetup({
@@ -240,6 +277,10 @@ function getWidgetModal(_options, _callback) {
       var result = _options.widget ? _options.widget : {};
 
 	  var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+		let infoCmd = moreInfos.slice();
+		$('input[cmdType="info"]').each((i, el) => {
+			infoCmd.push({id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title });
+		});
 
 	  widgetConfig.options.forEach(option => {
 		if (option.category == "cmd") {
@@ -275,7 +316,7 @@ function getWidgetModal(_options, _callback) {
 				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
 				throw {};
 			}
-			result[option.id] = $("#"+option.id+"-input").val();
+			result[option.id] = parseString($("#"+option.id+"-input").val(), infoCmd);
 		} else if (option.category == "binary") {
 			result[option.id] = $("#"+option.id+"-input").is(':checked');
 		} else if (option.category == "stringList") {
@@ -285,7 +326,7 @@ function getWidgetModal(_options, _callback) {
 			}
 			if ($("#"+option.id+"-input").val() != 'none') {
 				if (option.id == 'subtitle') {
-					result[option.id] = $("#subtitle-input-value").val();
+					result[option.id] = parseString($("#subtitle-input-value").val(), infoCmd);
 				} else {
 					result[option.id] = $("#"+option.id+"-input").val();
 				}
@@ -304,13 +345,9 @@ function getWidgetModal(_options, _callback) {
 				throw {};
 			}
 			cmdCat.forEach(item => {
-				if (option.options.hasImage) {
-					item.image = $("#cmdList-"+item.id+" img").first().attr("value");
-					if (item.image == "") { delete item.image; }
-				}
-				if (option.options.hasIcon) {
-					item.icon = { name: $("#"+item.id+"-icon-input").val().trim(), source: $("#"+item.id+"-icon-source-input").val()}
-					if (item.icon.name == "") { delete item.icon; }
+				if (option.options.hasImage | option.options.hasIcon) {
+					item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
+					if (item.image == {}) { delete item.image; }
 				}
 				if (option.options.type == 'action') {
 					item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
@@ -325,22 +362,20 @@ function getWidgetModal(_options, _callback) {
 				throw {};
 			}
 			imgCat.forEach(item => {
-	      item.image = $("#imgList-"+item.index+" img").first().attr("value");
-	      item.info = $("#info-"+item.index).val();
+	      item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
+	      item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
 	      item.operator = $("#operator-"+item.index).val();
 	      item.value = $("#"+item.index+"-value").val();
 	    });
 			result[option.id] = imgCat;
 		}	else if (option.category == "img") {
-			if ($("#"+option.id).attr("value") == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
+			let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
+			if (icon.source == undefined & option.required) {
+				$('#widget-alert').showAlert({message: "L'image est obligatoire", level: 'danger'});
 				throw {};
 			}
-			if ($("#"+option.id).attr("value") != "") {
-				result[option.id] = $("#"+option.id).attr("value");
-			} else {
-				result[option.id] = undefined;
-			}
+			result[option.id] = icon.source != undefined ? icon : undefined;
+
 		}
 	  });
 
@@ -350,8 +385,16 @@ function getWidgetModal(_options, _callback) {
 	  }
 	  result.enable = $("#enable-input").is(':checked');
 		result.blockDetail = $("#blockDetail-input").is(':checked');
+		if (moreInfos.length > 0) {
+			result.moreInfos = [];
+			moreInfos.forEach(info => {
+				info.name = $("#"+info.id+"-name-input").val();
+				result.moreInfos.push(info);
+			});
 
-        if ('function' == typeof(_callback)) {
+		}
+
+    if ('function' == typeof(_callback)) {
           _callback(result);
         }
 		$('#widget-alert').hideAlert();
@@ -362,3 +405,17 @@ function getWidgetModal(_options, _callback) {
   }});
   $('#widgetModal').dialog('open');
 };
+
+function parseString(string, infos) {
+	let result = string;
+  if (typeof(string) != "string") { return string; }
+  const match = string.match(/#.*?#/g);
+  if (!match) { return string; }
+  match.forEach(item => {
+    const info = infos.find(i => i.human == item);
+    if (info) {
+      result = result.replace(item, "#"+info.id+"#");
+    }
+  });
+  return result;
+}

@@ -19,6 +19,10 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function JeedomConnect_install() {
+  
+  $docLink = htmlentities('<a href="https://github.com/jared-94/JeedomConnectDoc/raw/master/resources/apk/stable/JeedomConnect-0.17.1.apk" target="_blank">télécharger la nouvelle version ici</a>');
+  message::add( 'JeedomConnect',  'Cette version nécessite le téléchargement d\'un nouvel APK --> ' . $docLink ) ;
+  
 }
 
 function JeedomConnect_update() {
@@ -28,6 +32,10 @@ function JeedomConnect_update() {
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->updateConfig();
   }
+  
+  $docLink = htmlentities('<a href="https://github.com/jared-94/JeedomConnectDoc/raw/master/resources/apk/stable/JeedomConnect-0.17.1.apk" target="_blank">télécharger la nouvelle version ici</a>');
+  message::add( 'JeedomConnect',  'Cette nouvelle version nécessite le téléchargement d\'un nouvel APK --> ' . $docLink ) ;
+	
 
 }
 

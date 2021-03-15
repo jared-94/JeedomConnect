@@ -17,6 +17,81 @@ function openTab(evt, tabName) {
 	evt.currentTarget.className += " active";
 }
 
+function getIconModal(_options, _callback) {
+	$("#iconModal").dialog('destroy').remove();
+	if ($("#iconModal").length == 0) {
+    $('body').append('<div id="iconModal"></div>');
+    $("#iconModal").dialog({
+	  	title: _options.title,
+      closeText: '',
+      autoOpen: false,
+      modal: true,
+			height: (jQuery(window).height() - 150),
+      width: 1500
+    });
+		jQuery.ajaxSetup({
+      async: false
+    });
+		let params = `&withIcon=${_options.withIcon}&withImg=${_options.withImg}`;
+		if (_options.icon.source) {
+			params += `&source=${_options.icon.source}`;
+		}
+		if (_options.icon.name) {
+			params += `&name=${encodeURI(_options.icon.name)}`;
+		}
+		if (_options.icon.color) {
+			params += `&color=${_options.icon.color.substring(1)}`;
+		}
+		if (_options.icon.shadow) {
+			params += `&shadow=${_options.icon.shadow}`;
+		}
+
+    $('#iconModal').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
+    jQuery.ajaxSetup({
+      async: true
+    });
+	}
+
+	$("#iconModal").dialog({title: _options.title, buttons: {
+    "Annuler": function() {
+      $(this).dialog("close");
+    },
+    Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function() {
+				var icon = $('.iconSelected .iconSel').html();
+				if (icon === undefined) {
+					$('#div_iconSelectorAlert').showAlert({message: 'Aucune icône sélectionnée', level: 'danger'});
+					return;
+				}
+
+				let result = {};
+				result.source = $('.iconSelected .iconSel').children().first().attr("source");
+				result.name = $('.iconSelected .iconSel').children().first().attr("name");
+				if (result.source == 'fa') {
+					result.prefix = $('.iconSelected .iconSel').children().first().attr("prefix");
+				}
+				if ((result.source == 'jeedom' | result.source == 'md' | result.source == 'fa') & $("#mod-color-input").val() != '') {
+					result.color = $("#mod-color-input").val();
+				}
+				if (result.source == 'jc' | result.source == 'user') {
+					result.shadow = $("#bw-input").is(':checked');
+				}
+
+				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+		        _callback(result);
+		    }
+
+				$(this).dialog('close');
+			}
+		}
+	}});
+
+	$('#iconModal').dialog('open');
+
+}
+
 function getSimpleModal(_options, _callback) {
   if (!isset(_options)) {
     return;
@@ -76,55 +151,6 @@ function getSimpleModal(_options, _callback) {
 };
 
 
-function getImageModal(_options, _callback) {
-  if (!isset(_options)) {
-    return;
-  }
-  if ($("#imageModal").length == 0) {
-    $('body').append('<div id="imageModal"></div>');
-    $("#imageModal").dialog({
-	  title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
-      width: 450
-    });
-    jQuery.ajaxSetup({
-      async: false
-    });
-    $('#imageModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.imageModal.JeedomConnect');
-    jQuery.ajaxSetup({
-      async: true
-    });
-  }
-  setImageModalData(_options.selected);
-
-  $("#imageModal").dialog({
-	  buttons: [{
-		text: "Annuler",
-		click: function() {
-			$(this).dialog("close");
-		}
-	  },
-	  {
-		text: "Valider",
-		id: "validateImg",
-		click: function() {
-			var result = $(".selected").attr('id');
-			if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-				_callback(result);
-			}
-			$(this).dialog('close');
-		}
-	  }]
-	});
-
-  $('#imageModal').dialog('open');
-};
-
-
-
-
 function getNotifModal(_options, _callback) {
   if (!isset(_options)) {
     return;
@@ -168,11 +194,9 @@ function getNotifModal(_options, _callback) {
 			} else {
 				result.color = undefined;
 			}
-			if ($("#mod-img-img").attr("value") != '') {
-				result.image = $("#mod-img-img").attr("value");
-			} else {
-				result.image = undefined;
-			}
+			result.image = htmlToIcon($("#icon-div").children().first());
+			if (result.image == {}) { delete result.image; }
+
 			if (actionList.length > 0) {
 				actionList.forEach(item => {
 		      item.name = $("#"+item.id+"-name-input").val();

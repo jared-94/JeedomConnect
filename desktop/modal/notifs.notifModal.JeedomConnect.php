@@ -102,10 +102,9 @@ if (!isConnect('admin')) {
       <label class='col-xs-3 ' >Image</label>
         <div class='col-xs-9'>
         <span class="input-group-btn">
-            <img id="mod-img-img" src="" style="width:30px; height:30px; margin-top:-15px; display:none;" />
-            <i class="mdi mdi-minus-circle" id="mod-img-remove" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;display:none;" aria-hidden="true" onclick="removeImage()"></i>
             <a class="btn btn-success roundedRight" onclick="imagePicker()"><i class="fas fa-check-square">
             </i> Choisir </a>
+            <a id="icon-div" onclick="removeImage()">${notif ? iconToHtml(notif.image) : ''}</a>
         </span></div></div></li>`;
 
     items.push(imageHtml);
@@ -144,19 +143,13 @@ if (!isConnect('admin')) {
 
 
 	function imagePicker() {
-		getImageModal({title: "Choisir une image", selected: $("#mod-img-img").attr("value") } , function(result) {
-			$("#mod-img-img").attr("value", result);
-			$("#mod-img-img").attr("src", "plugins/JeedomConnect/data/img/"+result);
-			$("#mod-img-img").css("display", "");
-			$("#mod-img-remove").css("display", "");
-		});
+    getIconModal({ title: "Choisir une image", withIcon: "0", withImg: "1", icon: htmlToIcon($("#icon-div").children().first()) }, (result) => {
+      $("#icon-div").html(iconToHtml(result));
+    });
 	}
 
 	function removeImage() {
-		$("#mod-img-img").attr("src", "");
-		$("#mod-img-img").attr("value", "");
-		$("#mod-img-img").css("display", "none");
-		$("#mod-img-remove").css("display", "none");
+		$("#icon-div").empty();
 	}
 
   function colorDefined(c) {
