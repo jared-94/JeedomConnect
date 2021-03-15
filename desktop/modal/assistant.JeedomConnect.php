@@ -126,7 +126,7 @@ asort($widgetTypeAvail);
     </div>
     <div class="rightContent">
       <div class="alert alert-info">
-      Vous pouvez définir ici des pièces auxquelles seront attachés vos widgets.
+      Vous pouvez définir ici les pièces qui seront affichées dans le menu pièce (pour les résumés).
       </div>
     </div>
   </div>
