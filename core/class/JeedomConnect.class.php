@@ -125,7 +125,7 @@ class JeedomConnect extends eqLogic {
 		}
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json";
-		if (! file_exists($config_file_path)){ 
+		if (! file_exists($config_file_path)){
 			log::add('JeedomConnect', 'warning', 'file ' . $config_file_path . ' does not exist' );
 			return null;
 		}
@@ -207,7 +207,7 @@ class JeedomConnect extends eqLogic {
 
 		// add room if not exist in the config file but a widget is linked to it
 		// $allRooms = array();
-		// foreach (array_unique($roomIdList) as $item ) {	
+		// foreach (array_unique($roomIdList) as $item ) {
 		// 	if ($item != 'global') {
 		// 		$roomList = $this->getJeedomObject($item);
 		// 		array_push($allRooms, $roomList);
@@ -218,7 +218,9 @@ class JeedomConnect extends eqLogic {
 		// $widgetStringFinal = json_encode( $jsonConfig , JSON_PRETTY_PRINT) ;
 		//log::add('testTLE', 'info', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal );
 		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
-
+		// add summary
+			log::add('JeedomConnect', 'debug', 'GET CONFIG RETURN '.json_encode($jsonConfig));
+		$jsonConfig['payload']['summaryConfig'] = config::byKey('object:summary');
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
 	}
@@ -617,14 +619,14 @@ class JeedomConnect extends eqLogic {
 
 		$confStd = $this->getConfig();
 		$conf = $this->getConfig(true);
-		$exist = false ; 
+		$exist = false ;
 
 		if (! $conf ){
 			log::add('JeedomConnect', 'debug', 'No config content retrieved');
 			return;
 		}
-		
-		
+
+
 		foreach ($conf['payload']['widgets'] as $widget) {
 			if ( $widget['id']  == $widgetId  ){
 				$exist = true;
@@ -633,10 +635,10 @@ class JeedomConnect extends eqLogic {
 		}
 
 		if ( $exist ){
-			$configVersion = $confStd['payload']['configVersion'] + 1 ; 
+			$configVersion = $confStd['payload']['configVersion'] + 1 ;
 			log::add('JeedomConnect', 'debug', $widgetId . ' found in the current equipment -- updating configVersion to ' . $configVersion);
 
-			//update configVersion in the file		
+			//update configVersion in the file
 			$confStd['payload']['configVersion'] =  $configVersion ;
 			$this->saveConfig($confStd);
 
@@ -705,20 +707,20 @@ class JeedomConnect extends eqLogic {
 
 		$pluginInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'version.json'), true);
 
-		return $pluginInfo ; 
+		return $pluginInfo ;
 
 	}
 
 	public static function displayMessageInfo(){
 
 		$pluginInfo = self::getPluginInfo();
-		
+
 		$apkVersionRequired = $pluginInfo['require'] ;
-		$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ; 
-		
+		$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ;
+
 		$lien = htmlentities('<a href="'.$apkUrl.'" target="_blank">téléchargement ici</a>') ;
 		if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en -->> ' . $lien ) ;
-	
+
 	}
 
 	/**
@@ -745,7 +747,7 @@ class JeedomConnect extends eqLogic {
 
 			// create array matching between
 			// JC room ID <=> jeedom Object ID
-			
+
 			// sort array by index in order to recreate a good index array
 			usort($configFile['payload']['rooms'], function($a, $b) {return strcmp($a['index'], $b['index']);});
 			$indexRoom = 0;
@@ -776,7 +778,7 @@ class JeedomConnect extends eqLogic {
 					}
 
 					$existingRooms[$room['id']] = $room['object'];
-					
+
 					// set the main id to the jeedom object id
 					$currentRoom['id'] = $room['object'];
 

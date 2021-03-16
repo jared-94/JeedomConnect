@@ -119,7 +119,7 @@ function refreshWidgetsContent() {
 	rootElmts = rootElmts.sort(function(s,t) {
 		return s.index - t.index;
 	});
-
+console.log('widgets', configData.payload.widgets)
 	items = [];
 	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
 	$.each( rootElmts, function( key, value ) {
@@ -206,6 +206,7 @@ function resetConfig() {
 
 
 function getRootObjects(id) {
+	if (id == 'undefined') { id = undefined; }
 	var widgets = configData.payload.widgets.filter(w => w.parentId == id);
 	var groups = configData.payload.groups.filter(g => g.parentId == id);
 	return groups.concat(widgets);
@@ -357,7 +358,7 @@ function deleteBottomTab(tabId) {
 		});
 		configData.payload.widgets.forEach(widget => {
 			if (widget.parentId == tabId) {
-				removeWidget(widget.id, widget.parentId, widget.index);
+				removeWidgetAssistant(widget.id, widget.parentId, widget.index);
 			}
 		});
 
@@ -464,7 +465,7 @@ function removeTopTab(tabId) {
 
 	configData.payload.widgets.forEach(widget => {
 		if (widget.parentId == tabId) {
-			removeWidget(widget.id, widget.parentId, widget.index)
+			removeWidgetAssistant(widget.id, widget.parentId, widget.index)
 		}
 	});
 }
@@ -656,7 +657,7 @@ function removeGroup(groupId) {
 
 	configData.payload.widgets.slice().forEach(widget => {
 		if (widget.parentId == groupId) {
-			removeWidget(widget.id, widget.parentId, widget.index);
+			removeWidgetAssistant(widget.id, widget.parentId, widget.index);
 		}
 	});
 }
@@ -686,6 +687,8 @@ function moveGroupModal(groupId) {
 function upWidget(widgetId, widgetParentId, widgetIndex) {
 	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
+	if (widgetParentId == 'undefined') { widgetParentId = undefined; }
+	widgetIndex = parseInt(widgetIndex);
 	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
 	if (configData.payload.groups.find(g => g.id == widgetParentId) === undefined) { //widget is not in a group
 	  if (widgetIndex == 0) {
@@ -732,7 +735,8 @@ function upWidget(widgetId, widgetParentId, widgetIndex) {
 function downWidget(widgetId, widgetParentId, widgetIndex) {
 	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
-
+	if (widgetParentId == 'undefined') { widgetParentId = undefined; }
+	widgetIndex = parseInt(widgetIndex);
 	var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
 	if (configData.payload.groups.find(g => g.id == widgetParentId) === undefined) { //widget is not in a group
 	  if (widgetIndex == getMaxIndex(rootElmts)) {
@@ -777,13 +781,14 @@ function downWidget(widgetId, widgetParentId, widgetIndex) {
 
 function deleteWidget(widgetId, widgetParentId, widgetIndex) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {
-		removeWidget(widgetId, widgetParentId, widgetIndex);
+		removeWidgetAssistant(widgetId, widgetParentId, widgetIndex);
 		refreshWidgetsContent();
   });
 }
 
-function removeWidget(widgetId, widgetParentId, widgetIndex) {
-	configData.payload.widgets = configData.payload.widgets.filter(w => w.id != widgetId | w.index != widgetIndex | w.parentId != widgetParentId)
+function removeWidgetAssistant(widgetId, widgetParentId, widgetIndex) {
+	if (widgetParentId == 'undefined') { widgetParentId = undefined; }
+	configData.payload.widgets = configData.payload.widgets.filter(w => w.id != widgetId | w.index != widgetIndex | w.parentId != widgetParentId);
 
 	var rootElmts = getRootObjects(widgetParentId);
 	rootElmts.forEach(item => {
