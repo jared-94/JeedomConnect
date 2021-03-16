@@ -225,8 +225,9 @@ class apiHelper {
    $configVersion = $eqLogic->getConfiguration('configVersion');
    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
    if ($configVersion != $config['payload']['configVersion']) {
-     log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
-     return $eqLogic->getConfig(true);
+      log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
+      //return $eqLogic->getConfig(true);
+      return $eqLogic->getGeneratedConfigFile();
     }
     return false;
  }

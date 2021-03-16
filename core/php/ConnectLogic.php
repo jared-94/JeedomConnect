@@ -375,7 +375,8 @@ class ConnectLogic implements MessageComponentInterface
 				$configVersion = $eqLogic->getConfiguration('configVersion');
 				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
 					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
-					$this->configList[$apiKey] = $eqLogic->getConfig(true);
+					// $this->configList[$apiKey] = $eqLogic->getConfig(true);
+					$this->configList[$apiKey] = $eqLogic->getGeneratedConfigFile();
 					//$this->configList[$apiKey]['payload']['configVersion'] = $configVersion;
 					array_push($this->apiKeyList, $apiKey);
 					foreach ($this->authenticatedClients as $client) {

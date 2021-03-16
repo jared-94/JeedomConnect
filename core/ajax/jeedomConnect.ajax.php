@@ -228,9 +228,12 @@ try {
 		if (!is_object($eqLogic) or $configJson == null) {
 			ajax::error('Erreur');
 		} else {
-      $eqLogic->saveConfig($configJson);
+      		$eqLogic->saveConfig($configJson);
 			$eqLogic->setConfiguration('configVersion', $configJson->payload->configVersion);
 			$eqLogic->save();			
+
+			$eqLogic->getConfig(true, true); 
+
 			ajax::success();
 		}
   }

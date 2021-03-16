@@ -225,6 +225,28 @@ class JeedomConnect extends eqLogic {
 		return $jsonConfig;
 	}
 
+
+	public function getGeneratedConfigFile() {
+
+		log::add('JeedomConnect', 'debug', ' retrieved generated file' );
+
+		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
+			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' );
+			return null;
+		}
+
+		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
+		if (! file_exists($config_file_path)){
+			log::add('JeedomConnect', 'warning', 'file ' . $config_file_path . ' does not exist' );
+			return null;
+		}
+
+		$configFile = file_get_contents($config_file_path);
+		$jsonConfig = json_decode($configFile, true);
+		return $jsonConfig;
+
+	}
+
 	public function getJeedomObject($id){
 
 		$obj = jeeObject::byId($id) ;
@@ -645,6 +667,8 @@ class JeedomConnect extends eqLogic {
 			//update configVersion in the equipment configuration
 			$this->setConfiguration('configVersion', $configVersion);
 			$this->save();
+
+			$this->getConfig(true, true) ;
 
 		}
 		else{
