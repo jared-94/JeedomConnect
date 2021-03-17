@@ -215,12 +215,12 @@ class JeedomConnect extends eqLogic {
 		// }
 		// $jsonConfig['payload']['rooms'] = $allRooms ;
 
-		// $widgetStringFinal = json_encode( $jsonConfig , JSON_PRETTY_PRINT) ;
-		//log::add('testTLE', 'info', ' ¤¤¤¤¤ getConfig - final widget : ' . $widgetStringFinal );
-		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
 		// add summary
-			log::add('JeedomConnect', 'debug', 'GET CONFIG RETURN '.json_encode($jsonConfig));
+		log::add('JeedomConnect', 'debug', 'GET CONFIG RETURN '.json_encode($jsonConfig));
 		$jsonConfig['payload']['summaryConfig'] = config::byKey('object:summary');
+		
+		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
+		
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
 	}
