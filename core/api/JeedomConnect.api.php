@@ -151,7 +151,7 @@ switch ($method) {
 		break;
   case 'GET_CONFIG':
 		$result = $eqLogic->getConfig(true);
-		$result['payload']['summaryConfig'] = config::byKey('object:summary');
+		//$result['payload']['summaryConfig'] = config::byKey('object:summary');
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_CMD_INFO':
