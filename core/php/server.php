@@ -21,7 +21,7 @@ $server = IoServer::factory(new HttpServer(new WsServer($connectLogic)), $port);
 
 // Add the periodic processing
 $server->loop->addPeriodicTimer(
-    3,
+    1,
     function () use ($connectLogic) {
         $connectLogic->process();
     }
