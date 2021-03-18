@@ -33,8 +33,31 @@ foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
   
 }
 
+$pluginVersion = JeedomConnect::getPluginInfo();
+$apkLink = $pluginVersion['enrollment'] ;
+$beta = $pluginVersion['typeVersion'] == 'beta' ;
+
 ?>
 <form class="form-horizontal jeedomConnect">
+  
+  <?php
+  if ($beta){
+  ?>
+  <div style="text-align:center;margin-bottom:10px;">
+    <div style="margin-bottom:10px;">
+      <span  class="alert alert-success">
+        <a href="<?=$apkLink?>"  style="color: white !important;padding: 0px 10px;" target="_blank">S'enregister en tant que bêta-testeur</a>
+      </span>
+    </div>
+
+    <div>
+      <span>Afin d'accèder à l'application dans sa version bêta depuis le Store, vous devez être inscrit comme bêta-testeur</span>
+    </div>
+  </div>
+  <?php
+  }
+  ?>
+  
   <div class="alert alert-info" style="text-align:center;">
     Les paramètres ci-dessous doivent être configurés correctement pour le bon fonctionnement de l'application.<br/>
     Les paramètres liés au websocket ne sont nécessaires que si vous l'activez.
