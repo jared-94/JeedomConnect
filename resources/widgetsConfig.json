@@ -514,7 +514,7 @@
 	{
 		"type": "group-plug",
 		"name": "Groupe de prises",
-		"img": "plug6.png",
+		"img": "groupPlug.png",
 		"description": "Gère un groupe de plusieurs widgets prises",
 		"variables": [
 			{ "name": "room", "descr": "Pièce" },
@@ -1104,7 +1104,7 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"description": "Etat du climatisuer (binaire ou numérique)."
+				"description": "Etat du climatiseur (binaire ou numérique)."
 			},
 			{
 				"id": "setpointAction",
@@ -1236,7 +1236,7 @@
 				"description": "Etat de la porte"
 			},
 			{
-				"id": "image",
+        "id": "image",
 				"name": "Image",
 				"required": false,
 				"category": "img"
@@ -2484,7 +2484,7 @@
 		{
 			"type": "geoloc",
 			"name": "Géolocalisation",
-			"img": "web.png",
+			"img": "geo.png",
 			"description": "Permet d'afficher un point de localisation",
 			"variables": [
 				{ "name": "room", "descr": "Pièce" }

@@ -19,10 +19,9 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function JeedomConnect_install() {
-  
-  $docLink = htmlentities('<a href="https://github.com/jared-94/JeedomConnectDoc/raw/master/resources/apk/stable/JeedomConnect-0.17.1.apk" target="_blank">télécharger la nouvelle version ici</a>');
-  message::add( 'JeedomConnect',  'Cette version nécessite le téléchargement d\'un nouvel APK --> ' . $docLink ) ;
-  
+
+  JeedomConnect::displayMessageInfo();
+
 }
 
 function JeedomConnect_update() {
@@ -33,9 +32,11 @@ function JeedomConnect_update() {
     $eqLogic->updateConfig();
   }
   
-  $docLink = htmlentities('<a href="https://github.com/jared-94/JeedomConnectDoc/raw/master/resources/apk/stable/JeedomConnect-0.17.1.apk" target="_blank">télécharger la nouvelle version ici</a>');
-  message::add( 'JeedomConnect',  'Cette nouvelle version nécessite le téléchargement d\'un nouvel APK --> ' . $docLink ) ;
+  // message::add( 'JeedomConnect',  'Installation terminée.<br>Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement. Merci de lire <a href=\"https://jared-94.github.io/JeedomConnectDoc/fr_FR/\" target=\"_blank\">la doc</a>.') ;
+  $docLink = htmlentities('<a href="https://jared-94.github.io/JeedomConnectDoc/fr_FR/" target="_blank">https://jared-94.github.io/JeedomConnectDoc/fr_FR/</a>');
+  message::add( 'JeedomConnect',  'Mise à jour terminée. Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement -- pensez à lire la doc : ' . $docLink ) ;
 	
+  JeedomConnect::displayMessageInfo();
 
 }
 

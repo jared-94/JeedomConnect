@@ -30,8 +30,8 @@ function getIconModal(_options, _callback) {
       closeText: '',
       autoOpen: false,
       modal: true,
-			height: (jQuery(window).height() - 150),
-      width: 1500
+			height: jQuery(window).height() - 150,
+      width: jQuery(window).width() - 50 < 1500 ? jQuery(window).width() - 50 : 1500
     });
 		jQuery.ajaxSetup({
       async: false
@@ -122,13 +122,15 @@ function getSimpleModal(_options, _callback) {
   setSimpleModalData(_options.fields);
   $("#simpleModal").dialog({title: _options.title, buttons: {
     "Annuler": function() {
-      $(this).dialog("close");
+		$('#simpleModalAlert').hide();
+      	$(this).dialog("close");
     },
     Save: {
 			text: "Valider",
 			id: "saveSimple",
 			click: function() {
-	      var result = {};
+				$('#simpleModalAlert').hide();
+				var result = {};
 		  	if (_options.fields.find(i => i.type == "enable")) {
 			  	result.enable = $("#mod-enable-input").is(':checked');
 		  	}
@@ -154,12 +156,17 @@ function getSimpleModal(_options, _callback) {
 			  	result.expanded = $("#mod-expanded-input").is(':checked');
 		  	}
 		  	if (_options.fields.find(i => i.type == "widget")) {
+          if ( $("#mod-widget-input").val() == undefined){
+						$('#simpleModalAlert').showAlert({message: 'Choix obligatoire', level: 'danger'});
+						return;
+					}
 			  	result.widgetId = $("#mod-widget-input").val();
 			  	result.widgetName = $("#mod-widget-input option:selected").text();
 		  	}
 				if (_options.fields.find(i => i.type == "object")) {
-			  	result.object = $("#object-select  option:selected").val();
-		  	}
+					result.object = $("#object-select  option:selected").val();
+					result.name = $("#object-select  option:selected").text();
+				}
 				if (_options.fields.find(i => i.type == "swipeUp")) {
 					let choice = $("#swipeUp-select option:selected").val();
 					if (choice == 'cmd') {
@@ -167,7 +174,7 @@ function getSimpleModal(_options, _callback) {
 					} else if (choice == 'sc') {
 						result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
 					}
-		  	}
+				}
 				if (_options.fields.find(i => i.type == "swipeDown")) {
 					let choice = $("#swipeDown-select option:selected").val();
 					if (choice == 'cmd') {
@@ -175,13 +182,12 @@ function getSimpleModal(_options, _callback) {
 					} else if (choice == 'sc') {
 						result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
 					}
-		  	}
-	    if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-	        _callback(result);
-	    }
-	    $(this).dialog('close');
-
-	   }
+				}
+				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+					_callback(result);
+				}
+				$(this).dialog('close');
+	   		}
 		} }});
 
   $('#simpleModal').dialog('open');
@@ -192,230 +198,67 @@ function getSimpleModal(_options, _callback) {
 };
 
 
-function getImageModal(_options, _callback) {
-  if (!isset(_options)) {
-    return;
-  }
-  if ($("#imageModal").length == 0) {
-    $('body').append('<div id="imageModal"></div>');
-    $("#imageModal").dialog({
-	  title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
-      width: 450
-    });
-    jQuery.ajaxSetup({
-      async: false
-    });
-    $('#imageModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.imageModal.JeedomConnect');
-    jQuery.ajaxSetup({
-      async: true
-    });
-  }
-  setImageModalData(_options.selected);
+$('#selWidgetType').on('change', function() {
+	$( '#selWidgetDetail option' ).show();
+	//console.log("filter on type >>" + this.value);
+	var typeSelected = this.value ;
 
-  $("#imageModal").dialog({
-	  buttons: [{
-		text: "Annuler",
-		click: function() {
-			$(this).dialog("close");
+	$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
+
+});
+
+
+
+function htmlToIcon(html) {
+	let icon = {};
+	icon.source = html.attr("source");
+	icon.name = html.attr("name");
+	if (icon.source == 'fa') {
+		icon.prefix = html.attr("prefix");
+	}
+	if ((icon.source == 'jeedom' | icon.source == 'md' | icon.source == 'fa') & typeof(html.attr("style")) == "string") {
+		icon.color = html.attr("style").split(":")[1];
+	}
+	if (icon.source == 'jc' | icon.source == 'user') {
+		let tags = html.attr("style").split(";");
+		if (tags.includes('filter:grayscale(100%)')) {
+			icon.shadow = true;
 		}
-	  },
-	  {
-		text: "Valider",
-		id: "validateImg",
-		click: function() {
-			var result = $(".selected").attr('id');
-			if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-				_callback(result);
-			}
-			$(this).dialog('close');
+	}
+
+	return icon;
+}
+
+function iconToHtml(icon) {
+	if (icon == undefined) { return ''; }
+	if (typeof(icon) == "string") { //for old config structure
+		if (icon.startsWith('user_files')) {
+			icon = { source: 'user', name: icon.substring(icon.lastIndexOf("/") + 1) };
+		} else if (icon.lastIndexOf(".") > -1) {
+			icon = { source: 'jc', name: icon };
+		} else {
+			icon = { source: 'md', name: icon };
 		}
-	  }]
-	});
+	}
+	if (icon.source == 'jeedom') {
+		return `<i source="jeedom" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="icon ${icon.name}"></i>`;
+	} else if (icon.source == 'md') {
+		return `<i source="md" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="mdi mdi-${icon.name}"></i>`;
+	} else if (icon.source == 'fa') {
+		return `<i source="fa" name="${icon.name}" prefix="${icon.prefix || 'fa'}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="${icon.prefix || 'fa'} fa-${icon.name}"></i>`;
+	} else if (icon.source == 'jc') {
+		return `<img source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
+	} else if (icon.source == 'user') {
+		return `<img source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/user_files/${icon.name}">`;
+	}
+	return '';
+}
 
-
-
-  $('#imageModal').dialog('open');
-};
-
-
-
-
-function getWidgetModal(_options, _callback) {
-  if (!isset(_options)) {
-    return;
-  }
-	$("#widgetModal").dialog('destroy').remove();
-  if ($("#widgetModal").length == 0) {
-    $('body').append('<div id="widgetModal"></div>');
-
-    $("#widgetModal").dialog({
-	  title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
-      width: 1250,
-	  	height: 0.8*$(window).height()
-    });
-    jQuery.ajaxSetup({
-      async: false
-    });
-    $('#widgetModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetModal.JeedomConnect');
-    jQuery.ajaxSetup({
-      async: true
-    });
-  }
-  setWidgetModalData(_options);
-  $("#widgetModal").dialog({title: _options.title, buttons: {
-    "Annuler": function() {
-	  $('#widget-alert').hideAlert();
-      $(this).dialog("close");
-    },
-    "Valider": function() {
-      var result = _options.widget ? _options.widget : {};
-
-	  var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
-		let infoCmd = moreInfos.slice();
-		$('input[cmdType="info"]').each((i, el) => {
-			infoCmd.push({id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title });
-		});
-
-	  widgetConfig.options.forEach(option => {
-		if (option.category == "cmd") {
-			if ($("#"+option.id+"-input").attr('cmdId') == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			if ($("#"+option.id+"-input").attr('cmdId') != '') {
-				result[option.id] = {};
-				result[option.id].id = $("#"+option.id+"-input").attr('cmdId');
-				result[option.id].type = $("#"+option.id+"-input").attr('cmdType');
-				result[option.id].subType = $("#"+option.id+"-input").attr('cmdSubType');
-				result[option.id].minValue = $("#"+option.id+"-minInput").val() != '' ? $("#"+option.id+"-minInput").val() : undefined;
-				result[option.id].maxValue = $("#"+option.id+"-maxInput").val() != '' ? $("#"+option.id+"-maxInput").val() : undefined;
-				result[option.id].unit = $("#"+option.id+"-unitInput").val() != '' ? $("#"+option.id+"-unitInput").val() : undefined;
-				result[option.id].invert = $("#invert-"+option.id).is(':checked') || undefined;
-				result[option.id].confirm = $("#confirm-"+option.id).is(':checked') || undefined;
-				result[option.id].secure = $("#secure-"+option.id).is(':checked') || undefined;
-				Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
-			} else {
-				result[option.id] = undefined;
-			}
-		} else if (option.category == "scenario") {
-			if ($("#"+option.id+"-input").attr('scId') == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			if ($("#"+option.id+"-input").attr('scId') != '') {
-				result[option.id] = $("#"+option.id+"-input").attr('scId');
-			}
-		} else if (option.category == "string") {
-			if ($("#"+option.id+"-input").val() == '' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			result[option.id] = parseString($("#"+option.id+"-input").val(), infoCmd);
-		} else if (option.category == "binary") {
-			result[option.id] = $("#"+option.id+"-input").is(':checked');
-		} else if (option.category == "stringList") {
-			if ($("#"+option.id+"-input").val() == 'none' & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			if ($("#"+option.id+"-input").val() != 'none') {
-				if (option.id == 'subtitle') {
-					result[option.id] = parseString($("#subtitle-input-value").val(), infoCmd);
-				} else {
-					result[option.id] = $("#"+option.id+"-input").val();
-				}
-			} else {
-				result[option.id] = undefined;
-			}
-		} else if (option.category == "widgets") {
-			if (widgetsCat.length == 0 & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			result[option.id] = widgetsCat;
-		} else if (option.category == "cmdList") {
-			if (cmdCat.length == 0 & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			cmdCat.forEach(item => {
-				if (option.options.hasImage | option.options.hasIcon) {
-					item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
-					if (item.image == {}) { delete item.image; }
-				}
-				if (option.options.type == 'action') {
-					item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
-					item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
-				}
-			});
-			result[option.id] = cmdCat;
-
-		} else if (option.category == "ifImgs") {
-			if (imgCat.length == 0 & option.required) {
-				$('#widget-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			imgCat.forEach(item => {
-	      item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-	      item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-	      item.operator = $("#operator-"+item.index).val();
-	      item.value = $("#"+item.index+"-value").val();
-	    });
-			result[option.id] = imgCat;
-		}	else if (option.category == "img") {
-			let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
-			if (icon.source == undefined & option.required) {
-				$('#widget-alert').showAlert({message: "L'image est obligatoire", level: 'danger'});
-				throw {};
-			}
-			result[option.id] = icon.source != undefined ? icon : undefined;
-
-		}
-	  });
-
-	  result.type = $("#widgetsList-select").val();
-	  if ($("#room-input").val() != 'none') {
-		  result.room = $("#room-input").val();
-	  }
-	  result.enable = $("#enable-input").is(':checked');
-		result.blockDetail = $("#blockDetail-input").is(':checked');
-		if (moreInfos.length > 0) {
-			result.moreInfos = [];
-			moreInfos.forEach(info => {
-				info.name = $("#"+info.id+"-name-input").val();
-				result.moreInfos.push(info);
-			});
-
-		}
-
-    if ('function' == typeof(_callback)) {
-          _callback(result);
-        }
-		$('#widget-alert').hideAlert();
-        $(this).dialog('close');
-
-
-    }
-  }});
-  $('#widgetModal').dialog('open');
-};
-
-function parseString(string, infos) {
-	let result = string;
-  if (typeof(string) != "string") { return string; }
-  const match = string.match(/#.*?#/g);
-  if (!match) { return string; }
-  match.forEach(item => {
-    const info = infos.find(i => i.human == item);
-    if (info) {
-      result = result.replace(item, "#"+info.id+"#");
-    }
-  });
-  return result;
+function isIcon(icon) {
+	if (icon == undefined) { return false; }
+	if (typeof(icon) == "string") { return true; }
+	if (typeof(icon) == "object") {
+		if (icon.source != undefined & icon.name != undefined) { return true; }
+	}
+	return false;
 }

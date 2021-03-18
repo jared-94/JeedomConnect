@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Code venant du plugin gratuit auto Login. Il a été réadapter pour correspondre au plugin JeeMate
- *
  */
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
@@ -42,7 +39,14 @@ class apiHelper {
               }
             }
           }
-        }        
+          if ($item == 'moreInfos') {
+            foreach ($value as $i => $info) {
+              if ($info['type'] == 'cmd') {
+                array_push($return, $info['id']);
+              }
+            }
+          }
+        }
       }
     }
     return array_unique($return);
@@ -69,8 +73,10 @@ class apiHelper {
   public static function getScenarioList($config) {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
-      if ($widget['type'] == 'scenario') {
-        array_push($return, $widget['scenarioId']);
+      if (array_key_exists('type', $widget)) {
+        if ($widget['type'] == 'scenario') {
+          array_push($return, $widget['scenarioId']);
+        }
       }
     }
     return array_unique($return);
@@ -102,8 +108,8 @@ class apiHelper {
   public static function getObjectList($config) {
   	$return = array();
   	foreach ($config['payload']['rooms'] as $room) {
-  			if (array_key_exists("object", $room)) {
-  				array_push($return, $room['object']);
+  			if (array_key_exists("id", $room)) {
+  				array_push($return, $room['id']);
   			}
   	}
   	return array_unique($return);
@@ -219,8 +225,9 @@ class apiHelper {
    $configVersion = $eqLogic->getConfiguration('configVersion');
    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
    if ($configVersion != $config['payload']['configVersion']) {
-     log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
-     return $eqLogic->getConfig();
+      log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
+      //return $eqLogic->getConfig(true);
+      return $eqLogic->getGeneratedConfigFile();
     }
     return false;
  }
