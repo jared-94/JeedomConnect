@@ -229,6 +229,7 @@ $("#import-input").change(function() {
 			};
 		})(file);
 		reader.readAsText(file);
+    $(this).prop("value", "") ;
     }
 });
 

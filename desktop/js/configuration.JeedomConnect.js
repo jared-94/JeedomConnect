@@ -208,7 +208,7 @@ $('.jeedomConnect').off('click', '#listWidget').on('click', '#listWidget', funct
 
 
 $('.jeedomConnect').off('click', '#exportWidgetConf').on('click', '#exportWidgetConf', function() {
-    
+    $('.resultListWidget').hideAlert();
     var dt = new Date();
     var dd = String(dt.getDate()).padStart(2, '0');
     var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -243,11 +243,13 @@ $('.jeedomConnect').off('click', '#exportWidgetConf').on('click', '#exportWidget
 });
 
 $('.jeedomConnect').off('click', '#importWidgetConf').on('click', '#importWidgetConf', function() {
+    $('.resultListWidget').hideAlert();
     $("#importConfig-input").click();
+    // importFile();
 });
 
 $('.jeedomConnect').off('change', '#importConfig-input').on('change', '#importConfig-input', function() {
-    
+
     // var files = $(this).prop('files');
     var files = document.getElementById('importConfig-input').files;
     console.log(files);
@@ -287,6 +289,7 @@ $('.jeedomConnect').off('change', '#importConfig-input').on('change', '#importCo
         });
     }
     fr.readAsText(files.item(0));
+    $(this).prop("value", "") ;
     
 });
 
