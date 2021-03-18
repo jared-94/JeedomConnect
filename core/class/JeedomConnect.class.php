@@ -730,8 +730,11 @@ class JeedomConnect extends eqLogic {
 	public static function getPluginInfo(){
 
 		$pluginInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'version.json'), true);
+		$branchInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'branch.json'), true);
 
-		return $pluginInfo ;
+		$result = array_merge($pluginInfo, $branchInfo);
+
+		return $result ;
 
 	}
 
@@ -739,11 +742,16 @@ class JeedomConnect extends eqLogic {
 
 		$pluginInfo = self::getPluginInfo();
 
-		$apkVersionRequired = $pluginInfo['require'] ;
-		$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ;
+		if ( $pluginInfo['typeVersion'] != 'stable'){
+			$apkVersionRequired = $pluginInfo['require'] ;
+			$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ;
 
-		$lien = htmlentities('<a href="'.$apkUrl.'" target="_blank">téléchargement ici</a>') ;
-		if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en -->> ' . $lien ) ;
+			$lien = htmlentities('<a href="'.$apkUrl.'" target="_blank">téléchargement ici</a>') ;
+			if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en -->> ' . $lien ) ;
+		}
+		else{
+			message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.'. Si ce n\'est pas votre cas, pensez à mettre à jour votre application depuis le Play Store') ;
+		}
 
 	}
 
