@@ -742,15 +742,13 @@ class JeedomConnect extends eqLogic {
 
 		$pluginInfo = self::getPluginInfo();
 
-		if ( $pluginInfo['typeVersion'] != 'stable'){
-			$apkVersionRequired = $pluginInfo['require'] ;
-			$apkUrl = $pluginInfo['mainUrl'] .  $pluginInfo['typeVersion'] . '/' .  $pluginInfo['apkName'] ;
+		$apkVersionRequired = $pluginInfo['require'] ;
+		$playStoreUrl = htmlentities('<a href="' . $pluginInfo['storeUrl'] . '" target="_blank">Play Store</a>');
+		message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.'. Si nécessaire, pensez à mettre à jour votre application depuis le ' . $playStoreUrl ) ;
 
-			$lien = htmlentities('<a href="'.$apkUrl.'" target="_blank">téléchargement ici</a>') ;
-			if ( $apkUrl != '' && $apkVersionRequired != '' ) message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.' -- Disponible en -->> ' . $lien ) ;
-		}
-		else{
-			message::add( 'JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : '.$apkVersionRequired.'. Si ce n\'est pas votre cas, pensez à mettre à jour votre application depuis le Play Store') ;
+		if ( $pluginInfo['typeVersion'] == 'beta'){
+			$enrollmentLink = htmlentities('<a href="' . $pluginInfo['enrollment'] . '" target="_blank">en cliquant ici</a>');
+			message::add( 'JeedomConnect',  'Si ça n\'est pas déjà fait, pensez à vous inscrire dans le programme beta-testeur de l\'application sur le Store : ' . $enrollmentLink ) ;
 		}
 
 	}
