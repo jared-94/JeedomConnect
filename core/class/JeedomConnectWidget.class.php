@@ -261,7 +261,7 @@ class JeedomConnectWidget extends config {
 
 
 	public static function uploadWidgetConf($dataJson){
-		log::add(self::$_plugin_id, 'debug', 'uplading widgets conf');
+		log::add(self::$_plugin_id, 'debug', 'uploading widgets conf');
 
 		try{
 			$allConf = json_decode($dataJson, true);
