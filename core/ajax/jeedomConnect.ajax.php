@@ -126,6 +126,24 @@ try {
 		ajax::success(array('more' => $more ));
 	}
 
+	if (init('action') == 'exportWidgets') {
+		log::add('JeedomConnect', 'debug', 'ajax -- fx exportWidgets');
+		JeedomConnectWidget::exportWidgetConf();
+		ajax::success();
+	}
+
+	if (init('action') == 'uploadWidgets') {
+		log::add('JeedomConnect', 'debug', 'ajax -- fx uploadWidgets');
+		try{
+			JeedomConnectWidget::uploadWidgetConf(init('data'));
+			ajax::success("Import avec succès");
+		}
+		catch (Exception $e) {
+			ajax::success($e->getMessage());
+		}
+	}
+
+
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
