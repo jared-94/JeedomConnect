@@ -276,7 +276,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Configuration}}</label>
+								<label class="col-sm-3 control-label">{{Configuration de l'équipement}}</label>
 								<div class="col-sm-7 input-group" style="display:inline-flex;">
 									<span class="input-group-btn">
 										<input type="file" accept=".json" id="import-input" style="display:none;" >

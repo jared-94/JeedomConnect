@@ -207,6 +207,93 @@ $('.jeedomConnect').off('click', '#listWidget').on('click', '#listWidget', funct
 })
 
 
+$('.jeedomConnect').off('click', '#exportWidgetConf').on('click', '#exportWidgetConf', function() {
+    $('.resultListWidget').hideAlert();
+    var dt = new Date();
+    var dd = String(dt.getDate()).padStart(2, '0');
+    var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = dt.getFullYear();
+  
+    today = yyyy + mm + dd ;
+    var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+  
+    $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+            'action': 'exportWidgets'
+        },
+        dataType: 'json',
+        success: function( data ) {
+            if (data.state != 'ok') {
+                $('#div_alert').showAlert({
+                message: data.result,
+                level: 'danger'
+                });
+            }
+            else{
+                var a = document.createElement("a");
+                a.href = 'plugins/JeedomConnect/data/configs/export_Widgets.json';
+                a.download = 'export_Widgets_'+today+ '_'+time+'.json';
+                a.click();
+                a.remove();
+            }
+        }
+    });
+    
+});
+
+$('.jeedomConnect').off('click', '#importWidgetConf').on('click', '#importWidgetConf', function() {
+    $('.resultListWidget').hideAlert();
+    $("#importConfig-input").click();
+    // importFile();
+});
+
+$('.jeedomConnect').off('change', '#importConfig-input').on('change', '#importConfig-input', function() {
+
+    // var files = $(this).prop('files');
+    var files = document.getElementById('importConfig-input').files;
+    console.log(files);
+    if (files.length <= 0) {
+        return false;
+    }
+
+    var fr = new FileReader();
+
+    fr.onload = function(e) { 
+        
+        var dataUploaded = e.target.result;
+        // var dataUploaded = JSON.parse(e.target.result);
+        console.log('dataUploaded ', dataUploaded);
+    
+        $.post({
+            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+            data: {
+                action: 'uploadWidgets',
+                data : dataUploaded
+            },
+            dataType: 'json',
+            success: function( data ) {
+                if (data.state != 'ok') {
+                    $('#div_alert').showAlert({
+                    message: data.result,
+                    level: 'danger'
+                    });
+                }
+                else{
+                    $('.resultListWidget').showAlert({
+                        message: data.result,
+                        level: 'success'
+                    });
+                }
+            }
+        });
+    }
+    fr.readAsText(files.item(0));
+    $(this).prop("value", "") ;
+    
+});
+
+
 
 function getSimpleModal(_options, _callback) {
     if (!isset(_options)) {

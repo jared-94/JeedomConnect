@@ -259,4 +259,51 @@ class JeedomConnectWidget extends config {
 
 	}
 
+
+	public static function uploadWidgetConf($dataJson){
+		log::add(self::$_plugin_id, 'debug', 'uploading widgets conf');
+
+		try{
+			$allConf = json_decode($dataJson, true);
+
+			foreach ($allConf as $conf) {
+				log::add(self::$_plugin_id, 'debug', ' import key => ' . $conf['key'] . ' // value ==> ' . json_encode($conf['value']) );
+
+				if (! is_int($conf['value']) ) $conf['value'] = json_encode($conf['value']);
+
+				config::save($conf['key'], $conf['value'] , self::$_plugin_id ) ;
+			}
+
+			return true ;
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to upload config file : ' . $e->getMessage());
+			throw new Exception("Error avec l'import");			
+		}
+
+	}
+
+	public static function exportWidgetConf(){
+		$export_file = JeedomConnect::$_config_dir . "export_Widgets.json";
+		
+		$result = array();
+
+		$maxId = self::getMaxIndex();
+		array_push($result, array( 'key' => 'index::max', 'value' => intval($maxId) ) );
+		
+		$allWidgets = self::getAllConfigurations() ; 
+		
+		foreach ($allWidgets as $widget) {
+			array_push($result, array('key' => $widget['key'], 'value' => $widget['conf'])) ; 
+		}
+
+		try {
+			log::add('JeedomConnect', 'debug', 'Saving widgets conf file : ' . $export_file );
+			file_put_contents($export_file, json_encode($result, JSON_PRETTY_PRINT));
+		} 
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+		}
+	}
+
 }
