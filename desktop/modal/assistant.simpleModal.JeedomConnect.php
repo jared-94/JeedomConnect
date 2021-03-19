@@ -114,6 +114,14 @@ function setSimpleModalData(options) {
       if (option.value) {
         $('#object-select option[value="'+option.value+'"]').prop('selected', true);
       }
+
+      //hide all rooms already selected for this equipment
+      if ( $( "#roomUL" ).length ) {
+        $('ul#roomUL li').each(function(i){
+           $('#object-select option[value="'+$(this).data("id")+'"]').css('display','none');
+        });
+      }
+      
     } else if (option.type == "swipeUp" | option.type == "swipeDown") {
       swipe = `<li><div class='form-group'>
 			   <label class='col-xs-3' >${option.type == 'swipeUp' ? "Swipe Up" : "Swipe Down"}</label>
