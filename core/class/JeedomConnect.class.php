@@ -168,6 +168,12 @@ class JeedomConnect extends eqLogic {
 					array_push($roomIdList , $widget['room'] ) ;
 				}
 
+
+				if ( $widget['type'] == 'choices-list'){
+					$choices = self::getChoiceData($widget['listAction']['id'] ) ;
+					$widget['choices'] = $choices;
+				}
+
 				$jsonConfig['payload']['widgets'][$key] = $widget;
 				$maxIndex = $key;
 
@@ -246,6 +252,45 @@ class JeedomConnect extends eqLogic {
 		return $jsonConfig;
 
 	}
+
+	public static function getChoiceData($cmdId){
+		$choice = array();
+	
+		$cmd = cmd::byId($cmdId);
+	
+		if (! is_object($cmd)){
+			log::add('JeedomConnect', 'warning', $cmdId. ' is not a valid cmd Id');
+			return $choice;
+		}
+		
+		$cmdConfig = $cmd->getConfiguration('listValue');
+		
+		if ($cmdConfig !=  '') {
+			log::add('JeedomConnect', 'debug', 'value of listValue ' . json_encode($cmdConfig));
+			
+			foreach (explode(';', $cmdConfig) as $list) {
+				$selectData = explode('|', $list); 
+				
+				if ( count($selectData) == 1 ) {
+					$id = $value = $selectData[0] ;
+				}
+				else{
+					$id = $selectData[0] ;
+					$value = $selectData[1] ;
+				}
+	
+				$choice_info = array(
+				'id' => $id,
+				'value' => $value
+				);
+				array_push($choice, $choice_info);
+			}
+		}
+	
+		log::add('JeedomConnect', 'debug', 'final choices list => '.json_encode($choice) );
+		return $choice;
+	
+	  }
 
 	public function getJeedomObject($id){
 
