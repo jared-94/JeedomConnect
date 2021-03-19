@@ -66,23 +66,23 @@ while (true) {
   $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config);
   if ($newConfig != false) {
     $config = $newConfig;
-    $result = array(
-      'datetime' => time(),
-      'result' => array()
-    );
-    array_push($result['result'], array(
-      'name' => 'config::setConfig',
-      'option' => $config
-    ));
-    log::add('JeedomConnect', 'debug', "eventServer send new config : " . json_encode($result));
-    sse(json_encode($result));
+    log::add('JeedomConnect', 'debug', "eventServer send new config : " . json_encode($newConfig));
+    sse(json_encode(array($newConfig)));
     sleep(1);
   }
 
   $events = event::changes($lastReadTimestamp);
-  $data = getData($events);
+  $lastReadTimestamp = time();
+  $data = apiHelper::getEvents($events, $config);
 
-  if (count($data['result']) > 0) {
+  $sendInfo = false;
+  foreach ($data as $res) {
+    if (count($res['payload']) > 0) {
+      $sendInfo = true;
+    }
+  }
+
+  if ($sendInfo) {
     //log::add('JeedomConnect', 'debug', "eventServer send ".json_encode($data));
     sse( json_encode($data) );
     $step = 0;
@@ -97,35 +97,4 @@ while (true) {
     }
   }
   sleep(1);
-}
-
-
-function getData($events) {
-  global $eqLogic, $config;
-  $infoIds = apiHelper::getInfoCmdList($config);
-  $scIds = apiHelper::getScenarioList($config);
-  $objIds = apiHelper::getObjectList($config);
-  $result = array(
-    'datetime' => $events['datetime'],
-    'result' => array()
-  );
-
-  foreach ($events['result'] as $event) {
-    if ($event['name'] == 'jeeObject::summary::update') {
-      //if (in_array($event['option']['object_id'], $objIds)) {
-        array_push($result['result'], $event);
-      //}
-    }
-    if ($event['name'] == 'scenario::update') {
-      if (in_array($event['option']['scenario_id'], $scIds)) {
-        array_push($result['result'], $event);
-      }
-    }
-    if ($event['name'] == 'cmd::update') {
-      if (in_array($event['option']['cmd_id'], $infoIds) ) {
-        array_push($result['result'], $event);
-      }
-    }
-  }
-  return $result;
 }
