@@ -268,6 +268,18 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							</div>
 
 							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Mot de passe}}
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Vous avez la possibilité d'utiliser un mot de passe alphanumérique pour confirmer une action<br>Il est nécessaire de le définir ici pour s'en servir dans l'application."></i>
+									</sup>
+								</label>
+								<div class="col-sm-6 pass_show">
+									<input id="actionPwd" type="password" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="pwdAction" placeholder="{{Mot de passe pour confirmer une action sur l'application}}"/>
+									<span toggle="#password-field" class="eye fa fa-fw fa-eye field_icon toggle-password"></span>
+								</div>
+							</div>
+
+							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Assistant}}</label>
 								<div class="col-sm-7">
 									<a class="btn btn-success" id="assistant-btn"><i class="fa fa-wrench"></i> {{Configurer l'appareil}}

@@ -582,11 +582,14 @@ function setWidgetModalData(options) {
          if (options.widget[option.id].type == 'action') {
            $("#confirm-div-"+option.id).css('display', '');
            $("#secure-div-"+option.id).css('display', '');
+           $("#pwd-div-"+option.id).css('display', '');
            $("#confirm-"+option.id).prop('checked', options.widget[option.id].confirm ? "checked" : "");
            $("#secure-"+option.id).prop('checked', options.widget[option.id].secure ? "checked" : "");
+           $("#pwd-"+option.id).prop('checked', options.widget[option.id].pwd ? "checked" : "");
          } else {
            $("#confirm-div-"+option.id).css('display', 'none');
            $("#secure-div-"+option.id).css('display', 'none');
+           $("#pwd-div-"+option.id).css('display', 'none');
          }
          if (options.widget[option.id].subType == 'slider' | options.widget[option.id].subType == 'numeric') {
            $("#"+option.id+"-minInput").css('display', '');
@@ -728,6 +731,10 @@ function refreshAddWidgets() {
             </td><td>
                     <div style="width:50px; display:none;" id="secure-div-${option.id}">
                     <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
+            </td>
+            <td>
+                    <div style="width:50px; display:none;" id="pwd-div-${option.id}">
+                    <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
             </td>
             <td>
                 <input style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
@@ -908,9 +915,11 @@ function refreshCmdData(name, id, value) {
      if (data.result.type == 'action') {
        $("#confirm-div-"+name).css('display', '');
        $("#secure-div-"+name).css('display', '');
+       $("#pwd-div-"+name).css('display', '');
      } else {
        $("#confirm-div-"+name).css('display', 'none');
        $("#secure-div-"+name).css('display', 'none');
+       $("#pwd-div-"+name).css('display', 'none');
      }
      if (data.result.subType == 'slider' | data.result.subType == 'numeric') {
        $("#"+name+"-minInput").css('display', '');
@@ -1011,7 +1020,8 @@ function refreshCmdListOption(optionsJson) {
     if (options.type == 'action') {
         curOption += `<div style="text-align:end;">
           <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${item.id}">
-          <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  ></div>`;
+          <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  >
+          <i class='mdi mdi-numeric'></i><input type="checkbox" style="margin-left:5px;" id="pwd-${item.id}"  ></div>`;
 
     }
     if (options.hasIcon | options.hasImage) {
@@ -1036,6 +1046,8 @@ function refreshCmdListOption(optionsJson) {
   $("#confirm-"+item.id).prop('checked', confirm);
   var secure = item.secure ? "checked": "";
   $("#secure-"+item.id).prop('checked', secure);
+  var pwd = item.pwd ? "checked": "";
+  $("#pwd-"+item.id).prop('checked', pwd);
   getCmd({
     id: item.id,
     success: function (data) {
@@ -1054,6 +1066,7 @@ function saveCmdList() {
     item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
     item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
     item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
+    item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
   });
 }
 
@@ -1433,6 +1446,7 @@ function downWidgetOption(id) {
       result[option.id].invert = $("#invert-"+option.id).is(':checked') || undefined;
       result[option.id].confirm = $("#confirm-"+option.id).is(':checked') || undefined;
       result[option.id].secure = $("#secure-"+option.id).is(':checked') || undefined;
+      result[option.id].pwd = $("#pwd-"+option.id).is(':checked') || undefined;
       Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
     } else {
       result[option.id] = undefined;
@@ -1486,6 +1500,7 @@ function downWidgetOption(id) {
       if (option.options.type == 'action') {
         item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
         item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
+        item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
       }
     });
     result[option.id] = cmdCat;
@@ -1818,3 +1833,15 @@ $('#widgetTypeSelect').on('change', function() {
   $('.eqLogicThumbnailContainer').packery();
 
 });
+
+
+  $("body").on('click', '.toggle-password', function() {
+    $(this).toggleClass("fa-eye fa-eye-slash");
+    var input = $("#actionPwd");
+    if (input.attr("type") === "password") {
+      input.attr("type", "text");
+    } else {
+      input.attr("type", "password");
+    }
+  
+  });
