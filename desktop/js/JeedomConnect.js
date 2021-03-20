@@ -1835,13 +1835,13 @@ $('#widgetTypeSelect').on('change', function() {
 });
 
 
-  $("body").on('click', '.toggle-password', function() {
-    $(this).toggleClass("fa-eye fa-eye-slash");
-    var input = $("#actionPwd");
-    if (input.attr("type") === "password") {
-      input.attr("type", "text");
-    } else {
-      input.attr("type", "password");
-    }
-  
-  });
+$('body').off('click', '.toggle-password').on('click', '.toggle-password', function() {
+  $(this).toggleClass("fa-eye fa-eye-slash");
+  var input = $("#actionPwd");
+  if (input.attr("type") === "password") {
+    input.attr("type", "text");
+  } else {
+    input.attr("type", "password");
+  }
+
+});
