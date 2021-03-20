@@ -249,7 +249,7 @@ function iconToHtml(icon) {
 	} else if (icon.source == 'jc') {
 		return `<img source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
 	} else if (icon.source == 'user') {
-		return `<img source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/user_files/${icon.name}">`;
+		return `<img source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="${userImgPath}${icon.name}">`;
 	}
 	return '';
 }

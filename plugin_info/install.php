@@ -22,6 +22,11 @@ function JeedomConnect_install() {
 
   JeedomConnect::displayMessageInfo();
 
+  if (config::byKey('userImgPath',   'JeedomConnect') == '') {
+    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/' , 'JeedomConnect')
+  }
+  
+
 }
 
 function JeedomConnect_update() {
@@ -38,6 +43,10 @@ function JeedomConnect_update() {
 	
   JeedomConnect::displayMessageInfo();
 
+  if (config::byKey('userImgPath',   'JeedomConnect') == '') {
+    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/' , 'JeedomConnect')
+  }
+  
 }
 
 function JeedomConnect_remove() {

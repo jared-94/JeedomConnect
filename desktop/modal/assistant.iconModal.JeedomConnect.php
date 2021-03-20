@@ -25,6 +25,29 @@ sendVarToJS('selectedIcon', [
   'shadow' => init('shadow', 0)
 ]);
 
+function get_all_files($dir){
+  $result = array();
+  $dh = new DirectoryIterator($dir);   
+  
+  foreach ($dh as $item) {
+      if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
+          if ($item->isDir()) {
+            $tmp = get_all_files(  "$dir/$item" );
+            $result = array_merge($result , $tmp );
+          } 
+          else {
+              array_push($result, array('path' =>  preg_replace('#/+#','/', $item->getPathname() )  , 'name' => $item->getFilename() ) );
+          }
+      }
+  }
+  return $result;
+}
+
+$customPath = config::byKey('userImgPath', 'JeedomConnect') ;
+
+$myFiles = get_all_files($customPath);
+
+
 ?>
 
 <div style="display: none;" id="div_iconSelectorAlert"></div>
@@ -186,14 +209,11 @@ sendVarToJS('selectedIcon', [
 			  <div id="div_imageGallery" source="user">
           <?php
           $div = '';
-          $dir = __DIR__ . '/../../data/img/user_files';
-          $files = scandir($dir);
-
-          foreach ($files as $key => $name) {
-            if ($name == "." || $name == "..") { continue; }
+          
+          foreach ($myFiles as $img) {
             $div .= '<div class="divIconSel divImgSel">';
-            $div .= '<div class="cursor iconSel"><img source="user" name="'.$name.'" class="img-responsive" src="plugins/JeedomConnect/data/img/user_files/'. $name . '"/></div>';
-            $div .= '<div class="iconDesc">' . substr($name, 0, 15) . '</div>';
+            $div .= '<div class="cursor iconSel"><img source="user" name="'.str_replace($customPath, '', $img['path']).'" class="img-responsive" src="' . $img['path'] . '"/></div>';
+            $div .= '<div class="iconDesc">' . $img['name']. '</div>';
             $div .= '</div>';
           }
           echo $div;
@@ -229,7 +249,7 @@ sendVarToJS('selectedIcon', [
 $('#bt_uploadImg').fileupload({
     add: function (e, data) {
 			let currentPath = $('#bt_uploadImg').attr('data-path');
-			data.url = 'core/ajax/jeedom.ajax.php?action=uploadImageIcon&filepath=plugins/JeedomConnect/data/img/user_files/';
+			data.url = 'core/ajax/jeedom.ajax.php?action=uploadImageIcon&filepath='+userImgPath;
       data.submit();
     },
 		done: function(e, data) {
@@ -239,7 +259,7 @@ $('#bt_uploadImg').fileupload({
 			}
       var name = data.result.result.filepath.replace(/^.*[\\\/]/, '');
       div = '<div class="divIconSel divImgSel">';
-      div += '<div class="cursor iconSel"><img class="img-responsive" src="plugins/JeedomConnect/data/img/user_files/' + name + '" /></div>';
+      div += '<div class="cursor iconSel"><img class="img-responsive" src="' + userImgPath + name + '" /></div>';
       div += '<div class="iconDesc">' + name + '</div>';
       div += '</div>';
       $("#div_imageGallery[source='user']").append(div);
@@ -303,6 +323,7 @@ $('#in_searchIconSelector').on('keyup',function() {
 $('#bt_resetSearchIcon').on('click', function() {
 	$('#in_searchIconSelector').val('').keyup()
 })
+
 
 $('#iconModal ul li a[href="#md"]').click(function() {
   $('.tab-pane[source="jeedom"]').hide();

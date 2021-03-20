@@ -215,6 +215,9 @@ class JeedomConnect extends eqLogic {
 		//add equipement password
 		$pwd = $this->getConfiguration('pwdAction' , null) ;
 		$jsonConfig['payload']['password'] = $pwd ;
+		
+		//custom path
+		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect') ;
 
 
 		// add room if not exist in the config file but a widget is linked to it

@@ -110,6 +110,25 @@ $beta = $pluginVersion['typeVersion'] == 'beta' ;
       </div>
 
       <br/>
+      <!-- CUSTOM ZONE -->
+      <div class="alert alert-warning" style="text-align:center;">
+          {{Customisation}}
+			</div>
+      
+      <div class="form-group">
+        <label class="col-lg-6 control-label">{{Chemin pour les images perso}}
+          <sup>
+              <i class="fas fa-question-circle floatright" title="Chemin où sont stockés vos images personnelles<br/>Indiquez-le SANS la racine de votre installation jeedom [/var/www/html/]<br/>Par exemple, renseignez 'data/img/' pour le répertoire '/var/www/html/data/img/'"></i>
+          </sup>
+        </label>
+        <div class="col-lg-3">
+          <input class="configKey form-control" type="string" data-l1key="userImgPath"
+					         placeholder="<?=config::byKey('userImgPath', 'JeedomConnect');?>" />
+        </div>
+      </div>
+
+
+      <br/>
       <!-- BEGIN DANGER ZONE -->
       <div class="alert alert-danger" style="text-align:center;">
           <i class="fas fa-skull-crossbones"></i>&nbsp;&nbsp;&nbsp;&nbsp;{{Attention vous entrez en zone de Dangers !}}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-skull-crossbones"></i>

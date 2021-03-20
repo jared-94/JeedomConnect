@@ -2,6 +2,10 @@
 if (!isConnect('admin')) {
 	throw new Exception('{{401 - Accès non autorisé}}');
 }
+
+$customPath = config::byKey('userImgPath', 'JeedomConnect') ;
+sendVarToJS('userImgPath', $customPath );
+
 // Déclaration des variables obligatoires
 $plugin = plugin::byId('JeedomConnect');
 sendVarToJS('eqType', $plugin->getId());
