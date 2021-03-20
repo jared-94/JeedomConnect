@@ -217,7 +217,7 @@ sendVarToJS('selectedIcon', [
 
     <input class="form-control" placeholder="{{Rechercher}}" id="in_searchIconSelector">
   <div class="input-group-btn">
-    <a id="bt_resetSearch" class="btn roundedRight" style="width:30px; margin-top:32px;"><i class="fas fa-times"></i> </a>
+    <a id="bt_resetSearchIcon" class="btn roundedRight" style="width:30px; margin-top:32px;"><i class="fas fa-times"></i> </a>
   </div>
 </div>
 
@@ -300,7 +300,7 @@ $('#in_searchIconSelector').on('keyup',function() {
 	}
 })
 
-$('#bt_resetSearch').on('click', function() {
+$('#bt_resetSearchIcon').on('click', function() {
 	$('#in_searchIconSelector').val('').keyup()
 })
 
