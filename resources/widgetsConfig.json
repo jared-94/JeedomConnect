@@ -618,7 +618,7 @@
 	{
 		"type": "widgets-summary",
 		"name": "Résumé",
-		"img": "information.png",
+		"img": "summary.png",
 		"description": "Affiche un résumé de plusieurs widgets",
 		"options": [
 			{
@@ -646,7 +646,7 @@
 	{
 		"type": "room",
 		"name": "Résumé de pièce",
-		"img": "information.png",
+		"img": "room_summary.png",
 		"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
 		"options": [
 			{
