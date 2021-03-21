@@ -314,7 +314,22 @@ class JeedomConnect extends eqLogic {
 		log::add('JeedomConnect', 'debug', 'final choices list => '.json_encode($choice) );
 		return $choice;
 	
-	  }
+	}
+
+
+	public function getWidgetId(){
+		$ids = array();
+
+		$conf = self::getConfig(true);
+
+		foreach ($conf['payload']['widgets'] as $item) {
+			array_push( $ids, $item['id']);
+		}
+
+		log::add('JeedomConnect', 'debug', ' fx  getWidgetId -- result final ' . json_encode($ids) );
+		return $ids; 
+
+	}
 
 	public function getJeedomObject($id){
 

@@ -1647,46 +1647,87 @@ function duplicateWidget(){
 
 function removeWidget(){
   var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>" ;
-  getSimpleModal({title: "Confirmation", fields:[{type: "string",
-    value:"Voulez-vous supprimer ce widget ?<br>"+ warning +" La suppression retire ce widget de l'ensemble des équipements "+ warning }] }, function(result) {
-    $('#widget-alert').hideAlert();
-    widgetId = $("#widgetOptions").attr('widget-id') ;
+  
+  var widgetId = $("#widgetOptions").attr('widget-id') ;
 
-    $.ajax({
-      type: "POST",
-      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-      data: {
-        action: "removeWidgetConfig",
-        eqId: widgetId
-      },
-      dataType: 'json',
-      error: function(error) {
-        $('#div_alert').showAlert({message: error.message, level: 'danger'});
-      },
-      success: function(data) {
-        if (data.state != 'ok') {
-          $('#div_alert').showAlert({
-            message: data.result,
-            level: 'danger'
-          });
+  $.post({
+		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+		data: {
+			action: 'getWidgetExistance',
+      id: widgetId
+		},
+		cache: false,
+		dataType: 'json',
+    async: false,
+		success: function( data ) {
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({
+				  message: data.result,
+				  level: 'danger'
+				});
+			}
+			else{
+				var allName = data.result.names;
+        
+        var msg = '' ;
+        if (allName.length == 0 ||  allName == '' || allName == undefined  ){
+          msg = '(Ce widget n\'est utilisé dans aucun équipement)';
         }
         else{
-          var vars = getUrlVars()
-          var url = 'index.php?'
-          for (var i in vars) {
-            if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-              url += i + '=' + vars[i].replace('#', '') + '&'
-            }
+          if (allName.length == 1 ){
+            var eq = 'de l\'équipement';
           }
-          modifyWithoutSave = false
-          url += '&saveSuccessFull=1'
-          loadPage(url)
-        }
-      }
-    })
-  });
-}
+          else{
+            var eq = 'des équipements';
+          }
 
+          msg = warning + '  La suppression retirera ce widget '+ eq +' suivant : ' + allName.join(', ') + '  '  + warning ;
+        }
+        
+        getSimpleModal({title: "Confirmation", fields:[{type: "string",
+          value:  "Voulez-vous supprimer ce widget ?<br/><br/>"+ msg  }] }, function(result) {
+          $('#widget-alert').hideAlert();
+          widgetId = $("#widgetOptions").attr('widget-id') ;
+
+          $.ajax({
+            type: "POST",
+            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+            data: {
+              action: "removeWidgetConfig",
+              eqId: widgetId
+            },
+            dataType: 'json',
+            error: function(error) {
+              $('#div_alert').showAlert({message: error.message, level: 'danger'});
+            },
+            success: function(data) {
+              if (data.state != 'ok') {
+                $('#div_alert').showAlert({
+                  message: data.result,
+                  level: 'danger'
+                });
+              }
+              else{
+                var vars = getUrlVars()
+                var url = 'index.php?'
+                for (var i in vars) {
+                  if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
+                    url += i + '=' + vars[i].replace('#', '') + '&'
+                  }
+                }
+                modifyWithoutSave = false
+                url += '&saveSuccessFull=1'
+                loadPage(url)
+              }
+            }
+          })
+        });
+        
+			}
+		}
+	});
+
+}
 
 
 function getWidgetPath(id) {

@@ -236,6 +236,25 @@ try {
 		}
 	}
 
+	if (init('action') == 'getWidgetExistance') {
+		$myId = init('id');
+		$arrayName = array() ;
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$eqIds = $eqLogic->getWidgetId();
+			log::add('JeedomConnect', 'debug', 'all ids for eq ['.$eqLogic->getName().'] : ' . json_encode($eqIds) );
+			if ( in_array( $myId, $eqIds) ){
+				log::add('JeedomConnect', 'debug', $myId . ' exist in ['.$eqLogic->getName().']' );
+				array_push($arrayName, $eqLogic->getName() );
+			}
+			else{
+				log::add('JeedomConnect', 'debug', $myId . ' does NOT exist in ['.$eqLogic->getName().']' );
+			}
+		}
+
+		log::add('JeedomConnect', 'debug', 'ajax -- all name final -- ' . json_encode($arrayName) ) ;
+		ajax::success( array('names' => $arrayName ) );
+
+	}
 
 	if (init('action') == 'saveConfig') {
     	$config = init('config');
