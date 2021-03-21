@@ -180,35 +180,50 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		// remove duplicate id
-		$widgetIdInGroup = array_unique($widgetIdInGroup);
-		// check if for each widgetId found in a group, the widget itself has his configuration
-		// already detailed in the config file, if not, then add it
-		foreach ($widgetIdInGroup as $item) {
-			if ( ! in_array($item, $widgetList)){
-				log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
-				$newWidgetData = JeedomConnectWidget::getWidgets( $item );
+		while ( count($widgetIdInGroup) > 0 ) {
+			$moreWidget = array();
+			// remove duplicate id
+			$widgetIdInGroup = array_unique($widgetIdInGroup);
+			// check if for each widgetId found in a group, the widget itself has his configuration
+			// already detailed in the config file, if not, then add it
+			foreach ($widgetIdInGroup as $item) {
+				if ( ! in_array($item, $widgetList)){
+					log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
+					$newWidgetData = JeedomConnectWidget::getWidgets( $item );
 
-				if ( empty( $newWidgetData )  ) {
-					// ajax::error('Erreur - pas d\'équipement trouvé');
-				}
-				else{
-					$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
-					$newWidgetConf = json_decode($newWidgetJC, true);
-
-					$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
-					$newWidgetConf['parentId'] = null ;
-					$newWidgetConf['index'] = 999999999 ;
-
-					if (isset($newWidgetConf['room'])){
-						array_push($roomIdList , $newWidgetConf['room'] ) ;
+					if ( empty( $newWidgetData )  ) {
+						// ajax::error('Erreur - pas d\'équipement trouvé');
 					}
+					else{
+						$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
+						$newWidgetConf = json_decode($newWidgetJC, true);
 
-					$maxIndex = $maxIndex +1;
-					$jsonConfig['payload']['widgets'][$maxIndex] = $newWidgetConf;
+						$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
+						$newWidgetConf['parentId'] = null ;
+						$newWidgetConf['index'] = 999999999 ;
 
+						if (isset($newWidgetConf['room'])){
+							array_push($roomIdList , $newWidgetConf['room'] ) ;
+						}
+
+						if (isset($newWidgetConf['widgets'])){
+							foreach ($newWidgetConf['widgets'] as $itemWidget) {
+								array_push($moreWidget, intval($itemWidget['id']) );
+							}
+						}
+
+						$maxIndex = $maxIndex +1;
+						$jsonConfig['payload']['widgets'][$maxIndex] = $newWidgetConf;
+
+						array_push($widgetList, $newWidgetConf['id'] );
+					}
+					
 				}
 			}
+
+			if ( count($moreWidget) >0 ) log::add('JeedomConnect', 'debug', 'more widgets children to add -- ' . json_encode($moreWidget) ) ;
+			$widgetIdInGroup = $moreWidget ;
+		
 		}
 
 
