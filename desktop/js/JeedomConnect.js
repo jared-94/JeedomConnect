@@ -1886,3 +1886,25 @@ $('body').off('click', '.toggle-password').on('click', '.toggle-password', funct
   }
 
 });
+
+var originalPwd= null;
+$("#actionPwd").focusin(function(){
+  if (originalPwd === null) {
+    originalPwd = $(this).val();
+  }
+});
+
+
+function saveEqLogic(_eqLogic) {
+  if (!isset(_eqLogic.configuration)) {
+    _eqLogic.configuration = {};
+  }
+
+  currentPwd = $("#actionPwd").val();
+  if (originalPwd !== null && originalPwd != currentPwd) {
+    _eqLogic.configuration.pwdChanged = 'true';
+  }
+  
+  return _eqLogic;
+
+}

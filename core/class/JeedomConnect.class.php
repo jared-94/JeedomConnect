@@ -683,6 +683,25 @@ class JeedomConnect extends eqLogic {
     }
 
     public function postSave() {
+
+		if ($this->getConfiguration('pwdChanged') == 'true' ) {
+			$confStd = $this->getConfig();
+			$configVersion = $confStd['payload']['configVersion'] + 1 ;
+			log::add('JeedomConnect', 'debug', ' saving new conf after password changed -- updating configVersion to ' . $configVersion);
+
+			//update configVersion in the file
+			$confStd['payload']['configVersion'] =  $configVersion ;
+			$this->saveConfig($confStd);
+
+			//update configVersion in the equipment configuration
+			$this->setConfiguration('configVersion', $configVersion);
+			$this->setConfiguration('pwdChanged',  'false') ;
+			$this->save();
+
+			$this->getConfig(true, true) ;
+
+		}
+
     }
 
     public function preUpdate() {
