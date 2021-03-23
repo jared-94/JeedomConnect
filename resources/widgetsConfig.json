@@ -2467,11 +2467,31 @@
 					"description": "Conserver le dernier message envoyé pour ne pas avoir à le retaper"
 				},
 				{
-					"id": "image",
-					"name": "Image",
+					"id": "sendImage",
+					"name": "Image Envoyer",
 					"required": false,
 					"category": "img",
 					"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
 				}
 			]
 		},

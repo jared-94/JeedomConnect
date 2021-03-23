@@ -191,7 +191,7 @@ switch ($method) {
 		$jsonrpc->makeSuccess($result);
 		break;
 	case 'GET_HISTORY':
-			$jsonrpc->makeSuccess(json_encode(apiHelper::getHistory($params['id'], $params['options'])));
+			$jsonrpc->makeSuccess(apiHelper::getHistory($params['id'], $params['options']));
 			break;
   case 'GET_GEOFENCES':
     $result = apiHelper::getGeofencesData($eqLogic);
