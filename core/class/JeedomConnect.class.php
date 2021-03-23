@@ -577,7 +577,7 @@ class JeedomConnect extends eqLogic {
 			return;
 		}
 		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
-		if (!is_executable($binFlie)) {
+		if (!is_executable($binFile)) {
 			chmod($binFile, 0555);
 		}
 		$cmd = $binFile . " -data='". json_encode($postData) ."' 2>&1";
@@ -1089,8 +1089,8 @@ class JeedomConnectCmd extends cmd {
 					'cmdId' => $this->getId(),
 					'title' => str_replace("'", "&#039;", $_options['title']),
 					'message' => str_replace("'", "&#039;", $_options['message']),
-					'answer' => $_options['answer'],
-					'timeout' => $_options['timeout']
+					'answer' => $_options['answer'] ?? null,
+					'timeout' => $_options['timeout'] ?? null
 				)
 			);
 			if (isset($_options["files"])) {
