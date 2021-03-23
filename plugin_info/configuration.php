@@ -112,7 +112,7 @@ $beta = $pluginVersion['typeVersion'] == 'beta' ;
       <br/>
       <!-- CUSTOM ZONE -->
       <div class="alert alert-warning" style="text-align:center;">
-          {{Customisation}}
+          {{Personnalisation}}
 			</div>
       
       <div class="form-group">

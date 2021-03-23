@@ -1342,7 +1342,6 @@
 				"required": true,
 				"category": "cmd",
 				"type": "info",
-				"subtype": "binary",
 				"description": "Etat de la fenêtre"
 			},
 			{
