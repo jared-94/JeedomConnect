@@ -20,6 +20,8 @@ if (!isConnect('admin')) {
 
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
+$customPath = config::byKey('userImgPath', 'JeedomConnect') ;
+sendVarToJS('userImgPath', $customPath );
 
 
 include_file('desktop', 'notifs.JeedomConnect', 'js', 'JeedomConnect');
@@ -77,7 +79,7 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
         </div>
       </div>
     </div>
-  
+
   </div>
 
 </div>

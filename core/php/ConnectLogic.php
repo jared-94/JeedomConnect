@@ -77,14 +77,14 @@ class ConnectLogic implements MessageComponentInterface
           }
         }
       }
-		$this->lookForNewConfig();
-      if ($this->hasAuthenticatedClients) {
-        // Read events from Jeedom
-        $events = \event::changes($this->lastReadTimestamp);
+			$this->lookForNewConfig();
+    	if ($this->hasAuthenticatedClients) {
+      	// Read events from Jeedom
+      	$events = \event::changes($this->lastReadTimestamp);
 				$this->lastReadTimestamp = time();
-        $this->broadcastEvents($events);
-      }
-    }
+      	$this->broadcastEvents($events);
+    	}
+  	}
 
 
     /**
@@ -318,7 +318,7 @@ class ConnectLogic implements MessageComponentInterface
 				$from->sendAllSc = false;
 				break;
 			case 'GET_HISTORY':
-				$this->sendHistory($from, $msg['payload']['id'], $msg['payload']['options']);
+				$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
@@ -413,61 +413,13 @@ class ConnectLogic implements MessageComponentInterface
 	private function broadcastEvents($events) {
 		foreach ($this->authenticatedClients as $client) {
 			$config = $this->configList[$client->apiKey];
-			$result_cmd = array(
-				'type' => 'CMD_INFO',
-				'payload' => array()
-			);
-			$infoIds = \apiHelper::getInfoCmdList($config);
-			$result_sc = array(
-				'type' => 'SC_INFO',
-				'payload' => array()
-			);
-			$scIds = \apiHelper::getScenarioList($config);
-			$result_obj = array(
-				'type' => 'OBJ_INFO',
-				'payload' => array()
-			);
-			$objIds = \apiHelper::getObjectList($config);
+			$eventsRes = \apiHelper::getEvents($events, $config);
 
-			foreach ($events['result'] as $event) {
-				if ($event['name'] == 'jeeObject::summary::update') {
-					array_push($result_obj['payload'], $event['option']);
+			foreach ($eventsRes as $res) {
+				if (count($res['payload']) > 0) {
+					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
+					$client->send(json_encode($res));
 				}
-				if ($event['name'] == 'scenario::update') {
-					if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
-						$sc_info = array(
-							'id' => $event['option']['scenario_id'],
-							'status' => $event['option']['state'],
-							'lastLaunch' => strtotime($event['option']['lastLaunch'])
-						);
-						if (array_key_exists('isActive', $event['option'])) {
-							$sc_info['active'] = $event['option']['isActive'];
-						}
-						array_push($result_sc['payload'], $sc_info);
-					}
-				}
-				if ($event['name'] == 'cmd::update') {
-					if (in_array($event['option']['cmd_id'], $infoIds) ) {
-						$cmd_info = array(
-							'id' => $event['option']['cmd_id'],
-							'value' => $event['option']['value'],
-							'modified' => strtotime($event['option']['valueDate'])
-							);
-						array_push($result_cmd['payload'], $cmd_info);
-					}
-				}
-			}
-			if (count($result_cmd['payload']) > 0) {
-				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_cmd));
-				$client->send(json_encode($result_cmd));
-			}
-			if (count($result_sc['payload']) > 0) {
-				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_sc));
-				$client->send(json_encode($result_sc));
-			}
-			if (count($result_obj['payload']) > 0) {
-				\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($result_obj));
-				$client->send(json_encode($result_obj));
 			}
 		}
 	}
@@ -525,35 +477,6 @@ class ConnectLogic implements MessageComponentInterface
 		}
 
 		\log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
-		$client->send(json_encode($result));
-	}
-
-	public function sendHistory($client, $id, $options = null) {
-		$history = array();
-		if ($options == null) {
-			$history = \history::all($id);
-		} else {
-			$startTime = date('Y-m-d H:i:s', $options['startTime']);
-			$endTime = date('Y-m-d H:i:s', $options['endTime']);
-			\log::add('JeedomConnect', 'info', 'Get history from: '.$startTime.' to '.$endTime);
-			$history = \history::all($id, $startTime, $endTime);
-		}
-
-		$result = array(
-			'type' => 'SET_HISTORY',
-			'payload' => array(
-				'id' => $id,
-				'data' => array()
-			)
-		);
-
-		foreach ($history as $h) {
-			array_push($result['payload']['data'], array(
-				'time' => strtotime($h->getDateTime()),
-				'value' => $h->getValue()
-			));
-		}
-		\log::add('JeedomConnect', 'info', 'Send history');
 		$client->send(json_encode($result));
 	}
 

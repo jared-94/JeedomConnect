@@ -168,42 +168,72 @@ class JeedomConnect extends eqLogic {
 					array_push($roomIdList , $widget['room'] ) ;
 				}
 
+
+				if ( $widget['type'] == 'choices-list'){
+					$choices = self::getChoiceData($widget['listAction']['id'] ) ;
+					$widget['choices'] = $choices;
+				}
+
 				$jsonConfig['payload']['widgets'][$key] = $widget;
 				$maxIndex = $key;
 
 			}
 		}
 
-		// remove duplicate id
-		$widgetIdInGroup = array_unique($widgetIdInGroup);
-		// check if for each widgetId found in a group, the widget itself has his configuration
-		// already detailed in the config file, if not, then add it
-		foreach ($widgetIdInGroup as $item) {
-			if ( ! in_array($item, $widgetList)){
-				log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
-				$newWidgetData = JeedomConnectWidget::getWidgets( $item );
+		while ( count($widgetIdInGroup) > 0 ) {
+			$moreWidget = array();
+			// remove duplicate id
+			$widgetIdInGroup = array_unique($widgetIdInGroup);
+			// check if for each widgetId found in a group, the widget itself has his configuration
+			// already detailed in the config file, if not, then add it
+			foreach ($widgetIdInGroup as $item) {
+				if ( ! in_array($item, $widgetList)){
+					log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
+					$newWidgetData = JeedomConnectWidget::getWidgets( $item );
 
-				if ( empty( $newWidgetData )  ) {
-					// ajax::error('Erreur - pas d\'équipement trouvé');
-				}
-				else{
-					$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
-					$newWidgetConf = json_decode($newWidgetJC, true);
-
-					$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
-					$newWidgetConf['parentId'] = null ;
-					$newWidgetConf['index'] = 999999999 ;
-
-					if (isset($newWidgetConf['room'])){
-						array_push($roomIdList , $newWidgetConf['room'] ) ;
+					if ( empty( $newWidgetData )  ) {
+						// ajax::error('Erreur - pas d\'équipement trouvé');
 					}
+					else{
+						$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
+						$newWidgetConf = json_decode($newWidgetJC, true);
 
-					$maxIndex = $maxIndex +1;
-					$jsonConfig['payload']['widgets'][$maxIndex] = $newWidgetConf;
+						$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
+						$newWidgetConf['parentId'] = null ;
+						$newWidgetConf['index'] = 999999999 ;
 
+						if (isset($newWidgetConf['room'])){
+							array_push($roomIdList , $newWidgetConf['room'] ) ;
+						}
+
+						if (isset($newWidgetConf['widgets'])){
+							foreach ($newWidgetConf['widgets'] as $itemWidget) {
+								array_push($moreWidget, intval($itemWidget['id']) );
+							}
+						}
+
+						$maxIndex = $maxIndex +1;
+						$jsonConfig['payload']['widgets'][$maxIndex] = $newWidgetConf;
+
+						array_push($widgetList, $newWidgetConf['id'] );
+					}
+					
 				}
 			}
+
+			if ( count($moreWidget) >0 ) log::add('JeedomConnect', 'debug', 'more widgets children to add -- ' . json_encode($moreWidget) ) ;
+			$widgetIdInGroup = $moreWidget ;
+		
 		}
+
+
+		//add equipement password
+		$pwd = $this->getConfiguration('pwdAction' , null) ;
+		$jsonConfig['payload']['password'] = $pwd ;
+		
+		//custom path
+		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect') ;
+
 
 		// add room if not exist in the config file but a widget is linked to it
 		// $allRooms = array();
@@ -244,6 +274,60 @@ class JeedomConnect extends eqLogic {
 		$configFile = file_get_contents($config_file_path);
 		$jsonConfig = json_decode($configFile, true);
 		return $jsonConfig;
+
+	}
+
+	public static function getChoiceData($cmdId){
+		$choice = array();
+	
+		$cmd = cmd::byId($cmdId);
+	
+		if (! is_object($cmd)){
+			log::add('JeedomConnect', 'warning', $cmdId. ' is not a valid cmd Id');
+			return $choice;
+		}
+		
+		$cmdConfig = $cmd->getConfiguration('listValue');
+		
+		if ($cmdConfig !=  '') {
+			log::add('JeedomConnect', 'debug', 'value of listValue ' . json_encode($cmdConfig));
+			
+			foreach (explode(';', $cmdConfig) as $list) {
+				$selectData = explode('|', $list); 
+				
+				if ( count($selectData) == 1 ) {
+					$id = $value = $selectData[0] ;
+				}
+				else{
+					$id = $selectData[0] ;
+					$value = $selectData[1] ;
+				}
+	
+				$choice_info = array(
+				'id' => $id,
+				'value' => $value
+				);
+				array_push($choice, $choice_info);
+			}
+		}
+	
+		log::add('JeedomConnect', 'debug', 'final choices list => '.json_encode($choice) );
+		return $choice;
+	
+	}
+
+
+	public function getWidgetId(){
+		$ids = array();
+
+		$conf = self::getConfig(true);
+
+		foreach ($conf['payload']['widgets'] as $item) {
+			array_push( $ids, $item['id']);
+		}
+
+		log::add('JeedomConnect', 'debug', ' fx  getWidgetId -- result final ' . json_encode($ids) );
+		return $ids; 
 
 	}
 
@@ -493,7 +577,7 @@ class JeedomConnect extends eqLogic {
 			return;
 		}
 		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
-		if (!is_executable($binFlie)) {
+		if (!is_executable($binFile)) {
 			chmod($binFile, 0555);
 		}
 		$cmd = $binFile . " -data='". json_encode($postData) ."' 2>&1";
@@ -599,6 +683,25 @@ class JeedomConnect extends eqLogic {
     }
 
     public function postSave() {
+
+		if ($this->getConfiguration('pwdChanged') == 'true' ) {
+			$confStd = $this->getConfig();
+			$configVersion = $confStd['payload']['configVersion'] + 1 ;
+			log::add('JeedomConnect', 'debug', ' saving new conf after password changed -- updating configVersion to ' . $configVersion);
+
+			//update configVersion in the file
+			$confStd['payload']['configVersion'] =  $configVersion ;
+			$this->saveConfig($confStd);
+
+			//update configVersion in the equipment configuration
+			$this->setConfiguration('configVersion', $configVersion);
+			$this->setConfiguration('pwdChanged',  'false') ;
+			$this->save();
+
+			$this->getConfig(true, true) ;
+
+		}
+
     }
 
     public function preUpdate() {
@@ -986,8 +1089,8 @@ class JeedomConnectCmd extends cmd {
 					'cmdId' => $this->getId(),
 					'title' => str_replace("'", "&#039;", $_options['title']),
 					'message' => str_replace("'", "&#039;", $_options['message']),
-					'answer' => $_options['answer'],
-					'timeout' => $_options['timeout']
+					'answer' => $_options['answer'] ?? null,
+					'timeout' => $_options['timeout'] ?? null
 				)
 			);
 			if (isset($_options["files"])) {

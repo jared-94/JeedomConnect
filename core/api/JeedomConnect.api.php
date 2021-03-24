@@ -151,7 +151,6 @@ switch ($method) {
 		break;
   case 'GET_CONFIG':
 		$result = $eqLogic->getConfig(true);
-		//$result['payload']['summaryConfig'] = config::byKey('object:summary');
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_CMD_INFO':
@@ -191,6 +190,9 @@ switch ($method) {
 		log::add('JeedomConnect', 'info', 'Send info '.json_encode($result));
 		$jsonrpc->makeSuccess($result);
 		break;
+	case 'GET_HISTORY':
+			$jsonrpc->makeSuccess(apiHelper::getHistory($params['id'], $params['options']));
+			break;
   case 'GET_GEOFENCES':
     $result = apiHelper::getGeofencesData($eqLogic);
     log::add('JeedomConnect', 'info', 'GEOFENCES '.json_encode($result));
