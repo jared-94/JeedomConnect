@@ -2592,6 +2592,13 @@
 					"category": "binary"
 				},
 				{
+					"id":  "androidHardwareAccelerationDisabled",
+					"name": "Désactiver l'accélération matérielle",
+					"required": false,
+					"category": "binary",
+					"description": "Désactivez si vous rencontrer des problèmes"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
