@@ -300,7 +300,8 @@ $('#in_searchIconSelector').on('keyup',function() {
 	if (search != '') {
 		search = normTextLower(search)
 		$('.iconDesc').each(function() {
-			if ($(this).text().indexOf(search) == -1) {
+      iconName = normTextLower($(this).text())
+			if (iconName.indexOf(search) == -1) {
 				$(this).closest('.divIconSel').css({'display': 'none'})
 			}
 		})
