@@ -80,9 +80,13 @@ foreach ($summaryConfig as $index => $summary) {
   }
 
   $summaryAvailOptions .= '<option value="'.$summary['key'].'" data-key="'.$summary['key'].'" 
-                        data-name="'.$summary['name'].'" data-calcul="'.$summary['calcul'].'" data-unit="'.$summary['unit'].'" '.$icon.'
-                        data-count="'.$summary['count'].'" data-allowDisplayZero="'.$summary['allowDisplayZero'].'" data-ignoreIfCmdOlderThan="'.$summary['ignoreIfCmdOlderThan'].'"
+                        data-name="'.$summary['name'].'" '.$icon.'
                         >' . $summary['name'] . '</option>' ;
+
+  // $summaryAvailOptions .= '<option value="'.$summary['key'].'" data-key="'.$summary['key'].'" 
+  //                       data-name="'.$summary['name'].'" data-calcul="'.$summary['calcul'].'" data-unit="'.$summary['unit'].'" '.$icon.'
+  //                       data-count="'.$summary['count'].'" data-allowDisplayZero="'.$summary['allowDisplayZero'].'" data-ignoreIfCmdOlderThan="'.$summary['ignoreIfCmdOlderThan'].'"
+  //                       >' . $summary['name'] . '</option>' ;
 }
 
 

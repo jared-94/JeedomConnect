@@ -235,6 +235,21 @@ class JeedomConnect extends eqLogic {
 		//custom path
 		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect') ;
 
+		//add summary details
+		$objSummary = config::byKey('object:summary') ;
+		foreach ($jsonConfig['payload']['summaries'] as $index => $summary) {
+			if ( array_key_exists($summary['key'] , $objSummary) ){
+				$newSummary = $summary;
+				$newSummary['calcul']=$objSummary[$summary['key']]['calcul'];
+				$newSummary['unit']=$objSummary[$summary['key']]['unit'];
+				$newSummary['count']=$objSummary[$summary['key']]['count'];
+				$newSummary['allowDisplayZero']=  $objSummary[$summary['key']]['allowDisplayZero'] ;
+				$newSummary['ignoreIfCmdOlderThan']=  $objSummary[$summary['key']]['ignoreIfCmdOlderThan'];
+
+				$jsonConfig['payload']['summaries'][$index] = $newSummary;
+			}
+		}
+
 		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
 		
 		// $jsonConfig = json_decode($widgetStringFinal, true);
