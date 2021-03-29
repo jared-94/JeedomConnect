@@ -5,6 +5,8 @@ function openTab(evt, tabName) {
 		refreshTopTabData();
 	} else if (tabName == "roomTab") {
 		refreshRoomData();
+	} else if (tabName == "summaryTab") {
+		refreshSummaryData();
 	} else if (tabName == "widgetsTab") {
 		refreshWidgetData();
 	}

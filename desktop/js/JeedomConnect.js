@@ -16,6 +16,7 @@
  */
 
 var allWidgetsDetail;
+var summaryConfig = JSON.parse('{"type":"summary","name":"Résumé","description":"Gère la personalisation des icônes d\'un résumé","variables":[{"name":"value","descr":"valeur du résumé"},{"name":"total","descr":"Somme total des infos du résumé"}],"options":[{"id":"name","name":"Nom","required":true,"category":"string"},{"id":"image","name":"Image","required":false,"category":"img"},{"id":"statusImages","name":"Images sous conditions","required":false,"category":"ifImgs"}]}') ; 
 
 refreshWidgetDetails() ;
 
@@ -945,7 +946,6 @@ function refreshCmdData(name, id, value) {
      if (value != 'undefined' & data.result.value != '') {
        refreshCmdData(value, data.result.value, 'undefined');
      }
-
      refreshImgListOption();
      refreshInfoSelect();
    }
@@ -1218,14 +1218,25 @@ function idToHuman(string, infos) {
 // Image condition list
 function refreshImgListOption() {
   var options = [];
-  var type = $("#widgetsList-select").val();
-  var widget = widgetsList.widgets.find(i => i.type == type);
+
+
+  if ($("#summaryModal").length != 0 && $("#widgetsList-select").length == 0 ) {
+    //if summary modal open, then get the summary Config object
+    var widget = summaryConfig;
+  } 
+  else {
+      //otherwise use the widget config based on the selected type one
+      var type = $("#widgetsList-select").val();
+      var widget = widgetsList.widgets.find(i => i.type == type);
+    
+  }
   curOption = "";
   //get all info
   $('input[cmdType="info"]').each((i, el) => {
     options.push({ type: 'cmd', id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title})
   });
   options = options.concat(moreInfos);
+
   if (widget.variables) {
     widget.variables.forEach(v => {
       options.push({ type: 'var', id: v.name, human: `#${v.name}#`})
@@ -1290,7 +1301,6 @@ function deleteImgOption(id) {
     item.index = item.index - 1;
   }
   });
-
   refreshImgListOption();
 }
 

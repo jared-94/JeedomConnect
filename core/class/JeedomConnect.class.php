@@ -34,6 +34,7 @@ class JeedomConnect extends eqLogic {
 			'sections' => array(),
 			'rooms' => array(),
 			'groups' => array(),
+			'summaries' => array(),
 			'widgets' => array()
 		)
 	);
@@ -234,21 +235,6 @@ class JeedomConnect extends eqLogic {
 		//custom path
 		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect') ;
 
-
-		// add room if not exist in the config file but a widget is linked to it
-		// $allRooms = array();
-		// foreach (array_unique($roomIdList) as $item ) {
-		// 	if ($item != 'global') {
-		// 		$roomList = $this->getJeedomObject($item);
-		// 		array_push($allRooms, $roomList);
-		// 	}
-		// }
-		// $jsonConfig['payload']['rooms'] = $allRooms ;
-
-		// add summary
-		log::add('JeedomConnect', 'debug', 'GET CONFIG RETURN '.json_encode($jsonConfig));
-		$jsonConfig['payload']['summaryConfig'] = config::byKey('object:summary');
-		
 		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
 		
 		// $jsonConfig = json_decode($widgetStringFinal, true);
