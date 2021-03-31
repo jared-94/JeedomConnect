@@ -2673,6 +2673,137 @@
 					"description": "Affichage forcé du widget"
 				}
 			]
+		},
+		{
+			"type": "camera",
+			"name": "Caméra",
+			"img": "camera.png",
+			"description": "Permet d'afficher une caméra",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "streamUrl",
+					"name": "URL flux",
+					"required": false,
+					"category": "string"
+				},
+				{
+					"id": "onlyOnLan",
+					"name": "Flux vidéo uniquement sur le LAN",
+					"required": false,
+					"category": "binary"
+				},
+				{
+					"id": "snapshotUrl",
+					"name": "URL SnapShot",
+					"required": false,
+					"category": "string"
+				},
+				{
+					"id": "refreshInterval",
+					"name": "Rafraîchissement",
+					"required": false,
+					"category": "string",
+					"description": "Durée en seconde entre deux images (1s par défaut)"
+				},
+				{
+					"id": "compress",
+					"name": "Qualité SnapShot (%)",
+					"required": false,
+					"category": "string",
+					"description": "100% par défaut (haute qualité)"
+				},
+				{
+					"id": "resize",
+					"name": "Taille SnapShot (%)",
+					"required": false,
+					"category": "string",
+					"description": "100% par défaut (pas de redimensionnement)"
+				},
+				{
+					"id": "startRecordAction",
+					"name": "Enregistrer",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"description": "Commande action pour démarrer un enregistrement"
+				},
+				{
+					"id": "stopRecordAction",
+					"name": "Arrêter Enregistrement",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"description": "Commande action pour arrêter un enregistrement"
+				},
+				{
+					"id": "recordInfo",
+					"name": "Info Enregistrement",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Commande info d'enregistrement"
+				},
+				{
+					"id": "snapshotAction",
+					"name": "Instantané",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"description": "Commande action pour enregistrer un instantané"
+				},
+				{
+					"id": "recordFolder",
+					"name": "Dossier des enregistrements",
+					"required": false,
+					"category": "string",
+					"description": "par exemple /plugins/camera/data/records/camID"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "displayOnWidget",
+					"name": "Afficher sur carte",
+					"required": false,
+					"category": "binary",
+					"description": "Affichage du lecteur sur les cartes"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
 		}
 ]
 }

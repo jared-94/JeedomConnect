@@ -320,6 +320,12 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_HISTORY':
 				$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
 				break;
+			case 'GET_FILES':
+				$from->send(json_encode(\apiHelper::getFiles($msg['payload']['folder']) ));
+				break;
+			case 'REMOVE_FILE':
+				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));
+				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
 				break;

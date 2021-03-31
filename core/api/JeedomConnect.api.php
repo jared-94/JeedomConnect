@@ -243,6 +243,16 @@ switch ($method) {
       log::add('JeedomConnect', 'debug', 'reply to ask OK');
     }
     break;
+	case 'GET_FILES':
+		$result =apiHelper::getFiles($params['folder']);
+		log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
+		$jsonrpc->makeSuccess($result);
+		break;
+	case 'REMOVE_FILE':
+		$result =apiHelper::removeFile($params['file']);
+		log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
+		$jsonrpc->makeSuccess($result);
+		break;
 }
 
 

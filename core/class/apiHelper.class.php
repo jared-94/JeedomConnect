@@ -311,5 +311,45 @@ class apiHelper {
    return $result;
  }
 
+ // FILES
+ public static function getFiles($folder) {
+   return  array(
+     'type' => 'SET_FILES',
+     'payload' => array(
+       'path' => $folder,
+       'files' => self::getRecursiveFiles($folder)
+     )
+   );
+ }
+
+ public static function getRecursiveFiles($folder) {
+   $dir = __DIR__ . '/../../../..' . $folder;
+   $result = array();
+   $dh = new DirectoryIterator($dir);
+
+   foreach ($dh as $item) {
+       if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
+           if ($item->isDir()) {
+             $tmp = getFiles(  "$dir/$item" );
+             $result = array_merge($result , $tmp );
+           }
+           else {
+               array_push($result, array(
+                 'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
+                 'timestamp' => $item->getMTime()
+               ) );
+           }
+       }
+   }
+   return $result;
+ }
+
+ public static function removeFile($file) {
+   $filePath =  __DIR__ . '/../../../..' . $file;
+   $pathInfo = pathinfo($file);
+   unlink($filePath);
+   return self::getFiles($pathInfo['dirname']);
+ }
+
 }
 ?>
