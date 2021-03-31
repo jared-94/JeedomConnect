@@ -1092,6 +1092,19 @@ function refreshCmdListOption(optionsJson) {
         }
       }
     });
+
+    if (['message', 'slider','color'].indexOf(item.subtype) > -1 && item.options != null ){
+      Object.entries(item.options).forEach(entry => {
+        const [key, value] = entry;
+        if ( value != ''){
+          getHumanNameFromCmdId({alert: '#widget-alert', cmdIdData:  value , id: item.id } , function(result, _params){
+            $('#'+key+'-input-' + _params.id).val(result);
+          } ) ; 
+        }
+      });
+
+    }
+    
   })
 }
 
@@ -1573,6 +1586,67 @@ function downWidgetOption(id) {
    $.ajax(paramsAJAX);
  }
 
+
+function getCmdIdFromHumanName(_params, _callback) {
+  if(typeof _params.alert == 'undefined'){
+    _params.alert = '#div_alert';
+  }
+
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'humanReadableToCmd',
+      human: _params.stringData
+    },
+    cache: false,
+    dataType: 'json',
+    async: false,
+    success: function( data ) {
+      if (data.state != 'ok') {
+        $(_params.alert).showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else{
+        if ('function' == typeof(_callback)) {
+          _callback(data.result, _params);
+        }
+      }
+    }
+  });
+}
+
+function getHumanNameFromCmdId(_params, _callback) {
+  if(typeof _params.alert == 'undefined'){
+    _params.alert = '#div_alert';
+  }
+
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'cmdToHumanReadable',
+      strWithCmdId: _params.cmdIdData
+    },
+    cache: false,
+    dataType: 'json',
+    async: false,
+    success: function( data ) {
+      if (data.state != 'ok') {
+        $(_params.alert).showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else{
+        if ('function' == typeof(_callback)) {
+          _callback(data.result, _params);
+        }
+      }
+    }
+  });
+}
+
  function getCmd({id, error, success}) {
    $.post({
      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -1696,18 +1770,31 @@ function downWidgetOption(id) {
           item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
           item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
 
-          if (item.subtype != undefined ) {
+          if (item.subtype != undefined && item.subtype != 'other' ) {
+            var optionsForSubtype = {'message' : ['title', 'message'], 'slider' : ['slider'], 'color' : ['color']} ;
+
             item['options'] = {} ;
-            if ( item.subtype == 'message'){
-              item['options']['title'] = $("#title-input-"+item.id).val();
-              item['options']['message'] = $("#message-input-"+item.id).val();
-            }
-            else if ( item.subtype == 'select'){
+
+            if ( item.subtype == 'select'){
               item['options']['select'] = $("#select-input-"+item.id+ " option:selected").val() ;
             }
             else{
-              item['options'][item.subtype] = $("#" + item.subtype + "-input-"+item.id).val() ;
+              
+              var currentArray = optionsForSubtype[item.subtype];
+              currentArray.forEach(key => {
+                var tmpData = $("#"+key+"-input-"+item.id).val() ;
+                if (tmpData != ''){
+                  getCmdIdFromHumanName({alert: '#widget-alert', stringData: tmpData, subtype :key }, function(result, _params){
+                    item['options'][_params.subtype] = result ;
+                  } ) ; 
+                }
+                else{
+                  item['options'][key] = '';
+                }
+              });
+              
             }
+
           }
       }
     });
@@ -2021,8 +2108,7 @@ function parseString(string, infos) {
 function updateOrderWidget(){
 
   var type = $("#widgetOrder").val();
-  console.log("choix tri : " + type);
-
+  
   var vars = getUrlVars()
   var url = 'index.php?'
   for (var i in vars) {
