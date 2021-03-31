@@ -488,6 +488,9 @@ var widgetsList = (function () {
     'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
+      data.widgets.sort(function (a, b) {
+        return a.name.localeCompare( b.name );
+      });
       json = data ;
     }
   });
@@ -826,7 +829,7 @@ function refreshAddWidgets() {
     } else if (option.category == "cmdList") {
       curOption += `<span class="input-group-btn">
               <a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
-              </i> Ajouter</a></span><div id="cmdList-option"></div>`;
+              </i> Ajouter</a></span><div id="cmdList-option" style='margin-left:-150px;'></div>`;
       curOption += `</div></div></li>`;
     } else if (option.category == "ifImgs") {
       curOption += `<span class="input-group-btn">
