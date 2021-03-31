@@ -488,6 +488,9 @@ var widgetsList = (function () {
     'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
+      data.widgets.sort(function (a, b) {
+        return a.name.localeCompare( b.name );
+      });
       json = data ;
     }
   });

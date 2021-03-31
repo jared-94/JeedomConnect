@@ -15,8 +15,11 @@ $.post({
 			dataType: 'json',
 			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
 			cache: false,
-			success: function( widgets ) {
-				widgetsList = widgets;
+			success: function( data ) {
+				data.widgets.sort(function (a, b) {
+					return a.name.localeCompare( b.name );
+				});
+				widgetsList = data;
 				initData();
 			}
 		});
