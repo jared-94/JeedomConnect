@@ -2337,7 +2337,7 @@
 				"name": "Actions",
 				"required": true,
 				"category": "cmdList",
-				"options": {"type": "action", "subtype": "other", "hasIcon": true, "hasImage": false, "hasName": false }
+				"options": {"type": "action", "subtype": "", "hasIcon": true, "hasImage": false, "hasName": false }
 			},
 			{
 				"id": "image",
