@@ -24,8 +24,12 @@ function JeedomConnect_install() {
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
     config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/' , 'JeedomConnect') ;
+    $img_dir = __DIR__ . '/../data/img/user_files/';
+    if (!is_dir($img_dir)) {
+			mkdir($img_dir);
+		}
   }
-  
+
 
 }
 
@@ -36,17 +40,21 @@ function JeedomConnect_update() {
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->updateConfig();
   }
-  
+
   // message::add( 'JeedomConnect',  'Installation terminée.<br>Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement. Merci de lire <a href=\"https://jared-94.github.io/JeedomConnectDoc/fr_FR/\" target=\"_blank\">la doc</a>.') ;
   $docLink = htmlentities('<a href="https://jared-94.github.io/JeedomConnectDoc/fr_FR/" target="_blank">https://jared-94.github.io/JeedomConnectDoc/fr_FR/</a>');
   message::add( 'JeedomConnect',  'Mise à jour terminée. Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement -- pensez à lire la doc : ' . $docLink ) ;
-	
+
   JeedomConnect::displayMessageInfo();
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
     config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/' , 'JeedomConnect') ;
+    $img_dir = __DIR__ . '/../data/img/user_files/';
+    if (!is_dir($img_dir)) {
+			mkdir($img_dir);
+		}
   }
-  
+
 }
 
 function JeedomConnect_remove() {
