@@ -280,6 +280,10 @@ class ConnectLogic implements MessageComponentInterface
 				if (isset($msg['payload']['options'])) {
 					$options = $msg['payload']['options'];
 				}
+				else{
+					$options['action'] = 'start';
+					$options['scenario_id'] = $msg['payload']['id'];
+				}
 				\scenarioExpression::createAndExec('action', 'scenario', $options);
 				break;
 			case 'SC_STOP':
