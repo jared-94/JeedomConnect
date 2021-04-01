@@ -262,38 +262,16 @@ class ConnectLogic implements MessageComponentInterface
 		if (!array_key_exists('type', $msg)) { return; }
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
-				$cmd = \cmd::byId($msg['payload']['id']);
-				if (!is_object($cmd)) {
-					\log::add('JeedomConnect', 'error', "Can't find command");
-					return;
-				}
-				if ($msg['payload']['options'] == null) {
-					$cmd->execCmd();
-				} else {
-					$cmd->execCmd($option = $msg['payload']['options']);
-				}
+				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options']);
 				break;
 			case 'SC_EXEC':
-				// $sc = \scenario::byId($msg['payload']['id']);
-				// $sc->launch();
-				$options = array();
-				if (isset($msg['payload']['options'])) {
-					$options = $msg['payload']['options'];
-				}
-				else{
-					$options['action'] = 'start';
-					$options['scenario_id'] = $msg['payload']['id'];
-				}
-				\scenarioExpression::createAndExec('action', 'scenario', $options);
+				\apiHelper::execSc($msg['payload']['id'], $msg['payload']['options']);
 				break;
 			case 'SC_STOP':
-				$sc = \scenario::byId($msg['payload']['id']);
-				$sc->stop();
+				\apiHelper::stopSc($msg['payload']['id']);
 				break;
 			case 'SC_SET_ACTIVE':
-				$sc = \scenario::byId($msg['payload']['id']);
-				$sc->setIsActive($msg['payload']['active']);
-				$sc->save();
+				\apiHelper::setActiveSc($msg['payload']['id'], $msg['payload']['active']);
 				break;
 			case 'GET_PLUGIN_CONFIG':
 				$conf = array(

@@ -201,7 +201,23 @@ switch ($method) {
       $jsonrpc->makeSuccess($result);
     }
     break;
-  case 'ADD_GEOFENCE':
+	case 'CMD_EXEC':
+		apiHelper::execCmd($params['id'], $params['options']);
+		$jsonrpc->makeSuccess();
+		break;
+	case 'SC_EXEC':
+		apiHelper::execSc($params['id'], $params['options']);
+		$jsonrpc->makeSuccess();
+		break;
+	case 'SC_STOP':
+		apiHelper::stopSc($params['id']);
+		$jsonrpc->makeSuccess();
+		break;
+	case 'SC_SET_ACTIVE':
+		apiHelper::setActiveSc($params['id'], $params['active']);
+		$jsonrpc->makeSuccess();
+		break;
+	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
     break;
