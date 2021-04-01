@@ -34,6 +34,7 @@ class JeedomConnect extends eqLogic {
 			'sections' => array(),
 			'rooms' => array(),
 			'groups' => array(),
+			'summaries' => array(),
 			'widgets' => array()
 		)
 	);
@@ -217,40 +218,40 @@ class JeedomConnect extends eqLogic {
 
 						array_push($widgetList, $newWidgetConf['id'] );
 					}
-					
+
 				}
 			}
 
 			if ( count($moreWidget) >0 ) log::add('JeedomConnect', 'debug', 'more widgets children to add -- ' . json_encode($moreWidget) ) ;
 			$widgetIdInGroup = $moreWidget ;
-		
+
 		}
 
 
 		//add equipement password
 		$pwd = $this->getConfiguration('pwdAction' , null) ;
 		$jsonConfig['payload']['password'] = $pwd ;
-		
+
 		//custom path
 		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect') ;
 
+		//add summary details
+		$objSummary = config::byKey('object:summary') ;
+		foreach ($jsonConfig['payload']['summaries'] as $index => $summary) {
+			if ( array_key_exists($summary['key'] , $objSummary) ){
+				$newSummary = $summary;
+				$newSummary['calcul']=$objSummary[$summary['key']]['calcul'];
+				$newSummary['unit']=$objSummary[$summary['key']]['unit'];
+				$newSummary['count']=$objSummary[$summary['key']]['count'];
+				$newSummary['allowDisplayZero']=  $objSummary[$summary['key']]['allowDisplayZero'] ;
+				$newSummary['ignoreIfCmdOlderThan']=  $objSummary[$summary['key']]['ignoreIfCmdOlderThan'];
 
-		// add room if not exist in the config file but a widget is linked to it
-		// $allRooms = array();
-		// foreach (array_unique($roomIdList) as $item ) {
-		// 	if ($item != 'global') {
-		// 		$roomList = $this->getJeedomObject($item);
-		// 		array_push($allRooms, $roomList);
-		// 	}
-		// }
-		// $jsonConfig['payload']['rooms'] = $allRooms ;
+				$jsonConfig['payload']['summaries'][$index] = $newSummary;
+			}
+		}
 
-		// add summary
-		log::add('JeedomConnect', 'debug', 'GET CONFIG RETURN '.json_encode($jsonConfig));
-		$jsonConfig['payload']['summaryConfig'] = config::byKey('object:summary');
-		
 		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
-		
+
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
 	}
@@ -279,22 +280,22 @@ class JeedomConnect extends eqLogic {
 
 	public static function getChoiceData($cmdId){
 		$choice = array();
-	
+
 		$cmd = cmd::byId($cmdId);
-	
+
 		if (! is_object($cmd)){
 			log::add('JeedomConnect', 'warning', $cmdId. ' is not a valid cmd Id');
 			return $choice;
 		}
-		
+
 		$cmdConfig = $cmd->getConfiguration('listValue');
-		
+
 		if ($cmdConfig !=  '') {
 			log::add('JeedomConnect', 'debug', 'value of listValue ' . json_encode($cmdConfig));
-			
+
 			foreach (explode(';', $cmdConfig) as $list) {
-				$selectData = explode('|', $list); 
-				
+				$selectData = explode('|', $list);
+
 				if ( count($selectData) == 1 ) {
 					$id = $value = $selectData[0] ;
 				}
@@ -302,7 +303,7 @@ class JeedomConnect extends eqLogic {
 					$id = $selectData[0] ;
 					$value = $selectData[1] ;
 				}
-	
+
 				$choice_info = array(
 				'id' => $id,
 				'value' => $value
@@ -310,10 +311,10 @@ class JeedomConnect extends eqLogic {
 				array_push($choice, $choice_info);
 			}
 		}
-	
+
 		log::add('JeedomConnect', 'debug', 'final choices list => '.json_encode($choice) );
 		return $choice;
-	
+
 	}
 
 
@@ -327,7 +328,7 @@ class JeedomConnect extends eqLogic {
 		}
 
 		log::add('JeedomConnect', 'debug', ' fx  getWidgetId -- result final ' . json_encode($ids) );
-		return $ids; 
+		return $ids;
 
 	}
 
@@ -514,7 +515,8 @@ class JeedomConnect extends eqLogic {
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
-			'userHash' => $user->getHash()
+			'userHash' => $user->getHash(),
+			'eqName' => $this->getName()
 		);
 
 		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));

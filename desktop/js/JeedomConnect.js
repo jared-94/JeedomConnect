@@ -16,6 +16,7 @@
  */
 
 var allWidgetsDetail;
+var summaryConfig = JSON.parse('{"type":"summary","name":"Résumé","description":"Gère la personalisation des icônes d\'un résumé","variables":[{"name":"value","descr":"valeur du résumé"},{"name":"total","descr":"Somme total des infos du résumé"}],"options":[{"id":"name","name":"Nom","required":true,"category":"string"},{"id":"image","name":"Image","required":false,"category":"img"},{"id":"statusImages","name":"Images sous conditions","required":false,"category":"ifImgs"}]}') ; 
 
 refreshWidgetDetails() ;
 
@@ -487,7 +488,10 @@ var widgetsList = (function () {
     'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
-      json = data;
+      data.widgets.sort(function (a, b) {
+        return a.name.localeCompare( b.name );
+      });
+      json = data ;
     }
   });
   return json;
@@ -626,6 +630,15 @@ function setWidgetModalData(options) {
             })
           }
          });
+         $('#optionScenario').css('display','block') ;
+
+         if (options.widget['options'] !== undefined && 
+                  options.widget['options']['tags'] !== undefined && 
+                    options.widget['options']['tags'] != ''){
+            getHumanNameFromCmdId({alert: '#widget-alert', cmdIdData:  options.widget['options']['tags']  } , function(result, _params){
+              $('#tags-scenario-input').val(result);
+            }) ;
+         }
        } else if (option.category == "stringList" & options.widget[option.id] !== undefined) {
          var selectedChoice = option.choices.find(s => s.id == options.widget[option.id]);
          if (selectedChoice !== undefined) {
@@ -825,7 +838,7 @@ function refreshAddWidgets() {
     } else if (option.category == "cmdList") {
       curOption += `<span class="input-group-btn">
               <a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
-              </i> Ajouter</a></span><div id="cmdList-option"></div>`;
+              </i> Ajouter</a></span><div id="cmdList-option" style='margin-left:-150px;'></div>`;
       curOption += `</div></div></li>`;
     } else if (option.category == "ifImgs") {
       curOption += `<span class="input-group-btn">
@@ -836,6 +849,12 @@ function refreshAddWidgets() {
       curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
     <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir un scenario' onclick="selectScenario('${option.id}');">
     <i class='fas fa-list-alt'></i></a></span></div>
+      <div id='optionScenario' style='display:none;'>
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
+            <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
+        </div>
+      </div>
     </div>
     </div></li>`;
   } else {
@@ -945,7 +964,6 @@ function refreshCmdData(name, id, value) {
      if (value != 'undefined' & data.result.value != '') {
        refreshCmdData(value, data.result.value, 'undefined');
      }
-
      refreshImgListOption();
      refreshInfoSelect();
    }
@@ -974,6 +992,10 @@ function selectScenario(name) {
         }
       });
       $("#name-input").val(result.name);
+
+      previousData = $('#tags-scenario-input').val() || '';
+      $('#tags-scenario-input').val(previousData);
+      $('#optionScenario').css('display','block');
     }
   })
 }
@@ -1010,56 +1032,240 @@ function refreshWidgetOption() {
 
 function refreshCmdListOption(optionsJson) {
   var options = JSON.parse(optionsJson);
+  
   curOption = "";
   cmdCat.sort(function(s,t) {
     return s.index - t.index;
   });
   cmdCat.forEach(item => {
-    curOption += `<div class='input-group' style="display:flex;" id="cmdList-${item.id}">
-						<input style="width:240px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='' disabled>`;
-    if (options.type == 'action') {
-        curOption += `<div style="text-align:end;">
-          <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${item.id}">
-          <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  >
-          <i class='mdi mdi-numeric'></i><input type="checkbox" style="margin-left:5px;" id="pwd-${item.id}"  ></div>`;
+    //open the div
+    curOption += `<div class='input-group col-lg-12' style="display:flex;border:0.5px black solid;margin: 0 5px;" id="cmdList-${item.id}">`;
 
-    }
-    if (options.hasIcon | options.hasImage) {
-      curOption += `
-      <div class='input-group'>
-              <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}')"><i class="fas fa-check-square">
-              </i> Icône </a>
-              <a id="icon-div-${item.id}" onclick="removeImage('${item.id}')">${iconToHtml(item.image)}</a>
-       </div>`;
-    }
-    curOption += `<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-    <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-    <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-    </div>`
-    if (item.type == 'action') {
-      curOption += '</div>';
-    }
+      //left part
+      curOption +=`<div class="col-lg-6 form-group">`;
+      
+            curOption +=`<div class="input-group input-group-sm" style="width: 100%">
+                            <span class="input-group-addon roundedLeft" style="width: 100px">Commande</span>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title' id="${item.id}-input" value='' disabled>
+                        </div>`;
+
+            
+            curOption += getCmdOptions(item) ;
+
+      curOption +=`</div>`;  
+      // --- END left part -- 
+
+      ////right part
+      curOption +=`<div class="col-lg-6">`;
+        curOption +=`<div class="col-lg-12 form-group">`;
+
+          if (options.type == 'action') {
+              curOption += `
+                <div class="col-lg-6">
+                    <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${item.id}">
+                    <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  >
+                    <i class='mdi mdi-numeric'></i><input type="checkbox" style="margin-left:5px;" id="pwd-${item.id}"  >
+                </div> `;
+
+          }
+          
+          curOption += `<div class="col-lg-6" >
+                  <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                </div>`
+        
+        curOption +=`</div>`;
+        
+        if (options.hasIcon | options.hasImage) {
+          curOption +=`<div class="col-lg-12 form-group">`;
+          curOption += `
+              <div>
+                      <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}')"><i class="fas fa-check-square">
+                      </i> Icône </a>
+                      <a id="icon-div-${item.id}" onclick="removeImage('${item.id}')">${iconToHtml(item.image)}</a>
+              </div>`;
+          curOption +=`</div>`;
+        }
+
+        
+        
+      curOption +=`</div>`; 
+      //// ---  END right part
+    curOption +=`</div>`; 
+
+    
   });
   $("#cmdList-option").html(curOption);
   cmdCat.forEach(item => {
-  var confirm = item.confirm ? "checked": "";
-  $("#confirm-"+item.id).prop('checked', confirm);
-  var secure = item.secure ? "checked": "";
-  $("#secure-"+item.id).prop('checked', secure);
-  var pwd = item.pwd ? "checked": "";
-  $("#pwd-"+item.id).prop('checked', pwd);
-  getCmd({
-    id: item.id,
-    success: function (data) {
-      $("#"+item.id+"-input").val("#"+data.result.humanName+"#");
-      if (!isIcon(item.image)) {
-        item.image = jeedomIconToIcon(data.result.icon);
-        $("#icon-div-"+item.id).html(iconToHtml(item.image));
+    var confirm = item.confirm ? "checked": "";
+    $("#confirm-"+item.id).prop('checked', confirm);
+    var secure = item.secure ? "checked": "";
+    $("#secure-"+item.id).prop('checked', secure);
+    var pwd = item.pwd ? "checked": "";
+    $("#pwd-"+item.id).prop('checked', pwd);
+    getCmd({
+      id: item.id,
+      success: function (data) {
+        $("#"+item.id+"-input").val("#"+data.result.humanName+"#");
+        if (!isIcon(item.image)) {
+          item.image = jeedomIconToIcon(data.result.icon);
+          $("#icon-div-"+item.id).html(iconToHtml(item.image));
+        }
       }
+    });
+
+    if (['message', 'slider','color'].indexOf(item.subtype) > -1 && item.options != null ){
+      Object.entries(item.options).forEach(entry => {
+        const [key, value] = entry;
+        if ( value != ''){
+          getHumanNameFromCmdId({alert: '#widget-alert', cmdIdData:  value , id: item.id } , function(result, _params){
+            $('#'+key+'-input-' + _params.id).val(result);
+          } ) ; 
+        }
+      });
+
     }
-  });
-})
+    
+  })
 }
+
+
+function getCmdOptions(item){
+
+  curOption = '' ;
+
+  var d = new Date().getTime();
+  var rand = Math.floor(Math.random() * 10000) * Math.floor(Math.random() * 10000) ;
+  var timestamp = d + '' + rand ;
+  var customUid = 'cmd' + item.id + '____' +timestamp +'____' ;
+  
+  // create dynamic var
+  if ('options' in item ) {
+    for (const [key, value] of Object.entries(item.options)) {
+        eval('var option' + key.charAt(0).toUpperCase() + key.slice(1) + '= "' + value + '";');
+    }
+  }
+
+
+  if (item.subtype == 'select') {
+    var optionSelect= optionSelect || '';
+
+    getCmdDetail({id:item.id, item:item, optionSelect:optionSelect}, function(_result, _param){
+      
+        var selectOptions = [] ;
+        $.each(_result.configuration.listValue.split(';'), function(key, val) {
+          var myData = val.split('|') ;
+          if ( myData.length == 1){
+            var value = text = myData[0] ;
+          } 
+          else{
+            var value = myData[0] ;
+            var text = myData[1] ;
+          }
+          selectOptions.push(`<option value="${value}">${text}</option>`);
+        });
+  
+        $('.customJCdata[data-uid=' + customUid + '][data-l1key=options][data-l2key=select]').html( selectOptions.join("") );
+
+        var optionSelect= _param.optionSelect || '';
+        
+        $('.customJCdata[data-uid=' + customUid + '][data-l1key=options][data-l2key=select]').value(optionSelect) ;
+        
+
+    });
+
+    curOption = `
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Choix</span>
+            <select class="form-control input-sm customJCdata roundedRight" data-l1key="options" data-l2key="select" data-cmd_id="${item.id}" data-uid="${customUid}" id="select-input-${item.id}">
+            </select>
+        </div>
+       `;
+    
+  }
+  
+
+  if (item.subtype == 'message') {
+
+    var optionTitle= optionTitle || '';
+    var optionMessage= optionMessage || '';
+    
+    curOption = `
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Titre</span>
+            <input style="width:240px;" class='input-sm form-control roundedRight title' type="string" id="title-input-${item.id}" value="${optionTitle}" />
+        </div>
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Message</span>
+            <textarea class="message form-control ta_autosize customJCdata" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  id="message-input-${item.id}" data-uid="${customUid}">${optionMessage}</textarea>
+            <span class="input-group-addon hasBtn roundedRight">
+              <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
+            </span>
+        </div>
+        <script>
+          $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
+              jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
+                $('.customJCdata[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
+              });
+          });
+          
+        </script>`;
+  }
+
+  if (item.subtype == 'slider') {
+    var optionSlider= optionSlider || '';
+    
+    curOption = `
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Valeur</span>
+            <textarea class="message form-control ta_autosize customJCdata" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  id="slider-input-${item.id}" data-uid="${customUid}">${optionSlider}</textarea>
+            <span class="input-group-addon hasBtn roundedRight">
+              <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
+            </span>
+        </div>
+        <script>
+          $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
+              jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
+                $('.customJCdata[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
+              });
+          });
+        </script>`;
+  }
+
+  if (item.subtype == 'color') {
+    var optionColor = optionColor || '';
+
+    curOption = `
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Couleur</span>
+            <input type="color" class="form-control input-sm cursor colorChooser" data-uid="${customUid}" style="width: 20%; display: inline-block;" value="${optionColor}">
+            <input class="customJCdata form-control input-sm" data-l1key="options" data-l2key="color"  data-uid="${customUid}" style="width: 80%; display: inline-block;" placeholder="Couleur (hexa)" id="color-input-${item.id}" value="${optionColor}">
+            <span class="input-group-btn">
+              <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
+            </span>
+        </div>
+        <script>
+          $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
+            var el = $(this);
+            jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function (result) {
+              $('.customJCdata[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value(result.human);
+            });
+          });
+          $('.colorChooser[data-uid=${customUid}]').off('change').on('change', function () {
+            $('.customJCdata[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value($(this).value())
+          });
+        </script>`;
+  }
+  
+  
+
+  return curOption;
+
+
+}
+
+
 
 function saveCmdList() {
   cmdCat.forEach(item => {
@@ -1067,6 +1273,19 @@ function saveCmdList() {
     item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
     item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
     item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
+
+    item['options'] = {};
+    if ( item.subtype == 'message'){
+      item['options']['title'] = $("#title-input-"+item.id).val();
+      item['options']['message'] = $("#message-input-"+item.id).val();
+    }
+    else if ( item.subtype == 'select'){
+      item['options'][item.subtype] = $("#" + item.subtype + "-input-"+item.id+ " option:selected").val() ;
+    }
+    else{
+      item['options'][item.subtype] = $("#" + item.subtype + "-input-"+item.id).val() ;
+    }
+    
   });
 }
 
@@ -1085,8 +1304,8 @@ function addCmdOption(optionsJson) {
     name = name.split('[');
     name = name[name.length-1].replace(/]/g, '');
     var maxIndex = getMaxIndex(cmdCat);
-    cmdCat.push({id: result.cmd.id, name:name, index: maxIndex+1 });
-    refreshCmdListOption(optionsJson)
+    cmdCat.push({id: result.cmd.id, name:name, index: maxIndex+1, subtype: result.cmd.subType });
+    refreshCmdListOption(optionsJson) ;
   })
 }
 
@@ -1218,14 +1437,25 @@ function idToHuman(string, infos) {
 // Image condition list
 function refreshImgListOption() {
   var options = [];
-  var type = $("#widgetsList-select").val();
-  var widget = widgetsList.widgets.find(i => i.type == type);
+
+
+  if ($("#summaryModal").length != 0 && $("#widgetsList-select").length == 0 ) {
+    //if summary modal open, then get the summary Config object
+    var widget = summaryConfig;
+  } 
+  else {
+      //otherwise use the widget config based on the selected type one
+      var type = $("#widgetsList-select").val();
+      var widget = widgetsList.widgets.find(i => i.type == type);
+    
+  }
   curOption = "";
   //get all info
   $('input[cmdType="info"]').each((i, el) => {
     options.push({ type: 'cmd', id: $("input[id="+el.id+"]").attr('cmdid'), human: el.title})
   });
   options = options.concat(moreInfos);
+
   if (widget.variables) {
     widget.variables.forEach(v => {
       options.push({ type: 'var', id: v.name, human: `#${v.name}#`})
@@ -1290,7 +1520,6 @@ function deleteImgOption(id) {
     item.index = item.index - 1;
   }
   });
-
   refreshImgListOption();
 }
 
@@ -1379,6 +1608,67 @@ function downWidgetOption(id) {
    $.ajax(paramsAJAX);
  }
 
+
+function getCmdIdFromHumanName(_params, _callback) {
+  if(typeof _params.alert == 'undefined'){
+    _params.alert = '#div_alert';
+  }
+
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'humanReadableToCmd',
+      human: _params.stringData
+    },
+    cache: false,
+    dataType: 'json',
+    async: false,
+    success: function( data ) {
+      if (data.state != 'ok') {
+        $(_params.alert).showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else{
+        if ('function' == typeof(_callback)) {
+          _callback(data.result, _params);
+        }
+      }
+    }
+  });
+}
+
+function getHumanNameFromCmdId(_params, _callback) {
+  if(typeof _params.alert == 'undefined'){
+    _params.alert = '#div_alert';
+  }
+
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'cmdToHumanReadable',
+      strWithCmdId: _params.cmdIdData
+    },
+    cache: false,
+    dataType: 'json',
+    async: false,
+    success: function( data ) {
+      if (data.state != 'ok') {
+        $(_params.alert).showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else{
+        if ('function' == typeof(_callback)) {
+          _callback(data.result, _params);
+        }
+      }
+    }
+  });
+}
+
  function getCmd({id, error, success}) {
    $.post({
      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -1458,6 +1748,15 @@ function downWidgetOption(id) {
     }
     if ($("#"+option.id+"-input").attr('scId') != '') {
       result[option.id] = $("#"+option.id+"-input").attr('scId');
+
+      result['options'] = {} ;
+      result['options']['scenario_id'] = $("#"+option.id+"-input").attr('scId');
+      result['options']['action'] = 'start';
+      if ( $('#tags-scenario-input').val() != '' ){
+        getCmdIdFromHumanName({alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function(data, _params){
+          result['options']['tags'] = data ;
+        } ) ; 
+      }
     }
   } else if (option.category == "string") {
     if ($("#"+option.id+"-input").val() == '' & option.required) {
@@ -1498,9 +1797,36 @@ function downWidgetOption(id) {
         if (item.image == {}) { delete item.image; }
       }
       if (option.options.type == 'action') {
-        item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
-        item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
-        item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
+          item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
+          item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
+          item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
+
+          if (item.subtype != undefined && item.subtype != 'other' ) {
+            var optionsForSubtype = {'message' : ['title', 'message'], 'slider' : ['slider'], 'color' : ['color']} ;
+
+            item['options'] = {} ;
+
+            if ( item.subtype == 'select'){
+              item['options']['select'] = $("#select-input-"+item.id+ " option:selected").val() ;
+            }
+            else{
+              
+              var currentArray = optionsForSubtype[item.subtype];
+              currentArray.forEach(key => {
+                var tmpData = $("#"+key+"-input-"+item.id).val() ;
+                if (tmpData != ''){
+                  getCmdIdFromHumanName({alert: '#widget-alert', stringData: tmpData, subtype :key }, function(result, _params){
+                    item['options'][_params.subtype] = result ;
+                  } ) ; 
+                }
+                else{
+                  item['options'][key] = '';
+                }
+              });
+              
+            }
+
+          }
       }
     });
     result[option.id] = cmdCat;
@@ -1554,10 +1880,8 @@ function downWidgetOption(id) {
       result.moreInfos.push(info);
     });
   }
-
   toSave = JSON.stringify(result)
-  //console.log("envoie du widgetJC ==> " , toSave);
-
+  
   widgetImg = $("#widgetImg").attr("src") ;
 
   widgetName = $("#name-input").val() ;
@@ -1815,8 +2139,7 @@ function parseString(string, infos) {
 function updateOrderWidget(){
 
   var type = $("#widgetOrder").val();
-  console.log("choix tri : " + type);
-
+  
   var vars = getUrlVars()
   var url = 'index.php?'
   for (var i in vars) {
@@ -1908,3 +2231,38 @@ function saveEqLogic(_eqLogic) {
   return _eqLogic;
 
 }
+
+
+function getCmdDetail(_params, _callback) {
+  if(typeof _params.alert == 'undefined'){
+    _params.alert = '#div_alert';
+  }
+  var paramsRequired = ['id'];
+  var paramsSpecifics = {
+    global: false,
+    success: function(result) {
+
+      if ('function' == typeof(_callback)) {
+        _callback(result, _params);
+      }
+      
+	  } 
+  };
+
+  try {
+    jeedom.private.checkParamsRequired(_params || {}, paramsRequired);
+  } catch (e) {
+    (_params.error || paramsSpecifics.error || jeedom.private.default_params.error)(e);
+    $(_params.alert).showAlert({message: e.message, level: 'danger'});
+    return;
+  }
+  var params = $.extend({}, jeedom.private.default_params, paramsSpecifics, _params || {});
+  var paramsAJAX = jeedom.private.getParamsAJAX(params);
+  paramsAJAX.url = 'core/ajax/cmd.ajax.php';
+  paramsAJAX.data = {
+    action: 'getCmd',
+    id: _params.id,
+  };
+  $.ajax(paramsAJAX);
+};
+

@@ -311,5 +311,85 @@ class apiHelper {
    return $result;
  }
 
+ //EXEC ACTIONS
+ public static function execCmd($id, $options = null) {
+   $cmd = \cmd::byId($id);
+   if (!is_object($cmd)) {
+     \log::add('JeedomConnect', 'error', "Can't find command");
+     return;
+   }
+   try {
+     $cmd->execCmd($options);
+   } catch (Exception $e) {
+     \log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function execSc($id, $options = null) {
+   if ($options == null) {
+     $options = array(
+       'action' => 'start',
+       'scenario_id' => $id
+     );
+   }
+   try {
+     scenarioExpression::createAndExec('action', 'scenario', $options);
+   } catch (Exception $e) {
+     \log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function stopSc($id) {
+   try {
+     $sc = scenario::byId($id);
+     $sc->stop();
+   } catch (Exception $e) {
+     \log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function setActiveSc($id, $active) {
+   try {
+     $sc = \scenario::byId($id);
+     $sc->setIsActive($active);
+     $sc->save();
+   } catch (Exception $e) {
+     \log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ // FILES
+ public static function getFiles($folder) {
+   $dir = __DIR__ . '/../../../..' . $folder;
+   $result = array();
+   $dh = new DirectoryIterator($dir);
+
+   foreach ($dh as $item) {
+       if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
+           if (!$item->isDir()) {
+               array_push($result, array(
+                 'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
+                 'timestamp' => $item->getMTime()
+               ) );
+           }
+       }
+   }
+   return  array(
+     'type' => 'SET_FILES',
+     'payload' => array(
+       'path' => $folder,
+       'files' => $result
+     )
+   );
+ }
+
+
+ public static function removeFile($file) {
+   $filePath =  __DIR__ . '/../../../..' . $file;
+   $pathInfo = pathinfo($file);
+   unlink($filePath);
+   return self::getFiles($pathInfo['dirname']);
+ }
+
 }
 ?>

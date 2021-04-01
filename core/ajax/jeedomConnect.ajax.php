@@ -256,6 +256,28 @@ try {
 
 	}
 
+	if (init('action') == 'humanReadableToCmd') {
+
+		$stringWithCmdId = cmd::humanReadableToCmd(init('human'));
+		if ( strcmp($stringWithCmdId, init('human') ) == 0 ){
+			log::add('JeedomConnect', 'debug', 'ajax -- fx humanReadableToCmd -- string is the same with humanCmdString and cmdId => ' . $stringWithCmdId);
+			// ajax::error('La commande n\'existe pas');
+		}
+		ajax::success( $stringWithCmdId );
+
+	}
+
+	if (init('action') == 'cmdToHumanReadable') {
+
+		$cmdIdToHuman = cmd::cmdToHumanReadable(init('strWithCmdId'));
+		if ( strcmp($cmdIdToHuman, init('strWithCmdId') ) == 0 ){
+			log::add('JeedomConnect', 'debug', 'ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no cmdId => ' . $cmdIdToHuman);
+			// ajax::error('La commande n\'existe pas');
+		}
+		ajax::success( $cmdIdToHuman );
+
+	}
+
 	if (init('action') == 'saveConfig') {
     	$config = init('config');
 		$apiKey = init('apiKey');
