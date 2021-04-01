@@ -274,8 +274,13 @@ class ConnectLogic implements MessageComponentInterface
 				}
 				break;
 			case 'SC_EXEC':
-				$sc = \scenario::byId($msg['payload']['id']);
-				$sc->launch();
+				// $sc = \scenario::byId($msg['payload']['id']);
+				// $sc->launch();
+				$options = array();
+				if (isset($msg['payload']['options'])) {
+					$options = $msg['payload']['options'];
+				}
+				\scenarioExpression::createAndExec('action', 'scenario', $options);
 				break;
 			case 'SC_STOP':
 				$sc = \scenario::byId($msg['payload']['id']);

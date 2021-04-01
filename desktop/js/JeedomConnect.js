@@ -630,6 +630,15 @@ function setWidgetModalData(options) {
             })
           }
          });
+         $('#optionScenario').css('display','block') ;
+
+         if (options.widget['options'] !== undefined && 
+                  options.widget['options']['tags'] !== undefined && 
+                    options.widget['options']['tags'] != ''){
+            getHumanNameFromCmdId({alert: '#widget-alert', cmdIdData:  options.widget['options']['tags']  } , function(result, _params){
+              $('#tags-scenario-input').val(result);
+            }) ;
+         }
        } else if (option.category == "stringList" & options.widget[option.id] !== undefined) {
          var selectedChoice = option.choices.find(s => s.id == options.widget[option.id]);
          if (selectedChoice !== undefined) {
@@ -840,6 +849,12 @@ function refreshAddWidgets() {
       curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
     <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir un scenario' onclick="selectScenario('${option.id}');">
     <i class='fas fa-list-alt'></i></a></span></div>
+      <div id='optionScenario' style='display:none;'>
+        <div class="input-group input-group-sm" style="width: 100%">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
+            <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
+        </div>
+      </div>
     </div>
     </div></li>`;
   } else {
@@ -977,6 +992,10 @@ function selectScenario(name) {
         }
       });
       $("#name-input").val(result.name);
+
+      previousData = $('#tags-scenario-input').val() || '';
+      $('#tags-scenario-input').val(previousData);
+      $('#optionScenario').css('display','block');
     }
   })
 }
@@ -1729,6 +1748,15 @@ function getHumanNameFromCmdId(_params, _callback) {
     }
     if ($("#"+option.id+"-input").attr('scId') != '') {
       result[option.id] = $("#"+option.id+"-input").attr('scId');
+
+      result['options'] = {} ;
+      result['options']['scenario_id'] = $("#"+option.id+"-input").attr('scId');
+      result['options']['action'] = 'start';
+      if ( $('#tags-scenario-input').val() != '' ){
+        getCmdIdFromHumanName({alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function(data, _params){
+          result['options']['tags'] = data ;
+        } ) ; 
+      }
     }
   } else if (option.category == "string") {
     if ($("#"+option.id+"-input").val() == '' & option.required) {
