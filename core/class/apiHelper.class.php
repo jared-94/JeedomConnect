@@ -232,5 +232,84 @@ class apiHelper {
     return false;
  }
 
+ // EVENTS FUNCTION
+ public static function getEvents($events, $config) {
+   $result_cmd = array(
+     'type' => 'CMD_INFO',
+     'payload' => array()
+   );
+   $infoIds = self::getInfoCmdList($config);
+   $result_sc = array(
+     'type' => 'SC_INFO',
+     'payload' => array()
+   );
+   $scIds = self::getScenarioList($config);
+   $result_obj = array(
+     'type' => 'OBJ_INFO',
+     'payload' => array()
+   );
+   $objIds = self::getObjectList($config);
+
+   foreach ($events['result'] as $event) {
+     if ($event['name'] == 'jeeObject::summary::update') {
+       array_push($result_obj['payload'], $event['option']);
+     }
+     if ($event['name'] == 'scenario::update') {
+       if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
+         $sc_info = array(
+           'id' => $event['option']['scenario_id'],
+           'status' => $event['option']['state'],
+           'lastLaunch' => strtotime($event['option']['lastLaunch'])
+         );
+         if (array_key_exists('isActive', $event['option'])) {
+           $sc_info['active'] = $event['option']['isActive'];
+         }
+         array_push($result_sc['payload'], $sc_info);
+       }
+     }
+     if ($event['name'] == 'cmd::update') {
+       if (in_array($event['option']['cmd_id'], $infoIds) ) {
+         $cmd_info = array(
+           'id' => $event['option']['cmd_id'],
+           'value' => $event['option']['value'],
+           'modified' => strtotime($event['option']['valueDate'])
+           );
+         array_push($result_cmd['payload'], $cmd_info);
+       }
+     }
+   }
+   return array($result_cmd, $result_sc, $result_obj);
+ }
+
+ //HISTORY
+ public static function getHistory($id, $options = null) {
+   $history = array();
+   if ($options == null) {
+     $history = history::all($id);
+   } else {
+     $startTime = date('Y-m-d H:i:s', $options['startTime']);
+     $endTime = date('Y-m-d H:i:s', $options['endTime']);
+     log::add('JeedomConnect', 'info', 'Get history from: '.$startTime.' to '.$endTime);
+     $history = history::all($id, $startTime, $endTime);
+   }
+
+   $result = array(
+     'type' => 'SET_HISTORY',
+     'payload' => array(
+       'id' => $id,
+       'data' => array()
+     )
+   );
+
+   foreach ($history as $h) {
+     array_push($result['payload']['data'], array(
+       'time' => strtotime($h->getDateTime()),
+       'value' => $h->getValue()
+     ));
+   }
+   log::add('JeedomConnect', 'info', 'Send history (' . count($result['payload']['data']) . ' points)');
+   return $result;
+ }
+
 }
 ?>
