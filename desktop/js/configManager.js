@@ -936,55 +936,59 @@ function saveSummary() {
 	$('#summary-alert').hideAlert();
 	var result = {};
 	var summaryKey = $('#summary-key').text() ;
-	
-	summaryConfig.options.forEach(option => {
-		if (option.category == "string") {
-			if ($("#"+option.id+"-input").val() == '' & option.required) {
-				$('#summary-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			result[option.id] = $("#"+option.id+"-input").val();
-		} 
-		else if (option.category == "binary") {
-			result[option.id] = $("#"+option.id+"-input").is(':checked');
-		}
-		else if (option.category == "ifImgs") {
-			if (imgCat.length == 0 & option.required) {
-				$('#summary-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			imgCat.forEach(item => {
-				item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-				item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-				item.operator = $("#operator-"+item.index).val();
-				item.value = $("#"+item.index+"-value").val();
-			});
-			result[option.id] = imgCat;
-		}	
-		else if (option.category == "img") {
-			let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
-			if (icon.source == undefined & option.required) {
-				$('#summary-alert').showAlert({message: "L'image est obligatoire", level: 'danger'});
-				throw {};
-			}
-			result[option.id] = icon.source != undefined ? icon : undefined;
-		}
-	});
+	var summary = summaryConfig.find(i => i.type == 'summary');
 
-	summaryIndex = configData.payload.summaries.findIndex((obj => obj.key == summaryKey));
-	previousSummary = configData.payload.summaries[summaryIndex] ;
-	
-	previousSummary['name']= result['name'] ;
-	previousSummary['enable']= $('#enable-input').is(":checked") ;
-	
-	delete result['name'] ;
-	
-	const resultFinal = Object.assign(previousSummary, result);
-	
-	configData.payload.summaries[summaryIndex] = resultFinal ;
-	
-	$('#summaryModal').dialog('destroy').remove();
-	refreshSummaryData();
+	try{
+		summary.options.forEach(option => {
+			if (option.category == "string") {
+				if ($("#"+option.id+"-input").val() == '' & option.required) {
+					throw 'La commande '+option.name+' est obligatoire';
+				}
+				result[option.id] = $("#"+option.id+"-input").val();
+			} 
+			else if (option.category == "binary") {
+				result[option.id] = $("#"+option.id+"-input").is(':checked');
+			}
+			else if (option.category == "ifImgs") {
+				if (imgCat.length == 0 & option.required) {
+					throw 'La commande '+option.name+' est obligatoire';
+				}
+				imgCat.forEach(item => {
+					item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
+					item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
+					item.operator = $("#operator-"+item.index).val();
+					item.value = $("#"+item.index+"-value").val();
+				});
+				result[option.id] = imgCat;
+			}	
+			else if (option.category == "img") {
+				let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
+				if (icon.source == undefined & option.required) {
+					throw "L'image est obligatoire";
+				}
+				result[option.id] = icon.source != undefined ? icon : undefined;
+			}
+		});
+
+		summaryIndex = configData.payload.summaries.findIndex((obj => obj.key == summaryKey));
+		previousSummary = configData.payload.summaries[summaryIndex] ;
+		
+		previousSummary['name']= result['name'] ;
+		previousSummary['enable']= $('#enable-input').is(":checked") ;
+		
+		delete result['name'] ;
+		
+		const resultFinal = Object.assign(previousSummary, result);
+		
+		configData.payload.summaries[summaryIndex] = resultFinal ;
+		
+		$('#summaryModal').dialog('destroy').remove();
+		refreshSummaryData();
+	} 
+	catch (error) {
+		$('#summary-alert').showAlert({message: error, level: 'danger'});
+		console.error(error);
+  	}
 	
 
 }

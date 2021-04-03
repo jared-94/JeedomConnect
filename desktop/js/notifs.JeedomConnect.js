@@ -120,31 +120,40 @@ function getSimpleModal(_options, _callback) {
       $(this).dialog("close");
     },
     "Valider": function() {
-      var result = {};
-	  if (_options.fields.find(i => i.type == "enable")) {
-		  result.enable = $("#mod-enable-input").is(':checked');
-	  }
-	  if (_options.fields.find(i => i.type == "name")) {
-		  result.name = $("#mod-name-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "icon")) {
-		  result.icon = $("#mod-icon-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "move")) {
-		  result.moveToId = $("#mod-move-input").val();
-	  }
-	  if (_options.fields.find(i => i.type == "expanded")) {
-		  result.expanded = $("#mod-expanded-input").is(':checked');
-	  }
-	  if (_options.fields.find(i => i.type == "widget")) {
-		  result.widgetId = $("#mod-widget-input").val();
-		  result.widgetName = $("#mod-widget-input option:selected").text();
-	  }
+		try{
+			var result = {};
+			if (_options.fields.find(i => i.type == "enable")) {
+				result.enable = $("#mod-enable-input").is(':checked');
+			}
+			if (_options.fields.find(i => i.type == "name")) {
+				if ( $("#mod-name-input").val() == '' ){
+					throw 'La nom est obligatoire';
+				}
+				result.name = $("#mod-name-input").val();
+			}
+			if (_options.fields.find(i => i.type == "icon")) {
+				result.icon = $("#mod-icon-input").val();
+			}
+			if (_options.fields.find(i => i.type == "move")) {
+				result.moveToId = $("#mod-move-input").val();
+			}
+			if (_options.fields.find(i => i.type == "expanded")) {
+				result.expanded = $("#mod-expanded-input").is(':checked');
+			}
+			if (_options.fields.find(i => i.type == "widget")) {
+				result.widgetId = $("#mod-widget-input").val();
+				result.widgetName = $("#mod-widget-input option:selected").text();
+			}
 
-      if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-        _callback(result);
-      }
-      $(this).dialog('close');
+			if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+				_callback(result);
+			}
+			$(this).dialog('close');
+		}
+		catch(error){
+			$('#div_simpleModalAlert').showAlert({message: error, level: 'danger'});
+    		console.error(error);
+		}
     }
   }});
   $('#simpleModal').dialog('open');
@@ -181,17 +190,18 @@ function getNotifModal(_options, _callback) {
       $(this).dialog("close");
     },
     "Valider": function() {
-      var result = _options.notif || {};
+		try{
+      		var result = _options.notif || {};
 			if ($("#mod-notifName-input").val() == '') {
-				$('#notif-alert').showAlert({message: 'La commande Nom est obligatoire', level: 'danger'});
-				throw {};
+				throw 'La commande Nom est obligatoire';
 			}
-	  	result.name = $("#mod-notifName-input").val();
+	  		result.name = $("#mod-notifName-input").val();
 			result.channel = $("#mod-channel-input").val();
 			result.update = $("#update-input").is(':checked')
 			if ($("#mod-color-input").val() != '') {
 				result.color = $("#mod-color-input").val();
-			} else {
+			} 
+			else {
 				result.color = undefined;
 			}
 			result.image = htmlToIcon($("#icon-div").children().first());
@@ -199,18 +209,25 @@ function getNotifModal(_options, _callback) {
 
 			if (actionList.length > 0) {
 				actionList.forEach(item => {
-		      item.name = $("#"+item.id+"-name-input").val();
-		    });
+					item.name = $("#"+item.id+"-name-input").val();
+				});
 				result.actions = actionList;
-			} else {
+			} 
+			else {
 				result.actions = undefined;
 			}
 
-      if ('function' == typeof(_callback)) {
-          _callback(result);
-      }
+			if ('function' == typeof(_callback)) {
+				_callback(result);
+			}
+
 			$('#notif-alert').hideAlert();
-      $(this).dialog('close');
+      		$(this).dialog('close');
+		}
+		catch(error){
+			$('#notif-alert').showAlert({message: error, level: 'danger'});
+			console.error(error);
+		}
 
     }
   }});

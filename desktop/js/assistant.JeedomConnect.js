@@ -131,64 +131,68 @@ function getSimpleModal(_options, _callback) {
 			text: "Valider",
 			id: "saveSimple",
 			click: function() {
-				$('#simpleModalAlert').hide();
-				var result = {};
-		  	if (_options.fields.find(i => i.type == "enable")) {
-			  	result.enable = $("#mod-enable-input").is(':checked');
-		  	}
-		  	if (_options.fields.find(i => i.type == "name")) {
-					if ($("#mod-name-input").val() == '') {
-						$('#div_simpleModalAlert').showAlert({message: 'Le nom est obligatoire', level: 'danger'});
-						throw {};
+				try{
+					$('#simpleModalAlert').hide();
+					var result = {};
+					if (_options.fields.find(i => i.type == "enable")) {
+						result.enable = $("#mod-enable-input").is(':checked');
 					}
-			  	result.name = $("#mod-name-input").val();
-		  	}
-		  	if (_options.fields.find(i => i.type == "icon")) {
-					let icon = htmlToIcon($("#icon-div").children().first());
-					if (icon.source == undefined) {
-						$('#div_simpleModalAlert').showAlert({message: "L'icône est obligatoire", level: 'danger'});
-						throw {};
+					if (_options.fields.find(i => i.type == "name")) {
+						if ($("#mod-name-input").val() == '') {
+							throw 'Le nom est obligatoire';
+						}
+						result.name = $("#mod-name-input").val();
 					}
-					result.icon = htmlToIcon($("#icon-div").children().first());
-		  	}
-		  	if (_options.fields.find(i => i.type == "move")) {
-			  	result.moveToId = $("#mod-move-input").val();
-		  	}
-		  	if (_options.fields.find(i => i.type == "expanded")) {
-			  	result.expanded = $("#mod-expanded-input").is(':checked');
-		  	}
-		  	if (_options.fields.find(i => i.type == "widget")) {
-          if ( $("#mod-widget-input").val() == undefined){
-						$('#simpleModalAlert').showAlert({message: 'Choix obligatoire', level: 'danger'});
-						return;
+					if (_options.fields.find(i => i.type == "icon")) {
+						let icon = htmlToIcon($("#icon-div").children().first());
+						if (icon.source == undefined) {
+							throw "L'icône est obligatoire";
+						}
+						result.icon = htmlToIcon($("#icon-div").children().first());
 					}
-			  	result.widgetId = $("#mod-widget-input").val();
-			  	result.widgetName = $("#mod-widget-input option:selected").text();
-		  	}
-				if (_options.fields.find(i => i.type == "object")) {
-					result.object = $("#object-select  option:selected").val();
-					result.name = $("#object-select  option:selected").text();
-				}
-				if (_options.fields.find(i => i.type == "swipeUp")) {
-					let choice = $("#swipeUp-select option:selected").val();
-					if (choice == 'cmd') {
-						result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
-					} else if (choice == 'sc') {
-						result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
+					if (_options.fields.find(i => i.type == "move")) {
+						result.moveToId = $("#mod-move-input").val();
 					}
-				}
-				if (_options.fields.find(i => i.type == "swipeDown")) {
-					let choice = $("#swipeDown-select option:selected").val();
-					if (choice == 'cmd') {
-						result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
-					} else if (choice == 'sc') {
-						result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
+					if (_options.fields.find(i => i.type == "expanded")) {
+						result.expanded = $("#mod-expanded-input").is(':checked');
 					}
-				}
-				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-					_callback(result);
-				}
-				$(this).dialog('close');
+					if (_options.fields.find(i => i.type == "widget")) {
+						if ( $("#mod-widget-input").val() == undefined){
+							throw 'Choix obligatoire';
+						}
+						result.widgetId = $("#mod-widget-input").val();
+						result.widgetName = $("#mod-widget-input option:selected").text();
+					}
+					if (_options.fields.find(i => i.type == "object")) {
+						result.object = $("#object-select  option:selected").val();
+						result.name = $("#object-select  option:selected").text();
+					}
+					if (_options.fields.find(i => i.type == "swipeUp")) {
+						let choice = $("#swipeUp-select option:selected").val();
+						if (choice == 'cmd') {
+							result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
+						} else if (choice == 'sc') {
+							result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
+						}
+					}
+					if (_options.fields.find(i => i.type == "swipeDown")) {
+						let choice = $("#swipeDown-select option:selected").val();
+						if (choice == 'cmd') {
+							result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
+						} else if (choice == 'sc') {
+							result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
+						}
+					}
+					if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+						_callback(result);
+					}
+					$(this).dialog('close');
+
+				} 
+				catch (error) {
+					$('#div_simpleModalAlert').showAlert({message: error, level: 'danger'});
+					console.error(error);
+			  	}
 	   		}
 		} }});
 
