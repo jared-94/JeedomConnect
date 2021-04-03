@@ -16,8 +16,6 @@
  */
 
 var allWidgetsDetail;
-var summaryConfig = JSON.parse('{"type":"summary","name":"Résumé","description":"Gère la personalisation des icônes d\'un résumé","variables":[{"name":"value","descr":"valeur du résumé"},{"name":"total","descr":"Somme total des infos du résumé"}],"options":[{"id":"name","name":"Nom","required":true,"category":"string"},{"id":"image","name":"Image","required":false,"category":"img"},{"id":"statusImages","name":"Images sous conditions","required":false,"category":"ifImgs"}]}') ; 
-
 refreshWidgetDetails() ;
 
 function refreshWidgetDetails(){
@@ -37,8 +35,7 @@ function refreshWidgetDetails(){
 				});
 			}
 			else{
-				allWidgetsDetail = data.result;
-				// console.log("refresh allWidgetsDetail : ", allWidgetsDetail);
+				allWidgetsDetail = data.result
 			}
 		}
 	});
@@ -540,8 +537,10 @@ $("#room-input").html(roomListOptions);
 
 
 function setWidgetModalData(options) {
+  $('#summaryModal').dialog('destroy').remove();
+
   refreshAddWidgets();
-  //console.log("seWidgetMdal options : ", options);
+
   if (options.widget !== undefined) {
      $('#widgetsList-select option[value="'+options.widget.type+'"]').prop('selected', true);
      refreshAddWidgets();
@@ -562,8 +561,8 @@ function setWidgetModalData(options) {
     $("#widgetOptions").attr('widget-id', options.eqId ?? '');
 
      var widgetConfig = widgetsList.widgets.find(i => i.type == options.widget.type);
-     //console.log("widgetsList => ", widgetsList) ;
-     //console.log("widgetConfig => ", widgetConfig) ;
+    //  console.log("widgetsList => ", widgetsList) ;
+    //  console.log("widgetConfig => ", widgetConfig) ;
      widgetConfig.options.forEach(option => {
        if (option.category == "string" & options.widget[option.id] !== undefined ) {
          $("#"+option.id+"-input").val(options.widget[option.id]);
@@ -842,7 +841,7 @@ function refreshAddWidgets() {
       curOption += `</div></div></li>`;
     } else if (option.category == "ifImgs") {
       curOption += `<span class="input-group-btn">
-              <a class="btn btn-default roundedRight" onclick="addImgOption()"><i class="fas fa-plus-square">
+              <a class="btn btn-default roundedRight" onclick="addImgOption('widget')"><i class="fas fa-plus-square">
               </i> Ajouter</a></span><div id="imgList-option"></div>`;
       curOption += `</div></div></li>`;
     } else if (option.category == "scenario") {
@@ -1435,20 +1434,20 @@ function idToHuman(string, infos) {
 }
 
 // Image condition list
-function refreshImgListOption() {
+function refreshImgListOption(dataType = 'widget') {
   var options = [];
 
 
-  if ($("#summaryModal").length != 0 && $("#widgetsList-select").length == 0 ) {
+  if ( dataType != 'widget') {
     //if summary modal open, then get the summary Config object
-    var widget = summaryConfig;
+    var widget = summaryConfig.find(i => i.type == 'summary');
   } 
   else {
       //otherwise use the widget config based on the selected type one
       var type = $("#widgetsList-select").val();
       var widget = widgetsList.widgets.find(i => i.type == type);
-    
   }
+  
   curOption = "";
   //get all info
   $('input[cmdType="info"]').each((i, el) => {
@@ -1503,11 +1502,11 @@ function saveImgOption() {
   });
 }
 
-function addImgOption() {
+function addImgOption(dataType) {
   saveImgOption();
   var maxIndex = getMaxIndex(imgCat);
   imgCat.push({index: maxIndex+1 });
-  refreshImgListOption();
+  refreshImgListOption(dataType);
 }
 
 function deleteImgOption(id) {

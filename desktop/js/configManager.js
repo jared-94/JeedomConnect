@@ -1,5 +1,6 @@
 var configData;
 var widgetsList;
+var summaryConfig ;
 
 
 $.post({
@@ -20,6 +21,7 @@ $.post({
 					return a.name.localeCompare( b.name );
 				});
 				widgetsList = data;
+				summaryConfig = data.summaries;
 				initData();
 			}
 		});
@@ -883,17 +885,21 @@ function removeSummary() {
 }
 
 function setSummaryModalData(options) {
+	$('#widgetModal').dialog('destroy').remove();
 	refreshAddSummaries(options) ;
 	
 	//Enable
 	var enable = options.summary.enable ? "checked": "";
 	$("#enable-input").prop('checked', enable);
 
-	   
-	summaryConfig.options.forEach(option => {
+
+	var summary = summaryConfig.find(i => i.type == 'summary');
+
+
+	summary.options.forEach(option => {
 		
 		if (option.category == "string" & options.summary[option.id] !== undefined ) {
-		   	$("#"+option.id+"-input").val(options.summary[option.id]);
+			$("#"+option.id+"-input").val(options.summary[option.id]);
 		} 
 		else if (option.category == "binary" & options.summary[option.id] !== undefined ) {
 		   	$("#"+option.id+"-input").prop('checked', options.summary[option.id] ? "checked": "");
@@ -915,7 +921,7 @@ function setSummaryModalData(options) {
 		}
 		else if (option.category == "ifImgs" & options.summary[option.id] !== undefined) {
 			imgCat = options.summary[option.id];
-			refreshImgListOption(summaryConfig);
+			refreshImgListOption('summary');
 		}
 		else if (option.category == "img" & options.summary[option.id] !== undefined ) {
 			$("#icon-div-"+option.id).html(iconToHtml(options.summary[option.id]));
@@ -976,15 +982,15 @@ function saveSummary() {
 	const resultFinal = Object.assign(previousSummary, result);
 	
 	configData.payload.summaries[summaryIndex] = resultFinal ;
-
-	$('#summaryModal').dialog('close');
+	
+	$('#summaryModal').dialog('destroy').remove();
 	refreshSummaryData();
 	
 
 }
 
 function refreshAddSummaries(_options) {
-	var summary = summaryConfig;
+	var summary = summaryConfig.find(i => i.type == 'summary');
 	
 	$("#summaryDescription").html(summary.description);
   
@@ -1087,7 +1093,7 @@ function refreshAddSummaries(_options) {
 		} 
 		else if (option.category == "ifImgs") {
 			curOption += `<span class="input-group-btn">
-				<a class="btn btn-default roundedRight" onclick="addImgOption()"><i class="fas fa-plus-square">
+				<a class="btn btn-default roundedRight" onclick="addImgOption('summary')"><i class="fas fa-plus-square">
 				</i> Ajouter</a></span><div id="imgList-option"></div>`;
 			curOption += `</div></div></li>`;
 		} 

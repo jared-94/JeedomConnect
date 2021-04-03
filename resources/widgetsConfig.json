@@ -1,2371 +1,701 @@
 {
-"widgets":[
-	{
-		"type": "single-light-switch",
-		"name": "Lumière On/Off",
-		"img": "light100.png",
-		"description": "Gère une lumière simple à deux états allumé/éteind",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "onAction",
-				"name": "Action ON",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande ON"
-			},
-			{
-				"id": "offAction",
-				"name": "Action OFF",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande OFF"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"description": "Etat de la lumière (binaire ou numérique)"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "single-light-dim",
-		"name": "Lumière à variation",
-		"img": "light80.png",
-		"description": "Gère une lumière à intensité variable",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "onAction",
-				"name": "Action ON",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande ON"
-			},
-			{
-				"id": "offAction",
-				"name": "Action OFF",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande OFF"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
-			},
-			{
-				"id": "brightAction",
-				"name": "Intensité",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"value": "brightInfo",
-				"subtype": "slider"
-			},
-			{
-				"id": "brightInfo",
-				"name": "Info Intensité",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Intensité de la lumière"
-			},
-			{
-				"id": "whiteTempAction",
-				"name": "Température blanc",
-				"category": "cmd",
-				"type": "action",
-				"value": "whiteTempInfo",
-				"subtype": "slider"
-			},
-			{
-				"id": "whiteTempInfo",
-				"name": "Info Temp. blanc",
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "single-light-color",
-		"name": "Lumière de couleurs",
-		"img": "icon_wheel.png",
-		"description": "Gère une lumière à couleurs",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "colorAction",
-				"name": "Couleur action",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "color",
-				"value": "colorInfo"
-			},
-			{
-				"id": "colorInfo",
-				"name": "Info Couleur",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "string",
-				"description": "Couleur de la lumière"
-			},
-			{
-				"id": "onAction",
-				"name": "Action ON",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande ON"
-			},
-			{
-				"id": "offAction",
-				"name": "Action OFF",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande OFF"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
-			},
-			{
-				"id": "brightAction",
-				"name": "Intensité",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider",
-				"value": "brightInfo"
-			},
-			{
-				"id": "brightInfo",
-				"name": "Info Intensité",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Intensité de la lumière"
-			},
-			{
-				"id": "whiteTempAction",
-				"name": "Température blanc",
-				"category": "cmd",
-				"type": "action",
-				"value": "whiteTempInfo",
-				"subtype": "slider"
-			},
-			{
-				"id": "whiteTempInfo",
-				"name": "Info Temp. blanc",
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
-			},
-			{
-				"id": "grabberAction",
-				"name": "Mode TV",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Commande Grabber pour les LEDS TV"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-light",
-		"name": "Groupe de lumières",
-		"img": "groupLight.png",
-		"description": "Gère un groupe de plusieurs widgets lumières",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
-			{ "name": "onNb", "descr": "Nombre de lumières allumées" },
-			{ "name": "offNb", "descr": "Nombre de lumières éteintes" },
-			{ "name": "total", "descr": "Nombre de lumières" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["single-light-switch", "single-light-dim", "single-light-color"],
-				"description": "Liste des lumières à gérer"
-			},
-			{
-				"id": "autoManOnAction",
-				"name": "Gestion ON",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "autoManInfo",
-				"description": "Active la gestion automatique"
-			},
-			{
-				"id": "autoManOffAction",
-				"name": "Gestion OFF",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "autoManInfo",
-				"description": "Désactive la gestion automatique"
-			},
-			{
-				"id": "autoManInfo",
-				"name": "Gestion auto",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Gestion automatique des lumières"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "plug",
-		"name": "Prise",
-		"img": "plug6.png",
-		"description": "Widget pour gérer une prise électrique",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "onAction",
-				"name": "Allumer",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo"
-			},
-			{
-				"id": "offAction",
-				"name": "Eteindre",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat (Allumé/Eteint) de la prise"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-plug",
-		"name": "Groupe de prises",
-		"img": "groupPlug.png",
-		"description": "Gère un groupe de plusieurs widgets prises",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
-			{ "name": "onNb", "descr": "Nombre de prises allumées" },
-			{ "name": "offNb", "descr": "Nombre de prises éteintes" },
-			{ "name": "total", "descr": "Nombre de prises" },
-			{ "name": "power", "descr": "Puissance totale" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id": "power", "name": "Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["plug"],
-				"description": "Liste des prises à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "scenario",
-		"name": "Scénario",
-		"img": "scenario.png",
-		"description": "Gestion d'un scénario",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "active", "descr": "Scénario actif (0 ou 1)" },
-			{ "name": "running", "descr": "En cours d'exécution (0 ou 1)" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": false,
-				"category": "string",
-				"description": "Si vide, le nom du scénario sera utilisé"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Status"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "scenarioId",
-				"name": "Scénario",
-				"required": true,
-				"category": "scenario"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			}
-		]
-	},
-	{
-		"type": "widgets-summary",
-		"name": "Résumé",
-		"img": "summary.png",
-		"description": "Affiche un résumé de plusieurs widgets",
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"blackList": ["widgets-summary", "favorites", "room-summary"],
-				"description": "Liste des widgets à afficher"
-			},
-			{
-				"id": "blocDisplay",
-				"name": "Affichage bloc",
-				"category": "binary",
-				"description": "Affichage du résumé sur plusieurs lignes"
-			}
-		]
-	},
-	{
-		"type": "room",
-		"name": "Résumé de pièce",
-		"img": "room_summary.png",
-		"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "blocDisplay",
-				"name": "Affichage bloc",
-				"category": "binary",
-				"description": "Affichage du résumé sur plusieurs lignes"
-			}
-		]
-	},
-	{
-		"type": "favorites",
-		"name": "Favoris",
-		"img": "favorites.png",
-		"description": "Affiche des widgets favoris",
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"blackList": ["widgets-summary", "favorites", "room-summary"],
-				"description": "Liste des widgets à afficher"
-			},
-			{
-				"id": "blocDisplay",
-				"name": "Affichage bloc",
-				"category": "binary",
-				"description": "Affichage des éléments sur plusieurs lignes"
-			}
-		]
-	},
-	{
-		"type": "brightness",
-		"name": "Luminosité",
-		"img": "brightness.png",
-		"description": "Donne la luminosité en Lux",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat de la luminosité en Lux"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "humidity",
-		"name": "Humidité",
-		"img": "humidity.png",
-		"description": "Donne l'humidité en %",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat de l'humidité en %"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "temperature",
-		"name": "Température",
-		"img": "temperature.png",
-		"description": "Affiche la température en °C",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat de la température en °C"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img",
-				"description": "Image par défaut si aucune condition n'est remplie"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "power",
-		"name": "Puissance",
-		"img": "power.png",
-		"description": "Donne la puissance consomée en W",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat de la puissance en W"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img",
-				"description": "Image par défaut si aucune condition n'est remplie"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "thermostat",
-		"name": "Thermostat",
-		"img": "thermostatOff.png",
-		"description": "Gère un thermostat. Compatible avec le plugin officiel",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"},
-			{ "name": "lockText", "descr": "Etat 'Vérouillé' ou 'Déverrouillé'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [
-					{"id":"room", "name":"Pièce"},
-					{"id":"elapsedTime", "name":"Temps écoulé"},
-					{"id":"status", "name":"Status"},
-					{"id":"mode", "name":"Mode"},
-					{"id":"temperature", "name":"Température int"},
-					{"id":"temperatureExt", "name":"Température ext"},
-					{"id":"power", "name":"Puissance"}
-				],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"description": "Etat du thermostat (chaîne ou binaire)."
-			},
-			{
-				"id": "setpointAction",
-				"name": "Consigne",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider",
-				"value": "setpointInfo",
-				"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)"
-			},
-			{
-				"id": "setpointInfo",
-				"name": "Info Consigne",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "tempInfo",
-				"name": "Température intérieure",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "tempExtInfo",
-				"name": "Température extérieure",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "modeInfo",
-				"name": "Info Mode",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "string",
-				"description": "Info qui donne le mode courant"
-			},
-			{
-				"id": "modes",
-				"name": "Modes",
-				"required": false,
-				"category": "cmdList",
-				"options": {"type": "action", "subtype": "other", "hasIcon": true, "hasImage": true, "hasName": false }
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Info qui donne la puissance en %"
-			},
-			{
-				"id": "lockInfo",
-				"name": "Info verrou",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary"
-			},
-			{
-				"id": "lockAction",
-				"name": "Verrouillage",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other"
-			},
-			{
-				"id": "unlockAction",
-				"name": "Déverrouillage",
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "air-con",
-		"name": "Climatiseur",
-		"img": "cold.png",
-		"description": "Gère un climatiseur",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"}
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"mode", "name":"Mode"}, {"id":"temperature", "name":"Température"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "onAction",
-				"name": "Action ON",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande ON"
-			},
-			{
-				"id": "offAction",
-				"name": "Action OFF",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande OFF"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"description": "Etat du climatiseur (binaire ou numérique)."
-			},
-			{
-				"id": "setpointAction",
-				"name": "Consigne",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider",
-				"value": "setpointInfo"
-			},
-			{
-				"id": "setpointInfo",
-				"name": "Info Consigne",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "tempInfo",
-				"name": "Température",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric"
-			},
-			{
-				"id": "modeInfo",
-				"name": "Info Mode",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "string",
-				"description": "Info qui donne le mode courant (Froid, Chauffage, Sechage)"
-			},
-			{
-				"id": "hotAction",
-				"name": "Mode Chauffage",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other"
-			},
-			{
-				"id": "coldAction",
-				"name": "Mode Froid",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other"
-			},
-			{
-				"id": "dryAction",
-				"name": "Mode Séchage",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other"
-			},
-			{
-				"id": "fanSpeedInfo",
-				"name": "Info Ventilation",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Info qui donne la vitesse de ventilation"
-			},
-			{
-				"id": "fanSpeedAction",
-				"name": "Ventilation",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "door",
-		"name": "Porte",
-		"img": "doorOn.png",
-		"description": "Donne l'état ouvert/fermé d'une porte",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la porte"
-			},
-			{
-        "id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-door",
-		"name": "Groupe de portes",
-		"img": "groupDoor.png",
-		"description": "Gère un groupe de plusieurs widgets portes",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "openNb", "descr": "Nombre de portes ouvertes" },
-			{ "name": "closedNb", "descr": "Nombre de portes fermées" },
-			{ "name": "total", "descr": "Nombre de portes" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["door"],
-				"description": "Liste des portes à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "window",
-		"name": "Fenêtre",
-		"img": "windowClosed.png",
-		"description": "Donne l'état ouvert/fermé d'une fenêtre",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"description": "Etat de la fenêtre"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-window",
-		"name": "Groupe de fenêtres",
-		"img": "groupWindows.png",
-		"description": "Gère un groupe de plusieurs widgets fenêtres",
-		"variables": [
-			{ "name": "openNb", "descr": "Nombre de fenêtres ouvertes" },
-			{ "name": "closedNb", "descr": "Nombre de fenêtres fermées" },
-			{ "name": "total", "descr": "Nombre de fenêtres" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["window"],
-				"description": "Liste des fenêtres à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "frontgate",
-		"name": "Portail coulissant",
-		"img": "gateOpen.png",
-		"description": "Gère un portail coulissant",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Ouvert', 'Fermé' ou 'Piéton'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])"
-			},
-			{
-				"id": "openAction",
-				"name": "Ouvrir",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Ouverture totale du portail"
-			},
-			{
-				"id": "closeAction",
-				"name": "Fermer",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Fermeture du portail"
-			},
-			{
-				"id": "partialAction",
-				"name": "Piéton",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Fermeture partielle (piéton) du portail"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "shutter",
-		"name": "Volet",
-		"img": "shutter50.png",
-		"description": "Gère un volet roulant",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status 'Ouvert' ou 'Fermé'" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"description": "Etat du volet (numérique ou binaire)"
-			},
-			{
-				"id": "upAction",
-				"name": "Monter",
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande pour monter le volet"
-			},
-			{
-				"id": "downAction",
-				"name": "Descendre",
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande pour déscendre le volet"
-			},
-			{
-				"id": "stopAction",
-				"name": "Stop",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"description": "Commande pour arrêter le volet"
-			},
-			{
-				"id": "positionAction",
-				"name": "Position",
-				"required": false,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider",
-				"value": "statusInfo",
-				"description": "Commande de positionnement du volet"
-			},
-			{
-				"id": "powerInfo",
-				"name": "Puissance",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Puissance en watts"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-shutter",
-		"name": "Groupe de volets",
-		"img": "groupShutter.png",
-		"description": "Gère un groupe de plusieurs widgets volets",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "openNb", "descr": "Nombre de volets ouvertes" },
-			{ "name": "closedNb", "descr": "Nombre de volets fermées" },
-			{ "name": "total", "descr": "Nombre de volets" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["shutter"],
-				"description": "Liste des volets à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "pir",
-		"name": "PIR",
-		"img": "pirOff.png",
-		"description": "Donne l'état d'un capteur de mouvements",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat du capteur"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-pir",
-		"name": "Groupe de PIR",
-		"img": "groupPIR.png",
-		"description": "Gère un groupe de plusieurs capteurs de mouvements",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "alertNb", "descr": "Nombre de PIR en alerte" },
-			{ "name": "normalNb", "descr": "Nombre de PIR au repos" },
-			{ "name": "total", "descr": "Nombre de PIR" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["pir"],
-				"description": "Liste des capteurs à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "alarm",
-		"name": "Alarme",
-		"img": "alarm_red.png",
-		"description": "Gère une alarme",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "statusText", "descr": "Status de l'alarme" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "enableInfo",
-				"name": "Actif",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de l'alarme (armée/désarmée)"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Status de l'alarme (alarme en cours)"
-			},
-			{
-				"id": "onAction",
-				"name": "Action activer",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "enableInfo",
-				"description": "Commande pour activer l'alarme"
-			},
-			{
-				"id": "offAction",
-				"name": "Action désactiver",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "enableInfo",
-				"description": "Commande pour désactiver l'alarme"
-			},
-			{
-				"id": "immediateInfo",
-				"name": "Status immédiat",
-				"required": false,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Commande binaire pour le pré-armement / pré-alarme"
-			},
-			{
-				"id": "immediateTime",
-				"name": "Délais d'activation",
-				"required": false,
-				"category": "string",
-				"description": "Durée en minutes avant activation"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-alarm",
-		"name": "Groupe d'alarmes",
-		"img": "groupAlarm.png",
-		"description": "Gère un groupe d'alarmes",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "armedNb", "descr": "Nombre d'alarmes armées'" },
-			{ "name": "alarmNb", "descr": "Nombre d'alarme en alerte'" },
-			{ "name": "total", "descr": "Nombre de'alarmes dans le groupe" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"formatedValue", "name":"Status"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["alarm"],
-				"description": "Liste des alarmes à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "generic-info-binary",
-		"name": "Générique binaire",
-		"img": "information.png",
-		"description": "Widget générique pour afficher les infos d'une commande binaire",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la commande"
-			},
-			{
-				"id": "text0",
-				"name": "Texte 0",
-				"required": false,
-				"category": "string",
-				"description": "Texte affiché lorsque la valeur est 0"
-			},
-			{
-				"id": "text1",
-				"name": "Texte 1",
-				"required": false,
-				"category": "string",
-				"description": "Texte affiché lorsque la valeur est 1"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "group-generic-info-binary",
-		"name": "Groupe de génériques binaires",
-		"img": "groupBinary.png",
-		"description": "Gère un groupe de plusieurs widgets générique info binaire",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" },
-			{ "name": "nb0", "descr": "Nombre de binaires valant 0" },
-			{ "name": "nb1", "descr": "Nombre de binaires valant 1" },
-			{ "name": "total", "descr": "Nombre de binaires" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "widgets",
-				"name": "Widgets",
-				"required": true,
-				"category": "widgets",
-				"whiteList": ["generic-info-binary"],
-				"description": "Liste des génériques binaires à gérer"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "generic-info-numeric",
-		"name": "Générique numérique",
-		"img": "information.png",
-		"description": "Widget générique pour afficher les infos d'une commande info numérique",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat de la commande"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img",
-				"description": "Image par défaut si aucune condition n'est remplie"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs",
-				"infos": [ "statusInfo" ]
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "generic-info-string",
-		"name": "Générique texte",
-		"img": "information.png",
-		"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "string",
-				"description": "Etat de la commande"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "generic-switch",
-		"name": "Générique switch",
-		"img": "switch.png",
-		"description": "Widget générique pour un switch (commande ON/OFF)",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "onAction",
-				"name": "Action ON",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande ON"
-			},
-			{
-				"id": "offAction",
-				"name": "Action OFF",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "other",
-				"value": "statusInfo",
-				"description": "Commande OFF"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "binary",
-				"description": "Etat de la commande"
-			},
-			{
-				"id": "text0",
-				"name": "Texte 0",
-				"required": false,
-				"category": "string",
-				"description": "Texte affiché lorsque la valeur est 0"
-			},
-			{
-				"id": "text1",
-				"name": "Texte 1",
-				"required": false,
-				"category": "string",
-				"description": "Texte affiché lorsque la valeur est 1"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "generic-slider",
-		"name": "Générique slider",
-		"img": "meter.png",
-		"description": "Gère un slider",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Valeur"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "sliderAction",
-				"name": "Action",
-				"required": true,
-				"category": "cmd",
-				"type": "action",
-				"subtype": "slider",
-				"value": "statusInfo"
-			},
-			{
-				"id": "statusInfo",
-				"name": "Status",
-				"required": true,
-				"category": "cmd",
-				"type": "info",
-				"subtype": "numeric",
-				"description": "Etat du slider (numérique)"
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		]
-	},
-	{
-		"type": "generic-action-other",
-		"name": "Générique actions",
-		"img": "powerButton.png",
-		"description": "Permet des lancer des commandes action (de type other)",
-		"variables": [
-			{ "name": "room", "descr": "Pièce" }
-		],
-		"options": [
-			{
-				"id": "name",
-				"name": "Nom",
-				"required": true,
-				"category": "string"
-			},
-			{
-				"id": "subtitle",
-				"name": "Sous-titre",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"room", "name":"Pièce"}],
-				"description": "Information supplémentaire affichée sur le widget"
-			},
-			{
-				"id": "actions",
-				"name": "Actions",
-				"required": true,
-				"category": "cmdList",
-				"options": {"type": "action", "subtype": "", "hasIcon": true, "hasImage": false, "hasName": false }
-			},
-			{
-				"id": "image",
-				"name": "Image",
-				"required": false,
-				"category": "img"
-			},
-			{
-				"id":  "statusImages",
-				"name": "Images sous conditions",
-				"required": false,
-				"category": "ifImgs"
-			},
-			{
-				"id": "display",
-				"name": "Affichage forcé",
-				"required": false,
-				"category": "stringList",
-				"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-				"description": "Affichage forcé du widget"
-			}
-		 ]
+	"widgets":[
+		{
+			"type": "single-light-switch",
+			"name": "Lumière On/Off",
+			"img": "light100.png",
+			"description": "Gère une lumière simple à deux états allumé/éteind",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "onAction",
+					"name": "Action ON",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
+				},
+				{
+					"id": "offAction",
+					"name": "Action OFF",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"description": "Etat de la lumière (binaire ou numérique)"
+				},
+				{
+					"id": "powerInfo",
+					"name": "Puissance",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Puissance en watts"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
 		},
 		{
-			"type": "choices-list",
-			"name": "Liste de choix",
-			"img": "choices-list.png",
-			"description": "Gère une liste",
+			"type": "single-light-dim",
+			"name": "Lumière à variation",
+			"img": "light80.png",
+			"description": "Gère une lumière à intensité variable",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "onAction",
+					"name": "Action ON",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
+				},
+				{
+					"id": "offAction",
+					"name": "Action OFF",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+				},
+				{
+					"id": "brightAction",
+					"name": "Intensité",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"value": "brightInfo",
+					"subtype": "slider"
+				},
+				{
+					"id": "brightInfo",
+					"name": "Info Intensité",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Intensité de la lumière"
+				},
+				{
+					"id": "whiteTempAction",
+					"name": "Température blanc",
+					"category": "cmd",
+					"type": "action",
+					"value": "whiteTempInfo",
+					"subtype": "slider"
+				},
+				{
+					"id": "whiteTempInfo",
+					"name": "Info Temp. blanc",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "powerInfo",
+					"name": "Puissance",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Puissance en watts"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "single-light-color",
+			"name": "Lumière de couleurs",
+			"img": "icon_wheel.png",
+			"description": "Gère une lumière à couleurs",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "colorAction",
+					"name": "Couleur action",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "color",
+					"value": "colorInfo"
+				},
+				{
+					"id": "colorInfo",
+					"name": "Info Couleur",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Couleur de la lumière"
+				},
+				{
+					"id": "onAction",
+					"name": "Action ON",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
+				},
+				{
+					"id": "offAction",
+					"name": "Action OFF",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+				},
+				{
+					"id": "brightAction",
+					"name": "Intensité",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider",
+					"value": "brightInfo"
+				},
+				{
+					"id": "brightInfo",
+					"name": "Info Intensité",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Intensité de la lumière"
+				},
+				{
+					"id": "whiteTempAction",
+					"name": "Température blanc",
+					"category": "cmd",
+					"type": "action",
+					"value": "whiteTempInfo",
+					"subtype": "slider"
+				},
+				{
+					"id": "whiteTempInfo",
+					"name": "Info Temp. blanc",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "powerInfo",
+					"name": "Puissance",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Puissance en watts"
+				},
+				{
+					"id": "grabberAction",
+					"name": "Mode TV",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"description": "Commande Grabber pour les LEDS TV"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-light",
+			"name": "Groupe de lumières",
+			"img": "groupLight.png",
+			"description": "Gère un groupe de plusieurs widgets lumières",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
+				{ "name": "onNb", "descr": "Nombre de lumières allumées" },
+				{ "name": "offNb", "descr": "Nombre de lumières éteintes" },
+				{ "name": "total", "descr": "Nombre de lumières" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["single-light-switch", "single-light-dim", "single-light-color"],
+					"description": "Liste des lumières à gérer"
+				},
+				{
+					"id": "autoManOnAction",
+					"name": "Gestion ON",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "autoManInfo",
+					"description": "Active la gestion automatique"
+				},
+				{
+					"id": "autoManOffAction",
+					"name": "Gestion OFF",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "autoManInfo",
+					"description": "Désactive la gestion automatique"
+				},
+				{
+					"id": "autoManInfo",
+					"name": "Gestion auto",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Gestion automatique des lumières"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "plug",
+			"name": "Prise",
+			"img": "plug6.png",
+			"description": "Widget pour gérer une prise électrique",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "onAction",
+					"name": "Allumer",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo"
+				},
+				{
+					"id": "offAction",
+					"name": "Eteindre",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat (Allumé/Eteint) de la prise"
+				},
+				{
+					"id": "powerInfo",
+					"name": "Puissance",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Puissance en watts"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-plug",
+			"name": "Groupe de prises",
+			"img": "groupPlug.png",
+			"description": "Gère un groupe de plusieurs widgets prises",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
+				{ "name": "onNb", "descr": "Nombre de prises allumées" },
+				{ "name": "offNb", "descr": "Nombre de prises éteintes" },
+				{ "name": "total", "descr": "Nombre de prises" },
+				{ "name": "power", "descr": "Puissance totale" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id": "power", "name": "Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["plug"],
+					"description": "Liste des prises à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "scenario",
+			"name": "Scénario",
+			"img": "scenario.png",
+			"description": "Gestion d'un scénario",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "active", "descr": "Scénario actif (0 ou 1)" },
+				{ "name": "running", "descr": "En cours d'exécution (0 ou 1)" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": false,
+					"category": "string",
+					"description": "Si vide, le nom du scénario sera utilisé"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Status"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "scenarioId",
+					"name": "Scénario",
+					"required": true,
+					"category": "scenario"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				}
+			]
+		},
+		{
+			"type": "widgets-summary",
+			"name": "Résumé",
+			"img": "summary.png",
+			"description": "Affiche un résumé de plusieurs widgets",
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"blackList": ["widgets-summary", "favorites", "room-summary"],
+					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "blocDisplay",
+					"name": "Affichage bloc",
+					"category": "binary",
+					"description": "Affichage du résumé sur plusieurs lignes"
+				}
+			]
+		},
+		{
+			"type": "room",
+			"name": "Résumé de pièce",
+			"img": "room_summary.png",
+			"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "blocDisplay",
+					"name": "Affichage bloc",
+					"category": "binary",
+					"description": "Affichage du résumé sur plusieurs lignes"
+				}
+			]
+		},
+		{
+			"type": "favorites",
+			"name": "Favoris",
+			"img": "favorites.png",
+			"description": "Affiche des widgets favoris",
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"blackList": ["widgets-summary", "favorites", "room-summary"],
+					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "blocDisplay",
+					"name": "Affichage bloc",
+					"category": "binary",
+					"description": "Affichage des éléments sur plusieurs lignes"
+				}
+			]
+		},
+		{
+			"type": "brightness",
+			"name": "Luminosité",
+			"img": "brightness.png",
+			"description": "Donne la luminosité en Lux",
 			"variables": [
 				{ "name": "room", "descr": "Pièce" }
 			],
@@ -2381,18 +711,8 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"status", "name":"Valeur"}],
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
 					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "listAction",
-					"name": "Action",
-					"required": true,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "select",
-					"value": "statusInfo",
-					"description": "Où est définie la liste des valeurs possible"
 				},
 				{
 					"id": "statusInfo",
@@ -2400,7 +720,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Valeur courante"
+					"subtype": "numeric",
+					"description": "Etat de la luminosité en Lux"
 				},
 				{
 					"id": "image",
@@ -2425,10 +746,13 @@
 			]
 		},
 		{
-			"type": "generic-message",
-			"name": "Générique message",
-			"img": "generic-message.png",
-			"description": "Permet l'utilisation d'une commande de type message",
+			"type": "humidity",
+			"name": "Humidité",
+			"img": "humidity.png",
+			"description": "Donne l'humidité en %",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
 			"options": [
 				{
 					"id": "name",
@@ -2441,36 +765,17 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}],
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
-					"id": "msgAction",
-					"name": "Action",
+					"id": "statusInfo",
+					"name": "Status",
 					"required": true,
 					"category": "cmd",
-					"type": "action",
-					"subtype": "message",
-					"description": "Commande executée avec les informations 'message' saisies"
-				},
-				{
-					"id": "displayTitle",
-					"name": "Champ Titre",
-					"category": "binary",
-					"description": "Est ce qu'une zone 'titre' doit être affichée sur le widget"
-				},
-				{
-					"id": "keepLastMsg",
-					"name": "Garder le dernier message",
-					"category": "binary",
-					"description": "Conserver le dernier message envoyé pour ne pas avoir à le retaper"
-				},
-				{
-					"id": "sendImage",
-					"name": "Image Envoyer",
-					"required": false,
-					"category": "img",
-					"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de l'humidité en %"
 				},
 				{
 					"id": "image",
@@ -2495,10 +800,1259 @@
 			]
 		},
 		{
-			"type": "mode",
-			"name": "Mode",
-			"img": "mode.png",
-			"description": "Affiche une liste de modes et permet de les sélectionner",
+			"type": "temperature",
+			"name": "Température",
+			"img": "temperature.png",
+			"description": "Affiche la température en °C",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de la température en °C"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img",
+					"description": "Image par défaut si aucune condition n'est remplie"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "power",
+			"name": "Puissance",
+			"img": "power.png",
+			"description": "Donne la puissance consomée en W",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de la puissance en W"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img",
+					"description": "Image par défaut si aucune condition n'est remplie"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "thermostat",
+			"name": "Thermostat",
+			"img": "thermostatOff.png",
+			"description": "Gère un thermostat. Compatible avec le plugin officiel",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"},
+				{ "name": "lockText", "descr": "Etat 'Vérouillé' ou 'Déverrouillé'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{"id":"room", "name":"Pièce"},
+						{"id":"elapsedTime", "name":"Temps écoulé"},
+						{"id":"status", "name":"Status"},
+						{"id":"mode", "name":"Mode"},
+						{"id":"temperature", "name":"Température int"},
+						{"id":"temperatureExt", "name":"Température ext"},
+						{"id":"power", "name":"Puissance"}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"description": "Etat du thermostat (chaîne ou binaire)."
+				},
+				{
+					"id": "setpointAction",
+					"name": "Consigne",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider",
+					"value": "setpointInfo",
+					"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)"
+				},
+				{
+					"id": "setpointInfo",
+					"name": "Info Consigne",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "tempInfo",
+					"name": "Température intérieure",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "tempExtInfo",
+					"name": "Température extérieure",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "modeInfo",
+					"name": "Info Mode",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Info qui donne le mode courant"
+				},
+				{
+					"id": "modes",
+					"name": "Modes",
+					"required": false,
+					"category": "cmdList",
+					"options": {"type": "action", "subtype": "other", "hasIcon": true, "hasImage": true, "hasName": false }
+				},
+				{
+					"id": "powerInfo",
+					"name": "Puissance",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Info qui donne la puissance en %"
+				},
+				{
+					"id": "lockInfo",
+					"name": "Info verrou",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary"
+				},
+				{
+					"id": "lockAction",
+					"name": "Verrouillage",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "unlockAction",
+					"name": "Déverrouillage",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "air-con",
+			"name": "Climatiseur",
+			"img": "cold.png",
+			"description": "Gère un climatiseur",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"mode", "name":"Mode"}, {"id":"temperature", "name":"Température"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "onAction",
+					"name": "Action ON",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
+				},
+				{
+					"id": "offAction",
+					"name": "Action OFF",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"description": "Etat du climatiseur (binaire ou numérique)."
+				},
+				{
+					"id": "setpointAction",
+					"name": "Consigne",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider",
+					"value": "setpointInfo"
+				},
+				{
+					"id": "setpointInfo",
+					"name": "Info Consigne",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "tempInfo",
+					"name": "Température",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "modeInfo",
+					"name": "Info Mode",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Info qui donne le mode courant (Froid, Chauffage, Sechage)"
+				},
+				{
+					"id": "hotAction",
+					"name": "Mode Chauffage",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "coldAction",
+					"name": "Mode Froid",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "dryAction",
+					"name": "Mode Séchage",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "fanSpeedInfo",
+					"name": "Info Ventilation",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Info qui donne la vitesse de ventilation"
+				},
+				{
+					"id": "fanSpeedAction",
+					"name": "Ventilation",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "door",
+			"name": "Porte",
+			"img": "doorOn.png",
+			"description": "Donne l'état ouvert/fermé d'une porte",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de la porte"
+				},
+				{
+			"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-door",
+			"name": "Groupe de portes",
+			"img": "groupDoor.png",
+			"description": "Gère un groupe de plusieurs widgets portes",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "openNb", "descr": "Nombre de portes ouvertes" },
+				{ "name": "closedNb", "descr": "Nombre de portes fermées" },
+				{ "name": "total", "descr": "Nombre de portes" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["door"],
+					"description": "Liste des portes à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "window",
+			"name": "Fenêtre",
+			"img": "windowClosed.png",
+			"description": "Donne l'état ouvert/fermé d'une fenêtre",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"description": "Etat de la fenêtre"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-window",
+			"name": "Groupe de fenêtres",
+			"img": "groupWindows.png",
+			"description": "Gère un groupe de plusieurs widgets fenêtres",
+			"variables": [
+				{ "name": "openNb", "descr": "Nombre de fenêtres ouvertes" },
+				{ "name": "closedNb", "descr": "Nombre de fenêtres fermées" },
+				{ "name": "total", "descr": "Nombre de fenêtres" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["window"],
+					"description": "Liste des fenêtres à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "frontgate",
+			"name": "Portail coulissant",
+			"img": "gateOpen.png",
+			"description": "Gère un portail coulissant",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Ouvert', 'Fermé' ou 'Piéton'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])"
+				},
+				{
+					"id": "openAction",
+					"name": "Ouvrir",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"description": "Ouverture totale du portail"
+				},
+				{
+					"id": "closeAction",
+					"name": "Fermer",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"description": "Fermeture du portail"
+				},
+				{
+					"id": "partialAction",
+					"name": "Piéton",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"description": "Fermeture partielle (piéton) du portail"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "shutter",
+			"name": "Volet",
+			"img": "shutter50.png",
+			"description": "Gère un volet roulant",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status 'Ouvert' ou 'Fermé'" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"description": "Etat du volet (numérique ou binaire)"
+				},
+				{
+					"id": "upAction",
+					"name": "Monter",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande pour monter le volet"
+				},
+				{
+					"id": "downAction",
+					"name": "Descendre",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande pour déscendre le volet"
+				},
+				{
+					"id": "stopAction",
+					"name": "Stop",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"description": "Commande pour arrêter le volet"
+				},
+				{
+					"id": "positionAction",
+					"name": "Position",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider",
+					"value": "statusInfo",
+					"description": "Commande de positionnement du volet"
+				},
+				{
+					"id": "powerInfo",
+					"name": "Puissance",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Puissance en watts"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-shutter",
+			"name": "Groupe de volets",
+			"img": "groupShutter.png",
+			"description": "Gère un groupe de plusieurs widgets volets",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "openNb", "descr": "Nombre de volets ouvertes" },
+				{ "name": "closedNb", "descr": "Nombre de volets fermées" },
+				{ "name": "total", "descr": "Nombre de volets" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["shutter"],
+					"description": "Liste des volets à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "pir",
+			"name": "PIR",
+			"img": "pirOff.png",
+			"description": "Donne l'état d'un capteur de mouvements",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat du capteur"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-pir",
+			"name": "Groupe de PIR",
+			"img": "groupPIR.png",
+			"description": "Gère un groupe de plusieurs capteurs de mouvements",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "alertNb", "descr": "Nombre de PIR en alerte" },
+				{ "name": "normalNb", "descr": "Nombre de PIR au repos" },
+				{ "name": "total", "descr": "Nombre de PIR" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["pir"],
+					"description": "Liste des capteurs à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "alarm",
+			"name": "Alarme",
+			"img": "alarm_red.png",
+			"description": "Gère une alarme",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "statusText", "descr": "Status de l'alarme" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "enableInfo",
+					"name": "Actif",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de l'alarme (armée/désarmée)"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Status de l'alarme (alarme en cours)"
+				},
+				{
+					"id": "onAction",
+					"name": "Action activer",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "enableInfo",
+					"description": "Commande pour activer l'alarme"
+				},
+				{
+					"id": "offAction",
+					"name": "Action désactiver",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "enableInfo",
+					"description": "Commande pour désactiver l'alarme"
+				},
+				{
+					"id": "immediateInfo",
+					"name": "Status immédiat",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Commande binaire pour le pré-armement / pré-alarme"
+				},
+				{
+					"id": "immediateTime",
+					"name": "Délais d'activation",
+					"required": false,
+					"category": "string",
+					"description": "Durée en minutes avant activation"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-alarm",
+			"name": "Groupe d'alarmes",
+			"img": "groupAlarm.png",
+			"description": "Gère un groupe d'alarmes",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "armedNb", "descr": "Nombre d'alarmes armées'" },
+				{ "name": "alarmNb", "descr": "Nombre d'alarme en alerte'" },
+				{ "name": "total", "descr": "Nombre de'alarmes dans le groupe" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"formatedValue", "name":"Status"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["alarm"],
+					"description": "Liste des alarmes à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "generic-info-binary",
+			"name": "Générique binaire",
+			"img": "information.png",
+			"description": "Widget générique pour afficher les infos d'une commande binaire",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de la commande"
+				},
+				{
+					"id": "text0",
+					"name": "Texte 0",
+					"required": false,
+					"category": "string",
+					"description": "Texte affiché lorsque la valeur est 0"
+				},
+				{
+					"id": "text1",
+					"name": "Texte 1",
+					"required": false,
+					"category": "string",
+					"description": "Texte affiché lorsque la valeur est 1"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-generic-info-binary",
+			"name": "Groupe de génériques binaires",
+			"img": "groupBinary.png",
+			"description": "Gère un groupe de plusieurs widgets générique info binaire",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" },
+				{ "name": "nb0", "descr": "Nombre de binaires valant 0" },
+				{ "name": "nb1", "descr": "Nombre de binaires valant 1" },
+				{ "name": "total", "descr": "Nombre de binaires" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Widgets",
+					"required": true,
+					"category": "widgets",
+					"whiteList": ["generic-info-binary"],
+					"description": "Liste des génériques binaires à gérer"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "generic-info-numeric",
+			"name": "Générique numérique",
+			"img": "information.png",
+			"description": "Widget générique pour afficher les infos d'une commande info numérique",
 			"variables": [
 				{ "name": "room", "descr": "Pièce" }
 			],
@@ -2519,19 +2073,68 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Info mode",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de la commande"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img",
+					"description": "Image par défaut si aucune condition n'est remplie"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs",
+					"infos": [ "statusInfo" ]
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "generic-info-string",
+			"name": "Générique texte",
+			"img": "information.png",
+			"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Etat actuel du mode"
-				},
-				{
-					"id": "modes",
-					"name": "Modes",
-					"required": true,
-					"category": "cmdList",
-					"options": {"type": "action", "subtype": "other", "hasIcon": false, "hasImage": true, "hasName": false }
+					"description": "Etat de la commande"
 				},
 				{
 					"id": "image",
@@ -2556,10 +2159,10 @@
 			]
 		},
 		{
-			"type": "webview",
-			"name": "Web View",
-			"img": "web.png",
-			"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web.<br/>Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
+			"type": "generic-switch",
+			"name": "Générique switch",
+			"img": "switch.png",
+			"description": "Widget générique pour un switch (commande ON/OFF)",
 			"variables": [
 				{ "name": "room", "descr": "Pièce" }
 			],
@@ -2575,206 +2178,51 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [],
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
-					"id": "url",
-					"name": "URL",
+					"id": "onAction",
+					"name": "Action ON",
 					"required": true,
-					"category": "string",
-					"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
-				},
-				{
-					"id":  "headerHide",
-					"name": "Cacher la barre du haut",
-					"required": false,
-					"category": "binary"
-				},
-				{
-					"id":  "androidHardwareAccelerationDisabled",
-					"name": "Désactiver l'accélération matérielle",
-					"required": false,
-					"category": "binary",
-					"description": "Désactivez si vous rencontrer des problèmes"
-				},
-				{
-					"id": "image",
-					"name": "Image",
-					"required": false,
-					"category": "img"
-				},
-				{
-					"id":  "statusImages",
-					"name": "Images sous conditions",
-					"required": false,
-					"category": "ifImgs"
-				},
-				{
-					"id": "display",
-					"name": "Affichage forcé",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-					"description": "Affichage forcé du widget"
-				}
-			]
-		},
-		{
-			"type": "geoloc",
-			"name": "Géolocalisation",
-			"img": "geo.png",
-			"description": "Permet d'afficher un point de localisation",
-			"variables": [
-				{ "name": "room", "descr": "Pièce" }
-			],
-			"options": [
-				{
-					"id": "name",
-					"name": "Nom",
-					"required": true,
-					"category": "string"
-				},
-				{
-					"id": "subtitle",
-					"name": "Sous-titre",
-					"required": false,
-					"category": "stringList",
-					"choices": [],
-					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "positionInfo",
-					"name": "Position",
-					"required": true,
-					"category": "cmd",
-					"type": "info",
-					"subtype": "string",
-					"description": "Commande chaîne sous la forme latitude,longitude"
-				},
-				{
-					"id": "image",
-					"name": "Image",
-					"required": false,
-					"category": "img"
-				},
-				{
-					"id":  "statusImages",
-					"name": "Images sous conditions",
-					"required": false,
-					"category": "ifImgs"
-				},
-				{
-					"id": "display",
-					"name": "Affichage forcé",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-					"description": "Affichage forcé du widget"
-				}
-			]
-		},
-		{
-			"type": "camera",
-			"name": "Caméra",
-			"img": "camera.png",
-			"description": "Permet d'afficher une caméra",
-			"variables": [
-				{ "name": "room", "descr": "Pièce" }
-			],
-			"options": [
-				{
-					"id": "name",
-					"name": "Nom",
-					"required": true,
-					"category": "string"
-				},
-				{
-					"id": "subtitle",
-					"name": "Sous-titre",
-					"required": false,
-					"category": "stringList",
-					"choices": [],
-					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "streamUrl",
-					"name": "URL flux",
-					"required": false,
-					"category": "string"
-				},
-				{
-					"id": "onlyOnLan",
-					"name": "Flux vidéo uniquement sur le LAN",
-					"required": false,
-					"category": "binary"
-				},
-				{
-					"id": "snapshotUrl",
-					"name": "URL SnapShot",
-					"required": false,
-					"category": "string"
-				},
-				{
-					"id": "refreshInterval",
-					"name": "Rafraîchissement",
-					"required": false,
-					"category": "string",
-					"description": "Durée en seconde entre deux images (1s par défaut)"
-				},
-				{
-					"id": "compress",
-					"name": "Qualité SnapShot (%)",
-					"required": false,
-					"category": "string",
-					"description": "100% par défaut (haute qualité)"
-				},
-				{
-					"id": "resize",
-					"name": "Taille SnapShot (%)",
-					"required": false,
-					"category": "string",
-					"description": "100% par défaut (pas de redimensionnement)"
-				},
-				{
-					"id": "startRecordAction",
-					"name": "Enregistrer",
-					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour démarrer un enregistrement"
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
 				},
 				{
-					"id": "stopRecordAction",
-					"name": "Arrêter Enregistrement",
-					"required": false,
+					"id": "offAction",
+					"name": "Action OFF",
+					"required": true,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour arrêter un enregistrement"
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
 				},
 				{
-					"id": "recordInfo",
-					"name": "Info Enregistrement",
-					"required": false,
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Commande info d'enregistrement"
+					"description": "Etat de la commande"
 				},
 				{
-					"id": "snapshotAction",
-					"name": "Instantané",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"description": "Commande action pour enregistrer un instantané"
-				},
-				{
-					"id": "recordFolder",
-					"name": "Dossier des enregistrements",
+					"id": "text0",
+					"name": "Texte 0",
 					"required": false,
 					"category": "string",
-					"description": "par exemple /plugins/camera/data/records/camID"
+					"description": "Texte affiché lorsque la valeur est 0"
+				},
+				{
+					"id": "text1",
+					"name": "Texte 1",
+					"required": false,
+					"category": "string",
+					"description": "Texte affiché lorsque la valeur est 1"
 				},
 				{
 					"id": "image",
@@ -2789,11 +2237,67 @@
 					"category": "ifImgs"
 				},
 				{
-					"id": "displayOnWidget",
-					"name": "Afficher sur carte",
+					"id": "display",
+					"name": "Affichage forcé",
 					"required": false,
-					"category": "binary",
-					"description": "Affichage du lecteur sur les cartes"
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "generic-slider",
+			"name": "Générique slider",
+			"img": "meter.png",
+			"description": "Gère un slider",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Valeur"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "sliderAction",
+					"name": "Action",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider",
+					"value": "statusInfo"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Status",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat du slider (numérique)"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "display",
@@ -2804,6 +2308,539 @@
 					"description": "Affichage forcé du widget"
 				}
 			]
+		},
+		{
+			"type": "generic-action-other",
+			"name": "Générique actions",
+			"img": "powerButton.png",
+			"description": "Permet des lancer des commandes action (de type other)",
+			"variables": [
+				{ "name": "room", "descr": "Pièce" }
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"room", "name":"Pièce"}],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "actions",
+					"name": "Actions",
+					"required": true,
+					"category": "cmdList",
+					"options": {"type": "action", "subtype": "", "hasIcon": true, "hasImage": false, "hasName": false }
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id":  "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				}
+			]
+			},
+			{
+				"type": "choices-list",
+				"name": "Liste de choix",
+				"img": "choices-list.png",
+				"description": "Gère une liste",
+				"variables": [
+					{ "name": "room", "descr": "Pièce" }
+				],
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"room", "name":"Pièce"}, {"id":"status", "name":"Valeur"}],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "listAction",
+						"name": "Action",
+						"required": true,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "select",
+						"value": "statusInfo",
+						"description": "Où est définie la liste des valeurs possible"
+					},
+					{
+						"id": "statusInfo",
+						"name": "Status",
+						"required": true,
+						"category": "cmd",
+						"type": "info",
+						"description": "Valeur courante"
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					}
+				]
+			},
+			{
+				"type": "generic-message",
+				"name": "Générique message",
+				"img": "generic-message.png",
+				"description": "Permet l'utilisation d'une commande de type message",
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"room", "name":"Pièce"}],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "msgAction",
+						"name": "Action",
+						"required": true,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "message",
+						"description": "Commande executée avec les informations 'message' saisies"
+					},
+					{
+						"id": "displayTitle",
+						"name": "Champ Titre",
+						"category": "binary",
+						"description": "Est ce qu'une zone 'titre' doit être affichée sur le widget"
+					},
+					{
+						"id": "keepLastMsg",
+						"name": "Garder le dernier message",
+						"category": "binary",
+						"description": "Conserver le dernier message envoyé pour ne pas avoir à le retaper"
+					},
+					{
+						"id": "sendImage",
+						"name": "Image Envoyer",
+						"required": false,
+						"category": "img",
+						"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					}
+				]
+			},
+			{
+				"type": "mode",
+				"name": "Mode",
+				"img": "mode.png",
+				"description": "Affiche une liste de modes et permet de les sélectionner",
+				"variables": [
+					{ "name": "room", "descr": "Pièce" }
+				],
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "statusInfo",
+						"name": "Info mode",
+						"required": true,
+						"category": "cmd",
+						"type": "info",
+						"subtype": "string",
+						"description": "Etat actuel du mode"
+					},
+					{
+						"id": "modes",
+						"name": "Modes",
+						"required": true,
+						"category": "cmdList",
+						"options": {"type": "action", "subtype": "other", "hasIcon": false, "hasImage": true, "hasName": false }
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					}
+				]
+			},
+			{
+				"type": "webview",
+				"name": "Web View",
+				"img": "web.png",
+				"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web.<br/>Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
+				"variables": [
+					{ "name": "room", "descr": "Pièce" }
+				],
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "url",
+						"name": "URL",
+						"required": true,
+						"category": "string",
+						"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
+					},
+					{
+						"id":  "headerHide",
+						"name": "Cacher la barre du haut",
+						"required": false,
+						"category": "binary"
+					},
+					{
+						"id":  "androidHardwareAccelerationDisabled",
+						"name": "Désactiver l'accélération matérielle",
+						"required": false,
+						"category": "binary",
+						"description": "Désactivez si vous rencontrer des problèmes"
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					}
+				]
+			},
+			{
+				"type": "geoloc",
+				"name": "Géolocalisation",
+				"img": "geo.png",
+				"description": "Permet d'afficher un point de localisation",
+				"variables": [
+					{ "name": "room", "descr": "Pièce" }
+				],
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "positionInfo",
+						"name": "Position",
+						"required": true,
+						"category": "cmd",
+						"type": "info",
+						"subtype": "string",
+						"description": "Commande chaîne sous la forme latitude,longitude"
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					}
+				]
+			},
+			{
+				"type": "camera",
+				"name": "Caméra",
+				"img": "camera.png",
+				"description": "Permet d'afficher une caméra",
+				"variables": [
+					{ "name": "room", "descr": "Pièce" }
+				],
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "streamUrl",
+						"name": "URL flux",
+						"required": false,
+						"category": "string"
+					},
+					{
+						"id": "onlyOnLan",
+						"name": "Flux vidéo uniquement sur le LAN",
+						"required": false,
+						"category": "binary"
+					},
+					{
+						"id": "snapshotUrl",
+						"name": "URL SnapShot",
+						"required": false,
+						"category": "string"
+					},
+					{
+						"id": "refreshInterval",
+						"name": "Rafraîchissement",
+						"required": false,
+						"category": "string",
+						"description": "Durée en seconde entre deux images (1s par défaut)"
+					},
+					{
+						"id": "compress",
+						"name": "Qualité SnapShot (%)",
+						"required": false,
+						"category": "string",
+						"description": "100% par défaut (haute qualité)"
+					},
+					{
+						"id": "resize",
+						"name": "Taille SnapShot (%)",
+						"required": false,
+						"category": "string",
+						"description": "100% par défaut (pas de redimensionnement)"
+					},
+					{
+						"id": "startRecordAction",
+						"name": "Enregistrer",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"description": "Commande action pour démarrer un enregistrement"
+					},
+					{
+						"id": "stopRecordAction",
+						"name": "Arrêter Enregistrement",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"description": "Commande action pour arrêter un enregistrement"
+					},
+					{
+						"id": "recordInfo",
+						"name": "Info Enregistrement",
+						"required": false,
+						"category": "cmd",
+						"type": "info",
+						"subtype": "binary",
+						"description": "Commande info d'enregistrement"
+					},
+					{
+						"id": "snapshotAction",
+						"name": "Instantané",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"description": "Commande action pour enregistrer un instantané"
+					},
+					{
+						"id": "recordFolder",
+						"name": "Dossier des enregistrements",
+						"required": false,
+						"category": "string",
+						"description": "par exemple /plugins/camera/data/records/camID"
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "displayOnWidget",
+						"name": "Afficher sur carte",
+						"required": false,
+						"category": "binary",
+						"description": "Affichage du lecteur sur les cartes"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					}
+				]
+			}
+	],
+	"summaries" : [
+		{
+			"type": "summary",
+			"name": "Résumé",
+			"description": "Gère la personalisation des icônes d'un résumé",
+			"variables": [
+				{
+					"name": "value",
+					"descr": "valeur du résumé"
+				},
+				{
+					"name": "total",
+					"descr": "Somme total des infos du résumé"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				}
+			]
 		}
-]
+	]
 }
