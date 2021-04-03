@@ -116,47 +116,55 @@ function getSimpleModal(_options, _callback) {
   }
   setSimpleModalData(_options.fields);
   $("#simpleModal").dialog({title: _options.title, buttons: {
-    "Annuler": function() {
-      $(this).dialog("close");
-    },
-    "Valider": function() {
-		try{
-			var result = {};
-			if (_options.fields.find(i => i.type == "enable")) {
-				result.enable = $("#mod-enable-input").is(':checked');
-			}
-			if (_options.fields.find(i => i.type == "name")) {
-				if ( $("#mod-name-input").val() == '' ){
-					throw 'La nom est obligatoire';
-				}
-				result.name = $("#mod-name-input").val();
-			}
-			if (_options.fields.find(i => i.type == "icon")) {
-				result.icon = $("#mod-icon-input").val();
-			}
-			if (_options.fields.find(i => i.type == "move")) {
-				result.moveToId = $("#mod-move-input").val();
-			}
-			if (_options.fields.find(i => i.type == "expanded")) {
-				result.expanded = $("#mod-expanded-input").is(':checked');
-			}
-			if (_options.fields.find(i => i.type == "widget")) {
-				result.widgetId = $("#mod-widget-input").val();
-				result.widgetName = $("#mod-widget-input option:selected").text();
-			}
+		"Annuler": function() {
+		$(this).dialog("close");
+		},
+		Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function() {
+				try{
+					var result = {};
+					if (_options.fields.find(i => i.type == "enable")) {
+						result.enable = $("#mod-enable-input").is(':checked');
+					}
+					if (_options.fields.find(i => i.type == "name")) {
+						if ( $("#mod-name-input").val() == '' ){
+							throw 'La nom est obligatoire';
+						}
+						result.name = $("#mod-name-input").val();
+					}
+					if (_options.fields.find(i => i.type == "icon")) {
+						result.icon = $("#mod-icon-input").val();
+					}
+					if (_options.fields.find(i => i.type == "move")) {
+						result.moveToId = $("#mod-move-input").val();
+					}
+					if (_options.fields.find(i => i.type == "expanded")) {
+						result.expanded = $("#mod-expanded-input").is(':checked');
+					}
+					if (_options.fields.find(i => i.type == "widget")) {
+						result.widgetId = $("#mod-widget-input").val();
+						result.widgetName = $("#mod-widget-input option:selected").text();
+					}
 
-			if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-				_callback(result);
+					if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+						_callback(result);
+					}
+					$(this).dialog('close');
+				}
+				catch(error){
+					$('#div_simpleModalAlert').showAlert({message: error, level: 'danger'});
+					console.error(error);
+				}
 			}
-			$(this).dialog('close');
 		}
-		catch(error){
-			$('#div_simpleModalAlert').showAlert({message: error, level: 'danger'});
-    		console.error(error);
-		}
-    }
-  }});
+  	}});
   $('#simpleModal').dialog('open');
+  $('#simpleModal').keydown(function(e) { if (e.which == 13) {
+	$('#saveSimple').click();
+	return false;
+}})
 };
 
 
