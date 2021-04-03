@@ -2313,7 +2313,7 @@
 			"type": "generic-action-other",
 			"name": "Générique actions",
 			"img": "powerButton.png",
-			"description": "Permet des lancer des commandes action (de type other)",
+			"description": "Permet des lancer des commandes action (de tous types)",
 			"variables": [
 				{ "name": "room", "descr": "Pièce" }
 			],
