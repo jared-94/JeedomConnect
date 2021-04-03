@@ -516,7 +516,7 @@ class JeedomConnect extends eqLogic {
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
 			'userHash' => $user->getHash(),
-			'eqName' => $this->getName()
+			'eqName' => urlencode($this->getName())
 		);
 
 		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
