@@ -86,7 +86,7 @@ function getIconModal(_options, _callback) {
 				}
 
 				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-		        _callback(result);
+		        _callback(result, _options);
 		    }
 
 				$(this).dialog('close');

@@ -809,9 +809,9 @@ function refreshAddWidgets() {
       curOption += `</div></div></div></li>`;
     } else if (option.category == "img") {
       curOption += `
-              <a class="btn btn-success roundedRight" onclick="imagePicker('${option.id}')"><i class="fas fa-check-square">
+              <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-check-square">
               </i> Choisir </a>
-              <a id="icon-div-${option.id}" onclick="removeImage(this)"></a>
+              <a data-id="icon-div-${option.id}" id="icon-div-${option.id}" onclick="removeImage(this)"></a>
               </div></div></li>`;
 
 
@@ -892,20 +892,11 @@ function refreshAddWidgets() {
 
 
 
-function imagePicker(id,index = '') {
-
-  if ( index == ''){
-    el = $("#icon-div-"+id) ;
-  }
-  else{
-    el = $('.jcCmdListOptions[data-id="icon-'+id+'"][data-index="'+index+'"]') ;
-  }
-
-  getIconModal({ title: "Choisir une icône ou une image", withIcon: "1", withImg: "1", icon: htmlToIcon(el.children().first()) }, (result) => {
-    el.html(iconToHtml(result));
-    // newElt = $(elm).siblings().find('a [data-id^="icon-"]');
-    // console.log('new ', newElt);
-    // $(newElt).html(iconToHtml(result));
+function imagePicker(elm) {
+  var newElt = $(elm).nextAll("a[data-id^='icon-']:first") ;
+  
+  getIconModal({ title: "Choisir une icône ou une image", withIcon: "1", withImg: "1", icon: htmlToIcon(newElt.children().first()) , elt:newElt}, (result, _params) => {
+    $(_params.elt).html(iconToHtml(result));
   });
 }
 
@@ -1091,7 +1082,7 @@ function refreshCmdListOption(optionsJson) {
           curOption +=`<div class="col-lg-12 form-group">`;
           curOption += `
               <div>
-                      <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}', '${item.index}')"><i class="fas fa-check-square">
+                      <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-check-square">
                       </i> Icône </a>
                       <a class="jcCmdListOptions" data-id="icon-${item.id}" data-index="${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
               </div>`;
@@ -1508,9 +1499,9 @@ function refreshImgListOption(dataType = 'widget') {
     curOption +=`<input style="width:150px;height:31px;margin-left:5px;" class=' roundedLeft' id="${item.index}-value" value='${item.value || ''}' >`
     curOption += `
 
-              <a class="btn btn-success roundedRight" onclick="imagePicker('${item.index}')"><i class="fas fa-plus-square">
+              <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-plus-square">
               </i> Image </a>
-              <a id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>          
+              <a data-id="icon-div-${item.index}" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>          
               <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
               <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i>
               <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
