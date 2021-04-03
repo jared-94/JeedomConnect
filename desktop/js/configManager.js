@@ -1,5 +1,6 @@
 var configData;
 var widgetsList;
+var summaryConfig ;
 
 
 $.post({
@@ -20,6 +21,7 @@ $.post({
 					return a.name.localeCompare( b.name );
 				});
 				widgetsList = data;
+				summaryConfig = data.summaries;
 				initData();
 			}
 		});
@@ -883,17 +885,21 @@ function removeSummary() {
 }
 
 function setSummaryModalData(options) {
+	$('#widgetModal').dialog('destroy').remove();
 	refreshAddSummaries(options) ;
 	
 	//Enable
 	var enable = options.summary.enable ? "checked": "";
 	$("#enable-input").prop('checked', enable);
 
-	   
-	summaryConfig.options.forEach(option => {
+
+	var summary = summaryConfig.find(i => i.type == 'summary');
+
+
+	summary.options.forEach(option => {
 		
 		if (option.category == "string" & options.summary[option.id] !== undefined ) {
-		   	$("#"+option.id+"-input").val(options.summary[option.id]);
+			$("#"+option.id+"-input").val(options.summary[option.id]);
 		} 
 		else if (option.category == "binary" & options.summary[option.id] !== undefined ) {
 		   	$("#"+option.id+"-input").prop('checked', options.summary[option.id] ? "checked": "");
@@ -915,7 +921,7 @@ function setSummaryModalData(options) {
 		}
 		else if (option.category == "ifImgs" & options.summary[option.id] !== undefined) {
 			imgCat = options.summary[option.id];
-			refreshImgListOption(summaryConfig);
+			refreshImgListOption('summary');
 		}
 		else if (option.category == "img" & options.summary[option.id] !== undefined ) {
 			$("#icon-div-"+option.id).html(iconToHtml(options.summary[option.id]));
@@ -930,61 +936,65 @@ function saveSummary() {
 	$('#summary-alert').hideAlert();
 	var result = {};
 	var summaryKey = $('#summary-key').text() ;
-	
-	summaryConfig.options.forEach(option => {
-		if (option.category == "string") {
-			if ($("#"+option.id+"-input").val() == '' & option.required) {
-				$('#summary-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			result[option.id] = $("#"+option.id+"-input").val();
-		} 
-		else if (option.category == "binary") {
-			result[option.id] = $("#"+option.id+"-input").is(':checked');
-		}
-		else if (option.category == "ifImgs") {
-			if (imgCat.length == 0 & option.required) {
-				$('#summary-alert').showAlert({message: 'La commande '+option.name+' est obligatoire', level: 'danger'});
-				throw {};
-			}
-			imgCat.forEach(item => {
-				item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-				item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-				item.operator = $("#operator-"+item.index).val();
-				item.value = $("#"+item.index+"-value").val();
-			});
-			result[option.id] = imgCat;
-		}	
-		else if (option.category == "img") {
-			let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
-			if (icon.source == undefined & option.required) {
-				$('#summary-alert').showAlert({message: "L'image est obligatoire", level: 'danger'});
-				throw {};
-			}
-			result[option.id] = icon.source != undefined ? icon : undefined;
-		}
-	});
+	var summary = summaryConfig.find(i => i.type == 'summary');
 
-	summaryIndex = configData.payload.summaries.findIndex((obj => obj.key == summaryKey));
-	previousSummary = configData.payload.summaries[summaryIndex] ;
-	
-	previousSummary['name']= result['name'] ;
-	previousSummary['enable']= $('#enable-input').is(":checked") ;
-	
-	delete result['name'] ;
-	
-	const resultFinal = Object.assign(previousSummary, result);
-	
-	configData.payload.summaries[summaryIndex] = resultFinal ;
+	try{
+		summary.options.forEach(option => {
+			if (option.category == "string") {
+				if ($("#"+option.id+"-input").val() == '' & option.required) {
+					throw 'La commande '+option.name+' est obligatoire';
+				}
+				result[option.id] = $("#"+option.id+"-input").val();
+			} 
+			else if (option.category == "binary") {
+				result[option.id] = $("#"+option.id+"-input").is(':checked');
+			}
+			else if (option.category == "ifImgs") {
+				if (imgCat.length == 0 & option.required) {
+					throw 'La commande '+option.name+' est obligatoire';
+				}
+				imgCat.forEach(item => {
+					item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
+					item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
+					item.operator = $("#operator-"+item.index).val();
+					item.value = $("#"+item.index+"-value").val();
+				});
+				result[option.id] = imgCat;
+			}	
+			else if (option.category == "img") {
+				let icon = htmlToIcon($("#icon-div-"+option.id).children().first());
+				if (icon.source == undefined & option.required) {
+					throw "L'image est obligatoire";
+				}
+				result[option.id] = icon.source != undefined ? icon : undefined;
+			}
+		});
 
-	$('#summaryModal').dialog('close');
-	refreshSummaryData();
+		summaryIndex = configData.payload.summaries.findIndex((obj => obj.key == summaryKey));
+		previousSummary = configData.payload.summaries[summaryIndex] ;
+		
+		previousSummary['name']= result['name'] ;
+		previousSummary['enable']= $('#enable-input').is(":checked") ;
+		
+		delete result['name'] ;
+		
+		const resultFinal = Object.assign(previousSummary, result);
+		
+		configData.payload.summaries[summaryIndex] = resultFinal ;
+		
+		$('#summaryModal').dialog('destroy').remove();
+		refreshSummaryData();
+	} 
+	catch (error) {
+		$('#summary-alert').showAlert({message: error, level: 'danger'});
+		console.error(error);
+  	}
 	
 
 }
 
 function refreshAddSummaries(_options) {
-	var summary = summaryConfig;
+	var summary = summaryConfig.find(i => i.type == 'summary');
 	
 	$("#summaryDescription").html(summary.description);
   
@@ -1080,14 +1090,14 @@ function refreshAddSummaries(_options) {
 		} 
 		else if (option.category == "img") {
 			curOption += `
-				<a class="btn btn-success roundedRight" onclick="imagePicker('${option.id}')"><i class="fas fa-check-square">
+				<a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-check-square">
 				</i> Choisir </a>
-				<a id="icon-div-${option.id}" onclick="removeImage('${option.id}')"></a>
+				<a data-id="icon-div-${option.id}" id="icon-div-${option.id}" onclick="removeImage(this)"></a>
 				</div></div></li>`;
 		} 
 		else if (option.category == "ifImgs") {
 			curOption += `<span class="input-group-btn">
-				<a class="btn btn-default roundedRight" onclick="addImgOption()"><i class="fas fa-plus-square">
+				<a class="btn btn-default roundedRight" onclick="addImgOption('summary')"><i class="fas fa-plus-square">
 				</i> Ajouter</a></span><div id="imgList-option"></div>`;
 			curOption += `</div></div></li>`;
 		} 
