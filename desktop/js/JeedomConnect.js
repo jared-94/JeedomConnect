@@ -811,7 +811,7 @@ function refreshAddWidgets() {
       curOption += `
               <a class="btn btn-success roundedRight" onclick="imagePicker('${option.id}')"><i class="fas fa-check-square">
               </i> Choisir </a>
-              <a id="icon-div-${option.id}" onclick="removeImage('${option.id}')"></a>
+              <a id="icon-div-${option.id}" onclick="removeImage(this)"></a>
               </div></div></li>`;
 
 
@@ -892,14 +892,25 @@ function refreshAddWidgets() {
 
 
 
-function imagePicker(id) {
-  getIconModal({ title: "Choisir une icône ou une image", withIcon: "1", withImg: "1", icon: htmlToIcon($("#icon-div-"+id).children().first()) }, (result) => {
-    $("#icon-div-"+id).html(iconToHtml(result));
+function imagePicker(id,index = '') {
+
+  if ( index == ''){
+    el = $("#icon-div-"+id) ;
+  }
+  else{
+    el = $('.jcCmdListOptions[data-id="icon-'+id+'"][data-index="'+index+'"]') ;
+  }
+
+  getIconModal({ title: "Choisir une icône ou une image", withIcon: "1", withImg: "1", icon: htmlToIcon(el.children().first()) }, (result) => {
+    el.html(iconToHtml(result));
+    // newElt = $(elm).siblings().find('a [data-id^="icon-"]');
+    // console.log('new ', newElt);
+    // $(newElt).html(iconToHtml(result));
   });
 }
 
-function removeImage(id) {
-  $("#icon-div-"+id).empty();
+function removeImage(elm) {
+  $(elm).empty();
 }
 
 
@@ -1038,14 +1049,14 @@ function refreshCmdListOption(optionsJson) {
   });
   cmdCat.forEach(item => {
     //open the div
-    curOption += `<div class='input-group col-lg-12' style="display:flex;border:0.5px black solid;margin: 0 5px;" id="cmdList-${item.id}">`;
+    curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;">`;
 
       //left part
       curOption +=`<div class="col-lg-6 form-group">`;
       
             curOption +=`<div class="input-group input-group-sm" style="width: 100%">
                             <span class="input-group-addon roundedLeft" style="width: 100px">Commande</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title' id="${item.id}-input" value='' disabled>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' disabled>
                         </div>`;
 
             
@@ -1061,17 +1072,17 @@ function refreshCmdListOption(optionsJson) {
           if (options.type == 'action') {
               curOption += `
                 <div class="col-lg-6">
-                    <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" id="confirm-${item.id}">
-                    <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" id="secure-${item.id}"  >
-                    <i class='mdi mdi-numeric'></i><input type="checkbox" style="margin-left:5px;" id="pwd-${item.id}"  >
+                    <i class='mdi mdi-help-circle-outline'></i><input type="checkbox" style="margin-left:5px;" class="jcCmdListOptions" data-id="confirm-${item.id}" data-index="${item.index}">
+                    <i class='mdi mdi-fingerprint'></i><input type="checkbox" style="margin-left:5px;" class="jcCmdListOptions" data-id="secure-${item.id}" data-index="${item.index}"  >
+                    <i class='mdi mdi-numeric'></i><input type="checkbox" style="margin-left:5px;" class="jcCmdListOptions" data-id="pwd-${item.id}" data-index="${item.index}"  >
                 </div> `;
 
           }
           
           curOption += `<div class="col-lg-6" >
-                  <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-                  <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
-                  <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteCmdOption('${item.id}','${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}" onclick="upCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}" onclick="downCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}"  onclick="deleteCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
                 </div>`
         
         curOption +=`</div>`;
@@ -1080,9 +1091,9 @@ function refreshCmdListOption(optionsJson) {
           curOption +=`<div class="col-lg-12 form-group">`;
           curOption += `
               <div>
-                      <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}')"><i class="fas fa-check-square">
+                      <a class="btn btn-success roundedRight" onclick="imagePicker('${item.id}', '${item.index}')"><i class="fas fa-check-square">
                       </i> Icône </a>
-                      <a id="icon-div-${item.id}" onclick="removeImage('${item.id}')">${iconToHtml(item.image)}</a>
+                      <a class="jcCmdListOptions" data-id="icon-${item.id}" data-index="${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
               </div>`;
           curOption +=`</div>`;
         }
@@ -1098,18 +1109,21 @@ function refreshCmdListOption(optionsJson) {
   $("#cmdList-option").html(curOption);
   cmdCat.forEach(item => {
     var confirm = item.confirm ? "checked": "";
-    $("#confirm-"+item.id).prop('checked', confirm);
+    $('.jcCmdListOptions[data-id="confirm-'+item.id+'"][data-index="'+item.index+'"]').prop('checked', confirm);
+    
     var secure = item.secure ? "checked": "";
-    $("#secure-"+item.id).prop('checked', secure);
+    $('.jcCmdListOptions[data-id="secure-'+item.id+'"][data-index="'+item.index+'"]').prop('checked', secure);
+    
     var pwd = item.pwd ? "checked": "";
-    $("#pwd-"+item.id).prop('checked', pwd);
+    $('.jcCmdListOptions[data-id="pwd-'+item.id+'"][data-index="'+item.index+'"]').prop('checked', pwd);
+    
     getCmd({
       id: item.id,
       success: function (data) {
-        $("#"+item.id+"-input").val("#"+data.result.humanName+"#");
+        $('.jcCmdListOptions[data-id="name-'+item.id+'"][data-index="'+item.index+'"]').val("#"+data.result.humanName+"#");
         if (!isIcon(item.image)) {
           item.image = jeedomIconToIcon(data.result.icon);
-          $("#icon-div-"+item.id).html(iconToHtml(item.image));
+          $('.jcCmdListOptions[data-id="icon-'+item.id+'"][data-index="'+item.index+'"]').html(iconToHtml(item.image));
         }
       }
     });
@@ -1118,8 +1132,8 @@ function refreshCmdListOption(optionsJson) {
       Object.entries(item.options).forEach(entry => {
         const [key, value] = entry;
         if ( value != ''){
-          getHumanNameFromCmdId({alert: '#widget-alert', cmdIdData:  value , id: item.id } , function(result, _params){
-            $('#'+key+'-input-' + _params.id).val(result);
+          getHumanNameFromCmdId({alert: '#widget-alert', cmdIdData:  value , id: item.id, index:item.index } , function(result, _params){
+            $('.jcCmdListOptions[data-id="'+ key + '-' + _params.id+'"][data-index="'+_params.index+'"]').val(result);
           } ) ; 
         }
       });
@@ -1165,11 +1179,11 @@ function getCmdOptions(item){
           selectOptions.push(`<option value="${value}">${text}</option>`);
         });
   
-        $('.customJCdata[data-uid=' + customUid + '][data-l1key=options][data-l2key=select]').html( selectOptions.join("") );
+        $('.jcCmdListOptions[data-uid=' + customUid + '][data-l1key=options][data-l2key=select]').html( selectOptions.join("") );
 
         var optionSelect= _param.optionSelect || '';
         
-        $('.customJCdata[data-uid=' + customUid + '][data-l1key=options][data-l2key=select]').value(optionSelect) ;
+        $('.jcCmdListOptions[data-uid=' + customUid + '][data-l1key=options][data-l2key=select]').value(optionSelect) ;
         
 
     });
@@ -1177,7 +1191,7 @@ function getCmdOptions(item){
     curOption = `
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Choix</span>
-            <select class="form-control input-sm customJCdata roundedRight" data-l1key="options" data-l2key="select" data-cmd_id="${item.id}" data-uid="${customUid}" id="select-input-${item.id}">
+            <select class="form-control input-sm jcCmdListOptions roundedRight" data-l1key="options" data-l2key="select" data-uid="${customUid}" data-id="select-${item.id}" data-index="${item.index}">
             </select>
         </div>
        `;
@@ -1193,19 +1207,19 @@ function getCmdOptions(item){
     curOption = `
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Titre</span>
-            <input style="width:240px;" class='input-sm form-control roundedRight title' type="string" id="title-input-${item.id}" value="${optionTitle}" />
+            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' type="string" data-id="title-${item.id}" data-index="${item.index}" value="${optionTitle}" />
         </div>
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Message</span>
-            <textarea class="message form-control ta_autosize customJCdata" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  id="message-input-${item.id}" data-uid="${customUid}">${optionMessage}</textarea>
+            <textarea class="message form-control ta_autosize jcCmdListOptions" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  data-id="message-${item.id}" data-index="${item.index}" data-uid="${customUid}">${optionMessage}</textarea>
             <span class="input-group-addon hasBtn roundedRight">
-              <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
+              <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
         </div>
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
-                $('.customJCdata[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
+                $('.jcCmdListOptions[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
               });
           });
           
@@ -1218,15 +1232,15 @@ function getCmdOptions(item){
     curOption = `
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Valeur</span>
-            <textarea class="message form-control ta_autosize customJCdata" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  id="slider-input-${item.id}" data-uid="${customUid}">${optionSlider}</textarea>
+            <textarea class="message form-control ta_autosize jcCmdListOptions" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  data-id="slider-${item.id}" data-index="${item.index}" data-uid="${customUid}">${optionSlider}</textarea>
             <span class="input-group-addon hasBtn roundedRight">
-              <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
+              <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
             </span>
         </div>
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
-                $('.customJCdata[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
+                $('.jcCmdListOptions[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
               });
           });
         </script>`;
@@ -1239,20 +1253,20 @@ function getCmdOptions(item){
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Couleur</span>
             <input type="color" class="form-control input-sm cursor colorChooser" data-uid="${customUid}" style="width: 20%; display: inline-block;" value="${optionColor}">
-            <input class="customJCdata form-control input-sm" data-l1key="options" data-l2key="color"  data-uid="${customUid}" style="width: 80%; display: inline-block;" placeholder="Couleur (hexa)" id="color-input-${item.id}" value="${optionColor}">
+            <input class="jcCmdListOptions form-control input-sm" data-l1key="options" data-l2key="color"  data-uid="${customUid}" style="width: 80%; display: inline-block;" placeholder="Couleur (hexa)" data-id="color-${item.id}" data-index="${item.index}" value="${optionColor}">
             <span class="input-group-btn">
-              <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
+              <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-index="${item.index}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
             </span>
         </div>
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
             var el = $(this);
             jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function (result) {
-              $('.customJCdata[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value(result.human);
+              $('.jcCmdListOptions[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value(result.human);
             });
           });
           $('.colorChooser[data-uid=${customUid}]').off('change').on('change', function () {
-            $('.customJCdata[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value($(this).value())
+            $('.jcCmdListOptions[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value($(this).value())
           });
         </script>`;
   }
@@ -1268,21 +1282,23 @@ function getCmdOptions(item){
 
 function saveCmdList() {
   cmdCat.forEach(item => {
-    item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
-    item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
-    item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
-    item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
+    item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-'+item.id+'"][data-index="'+item.index+'"]').children().first());
+    item['confirm'] = $('.jcCmdListOptions[data-id="confirm-'+item.id+'"][data-index="'+item.index+'"]').is(':checked')  || undefined;
+    
+    item['secure'] = $('.jcCmdListOptions[data-id="secure-'+item.id+'"][data-index="'+item.index+'"]').is(':checked') || undefined;
 
+    item['pwd'] = $('.jcCmdListOptions[data-id="pwd-'+item.id+'"][data-index="'+item.index+'"]').is(':checked') || undefined;
+    
     item['options'] = {};
     if ( item.subtype == 'message'){
-      item['options']['title'] = $("#title-input-"+item.id).val();
-      item['options']['message'] = $("#message-input-"+item.id).val();
+      item['options']['title'] = $('.jcCmdListOptions[data-id="title-'+item.id+'"][data-index="'+item.index+'"]').val();
+      item['options']['message'] = $('.jcCmdListOptions[data-id="message-'+item.id+'"][data-index="'+item.index+'"]').val();
     }
     else if ( item.subtype == 'select'){
-      item['options'][item.subtype] = $("#" + item.subtype + "-input-"+item.id+ " option:selected").val() ;
+      item['options'][item.subtype] = $('.jcCmdListOptions[data-id="select-'+item.id+'"][data-index="'+item.index+'"] option:selected').val() ;
     }
     else{
-      item['options'][item.subtype] = $("#" + item.subtype + "-input-"+item.id).val() ;
+      item['options'][item.subtype] = $('.jcCmdListOptions[data-id="' + item.subtype + '-'+item.id+'"][data-index="'+item.index+'"]').val() ;
     }
     
   });
@@ -1308,9 +1324,13 @@ function addCmdOption(optionsJson) {
   })
 }
 
-function deleteCmdOption(id, optionsJson) {
+function deleteCmdOption(elm, optionsJson) {
   saveCmdList();
-  var cmdToDelete = cmdCat.find(i => i.id == id);
+
+  var id = $(elm).data('id');
+  var currentIndex = $(elm).data('index');
+
+  var cmdToDelete = cmdCat.find(i => i.id == id && i.index == currentIndex);
   var index = cmdCat.indexOf(cmdToDelete);
   cmdCat.forEach(item => {
   if (item.index > cmdToDelete.index) {
@@ -1321,9 +1341,13 @@ function deleteCmdOption(id, optionsJson) {
   refreshCmdListOption(optionsJson);
 }
 
-function upCmdOption(id, optionsJson) {
+function upCmdOption(elm, optionsJson) {
   saveCmdList();
-  var cmdToMove = cmdCat.find(i => i.id == parseInt(id));
+
+  var id = $(elm).data('id');
+  var currentIndex = $(elm).data('index');
+
+  var cmdToMove = cmdCat.find(i => i.id == parseInt(id) && i.index == currentIndex);
   var index = parseInt(cmdToMove.index);
   if (index == 0) {
     return;
@@ -1334,9 +1358,13 @@ function upCmdOption(id, optionsJson) {
   refreshCmdListOption(optionsJson);
 }
 
-function downCmdOption(id, optionsJson) {
+function downCmdOption(elm, optionsJson) {
   saveCmdList();
-  var cmdToMove = cmdCat.find(i => i.id == parseInt(id));
+  
+  var id = $(elm).data('id');
+  var currentIndex = $(elm).data('index');
+
+  var cmdToMove = cmdCat.find(i => i.id == parseInt(id) && i.index == currentIndex );
   var index = parseInt(cmdToMove.index);
   if (index == getMaxIndex(cmdCat)) {
     return;
@@ -1482,7 +1510,7 @@ function refreshImgListOption(dataType = 'widget') {
 
               <a class="btn btn-success roundedRight" onclick="imagePicker('${item.index}')"><i class="fas fa-plus-square">
               </i> Image </a>
-              <a id="icon-div-${item.index}" onclick="removeImage('${item.index}')">${iconToHtml(item.image)}</a>          
+              <a id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>          
               <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
               <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i>
               <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
@@ -1792,13 +1820,13 @@ function getHumanNameFromCmdId(_params, _callback) {
     }
     cmdCat.forEach(item => {
       if (option.options.hasImage | option.options.hasIcon) {
-        item.image = htmlToIcon($("#icon-div-"+item.id).children().first());
+        item.image = htmlToIcon( $('.jcCmdListOptions[data-id="icon-'+item.id+'"][data-index="'+item.index+'"]').children().first() );
         if (item.image == {}) { delete item.image; }
       }
       if (option.options.type == 'action') {
-          item['confirm'] = $("#confirm-"+item.id).is(':checked') || undefined;
-          item['secure'] = $("#secure-"+item.id).is(':checked') || undefined;
-          item['pwd'] = $("#pwd-"+item.id).is(':checked') || undefined;
+          item['confirm'] = $('.jcCmdListOptions[data-id="confirm-'+item.id+'"][data-index="'+item.index+'"]').is(':checked') || undefined;
+          item['secure'] = $('.jcCmdListOptions[data-id="secure-'+item.id+'"][data-index="'+item.index+'"]').is(':checked') || undefined;
+          item['pwd'] = $('.jcCmdListOptions[data-id="pwd-'+item.id+'"][data-index="'+item.index+'"]').is(':checked') || undefined;
 
           if (item.subtype != undefined && item.subtype != 'other' ) {
             var optionsForSubtype = {'message' : ['title', 'message'], 'slider' : ['slider'], 'color' : ['color']} ;
@@ -1806,13 +1834,13 @@ function getHumanNameFromCmdId(_params, _callback) {
             item['options'] = {} ;
 
             if ( item.subtype == 'select'){
-              item['options']['select'] = $("#select-input-"+item.id+ " option:selected").val() ;
+              item['options']['select'] = $('.jcCmdListOptions[data-id="select-'+item.id+'"][data-index="'+item.index+'"] option:selected').val() ;
             }
             else{
               
               var currentArray = optionsForSubtype[item.subtype];
               currentArray.forEach(key => {
-                var tmpData = $("#"+key+"-input-"+item.id).val() ;
+                var tmpData = $('.jcCmdListOptions[data-id="'+key+'-'+item.id+'"][data-index="'+item.index+'"]').val() ;
                 if (tmpData != ''){
                   getCmdIdFromHumanName({alert: '#widget-alert', stringData: tmpData, subtype :key }, function(result, _params){
                     item['options'][_params.subtype] = result ;
