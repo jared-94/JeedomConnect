@@ -237,7 +237,8 @@ class JeedomConnect extends eqLogic {
 
 		//add summary details
 		$objSummary = config::byKey('object:summary') ;
-		foreach ($jsonConfig['payload']['summaries'] as $index => $summary) {
+		$allSummaries = $jsonConfig['payload']['summaries'] ?? [] ;
+		foreach ( $allSummaries as $index => $summary) {
 			if ( array_key_exists($summary['key'] , $objSummary) ){
 				$newSummary = $summary;
 				$newSummary['calcul']=$objSummary[$summary['key']]['calcul'];
