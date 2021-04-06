@@ -73,6 +73,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -188,6 +194,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -332,6 +344,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -502,6 +520,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -612,6 +636,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				}
 			]
 		},
@@ -736,6 +766,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -788,6 +824,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -845,6 +887,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -898,6 +946,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -1043,6 +1097,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -1194,6 +1254,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1246,6 +1312,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -1355,6 +1427,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -1493,6 +1571,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1591,6 +1675,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -1701,6 +1791,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -1859,6 +1955,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1983,6 +2085,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2095,6 +2203,12 @@
 					"infos": [ "statusInfo" ]
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2147,6 +2261,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -2237,6 +2357,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2300,6 +2426,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2350,6 +2482,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
 					"id": "display",
@@ -2413,6 +2551,12 @@
 						"name": "Images sous conditions",
 						"required": false,
 						"category": "ifImgs"
+					},
+					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
 					},
 					{
 						"id": "display",
@@ -2485,6 +2629,12 @@
 						"category": "ifImgs"
 					},
 					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
+					},
+					{
 						"id": "display",
 						"name": "Affichage forcé",
 						"required": false,
@@ -2544,6 +2694,12 @@
 						"name": "Images sous conditions",
 						"required": false,
 						"category": "ifImgs"
+					},
+					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
 					},
 					{
 						"id": "display",
@@ -2826,6 +2982,12 @@
 						"required": false,
 						"category": "binary",
 						"description": "Affichage du lecteur sur les cartes"
+					},
+					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
 					},
 					{
 						"id": "display",
