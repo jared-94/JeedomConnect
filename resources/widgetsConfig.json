@@ -2777,6 +2777,38 @@
 						"description": "par exemple /plugins/camera/data/records/camID"
 					},
 					{
+						"id": "upAction",
+						"name": "Direction haut",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
+						"id": "downAction",
+						"name": "Direction bas",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
+						"id": "leftAction",
+						"name": "Direction gauche",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
+						"id": "rightAction",
+						"name": "Direction droite",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
 						"id": "image",
 						"name": "Image",
 						"required": false,
