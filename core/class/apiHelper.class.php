@@ -325,6 +325,12 @@ class apiHelper {
    }
  }
 
+ public static function execMultipleCmd($cmdList) {
+   foreach ($cmdList as $cmd) {
+     self::execCmd($cmd['id'], $cmd['options']);
+   }
+ }
+
  public static function execSc($id, $options = null) {
    if ($options == null) {
      $options = array(

@@ -205,6 +205,10 @@ switch ($method) {
 		apiHelper::execCmd($params['id'], $params['options']);
 		$jsonrpc->makeSuccess();
 		break;
+	case 'CMDLIST_EXEC':
+		apiHelper::execMultipleCmd($params['cmdList']);
+		$jsonrpc->makeSuccess();
+		break;
 	case 'SC_EXEC':
 		apiHelper::execSc($params['id'], $params['options']);
 		$jsonrpc->makeSuccess();
