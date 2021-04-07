@@ -1371,11 +1371,14 @@ function downCmdOption(elm, optionsJson) {
 function refreshMoreInfos() {
   let div = '';
   moreInfos.forEach(item => {
+    var unite = item.unite || '';
     div += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}">
           <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.human}' disabled>
           <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
           <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" value='${item.name}'>
-          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:145px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
+          <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
+          <input style="width:80px;position:absolute; margin-left:175px;" id="${item.id}-unit-input" value='${unite}'>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:260px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
           </div>`;
   });
   $("#moreInfos-div").html(div);
@@ -1385,11 +1388,11 @@ function refreshMoreInfos() {
 
 function addMoreCmd() {
   jeedom.cmd.getSelectModal({cmd: {type: 'info' } }, function(result) {
-    let name = result.human.replace(/#/g, '');
-    name = name.split('[')[name.split('[').length - 1].slice(0, -1);
-    moreInfos.push({ type: 'cmd', id: result.cmd.id, human: result.human, name  });
-    saveImgOption();
-    refreshMoreInfos();
+    getCmdDetail({id:result.cmd.id, human:result.human}, function(result, _param){
+      moreInfos.push({ type: 'cmd', id: result.id, human: _param.human,  name: result.name, unite: result.unite});
+      saveImgOption();
+      refreshMoreInfos();
+    })
   });
 }
 
@@ -1913,6 +1916,7 @@ function saveWidget() {
       result.moreInfos = [];
       moreInfos.forEach(info => {
         info.name = $("#"+info.id+"-name-input").val();
+        info.unite = $("#"+info.id+"-unit-input").val();
         result.moreInfos.push(info);
       });
     }
