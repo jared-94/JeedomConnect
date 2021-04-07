@@ -2008,7 +2008,7 @@ function duplicateWidget(){
 
   $('.widgetMenu .duplicateWidget').hide()
   $('.widgetMenu .removeWidget').hide()
-  $('#widget-alert').showAlert({message: 'Le widget est prêt à être dupliqué. Pensez à sauvegarder !', level: 'success'});
+  $('#widget-alert').showAlert({message: 'Vous êtes sur le widget dupliqué, réalisez (ou non) vos modifications. Dans tous les cas, pensez à sauvegarder !', level: 'success'});
   // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 
 }
