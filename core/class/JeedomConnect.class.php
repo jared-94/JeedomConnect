@@ -164,6 +164,12 @@ class JeedomConnect extends eqLogic {
 						array_push($widgetIdInGroup, $itemGroup['id'] );
 					}
 				}
+				
+				if (isset($widget['moreWidgets'])){
+					foreach ($widget['moreWidgets'] as $itemGroup) {
+						array_push($widgetIdInGroup, $itemGroup['id'] );
+					}
+				}
 
 				if (isset($widget['room'])){
 					array_push($roomIdList , $widget['room'] ) ;
