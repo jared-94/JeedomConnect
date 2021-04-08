@@ -267,7 +267,7 @@ function reIndexArray(array) {
 
 function addBottomTabModal() {
 	getSimpleModal({title: "Ajouter un menu bas", fields:[{type: "enable", value: true},{type: "name"},
-		{type:"icon"}, {type: "swipeUp"}, {type: "swipeDown"}] }, function(result) {
+		{type:"icon"}, {type: "swipeUp"}, {type: "swipeDown"}, {type: "action"}] }, function(result) {
 	  var name = result.name;
 	  var icon = result.icon;
 	  if (name == ''  | icon.name == '') {
@@ -280,6 +280,7 @@ function addBottomTabModal() {
 	  newTab.icon = icon;
 		if (result.swipeUp) { newTab.swipeUp = result.swipeUp; }
 		if (result.swipeDown) { newTab.swipeDown = result.swipeDown; }
+		if (result.action) { newTab.action = result.action; }
 	  newTab.enable = result.enable;
 	  newTab.index = maxIndex + 1;
 	  newTab.id = configData.idCounter;
@@ -306,12 +307,13 @@ function editBottomTabModal(tabId) {
   var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
   getSimpleModal({title: "Editer un menu bas",
 		fields:[{type: "enable", value: tabToEdit.enable},{type: "name",value:tabToEdit.name}, {type:"icon",value: tabToEdit.icon},
-			{type:'swipeUp', value:tabToEdit.swipeUp}, {type:'swipeDown', value:tabToEdit.swipeDown}] },
+			{type:'swipeUp', value:tabToEdit.swipeUp}, {type:'swipeDown', value:tabToEdit.swipeDown}, {type:'action', value:tabToEdit.action}] },
 		function(result) {
 				tabToEdit.name = result.name;
 				tabToEdit.icon = result.icon;
 				tabToEdit.swipeUp = result.swipeUp;
 				tabToEdit.swipeDown = result.swipeDown;
+				tabToEdit.action = result.action;
 				tabToEdit.enable = result.enable;
 				refreshBottomTabData();
   });

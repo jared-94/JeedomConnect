@@ -122,9 +122,9 @@ function setSimpleModalData(options) {
         });
       }
       
-    } else if (option.type == "swipeUp" | option.type == "swipeDown") {
+    } else if (option.type == "swipeUp" | option.type == "swipeDown" | option.type == "action") {
       swipe = `<li><div class='form-group'>
-			   <label class='col-xs-3' >${option.type == 'swipeUp' ? "Swipe Up" : "Swipe Down"}</label>
+			   <label class='col-xs-3' >${option.type == 'swipeUp' ? "Swipe Up" : ( option.type == 'swipeDown' ? "Swipe Down" : "Action" )}</label>
 			   <div class='col-xs-9'>
           <select id="${option.type}-select" onchange="swipeSelected('${option.type}');">
             <option value='none' ${option.value ? "" : "selected"}>Aucun</option>
@@ -154,6 +154,7 @@ function setSimpleModalData(options) {
 	$("#modalOptions").append(items.join(""));
   refreshSwipe("swipeUp");
   refreshSwipe("swipeDown");
+  refreshSwipe("action");
 
 }
 

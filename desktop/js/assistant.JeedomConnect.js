@@ -183,6 +183,14 @@ function getSimpleModal(_options, _callback) {
 							result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
 						}
 					}
+					if (_options.fields.find(i => i.type == "action")) {
+						let choice = $("#action-select option:selected").val();
+						if (choice == 'cmd') {
+							result.action = { type: 'cmd', id: $("#action-cmd-input").attr('cmdId') }
+						} else if (choice == 'sc') {
+							result.action = { type: 'sc', id: $("#action-sc-input").attr('scId') }
+						}
+					}
 					if ($.trim(result) != '' && 'function' == typeof(_callback)) {
 						_callback(result);
 					}
