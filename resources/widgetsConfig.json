@@ -17,6 +17,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -103,6 +109,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -226,6 +238,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -381,6 +399,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -462,6 +486,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -556,6 +586,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -612,6 +648,12 @@
 					"description": "Si vide, le nom du scénario sera utilisé"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -658,6 +700,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -686,6 +734,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
@@ -704,6 +758,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "widgets",
@@ -735,6 +795,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -797,6 +863,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -855,6 +927,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -918,6 +996,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -979,6 +1063,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1129,6 +1219,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1285,6 +1381,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1348,6 +1450,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1399,6 +1507,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1462,6 +1576,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1514,6 +1634,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1601,6 +1727,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1711,6 +1843,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1762,6 +1900,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1827,6 +1971,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1879,6 +2029,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1989,6 +2145,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2040,6 +2202,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2119,6 +2287,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2170,6 +2344,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2234,6 +2414,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2292,6 +2478,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2388,6 +2580,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2457,6 +2655,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2513,6 +2717,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2579,6 +2789,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2660,6 +2876,12 @@
 						"category": "string"
 					},
 					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
+					},
+					{
 						"id": "subtitle",
 						"name": "Sous-titre",
 						"required": false,
@@ -2727,6 +2949,12 @@
 						"category": "string"
 					},
 					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
+					},
+					{
 						"id": "subtitle",
 						"name": "Sous-titre",
 						"required": false,
@@ -2792,6 +3020,12 @@
 						"category": "string"
 					},
 					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
+					},
+					{
 						"id": "subtitle",
 						"name": "Sous-titre",
 						"required": false,
@@ -2844,6 +3078,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
