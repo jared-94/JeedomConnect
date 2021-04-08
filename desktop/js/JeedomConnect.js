@@ -615,6 +615,13 @@ function setWidgetModalData(options) {
          } else {
              $("#"+option.id+"-unitInput").css('display', 'none');
          }
+          if (options.widget[option.id].subType == 'slider') {
+            $("#"+option.id+"-stepInput").css('display', '');
+            $("#"+option.id+"-stepInput").val(options.widget[option.id].step);
+          } 
+          else {
+              $("#"+option.id+"-stepInput").css('display', 'none');
+          }
 
        } else if (option.category == "scenario" & options.widget[option.id] !== undefined) {
          getScenarioHumanName({
@@ -749,12 +756,17 @@ function refreshAddWidgets() {
                     <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
             </td>
             <td>
-                <input style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
-              </td><td>
-                <input style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
-            </td><td>
+                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+            </td>
+            <td>
+                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+            </td>
+            <td>
+                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
+            </td>
+            <td>
                 <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
-              </td></tr></table>
+            </td></tr></table>
                     `;
 
      curOption += "</div></div></li>";
@@ -962,6 +974,13 @@ function refreshCmdData(name, id, value) {
      } else {
          $("#"+name+"-unitInput").css('display', 'none');
      }
+      if (data.result.subType == 'slider') {
+        $("#"+name+"-stepInput").css('display', '');
+        $("#"+name+"-stepInput").val(data.result.step);
+      } 
+      else {
+          $("#"+name+"-stepInput").css('display', 'none');
+      }
      if (value != 'undefined' & data.result.value != '') {
        refreshCmdData(value, data.result.value, 'undefined');
      }
@@ -1757,6 +1776,7 @@ function saveWidget() {
         result[option.id].subType = $("#"+option.id+"-input").attr('cmdSubType');
         result[option.id].minValue = $("#"+option.id+"-minInput").val() != '' ? $("#"+option.id+"-minInput").val() : undefined;
         result[option.id].maxValue = $("#"+option.id+"-maxInput").val() != '' ? $("#"+option.id+"-maxInput").val() : undefined;
+        result[option.id].step = $("#"+option.id+"-stepInput").val() != '' ? $("#"+option.id+"-stepInput").val() : undefined;
         result[option.id].unit = $("#"+option.id+"-unitInput").val() != '' ? $("#"+option.id+"-unitInput").val() : undefined;
         result[option.id].invert = $("#invert-"+option.id).is(':checked') || undefined;
         result[option.id].confirm = $("#confirm-"+option.id).is(':checked') || undefined;
