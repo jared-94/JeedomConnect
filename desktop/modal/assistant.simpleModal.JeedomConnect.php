@@ -140,11 +140,17 @@ function setSimpleModalData(options) {
             <i class='fas fa-list-alt'></i></a>
           </div>
           <div class='input-group' id="${option.type}-sc-div"
-          style="display:${option.value ? option.value.type == 'sc' ? "''" : "none": "none"};"><input class='input-sm form-control roundedLeft' style="width:260px;"
+          style="display:${option.value ? option.value.type == 'sc' ? "''" : "none": "none"};">
+            <input class='input-sm form-control roundedLeft' style="width:260px;"
             id="${option.type}-sc-input" value='' scId='${option.value ? option.value.type == 'sc' ? option.value.id: '': ''}' disabled>
             <a class='btn btn-default btn-sm cursor bt_selectTrigger'
               tooltip='Choisir un scénario' onclick="selectSimpleSc('${option.type}');">
             <i class='fas fa-list-alt'></i></a>
+            <div class="input-group input-group-sm" style="width: 100%">
+              <span class="input-group-addon roundedLeft" style="width: 40px">Tags</span>
+              <input style="width:100%;" class='input-sm form-control' type="string" id="${option.type}-sc-tags-input" 
+                  value="${option.value ? option.value.tags ? option.value.tags : '': ''}" placeholder="Si nécessaire indiquez des tags" />
+            </div>
          </div>
          </div></li>`;
 			items.push(swipe);

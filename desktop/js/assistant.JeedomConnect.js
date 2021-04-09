@@ -172,7 +172,7 @@ function getSimpleModal(_options, _callback) {
 						if (choice == 'cmd') {
 							result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
 						} else if (choice == 'sc') {
-							result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
+							result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') , tags :$("#swipeUp-sc-tags-input").val() }
 						}
 					}
 					if (_options.fields.find(i => i.type == "swipeDown")) {
@@ -180,7 +180,7 @@ function getSimpleModal(_options, _callback) {
 						if (choice == 'cmd') {
 							result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
 						} else if (choice == 'sc') {
-							result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
+							result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId'), tags :$("#swipeDown-sc-tags-input").val() }
 						}
 					}
 					if (_options.fields.find(i => i.type == "action")) {
@@ -188,7 +188,7 @@ function getSimpleModal(_options, _callback) {
 						if (choice == 'cmd') {
 							result.action = { type: 'cmd', id: $("#action-cmd-input").attr('cmdId') }
 						} else if (choice == 'sc') {
-							result.action = { type: 'sc', id: $("#action-sc-input").attr('scId') }
+							result.action = { type: 'sc', id: $("#action-sc-input").attr('scId'), tags :$("#action-sc-tags-input").val() }
 						}
 					}
 					if ($.trim(result) != '' && 'function' == typeof(_callback)) {
