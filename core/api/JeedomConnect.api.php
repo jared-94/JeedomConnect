@@ -136,6 +136,18 @@ switch ($method) {
     log::add('JeedomConnect', 'debug', 'send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_EVENTS':
+    $config = $eqLogic->getConfig(true);
+    $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $params['configVersion']);
+    if ($newConfig != false) {
+      log::add('JeedomConnect', 'debug', "pollingServer send new config : " . json_encode($newConfig));
+      $jsonrpc->makeSuccess(array($newConfig));
+      return;
+    }
+    $events = event::changes($params['lastReadTimestamp']);
+    $data = apiHelper::getEvents($events, $config);
+    $jsonrpc->makeSuccess($data);
+    break;
 	case 'REGISTER_DEVICE':
 		$rdk = apiHelper::registerUser($eqLogic, $params['userHash'], $params['rdk']);
 		if (!isset($rdk)) {

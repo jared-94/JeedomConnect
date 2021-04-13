@@ -221,10 +221,10 @@ class apiHelper {
  }
 
  // Config Watcher
- public static function lookForNewConfig($eqLogic, $config) {
+ public static function lookForNewConfig($eqLogic, $prevConfig) {
    $configVersion = $eqLogic->getConfiguration('configVersion');
    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
-   if ($configVersion != $config['payload']['configVersion']) {
+   if ($configVersion != $prevConfig) {
       log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
       //return $eqLogic->getConfig(true);
       return $eqLogic->getGeneratedConfigFile();
