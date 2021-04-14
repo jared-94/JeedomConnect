@@ -104,6 +104,12 @@ class JeedomConnect extends eqLogic {
 
 		/*     * *********************Méthodes d'instance************************* */
 
+
+	public static function backup(){
+		JeedomConnectWidget::exportWidgetConf();
+	}
+
+
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
 			mkdir(self::$_config_dir);
