@@ -43,7 +43,7 @@ function refreshBottomTabData() {
 	});
 	var items = [];
 	$.each( tabs, function( key, val ) {
-		items.push( `<li><a  onclick="editBottomTabModal('${val.id}');">
+		items.push( `<li data-id="${val.id}" class="bottomItem"><a  onclick="editBottomTabModal('${val.id}');">
 			${iconToHtml(val.icon)}<i style="margin-left:10px;"></i>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
@@ -81,7 +81,7 @@ function refreshTopTabContent() {
 
 	items = [];
 	$.each( tabs, function( key, val ) {
-		items.push( `<li><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
+		items.push( `<li data-id="${val.id}" class="topItem"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteTopTab('${val.id}');"></i>
@@ -96,7 +96,7 @@ function refreshRoomData() {
 	});
 	var items = [];
 	$.each( rooms, function( key, val ) {
-		items.push( `<li data-id="${val.id}"><a>${val.name}</a>
+		items.push( `<li data-id="${val.id}" class="roomItem"><a>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
@@ -125,14 +125,14 @@ function refreshWidgetsContent() {
 	rootElmts = rootElmts.sort(function(s,t) {
 		return s.index - t.index;
 	});
-console.log('widgets', configData.payload.widgets)
+	// console.log('widgets', configData.payload.widgets)
 	items = [];
 	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
 	$.each( rootElmts, function( key, value ) {
 		var val = allWidgetsDetail.find(w => w.id == value.id) ;
 		if (val  !=undefined && val.type !== undefined) { //it is a widget
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
-			items.push( `<li><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
+			items.push( `<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}','${value.parentId}','${value.index}');"></i>
@@ -141,7 +141,7 @@ console.log('widgets', configData.payload.widgets)
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
 			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
+			items.push( `<div  class="widgetItem widgetGroup" data-id="${value.id}" data-parentId="${value.parentId}" data-index="${value.index}"><li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${value.id}');"></i>
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${value.id}');"></i>
@@ -150,19 +150,19 @@ console.log('widgets', configData.payload.widgets)
 			curWidgets = curWidgets.sort(function(s,t) {
 				return s.index - t.index;
 			});
-			items.push("<li><ul class='tabSubUL'>");
+			items.push(`<li><ul class="tabSubUL widgetGroup" data-id="${value.id}">`);
 			$.each(curWidgets, function (key, wid) {
 				var w = allWidgetsDetail.find(x => x.id == wid.id) ;
 				if ( w != undefined){
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
-					items.push( `<li><a  onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
+					items.push( `<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
 				<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
 				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
 				<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
 				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}','${wid.parentId}','${wid.index}');"></i></li>`);
 				}
 			});
-			items.push("</ul></li>");
+			items.push("</ul></li></div>");
 		}
 	});
 	$("#widgetsUL").html(items.join(""));
@@ -771,7 +771,7 @@ function refreshSummaryData() {
 	});
 	var items = [];
 	$.each( summaries, function( key, val ) {
-		items.push( `<li data-id="${val.key}"><a  onclick="editSummaryModal('${val.key}');">
+		items.push( `<li data-id="${val.key}" class="summaryItem" ><a  onclick="editSummaryModal('${val.key}');">
 			${iconToHtml(val.image)}<span style="margin-left:10px;"></span>${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upSummary('${val.key}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downSummary('${val.key}');"></i>

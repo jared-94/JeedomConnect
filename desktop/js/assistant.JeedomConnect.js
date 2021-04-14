@@ -1,3 +1,83 @@
+$("#widgetsUL").sortable({axis: "y", cursor: "move", items: ".widgetItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+		$('#widgetsUL > .widgetItem').each((i, el) => { 
+			if ( $( el ).hasClass( "widgetGroup" ) ){
+				var groupId = $(el).data('id') ;
+				var groupItem = 0 ; 
+				$(el).children().find('.widgetItem').each((i2, el2) => { 
+					var widgetId = $(el2).data('id') ;
+					var widgetIndex = $(el2).data('index') ;
+					var widgetParentId = $(el2).data('parentid') ;
+					var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+					widgetToMove.index = groupItem ; 
+					widgetToMove.parentId = groupId ; 
+					groupItem ++;
+
+				} );
+				
+				var groupToEdit = configData.payload.groups.find(g => g.id == groupId);
+				groupToEdit.index = i ; 
+				$(el).data('index', i) ;
+			}
+			else{
+				var widgetId = $(el).data('id') ;
+				var widgetIndex = $(el).data('index') ;
+				var widgetParentId = $(el).data('parentid') ;
+				var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+				widgetToMove.index = i ; 
+				$(el).data('index', i) ;
+			}
+
+		});
+		refreshWidgetsContent();
+
+	} });
+
+$("#summaryUL").sortable({axis: "y", cursor: "move", items: ".summaryItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#summaryUL > .summaryItem').each((i, el) => { 
+					var summaryKey = $(el).data('id') ;
+					var summaryToMove = configData.payload.summaries.find(summary => summary.key == summaryKey);
+					summaryToMove.index = i;
+					}
+			);
+
+	} });
+
+$("#roomUL").sortable({axis: "y", cursor: "move", items: ".roomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#roomUL > .roomItem').each((i, el) => { 
+					var roomId = $(el).data('id') ;
+					var roomToMove = configData.payload.rooms.find(room => room.id == roomId);
+					roomToMove.index = i;
+					}
+			);
+
+	} });	
+
+$("#bottomUL").sortable({axis: "y", cursor: "move", items: ".bottomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#bottomUL > .bottomItem').each((i, el) => { 
+					var tabId = $(el).data('id') ;
+					var tabToMove = configData.payload.tabs.find(tab => tab.id == tabId);
+					tabToMove.index = i;
+					}
+			);
+
+	} });	
+
+$("#topUL").sortable({axis: "y", cursor: "move", items: ".topItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#topUL > .topItem').each((i, el) => { 
+					var tabId = $(el).data('id') ;
+					var tabToMove = configData.payload.sections.find(tab => tab.id == tabId);
+					tabToMove.index = i;
+					}
+			);
+
+	} });	
+
+
 function openTab(evt, tabName) {
 	if (tabName == "bottomTab") {
 		refreshBottomTabData();

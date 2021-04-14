@@ -37,7 +37,7 @@ function refreshNotifsTabData() {
 	});
 	var items = [];
 	$.each( notifs, function( key, val ) {
-		var notifHtml = `<li><a  onclick="editNotifModal('${val.id}');">${val.name}</a>
+		var notifHtml = `<li class="notifItem" data-id="${val.id}"><a  onclick="editNotifModal('${val.id}');">${val.name}</a>
 			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upNotif('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downNotif('${val.id}');"></i>`;
 		if (val.id != 'defaultNotif') {
