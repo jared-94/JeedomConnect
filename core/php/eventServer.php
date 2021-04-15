@@ -47,7 +47,7 @@ $id = rand(0,1000);
 log::add('JeedomConnect', 'debug', "eventServer init client #".$id);
 
 
-$config = $eqLogic->getConfig(true);
+$config = $eqLogic->getGeneratedConfigFile();
 $lastReadTimestamp = time();
 $step = 0;
 

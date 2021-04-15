@@ -263,7 +263,10 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
+		if ( $saveGenerated ) {
+			cache::set('jcConfig' . $this->getConfiguration('apiKey'), json_encode( $jsonConfig));
+			file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
+		}
 
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
@@ -277,6 +280,11 @@ class JeedomConnect extends eqLogic {
 		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
 			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' );
 			return null;
+		}
+
+		$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
+		if ($cacheConf != '') {
+			return json_decode($cacheConf, true);
 		}
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
