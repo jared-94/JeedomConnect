@@ -901,6 +901,7 @@ function refreshAddWidgets() {
   items.push(option);
 
   $("#widgetOptions").html(items.join(""));
+  loadSortable('all'); 
 }
 
 
