@@ -183,6 +183,7 @@ function refreshWidgetsContent() {
 		}
 	});
 	$("#widgetsUL").html(items.join(""));
+	$("#widgetsUL").attr('data-id', parentId);
 }
 
 function incrementIdCounter() {

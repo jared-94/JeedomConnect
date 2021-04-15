@@ -1,4 +1,10 @@
 $("#widgetsUL").sortable({axis: "y", cursor: "move", items: ".widgetItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	beforeStop: function(ev, ui) {
+		if ($(ui.item).hasClass('widgetGroup') && $(ui.item).parent().hasClass('widgetGroup') ) {
+			alert("Déplacement d'un groupe dans un groupe non autorisé !");
+			$(this).sortable('cancel');
+		}
+	},
 	update: function( event, ui){ 
 		$('#widgetsUL > .widgetItem').each((i, el) => { 
 			if ( $( el ).hasClass( "widgetGroup" ) ){
@@ -24,8 +30,13 @@ $("#widgetsUL").sortable({axis: "y", cursor: "move", items: ".widgetItem", place
 				var widgetIndex = $(el).data('index') ;
 				var widgetParentId = $(el).data('parentid') ;
 				var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+				
+				var widgetParentIdNew = $(el).parent().data('id') ;
+				
 				widgetToMove.index = i ; 
+				widgetToMove.parentId = widgetParentIdNew ; 
 				$(el).data('index', i) ;
+				$(el).data('parentid',widgetParentIdNew) ;
 			}
 
 		});
