@@ -45,8 +45,11 @@ function refreshBottomTabData() {
 	$.each( tabs, function( key, val ) {
 		items.push( `<li data-id="${val.id}" class="bottomItem"><a  onclick="editBottomTabModal('${val.id}');">
 			${iconToHtml(val.icon)}<i style="margin-left:10px;"></i>${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+
+			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upBottomTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downBottomTab('${val.id}');"></i> -->
+
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteBottomTab('${val.id}');"></i></li>`);
 	});
 	$("#bottomUL").html(items.join(""));
@@ -82,8 +85,11 @@ function refreshTopTabContent() {
 	items = [];
 	$.each( tabs, function( key, val ) {
 		items.push( `<li data-id="${val.id}" class="topItem"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>	
+
+			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i> -->
+
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteTopTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Supprimer" style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveTopTabModal('${val.id}');"></i></li>`);
 	});
@@ -97,8 +103,10 @@ function refreshRoomData() {
 	var items = [];
 	$.each( rooms, function( key, val ) {
 		items.push( `<li data-id="${val.id}" class="roomItem"><a>${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			
+			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i> -->
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
 	});
 	$("#roomUL").html(items.join(""));
@@ -135,15 +143,21 @@ function refreshWidgetsContent() {
 			items.push( `<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}','${value.parentId}','${value.index}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}','${value.parentId}','${value.index}');"></i>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			
+			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:orange;font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}','${value.parentId}','${value.index}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:orange;font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}','${value.parentId}','${value.index}');"></i> 
+
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}','${value.parentId}','${value.index}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
 			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
 			items.push( `<div  class="widgetItem widgetGroup" data-id="${value.id}" data-parentId="${value.parentId}" data-index="${value.index}"><li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${value.id}');"></i>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			
+			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${value.id}');"></i> -->
+			
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${value.id}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${value.id}');"></i></li>`);
 			var curWidgets = configData.payload.widgets.filter(w => w.parentId == value.id);
@@ -156,8 +170,11 @@ function refreshWidgetsContent() {
 				if ( w != undefined){
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
 					items.push( `<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
-				<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
-				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
+					<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+					
+					<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
+				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}','${wid.parentId}','${wid.index}');"></i> -->
+				
 				<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
 				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}','${wid.parentId}','${wid.index}');"></i></li>`);
 				}
@@ -319,6 +336,7 @@ function editBottomTabModal(tabId) {
   });
 }
 
+/*
 function upBottomTab(tabId) {
 	var tabToMove = configData.payload.tabs.find(tab => tab.id == tabId);
 	var tabIndex = tabToMove.index;
@@ -342,6 +360,7 @@ function downBottomTab(tabId) {
 	otherTab.index = tabIndex;
 	refreshBottomTabData();
 }
+*/
 
 function deleteBottomTab(tabId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous vraiment supprimer ce menu ?"}] }, function(result) {
@@ -418,6 +437,7 @@ function editTopTabModal(tabId) {
   });
 }
 
+/*
 function upTopTab(tabId) {
 	var tabToMove = configData.payload.sections.find(tab => tab.id == tabId);
 	var tabIndex = tabToMove.index;
@@ -447,6 +467,7 @@ function downTopTab(tabId) {
 	otherTab.index = tabIndex;
 	refreshTopTabContent();
 }
+*/
 
 function deleteTopTab(tabId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous vraiment supprimer ce menu ?"}] }, function(result) {
@@ -531,6 +552,7 @@ function editRoomModal(roomId) {
 	});
 }
 
+/*
 function upRoom(roomId) {
 	var roomToMove = configData.payload.rooms.find(room => room.id == roomId);
 	var roomIndex = roomToMove.index;
@@ -556,6 +578,7 @@ function downRoom(roomId) {
 	otherRoom.index = roomIndex;
 	refreshRoomData();
 }
+*/
 
 function deleteRoom(roomId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer cette pièce ?"}] }, function(result) {
@@ -614,6 +637,7 @@ function editGroupModal(groupId) {
   });
 }
 
+/*
 function upGroup(groupId) {
 	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
@@ -645,6 +669,7 @@ function downGroup(groupId) {
 	otherElmt.index = groupIndex;
 	refreshWidgetsContent();
 }
+*/
 
 function deleteGroup(groupId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Tous les widgets attachés à ce groupe seront supprimés. Voulez-vous continuer ?"}] }, function(result) {
@@ -773,8 +798,9 @@ function refreshSummaryData() {
 	$.each( summaries, function( key, val ) {
 		items.push( `<li data-id="${val.key}" class="summaryItem" ><a  onclick="editSummaryModal('${val.key}');">
 			${iconToHtml(val.image)}<span style="margin-left:10px;"></span>${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upSummary('${val.key}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downSummary('${val.key}');"></i>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upSummary('${val.key}');"></i>
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downSummary('${val.key}');"></i> -->
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteSummary('${val.key}');"></i></li>`);
 		
 		$('#selSummaryDetail option[value="' + val.key + '"]').css('display','none');
@@ -791,7 +817,7 @@ function refreshSummaryData() {
 }
 
 
-
+/*
 function upSummary(summaryKey) {
 	var summaryToMove = configData.payload.summaries.find(summary => summary.key == summaryKey);
 	var summaryIndex = summaryToMove.index;
@@ -817,6 +843,7 @@ function downSummary(summaryKey) {
 	otherSummary.index = summaryIndex;
 	refreshSummaryData();
 }
+*/
 
 function deleteSummary(summaryKey) {
 	getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce résumé ?"}] }, function(result) {
@@ -1117,6 +1144,7 @@ function refreshAddSummaries(_options) {
 
 /* WIDGETS */
 
+
 function upWidget(widgetId, widgetParentId, widgetIndex) {
 	var parentId = $("#widgetsParents-select option:selected").attr('value');
 	var rootElmts = getRootObjects(parentId);
@@ -1211,6 +1239,7 @@ function downWidget(widgetId, widgetParentId, widgetIndex) {
 	}
 	refreshWidgetsContent();
 }
+
 
 function deleteWidget(widgetId, widgetParentId, widgetIndex) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer ce widget ?"}] }, function(result) {

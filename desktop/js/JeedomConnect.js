@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
-
 var allWidgetsDetail;
 refreshWidgetDetails() ;
 
@@ -674,6 +673,7 @@ function setWidgetModalData(options) {
      });
   }
   refreshStrings();
+  loadSortable('all'); 
 }
 
 function refreshAddWidgets() {
@@ -850,7 +850,7 @@ function refreshAddWidgets() {
     } else if (option.category == "cmdList") {
       curOption += `<span class="input-group-btn">
               <a class="btn btn-default roundedRight" onclick="addCmdOption('${JSON.stringify(option.options).replace(/"/g, '&quot;')}')"><i class="fas fa-plus-square">
-              </i> Ajouter</a></span><div id="cmdList-option" style='margin-left:-150px;'></div>`;
+              </i> Ajouter</a></span><div id="cmdList-option" data-cmd-options="${JSON.stringify(option.options).replace(/"/g, '&quot;')}" style='margin-left:-150px;'></div>`;
       curOption += `</div></div></li>`;
     } else if (option.category == "ifImgs") {
       curOption += `<span class="input-group-btn">
@@ -1039,11 +1039,14 @@ function refreshWidgetOption() {
   });
   widgetsCat.forEach(item => {
     var name = getWidgetPath(item.id);
-    curOption += `<div class='input-group'>
+    curOption += `<div class='input-group jcWidgetListMovable' data-id="${item.id}">
           <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}' disabled>
-          <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidgetOption('${item.id}');"></i>
-    <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidgetOption('${item.id}');"></i>
-    <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteWidgetOption('${item.id}');"></i></li>
+          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+          
+          <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidgetOption('${item.id}');"></i>
+		      <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidgetOption('${item.id}');"></i> -->
+          
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteWidgetOption('${item.id}');"></i></li>
           </div>`;
   });
   $("#widget-option").html(curOption);
@@ -1060,7 +1063,7 @@ function refreshCmdListOption(optionsJson) {
   });
   cmdCat.forEach(item => {
     //open the div
-    curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;">`;
+    curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;" data-id="${item.id}" data-index="${item.index}">`;
 
       //left part
       curOption +=`<div class="col-lg-6 form-group">`;
@@ -1091,8 +1094,11 @@ function refreshCmdListOption(optionsJson) {
           }
           
           curOption += `<div class="col-lg-6" >
-                  <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}" onclick="upCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
-                  <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}" onclick="downCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+
+                  <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}" onclick="upCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
+                  <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}" onclick="downCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i> -->
+        
                   <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" data-id="${item.id}" data-index="${item.index}"  onclick="deleteCmdOption(this,'${optionsJson.replace(/"/g, '&quot;')}');"></i>
                 </div>`
         
@@ -1352,6 +1358,7 @@ function deleteCmdOption(elm, optionsJson) {
   refreshCmdListOption(optionsJson);
 }
 
+/*
 function upCmdOption(elm, optionsJson) {
   saveCmdList();
 
@@ -1385,6 +1392,7 @@ function downCmdOption(elm, optionsJson) {
   otherCmd.index = index;
   refreshCmdListOption(optionsJson);
 }
+*/
 
 //More Infos
 
@@ -1508,7 +1516,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
 
   imgCat.forEach(item => {
-    curOption += `<div class='input-group' id="imgList-${item.index}">
+    curOption += `<div class='input-group jcImgListMovable' data-id="${item.index}" id="imgList-${item.index}">
     Si :<select id="info-${item.index}" style="width:250px;height:31px;margin-left:5px;">`;
     options.forEach(info => {
       curOption += `<option value="${info.id}" type="${info.type}" ${item.info == undefined ? '' : item.info.id == info.id && "selected"}>${info.human}</option>`;
@@ -1525,8 +1533,11 @@ function refreshImgListOption(dataType = 'widget') {
               <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-plus-square">
               </i> Image </a>
               <a data-id="icon-div-${item.index}" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>          
-              <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
-              <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i>
+              <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+              
+              <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
+              <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i> -->
+              
               <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
         `;
 
@@ -1551,6 +1562,57 @@ function addImgOption(dataType) {
   refreshImgListOption(dataType);
 }
 
+function loadSortable(elt){
+
+  if (elt == 'imgList' || elt == 'all'){
+    $("#imgList-option").sortable({axis: "y", cursor: "move", items: ".jcImgListMovable", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+        start: function(){ saveImgOption();},
+        update: function( event, ui){ 
+            $('#imgList-option > .jcImgListMovable').each((i, el) => { 
+                var imgId = $(el).data('id') ;
+                var imgToMove = imgCat.find(i => i.index == parseInt(imgId));
+                imgToMove.index = i;
+                }
+            );
+            refreshImgListOption();
+
+        } });
+  }
+
+  if (elt == 'widgetList' || elt == 'all'){
+    $("#widget-option").sortable({axis: "y", cursor: "move", items: ".jcWidgetListMovable", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+        update: function( event, ui){ 
+            $('#widget-option > .jcWidgetListMovable').each((i, el) => { 
+                var widgetId = $(el).data('id') ;
+                var widgetToMove = widgetsCat.find(i => i.id == parseInt(widgetId));
+                widgetToMove.index = i;
+                }
+            );
+            refreshWidgetOption();
+
+        } });
+  }
+
+  if (elt == 'cmdList' || elt == 'all'){
+    $("#cmdList-option").sortable({axis: "y", cursor: "move", items: ".jcCmdList", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+        start: function(){ saveCmdList(); },
+        update: function( event, ui){ 
+            $('#cmdList-option > .jcCmdList').each((i, el) => { 
+                var cmdId = $(el).data('id') ;
+                var cmdIndex = $(el).data('index') ;
+                
+                var cmdToMove = cmdCat.find(i => i.id == parseInt(cmdId) && i.index == cmdIndex);
+                cmdToMove.index = i;
+                }
+            );
+            var opt = $("#cmdList-option").data('cmd-options');
+            refreshCmdListOption(JSON.stringify(opt));
+
+        } });
+  }
+
+}
+
 function deleteImgOption(id) {
   saveImgOption();
   var imgToDelete = imgCat.find(i => i.index == id);
@@ -1564,6 +1626,7 @@ function deleteImgOption(id) {
   refreshImgListOption();
 }
 
+/*
 function upImgOption(id) {
   saveImgOption();
   var imgToMove = imgCat.find(i => i.index == parseInt(id));
@@ -1589,8 +1652,7 @@ function downImgOption(id) {
   otherImg.index = index;
   refreshImgListOption();
 }
-
-
+*/
 
 function addWidgetOption(choices) {
   var widgets = choices.split(".");
@@ -1613,6 +1675,7 @@ function deleteWidgetOption(id) {
   refreshWidgetOption();
 }
 
+/*
 function upWidgetOption(id) {
   var widgetToMove = widgetsCat.find(i => i.id == parseInt(id));
   var index = parseInt(widgetToMove.index);
@@ -1636,6 +1699,7 @@ function downWidgetOption(id) {
   otherWidget.index = index;
   refreshWidgetOption();
 }
+*/
 
  function getHumanName(_params) {
     var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
