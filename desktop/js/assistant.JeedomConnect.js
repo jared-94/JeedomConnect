@@ -1,4 +1,10 @@
 $("#widgetsUL").sortable({axis: "y", cursor: "move", items: ".widgetItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	beforeStop: function(ev, ui) {
+		if ($(ui.item).hasClass('widgetGroup') && $(ui.item).parent().hasClass('widgetGroup') ) {
+			alert("Déplacement d'un groupe dans un groupe non autorisé !");
+			$(this).sortable('cancel');
+		}
+	},
 	update: function( event, ui){ 
 		$('#widgetsUL > .widgetItem').each((i, el) => { 
 			if ( $( el ).hasClass( "widgetGroup" ) ){
