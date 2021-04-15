@@ -275,8 +275,6 @@ class JeedomConnect extends eqLogic {
 
 	public function getGeneratedConfigFile() {
 
-		log::add('JeedomConnect', 'debug', ' retrieved generated file' );
-
 		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
 			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' );
 			return null;

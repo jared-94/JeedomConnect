@@ -9,9 +9,6 @@ require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 class ConnectLogic implements MessageComponentInterface
 {
 
-		private $configList = array();
-		private $apiKeyList = array();
-
     /**
      * @var \SplObjectStorage List of unauthenticated clients (waiting for authentication message)
      */
@@ -42,22 +39,14 @@ class ConnectLogic implements MessageComponentInterface
      * Notifier constructor
      */
     public function __construct($versionJson) {
-			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-				$apiKey = $eqLogic->getConfiguration('apiKey');
-				if ( $apiKey !=  ''){
-					\log::add('JeedomConnect', 'debug', 'checking apiKey : ' . $apiKey );
-					array_push($this->apiKeyList, $apiKey);
-					$this->configList[$apiKey] = $eqLogic->getGeneratedConfigFile();
-				}
-			}
-      $this->unauthenticatedClients = new \SplObjectStorage;
-      $this->authenticatedClients = new \SplObjectStorage;
-      $this->hasAuthenticatedClients = false;
-      $this->hasUnauthenticatedClients = false;
-      $this->authDelay = 2;
-			$this->pluginVersion = $versionJson->version;
-			$this->appRequire = $versionJson->require;
-      $this->lastReadTimestamp = time();
+      	$this->unauthenticatedClients = new \SplObjectStorage;
+      	$this->authenticatedClients = new \SplObjectStorage;
+      	$this->hasAuthenticatedClients = false;
+      	$this->hasUnauthenticatedClients = false;
+      	$this->authDelay = 2;
+		$this->pluginVersion = $versionJson->version;
+		$this->appRequire = $versionJson->require;
+      	$this->lastReadTimestamp = time();
     }
 
 
@@ -77,12 +66,12 @@ class ConnectLogic implements MessageComponentInterface
           }
         }
       }
-			$this->lookForNewConfig();
+			
     	if ($this->hasAuthenticatedClients) {
-      	// Read events from Jeedom
-      	$events = \event::changes($this->lastReadTimestamp);
-				$this->lastReadTimestamp = time();
-      	$this->broadcastEvents($events);
+			$this->lookForNewConfig();
+      		$events = \event::changes($this->lastReadTimestamp);
+			$this->lastReadTimestamp = time();
+      		$this->broadcastEvents($events);
     	}
   	}
 
@@ -127,19 +116,23 @@ class ConnectLogic implements MessageComponentInterface
             return;
         }
 
-        if (!in_array($objectMsg->apiKey, $this->apiKeyList)) {
+		$eqLogic = \eqLogic::byLogicalId($objectMsg->apiKey, 'JeedomConnect');
+
+        if (!is_object($eqLogic)) {
             // Invalid API key
             \log::add('JeedomConnect', 'warning', "Authentication failed (invalid credentials) for client #{$conn->resourceId} from IP: {$conn->ip}");
-						$result = array( 'type' => 'BAD_KEY' );
-						$conn->send(json_encode($result));
+			$result = array( 'type' => 'BAD_KEY' );
+			$conn->send(json_encode($result));
             $conn->close();
+			return;
         } else {
             if (!$this->hasAuthenticatedClients) {
                 // It is the first client, we store current timestamp for fetching events since this moment
                 $this->lastReadTimestamp = time();
             }
 
-			$eqLogic = \eqLogic::byLogicalId($objectMsg->apiKey, 'JeedomConnect');
+			
+			$config = $eqLogic->getGeneratedConfigFile();
 			if ($eqLogic->getConfiguration('deviceId') == '') {
 				\log::add('JeedomConnect', 'info', "Register new device {$objectMsg->deviceName}");
 				$eqLogic->registerDevice($objectMsg->deviceId, $objectMsg->deviceName);
@@ -189,30 +182,30 @@ class ConnectLogic implements MessageComponentInterface
 			}
 
 			//check config format version
-			if( ! array_key_exists('formatVersion', $this->configList[$objectMsg->apiKey]) ) {
+			if( ! array_key_exists('formatVersion', $config) ) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad bad format version");
 				$result = array( 'type' => 'FORMAT_VERSION_ERROR' );
 				$conn->send(json_encode($result));
 				$conn->close();
-	      return;
+	      		return;
 			}
 
-      $conn->apiKey = $objectMsg->apiKey;
-			$conn->eqLogic = $eqLogic;
-      $this->authenticatedClients->attach($conn);
-      $this->hasAuthenticatedClients = true;
-      \log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
+			$conn->apiKey = $objectMsg->apiKey;
+			$conn->configVersion = $config['payload']['configVersion'];
+			$this->authenticatedClients->attach($conn);
+			$this->hasAuthenticatedClients = true;
+			\log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
 			$result = array(
 				'type' => 'WELCOME',
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
 					'userHash' => $user->getHash(),
-					'configVersion' => $this->configList[$objectMsg->apiKey]['payload']['configVersion'],
+					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
-					'cmdInfo' => \apiHelper::getCmdInfoData($this->configList[$conn->apiKey]),
-					'scInfo' => \apiHelper::getScenarioData($this->configList[$conn->apiKey]),
-					'objInfo' => \apiHelper::getObjectData($this->configList[$conn->apiKey])
+					'cmdInfo' => \apiHelper::getCmdInfoData($config),
+					'scInfo' => \apiHelper::getScenarioData($config),
+					'objInfo' => \apiHelper::getObjectData($config)
 				)
 			);
 			\log::add('JeedomConnect', 'info', "Send ".json_encode($result));
@@ -290,10 +283,10 @@ class ConnectLogic implements MessageComponentInterface
 				$from->send(json_encode($conf));
 				break;
 			case 'GET_CONFIG':
-				$result = $this->configList[$from->apiKey];
-				//$result['payload']['summaryConfig'] = \config::byKey('object:summary');
-				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($result));
-				$from->send(json_encode($result));
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				$config = $eqLogic->getGeneratedConfigFile();
+				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($config));
+				$from->send(json_encode($config));
 				break;
 			case 'GET_CMD_INFO':
 				$this->sendCmdInfo($from);
@@ -363,51 +356,23 @@ class ConnectLogic implements MessageComponentInterface
 
 
 	public function lookForNewConfig() {
-		$eqLogicKeys = array();
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-			$apiKey = $eqLogic->getConfiguration('apiKey');
-			array_push($eqLogicKeys, $apiKey);
-			if (in_array($apiKey, $this->apiKeyList)) {
-				$configVersion = $eqLogic->getConfiguration('configVersion');
-				if ($configVersion != $this->configList[$apiKey]['payload']['configVersion']) {
-					\log::add('JeedomConnect', 'debug', "New configuration for device ".$apiKey);
-					$this->configList[$apiKey] = $eqLogic->getGeneratedConfigFile();
-					//$this->configList[$apiKey]['payload']['configVersion'] = $configVersion;
-					array_push($this->apiKeyList, $apiKey);
-					foreach ($this->authenticatedClients as $client) {
-						if ($client->apiKey == $apiKey) {
-							\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} : ".json_encode($this->configList[$apiKey]));
-							$client->send(json_encode($this->configList[$apiKey]));
-							$this->sendCmdInfo($client);
-							$this->sendScenarioInfo($client);
-							return;
-						}
-					}
-				}
-			} else {
-				\log::add('JeedomConnect', 'info', "New device with key ".$apiKey);
-				array_push($this->apiKeyList, $apiKey);
-				$this->configList[$apiKey] = $eqLogic->getGeneratedConfigFile();
-			}
-		}
-		//Remove deleted configs
-		foreach ($this->apiKeyList as $i => $key) {
-			if (!in_array($key, $eqLogicKeys)) {
-				\log::add('JeedomConnect', 'info', "Remove device with key ".$key);
-				foreach ($this->authenticatedClients as $client) {
-					if ($client->apiKey == $key) {
-						$client->close();
-					}
-				}
-				unset($this->configList[$key]);
-				unset($this->apiKeyList[$i]);
+		foreach ($this->authenticatedClients as $client) {
+			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			$newConfig = \apiHelper::lookForNewConfig($eqLogic, $client->configVersion);
+  			if ($newConfig != false) {
+    			$config = $newConfig;
+				\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} with api key ".$client->apiKey);
+				$client->send(json_encode($newConfig));
+				$this->sendCmdInfo($client);
+				$this->sendScenarioInfo($client);
 			}
 		}
 	}
 
 	private function broadcastEvents($events) {
 		foreach ($this->authenticatedClients as $client) {
-			$config = $this->configList[$client->apiKey];
+			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			$config = $eqLogic->getGeneratedConfigFile();
 			$eventsRes = \apiHelper::getEvents($events, $config);
 
 			foreach ($eventsRes as $res) {
@@ -420,7 +385,9 @@ class ConnectLogic implements MessageComponentInterface
 	}
 
 	public function sendSummaries($client) {
-		$objIds = \apiHelper::getObjectData($this->configList[$client->apiKey]);
+		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+		$config = $eqLogic->getGeneratedConfigFile();
+		$objIds = \apiHelper::getObjectData($config);
 		$result = array(
 			'type' => 'SET_CMD_INFO',
 			'payload' => array()
@@ -439,17 +406,21 @@ class ConnectLogic implements MessageComponentInterface
 	}
 
 	public function sendCmdInfo($client) {
+		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+		$config = $eqLogic->getGeneratedConfigFile();
 		$result = array(
 			'type' => 'SET_CMD_INFO',
-			'payload' => \apiHelper::getCmdInfoData($this->configList[$client->apiKey])
+			'payload' => \apiHelper::getCmdInfoData($config)
 		);
 		\log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$client->send(json_encode($result));
 	}
 
 	public function sendScenarioInfo($client, $all=false) {
+		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+		$config = $eqLogic->getGeneratedConfigFile();
 		$client->sendAllSc = $all;
-		$scIds = \apiHelper::getScenarioList($this->configList[$client->apiKey]);
+		$scIds = \apiHelper::getScenarioList($config);
 		$result = array(
 			'type' => $all ? 'SET_ALL_SC' : 'SET_SC_INFO',
 			'payload' => array()
