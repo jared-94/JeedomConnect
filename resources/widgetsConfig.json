@@ -17,6 +17,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -73,6 +79,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -97,6 +109,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -190,6 +208,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -214,6 +238,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -334,6 +364,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -361,6 +397,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -446,6 +488,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -502,6 +550,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -530,6 +584,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -588,6 +648,12 @@
 					"description": "Si vide, le nom du scénario sera utilisé"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -612,6 +678,12 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
 				}
 			]
 		},
@@ -626,6 +698,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "widgets",
@@ -656,6 +734,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
@@ -674,6 +758,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "widgets",
@@ -707,6 +797,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -736,6 +832,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -759,6 +861,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -790,6 +898,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -813,6 +927,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -845,6 +965,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -868,6 +994,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -900,6 +1032,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -925,6 +1063,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1045,6 +1189,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1069,6 +1219,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1194,6 +1350,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1217,6 +1379,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1248,6 +1416,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1274,6 +1448,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1329,6 +1509,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1357,6 +1543,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1382,6 +1574,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1436,6 +1634,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1493,6 +1697,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1517,6 +1727,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1593,6 +1809,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1619,6 +1841,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1674,6 +1902,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1703,6 +1937,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1729,6 +1969,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1783,6 +2029,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1859,6 +2111,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -1885,6 +2143,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1940,6 +2204,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1983,6 +2253,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2009,6 +2285,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2064,6 +2346,12 @@
 					"category": "string"
 				},
 				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2095,6 +2383,12 @@
 					"infos": [ "statusInfo" ]
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2118,6 +2412,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2149,6 +2449,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2172,6 +2478,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2237,6 +2549,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2260,6 +2578,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2300,6 +2624,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2323,6 +2653,12 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "hideTitle",
+					"name": "Masquer le nom",
+					"category": "binary",
+					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2352,6 +2688,12 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
 					"id": "display",
 					"name": "Affichage forcé",
 					"required": false,
@@ -2375,6 +2717,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2415,6 +2763,12 @@
 						"category": "ifImgs"
 					},
 					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
+					},
+					{
 						"id": "display",
 						"name": "Affichage forcé",
 						"required": false,
@@ -2435,6 +2789,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2485,6 +2845,12 @@
 						"category": "ifImgs"
 					},
 					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
+					},
+					{
 						"id": "display",
 						"name": "Affichage forcé",
 						"required": false,
@@ -2508,6 +2874,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2546,6 +2918,12 @@
 						"category": "ifImgs"
 					},
 					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
+					},
+					{
 						"id": "display",
 						"name": "Affichage forcé",
 						"required": false,
@@ -2569,6 +2947,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2636,6 +3020,12 @@
 						"category": "string"
 					},
 					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
+					},
+					{
 						"id": "subtitle",
 						"name": "Sous-titre",
 						"required": false,
@@ -2688,6 +3078,12 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
+					},
+					{
+						"id": "hideTitle",
+						"name": "Masquer le nom",
+						"category": "binary",
+						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2777,6 +3173,38 @@
 						"description": "par exemple /plugins/camera/data/records/camID"
 					},
 					{
+						"id": "upAction",
+						"name": "Direction haut",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
+						"id": "downAction",
+						"name": "Direction bas",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
+						"id": "leftAction",
+						"name": "Direction gauche",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
+						"id": "rightAction",
+						"name": "Direction droite",
+						"required": false,
+						"category": "cmd",
+						"type": "action",
+						"subtype": "other"
+					},
+					{
 						"id": "image",
 						"name": "Image",
 						"required": false,
@@ -2794,6 +3222,12 @@
 						"required": false,
 						"category": "binary",
 						"description": "Affichage du lecteur sur les cartes"
+					},
+					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widegts supplémentaires affichés dans la vue détails"
 					},
 					{
 						"id": "display",

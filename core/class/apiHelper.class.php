@@ -221,12 +221,11 @@ class apiHelper {
  }
 
  // Config Watcher
- public static function lookForNewConfig($eqLogic, $config) {
+ public static function lookForNewConfig($eqLogic, $prevConfig) {
    $configVersion = $eqLogic->getConfiguration('configVersion');
    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
-   if ($configVersion != $config['payload']['configVersion']) {
+   if ($configVersion != $prevConfig) {
       log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
-      //return $eqLogic->getConfig(true);
       return $eqLogic->getGeneratedConfigFile();
     }
     return false;
@@ -322,6 +321,12 @@ class apiHelper {
      $cmd->execCmd($options);
    } catch (Exception $e) {
      \log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function execMultipleCmd($cmdList) {
+   foreach ($cmdList as $cmd) {
+     self::execCmd($cmd['id'], $cmd['options']);
    }
  }
 

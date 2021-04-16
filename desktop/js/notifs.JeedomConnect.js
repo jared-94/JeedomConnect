@@ -1,3 +1,14 @@
+$("#notifsUL").sortable({axis: "y", cursor: "move", items: ".notifItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#notifsUL > .notifItem').each((i, el) => { 
+					var notifId = $(el).data('id') ;
+					var notifToMove = notifData.notifs.find(i => i.id == notifId);
+					notifToMove.index = i;
+				}
+			);
+	} });
+
+
 function openTab(evt, tabName) {
 	if (tabName == "channelsTab") {
 		//refreshBottomTabData();

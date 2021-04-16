@@ -37,9 +37,10 @@ function refreshNotifsTabData() {
 	});
 	var items = [];
 	$.each( notifs, function( key, val ) {
-		var notifHtml = `<li><a  onclick="editNotifModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upNotif('${val.id}');"></i>
-			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downNotif('${val.id}');"></i>`;
+		var notifHtml = `<li class="notifItem" data-id="${val.id}"><a  onclick="editNotifModal('${val.id}');">${val.name}</a>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upNotif('${val.id}');"></i>
+			<i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downNotif('${val.id}');"></i> -->`;
 		if (val.id != 'defaultNotif') {
 			notifHtml += `<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteNotif('${val.id}');"></i>`;
 		}
@@ -196,7 +197,7 @@ function deleteChannelTab(channelId) {
 /* NOTIFICATIONS */
 
 
-
+/*
 function upNotif(notifId) {
 	var notifToMove = notifData.notifs.find(i => i.id == notifId);
  	var notifIndex = notifToMove.index;
@@ -225,6 +226,7 @@ function downNotif(notifId) {
 
 	refreshNotifsTabData();
 }
+*/
 
 function deleteNotif(notifId) {
   getSimpleModal({title: "Confirmation", fields:[{type: "string",value:"Voulez-vous supprimer cette notification ?"}] }, function(result) {

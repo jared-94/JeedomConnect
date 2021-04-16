@@ -21,6 +21,8 @@ if (!isConnect('admin')) {
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
 
+$eqName = $eqLogic->getName();
+
 
 include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'configManager', 'js', 'JeedomConnect');
@@ -94,13 +96,17 @@ foreach ($summaryConfig as $index => $summary) {
 
 <div style="display:none;" id="jc-assistant"></div>
 
-<a class="btn btn-success pull-right" onclick="save()"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
-<a class="btn btn-danger pull-right" onclick="resetConfig()"><i class="fa fa-times-circle"></i> {{Réinitialiser}}</a>
+<div id="" class="col-sm-12">
+    <legend class="col-sm-3 pull-left">Personnalisation de &gt; <?=$eqName?> &lt;</legend>
+    <div class="pull-right">
+      <a class="btn btn-success pull-right" onclick="save()"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
+      <a class="btn btn-danger pull-right" onclick="resetConfig()"><i class="fa fa-times-circle"></i> {{Réinitialiser}}</a>
+    </div>
+</div>
 
 <div id="widgetConfContainer" class="col-sm-12">
 
   <div id="detailMenu" class="col-sm-2 " style="margin-right: 20px;">
-    <legend> {{Configuration Jeedom Connect}}</legend>
     <div class="tab fixed">
       <button class="tablinks" onclick="openTab(event, 'bottomTab')" id="defaultOpen">Menu du bas</button>
       <button class="tablinks" onclick="openTab(event, 'topTab')">Menu du haut</button>

@@ -104,6 +104,12 @@ class JeedomConnect extends eqLogic {
 
 		/*     * *********************Méthodes d'instance************************* */
 
+
+	public static function backup(){
+		JeedomConnectWidget::exportWidgetConf();
+	}
+
+
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
 			mkdir(self::$_config_dir);
@@ -161,6 +167,12 @@ class JeedomConnect extends eqLogic {
 
 				if (isset($widget['widgets'])){
 					foreach ($widget['widgets'] as $itemGroup) {
+						array_push($widgetIdInGroup, $itemGroup['id'] );
+					}
+				}
+				
+				if (isset($widget['moreWidgets'])){
+					foreach ($widget['moreWidgets'] as $itemGroup) {
 						array_push($widgetIdInGroup, $itemGroup['id'] );
 					}
 				}
@@ -251,7 +263,10 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
+		if ( $saveGenerated ) {
+			cache::set('jcConfig' . $this->getConfiguration('apiKey'), json_encode( $jsonConfig));
+			file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
+		}
 
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
@@ -260,11 +275,14 @@ class JeedomConnect extends eqLogic {
 
 	public function getGeneratedConfigFile() {
 
-		log::add('JeedomConnect', 'debug', ' retrieved generated file' );
-
 		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
 			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' );
 			return null;
+		}
+
+		$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
+		if ($cacheConf != '') {
+			return json_decode($cacheConf, true);
 		}
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";

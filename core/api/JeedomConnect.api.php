@@ -111,7 +111,7 @@ switch ($method) {
 			$eqLogic->save();
 		}
 
-		$config = $eqLogic->getConfig(true);
+		$config = $eqLogic->getGeneratedConfigFile();
 
 		//check config format version
 		if( ! array_key_exists('formatVersion', $config) ) {
@@ -136,6 +136,18 @@ switch ($method) {
     log::add('JeedomConnect', 'debug', 'send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_EVENTS':
+    $config = $eqLogic->getGeneratedConfigFile();
+    $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $params['configVersion']);
+    if ($newConfig != false) {
+      log::add('JeedomConnect', 'debug', "pollingServer send new config : " . json_encode($newConfig));
+      $jsonrpc->makeSuccess(array($newConfig));
+      return;
+    }
+    $events = event::changes($params['lastReadTimestamp']);
+    $data = apiHelper::getEvents($events, $config);
+    $jsonrpc->makeSuccess($data);
+    break;
 	case 'REGISTER_DEVICE':
 		$rdk = apiHelper::registerUser($eqLogic, $params['userHash'], $params['rdk']);
 		if (!isset($rdk)) {
@@ -150,13 +162,13 @@ switch ($method) {
     ));
 		break;
   case 'GET_CONFIG':
-		$result = $eqLogic->getConfig(true);
+		$result = $eqLogic->getGeneratedConfigFile();
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_CMD_INFO':
     $result = array(
 	    'type' => 'SET_CMD_INFO',
-	    'payload' => apiHelper::getCmdInfoData($eqLogic->getConfig(true))
+	    'payload' => apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())
 	  );
     log::add('JeedomConnect', 'debug', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
@@ -164,7 +176,7 @@ switch ($method) {
   case 'GET_SC_INFO':
     $result = array(
 	    'type' => 'SET_SC_INFO',
-	    'payload' => apiHelper::getScenarioData($eqLogic->getConfig(true))
+	    'payload' => apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile())
 	  );
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
@@ -172,13 +184,13 @@ switch ($method) {
 	case 'GET_OBJ_INFO':
     $result = array(
 	    'type' => 'SET_OBJ_INFO',
-	    'payload' => apiHelper::getObjectData($eqLogic->getConfig(true))
+	    'payload' => apiHelper::getObjectData($eqLogic->getGeneratedConfigFile())
 	  );
     log::add('JeedomConnect', 'info', 'Send objects '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
 	case 'GET_INFO':
-		$config = $eqLogic->getConfig(true);
+		$config = $eqLogic->getGeneratedConfigFile();
 		$result = array(
 			'type' => 'SET_INFO',
 			'payload' => array(
@@ -203,6 +215,10 @@ switch ($method) {
     break;
 	case 'CMD_EXEC':
 		apiHelper::execCmd($params['id'], $params['options']);
+		$jsonrpc->makeSuccess();
+		break;
+	case 'CMDLIST_EXEC':
+		apiHelper::execMultipleCmd($params['cmdList']);
 		$jsonrpc->makeSuccess();
 		break;
 	case 'SC_EXEC':
