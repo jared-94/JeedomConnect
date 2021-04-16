@@ -199,6 +199,7 @@ class ConnectLogic implements MessageComponentInterface
 				'type' => 'WELCOME',
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
+					'useWs' => $eqLogic->getConfiguration('useWs', 0),
 					'userHash' => $user->getHash(),
 					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
@@ -253,6 +254,7 @@ class ConnectLogic implements MessageComponentInterface
 			return;
 		}
 		if (!array_key_exists('type', $msg)) { return; }
+		
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
 				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options']);
@@ -270,15 +272,16 @@ class ConnectLogic implements MessageComponentInterface
 				\apiHelper::setActiveSc($msg['payload']['id'], $msg['payload']['active']);
 				break;
 			case 'GET_PLUGIN_CONFIG':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				$conf = array(
-		      'type' => 'PLUGIN_CONFIG',
-		      'payload' => array(
-		        'useWs' => \config::byKey('useWs', 'JeedomConnect', false),
-		        'httpUrl' => \config::byKey('httpUrl', 'JeedomConnect', \network::getNetworkAccess('external')),
-		        'internalHttpUrl' => \config::byKey('internHttpUrl', 'JeedomConnect', \network::getNetworkAccess('internal')),
-		        'wsAddress' => \config::byKey('wsAddress', 'JeedomConnect', 'ws://' . \config::byKey('externalAddr') . ':8090'),
-		        'internalWsAddress' => \config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . \config::byKey('internalAddr', 'core', 'localhost') . ':8090')
-		     ));
+		      		'type' => 'PLUGIN_CONFIG',
+		      		'payload' => array(
+		        		'useWs' => $eqLogic->getConfiguration('useWs', 0),
+		        		'httpUrl' => \config::byKey('httpUrl', 'JeedomConnect', \network::getNetworkAccess('external')),
+		        		'internalHttpUrl' => \config::byKey('internHttpUrl', 'JeedomConnect', \network::getNetworkAccess('internal')),
+		        		'wsAddress' => \config::byKey('wsAddress', 'JeedomConnect', 'ws://' . \config::byKey('externalAddr') . ':8090'),
+		        		'internalWsAddress' => \config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . \config::byKey('internalAddr', 'core', 'localhost') . ':8090')
+		    	 ));
 				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($conf));
 				$from->send(json_encode($conf));
 				break;

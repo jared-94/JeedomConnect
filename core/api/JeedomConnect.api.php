@@ -124,6 +124,7 @@ switch ($method) {
       'type' => 'WELCOME',
       'payload' => array(
         'pluginVersion' => $versionJson->version,
+        'useWs' => $eqLogic->getConfiguration('useWs', 0),
 				'userHash' => $user->getHash(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',

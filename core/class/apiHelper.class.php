@@ -177,7 +177,6 @@ class apiHelper {
   //PLUGIN CONF FUNCTIONS
   function getPluginConfig() {
   	return array(
-  		'useWs' => config::byKey('useWs', 'JeedomConnect', false),
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
   		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
   		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),

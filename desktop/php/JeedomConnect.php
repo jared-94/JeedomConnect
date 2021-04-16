@@ -258,6 +258,13 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>
 
 							<div class="form-group">
+									<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
+									<div class="col-sm-7">
+										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
+									</div>
+							</div>
+
+							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
 								<div class="col-sm-7">
 									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userId">
@@ -367,7 +374,8 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 								<div class="alert alert-danger" style=" margin: 10px auto; margin-top:80px; width:400px;">
 									Veuillez re-générer le QR code si vous avez modifié :<br/>
 									* Les adresses dans la config du plugin<br/>
-									* L'utilisateur de cet équipement
+									* L'utilisateur de cet équipement<br/>
+									* La connexion websocket de cet équipement
 								</div>
 							</div>
 						</div>
