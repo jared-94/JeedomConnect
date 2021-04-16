@@ -244,6 +244,13 @@ switch ($method) {
     break;
   case 'GEOLOC':
 		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $params['timestamp']);
+
+    $activityCmd = $eqLogic->getCmd(null, 'activity');
+    if (is_object($activityCmd)) {
+      $activityCmd->event($params['activity']['type']);
+    }
+		
+
   /*if (array_key_exists('geofence', $params) ) {
     $geofenceCmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), 'geofence_' . $params['geofence']['identifier']);
     if (!is_object($geofenceCmd)) {

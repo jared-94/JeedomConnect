@@ -739,18 +739,32 @@ class JeedomConnect extends eqLogic {
     }
 
     public function postUpdate() {
+		// Position format : latitude,longitude,altitude
+		$positionCmd = $this->getCmd(null, 'position');
+		if (!is_object($positionCmd)) {
+			$positionCmd = new JeedomConnectCmd();
+			$positionCmd->setLogicalId('position');
+			$positionCmd->setEqLogic_id($this->getId());
+			$positionCmd->setType('info');
+			$positionCmd->setSubType('string');
+			$positionCmd->setIsVisible(1);
+		}
+		$positionCmd->setName(__('Position', __FILE__));
+		$positionCmd->save();
 
-			$positionCmd = $this->getCmd(null, 'position');
-				if (!is_object($positionCmd)) {
-					$positionCmd = new JeedomConnectCmd();
-					$positionCmd->setLogicalId('position');
-					$positionCmd->setEqLogic_id($this->getId());
-					$positionCmd->setType('info');
-					$positionCmd->setSubType('string');
-					$positionCmd->setIsVisible(1);
-				}
-				$positionCmd->setName(__('Position', __FILE__));
-				$positionCmd->save();
+		// Activity values : still, on_foot, running, on_bicycle and in_vehicle
+		$activityCmd = $this->getCmd(null, 'activity');
+		if (!is_object($activityCmd)) {
+			$activityCmd = new JeedomConnectCmd();
+			$activityCmd->setLogicalId('activity');
+			$activityCmd->setEqLogic_id($this->getId());
+			$activityCmd->setType('info');
+			$activityCmd->setSubType('string');
+			$activityCmd->setIsVisible(1);
+		}
+		$activityCmd->setName(__('Activité', __FILE__));
+		$activityCmd->save();
+		
     }
 
     public function preRemove() {
