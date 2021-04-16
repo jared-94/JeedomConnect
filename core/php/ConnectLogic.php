@@ -362,6 +362,7 @@ class ConnectLogic implements MessageComponentInterface
   			if ($newConfig != false) {
     			$config = $newConfig;
 				\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} with api key ".$client->apiKey);
+				$client->configVersion = $newConfig['payload']['configVersion'];
 				$client->send(json_encode($newConfig));
 				$this->sendCmdInfo($client);
 				$this->sendScenarioInfo($client);
