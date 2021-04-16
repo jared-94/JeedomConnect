@@ -253,7 +253,7 @@ class apiHelper {
        array_push($result_obj['payload'], $event['option']);
      }
      if ($event['name'] == 'scenario::update') {
-       if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
+       if (in_array($event['option']['scenario_id'], $scIds)) {
          $sc_info = array(
            'id' => $event['option']['scenario_id'],
            'status' => $event['option']['state'],
