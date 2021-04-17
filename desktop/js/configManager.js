@@ -152,7 +152,7 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
 			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		} else { //it's a group
-			items.push( `<div  class="widgetItem widgetGroup" data-id="${value.id}" data-parentId="${value.parentId}" data-index="${value.index}"><li><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
+			items.push( `<li class="widgetItem widgetGroup" data-id="${value.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 			
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
@@ -179,7 +179,7 @@ function refreshWidgetsContent() {
 				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}','${wid.parentId}','${wid.index}');"></i></li>`);
 				}
 			});
-			items.push("</ul></li></div>");
+			items.push("</ul></li>");
 		}
 	});
 	$("#widgetsUL").html(items.join(""));

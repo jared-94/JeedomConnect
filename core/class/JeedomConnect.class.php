@@ -528,7 +528,7 @@ class JeedomConnect extends eqLogic {
 		}
 
 		$connectData = array(
-			'useWs' => config::byKey('useWs', 'JeedomConnect', false),
+			'useWs' => $this->getConfiguration('useWs', 0),
     		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
       		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
@@ -644,9 +644,9 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function setCoordinates($lat, $lgt, $timestamp) {
+	public function setCoordinates($lat, $lgt, $alt, $timestamp) {
 		$positionCmd = $this->getCmd(null, 'position');
-		$positionCmd->event($lat . "," . $lgt, date('Y-m-d H:i:s', strtotime($timestamp)));
+		$positionCmd->event($lat . "," . $lgt . "," . $alt, date('Y-m-d H:i:s', strtotime($timestamp)));
 		$this->setGeofencesByCoordinates($lat, $lgt, $timestamp);
 	}
 
@@ -739,18 +739,32 @@ class JeedomConnect extends eqLogic {
     }
 
     public function postUpdate() {
+		// Position format : latitude,longitude,altitude
+		$positionCmd = $this->getCmd(null, 'position');
+		if (!is_object($positionCmd)) {
+			$positionCmd = new JeedomConnectCmd();
+			$positionCmd->setLogicalId('position');
+			$positionCmd->setEqLogic_id($this->getId());
+			$positionCmd->setType('info');
+			$positionCmd->setSubType('string');
+			$positionCmd->setIsVisible(1);
+		}
+		$positionCmd->setName(__('Position', __FILE__));
+		$positionCmd->save();
 
-			$positionCmd = $this->getCmd(null, 'position');
-				if (!is_object($positionCmd)) {
-					$positionCmd = new JeedomConnectCmd();
-					$positionCmd->setLogicalId('position');
-					$positionCmd->setEqLogic_id($this->getId());
-					$positionCmd->setType('info');
-					$positionCmd->setSubType('string');
-					$positionCmd->setIsVisible(1);
-				}
-				$positionCmd->setName(__('Position', __FILE__));
-				$positionCmd->save();
+		// Activity values : still, on_foot, running, on_bicycle and in_vehicle
+		$activityCmd = $this->getCmd(null, 'activity');
+		if (!is_object($activityCmd)) {
+			$activityCmd = new JeedomConnectCmd();
+			$activityCmd->setLogicalId('activity');
+			$activityCmd->setEqLogic_id($this->getId());
+			$activityCmd->setType('info');
+			$activityCmd->setSubType('string');
+			$activityCmd->setIsVisible(1);
+		}
+		$activityCmd->setName(__('Activité', __FILE__));
+		$activityCmd->save();
+		
     }
 
     public function preRemove() {

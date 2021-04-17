@@ -177,7 +177,6 @@ class apiHelper {
   //PLUGIN CONF FUNCTIONS
   function getPluginConfig() {
   	return array(
-  		'useWs' => config::byKey('useWs', 'JeedomConnect', false),
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
   		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
   		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
@@ -254,7 +253,7 @@ class apiHelper {
        array_push($result_obj['payload'], $event['option']);
      }
      if ($event['name'] == 'scenario::update') {
-       if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
+       if (in_array($event['option']['scenario_id'], $scIds)) {
          $sc_info = array(
            'id' => $event['option']['scenario_id'],
            'status' => $event['option']['state'],
@@ -312,15 +311,15 @@ class apiHelper {
 
  //EXEC ACTIONS
  public static function execCmd($id, $options = null) {
-   $cmd = \cmd::byId($id);
+   $cmd = cmd::byId($id);
    if (!is_object($cmd)) {
-     \log::add('JeedomConnect', 'error', "Can't find command");
+     log::add('JeedomConnect', 'error', "Can't find command");
      return;
    }
    try {
      $cmd->execCmd($options);
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
@@ -340,7 +339,7 @@ class apiHelper {
    try {
      scenarioExpression::createAndExec('action', 'scenario', $options);
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
@@ -349,17 +348,17 @@ class apiHelper {
      $sc = scenario::byId($id);
      $sc->stop();
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
  public static function setActiveSc($id, $active) {
    try {
-     $sc = \scenario::byId($id);
+     $sc = scenario::byId($id);
      $sc->setIsActive($active);
      $sc->save();
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
