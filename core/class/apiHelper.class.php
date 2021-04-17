@@ -311,15 +311,15 @@ class apiHelper {
 
  //EXEC ACTIONS
  public static function execCmd($id, $options = null) {
-   $cmd = \cmd::byId($id);
+   $cmd = cmd::byId($id);
    if (!is_object($cmd)) {
-     \log::add('JeedomConnect', 'error', "Can't find command");
+     log::add('JeedomConnect', 'error', "Can't find command");
      return;
    }
    try {
      $cmd->execCmd($options);
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
@@ -339,7 +339,7 @@ class apiHelper {
    try {
      scenarioExpression::createAndExec('action', 'scenario', $options);
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
@@ -348,17 +348,17 @@ class apiHelper {
      $sc = scenario::byId($id);
      $sc->stop();
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
  public static function setActiveSc($id, $active) {
    try {
-     $sc = \scenario::byId($id);
+     $sc = scenario::byId($id);
      $sc->setIsActive($active);
      $sc->save();
    } catch (Exception $e) {
-     \log::add('JeedomConnect', 'error', $e->getMessage());
+     log::add('JeedomConnect', 'error', $e->getMessage());
    }
  }
 
