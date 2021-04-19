@@ -17,12 +17,6 @@
 					"category": "string"
 				},
 				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
-				},
-				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -91,6 +85,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -109,12 +127,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -220,6 +232,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -238,12 +274,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -376,6 +406,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -397,12 +451,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -468,6 +516,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -486,12 +558,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -562,6 +628,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -584,12 +674,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -626,6 +710,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -646,12 +754,6 @@
 					"required": false,
 					"category": "string",
 					"description": "Si vide, le nom du scénario sera utilisé"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -684,6 +786,22 @@
 					"name": "Widgets supplémentaires",
 					"category": "widgets",
 					"description": "Widegts supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						}
+					]
 				}
 			]
 		},
@@ -700,12 +818,6 @@
 					"category": "string"
 				},
 				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
-				},
-				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -718,6 +830,22 @@
 					"name": "Affichage bloc",
 					"category": "binary",
 					"description": "Affichage du résumé sur plusieurs lignes"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						}
+					]
 				}
 			]
 		},
@@ -734,16 +862,26 @@
 					"category": "string"
 				},
 				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
-				},
-				{
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
 					"description": "Affichage du résumé sur plusieurs lignes"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						}
+					]
 				}
 			]
 		},
@@ -760,12 +898,6 @@
 					"category": "string"
 				},
 				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
-				},
-				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -778,6 +910,22 @@
 					"name": "Affichage bloc",
 					"category": "binary",
 					"description": "Affichage des éléments sur plusieurs lignes"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						}
+					]
 				}
 			]
 		},
@@ -795,12 +943,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -844,6 +986,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -861,12 +1027,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -910,6 +1070,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -927,12 +1111,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -977,6 +1155,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -994,12 +1196,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1044,6 +1240,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1063,12 +1283,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1201,6 +1415,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1219,12 +1457,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1362,6 +1594,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1381,12 +1637,6 @@
 					"category": "string"
 				},
 				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
-				},
-				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1404,7 +1654,7 @@
 					"description": "Etat de la porte"
 				},
 				{
-			"id": "image",
+					"id": "image",
 					"name": "Image",
 					"required": false,
 					"category": "img"
@@ -1428,6 +1678,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1448,12 +1722,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1490,6 +1758,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1507,12 +1799,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1555,6 +1841,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1574,12 +1884,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1616,6 +1920,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1634,12 +1962,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1709,6 +2031,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1727,12 +2073,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1821,6 +2161,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1841,12 +2205,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1883,6 +2241,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1900,12 +2282,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -1949,6 +2325,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -1969,12 +2369,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2011,6 +2405,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2029,12 +2447,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2123,6 +2535,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2143,12 +2579,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2185,6 +2615,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2202,12 +2656,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2265,6 +2713,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2285,12 +2757,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2327,6 +2793,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2344,12 +2834,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2395,6 +2879,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2412,12 +2920,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2461,6 +2963,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2478,12 +3004,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2561,6 +3081,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2578,12 +3122,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2636,6 +3174,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 		},
@@ -2653,12 +3215,6 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
-				},
-				{
-					"id": "hideTitle",
-					"name": "Masquer le nom",
-					"category": "binary",
-					"description": "Permet de ne pas afficher le nom du widget sur l'application"
 				},
 				{
 					"id": "subtitle",
@@ -2700,6 +3256,30 @@
 					"category": "stringList",
 					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices":[
+						{
+							"id":"hideTitle",
+							"text": "nom"
+						},
+						{
+							"id":"hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
+						}
+					]
 				}
 			]
 			},
@@ -2717,12 +3297,6 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
-					},
-					{
-						"id": "hideTitle",
-						"name": "Masquer le nom",
-						"category": "binary",
-						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2775,6 +3349,30 @@
 						"category": "stringList",
 						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideStatus",
+								"text": "statut"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
 					}
 				]
 			},
@@ -2789,12 +3387,6 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
-					},
-					{
-						"id": "hideTitle",
-						"name": "Masquer le nom",
-						"category": "binary",
-						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2857,6 +3449,30 @@
 						"category": "stringList",
 						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideStatus",
+								"text": "statut"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
 					}
 				]
 			},
@@ -2874,12 +3490,6 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
-					},
-					{
-						"id": "hideTitle",
-						"name": "Masquer le nom",
-						"category": "binary",
-						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -2930,6 +3540,30 @@
 						"category": "stringList",
 						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideStatus",
+								"text": "statut"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
 					}
 				]
 			},
@@ -2947,12 +3581,6 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
-					},
-					{
-						"id": "hideTitle",
-						"name": "Masquer le nom",
-						"category": "binary",
-						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -3001,6 +3629,30 @@
 						"category": "stringList",
 						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideStatus",
+								"text": "statut"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
 					}
 				]
 			},
@@ -3018,12 +3670,6 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
-					},
-					{
-						"id": "hideTitle",
-						"name": "Masquer le nom",
-						"category": "binary",
-						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -3061,6 +3707,30 @@
 						"category": "stringList",
 						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideStatus",
+								"text": "statut"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
 					}
 				]
 			},
@@ -3078,12 +3748,6 @@
 						"name": "Nom",
 						"required": true,
 						"category": "string"
-					},
-					{
-						"id": "hideTitle",
-						"name": "Masquer le nom",
-						"category": "binary",
-						"description": "Permet de ne pas afficher le nom du widget sur l'application"
 					},
 					{
 						"id": "subtitle",
@@ -3236,6 +3900,26 @@
 						"category": "stringList",
 						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
 						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
 					}
 				]
 			}
