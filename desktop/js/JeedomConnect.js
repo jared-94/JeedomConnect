@@ -667,6 +667,10 @@ function setWidgetModalData(options) {
        } else if (option.category == "ifImgs" & options.widget[option.id] !== undefined) {
          imgCat = options.widget[option.id];
          refreshImgListOption();
+       } else if (option.category == "choicesList" ) {
+          option.choices.forEach(v => {
+            $("#"+v.id+"-jc-checkbox").prop('checked', options.widget[v.id] ? "checked" : "");
+          });
        } else if (option.category == "img" & options.widget[option.id] !== undefined ) {
         $("#icon-div-"+option.id).html(iconToHtml(options.widget[option.id]));
        }
@@ -869,6 +873,16 @@ function refreshAddWidgets() {
       </div>
     </div>
     </div></li>`;
+  } else if (option.category == "choicesList") {
+    curOption += `<div class='input-group'>` ;
+    
+    option.choices.forEach(v => {
+      curOption +=`<label class="checkbox-inline">
+      <input type="checkbox" class="eqLogicAttr" id="${v.id}-jc-checkbox" />${v.text}
+      </label>`;
+    });    
+    
+    curOption +=  `</div></div></div></li>`;
   } else {
     return;
   }
@@ -1973,6 +1987,11 @@ function saveWidget() {
           throw "L'image est obligatoire";
         }
         result[option.id] = icon.source != undefined ? icon : undefined;
+    }
+    else if (option.category == "choicesList") {
+      option.choices.forEach(v => {
+        result[v.id] = $("#"+v.id+"-jc-checkbox").prop('checked');
+      });
     }
     });
 

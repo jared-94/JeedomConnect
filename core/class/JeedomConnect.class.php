@@ -201,7 +201,7 @@ class JeedomConnect extends eqLogic {
 			// already detailed in the config file, if not, then add it
 			foreach ($widgetIdInGroup as $item) {
 				if ( ! in_array($item, $widgetList)){
-					log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
+					// log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
 					$newWidgetData = JeedomConnectWidget::getWidgets( $item );
 
 					if ( empty( $newWidgetData )  ) {
@@ -781,7 +781,6 @@ class JeedomConnect extends eqLogic {
 
 		log::add('JeedomConnect', 'debug', 'Checking if widget '.$widgetId.' exist on equipment "' . $this->getName() . '" ['.$this->getConfiguration('apiKey').']' );
 
-		$confStd = $this->getConfig();
 		$conf = $this->getConfig(true);
 		$exist = false ;
 
@@ -799,6 +798,16 @@ class JeedomConnect extends eqLogic {
 		}
 
 		if ( $exist ){
+			$this->generateNewConfigVersion($widgetId);
+		}
+		else{
+			log::add('JeedomConnect', 'debug', $widgetId . ' NOT found in the current equipment');
+		}
+
+	}
+
+	public function generateNewConfigVersion($widgetId='widgets'){
+			$confStd = $this->getConfig();
 			$configVersion = $confStd['payload']['configVersion'] + 1 ;
 			log::add('JeedomConnect', 'debug', $widgetId . ' found in the current equipment -- updating configVersion to ' . $configVersion);
 
@@ -810,15 +819,10 @@ class JeedomConnect extends eqLogic {
 			$this->setConfiguration('configVersion', $configVersion);
 			$this->save();
 
+			log::add('JeedomConnect', 'debug', 'Renewing the version of the widgets configuration');
 			$this->getConfig(true, true) ;
-
-		}
-		else{
-			log::add('JeedomConnect', 'debug', $widgetId . ' NOT found in the current equipment');
-		}
-
+			return true;
 	}
-
 
 	public static function getWidgetParam(){
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
@@ -849,7 +853,9 @@ class JeedomConnect extends eqLogic {
 			if ($remove) {
 				$conf['payload']['widgets'] = array_values($conf['payload']['widgets']);
 				log::add('JeedomConnect', 'info', 'Widget ID '.json_encode($idToRemoveList). ' has been removed on equipement ' . $this->getName() );
-				return self::saveConfig($conf);
+				$this->saveConfig($conf);
+				$this->generateNewConfigVersion();
+				return;
 			}
 			else{
 				log::add('JeedomConnect', 'info', 'Widget ID '.json_encode($idToRemoveList). ' not found in equipement ' . $this->getName() );
