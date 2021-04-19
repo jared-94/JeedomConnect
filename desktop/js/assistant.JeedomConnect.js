@@ -10,7 +10,8 @@ $("#widgetsUL").sortable({axis: "y", cursor: "move", items: ".widgetItem", place
 			if ( $( el ).hasClass( "widgetGroup" ) ){
 				var groupId = $(el).data('id') ;
 				var groupItem = 0 ; 
-				$(el).children().find('.widgetItem').each((i2, el2) => { 
+
+				$(el).next().find('.widgetItem').each((i2, el2) => { 
 					var widgetId = $(el2).data('id') ;
 					var widgetIndex = $(el2).data('index') ;
 					var widgetParentId = $(el2).data('parentid') ;
