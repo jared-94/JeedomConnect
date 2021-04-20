@@ -788,6 +788,14 @@
 					"description": "Widegts supplémentaires affichés dans la vue détails"
 				},
 				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"description": "Affichage forcé du widget"
+				},
+				{
 					"id": "hideItem",
 					"name": "Eléments à masquer",
 					"category": "choicesList",
@@ -800,6 +808,14 @@
 						{
 							"id":"hideSubTitle",
 							"text": "sous-titre"
+						},
+						{
+							"id":"hideStatus",
+							"text": "statut"
+						},
+						{
+							"id":"hideIcon",
+							"text": "image"
 						}
 					]
 				}
