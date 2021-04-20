@@ -2076,16 +2076,13 @@ function saveWidget() {
             if ($('.widgetMenu .saveWidget').attr('exit-attr') == 'true') {
               var vars = getUrlVars()
               var url = 'index.php?'
-              for (var i in vars) {
-                if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-                  url += i + '=' + vars[i].replace('#', '') + '&'
-                }
-              }
-              modifyWithoutSave = false
-              url += '&saveSuccessFull=1'
+              delete vars['id']
+              delete vars['saveSuccessFull']
+              delete vars['removeSuccessFull']
+              vars['saveSuccessFull']="1";
 
               url = getCustomParamUrl(url, vars);
-
+              modifyWithoutSave = false
               loadPage(url)
             }
             else{
@@ -2125,14 +2122,12 @@ function saveWidget() {
 
 function getCustomParamUrl(url, vars){
 
-
   for (var i in vars) {
     if (i != 'jcOrderBy' && i != 'jcFilter' && i != 'jcSearch') {
       url += i + '=' + vars[i].replace('#', '') + '&'
     }
   }
 
-  
   var widgetFilter = $("#widgetTypeSelect option:selected").val();   
   if (widgetFilter != 'none'){
     url += '&jcFilter='+widgetFilter
@@ -2475,6 +2470,8 @@ $( document ).ready(function() {
   if (widgetSearch != ''){
     $('#in_searchWidget').keyup()
   }
+
+  $('.eqLogicThumbnailContainer').packery();
 });
 
 
