@@ -83,12 +83,6 @@ $beta = $pluginVersion['typeVersion'] == 'beta' ;
         La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
 			</div>
       <div class="form-group">
-			     <label class="col-lg-6 control-label">{{Activer la connexion par Websocket}}</label>
-			     <div class="col-sm-1">
-				         <input type="checkbox" class="configKey form-control" data-l1key="useWs"/>
-			     </div>
-		  </div>
-      <div class="form-group">
           <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
           <div class="col-lg-1">
               <input class="configKey form-control" type="number" data-l1key="port" placeholder="8090" />

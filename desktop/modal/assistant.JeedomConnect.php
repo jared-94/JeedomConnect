@@ -21,6 +21,8 @@ if (!isConnect('admin')) {
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
 
+$eqName = $eqLogic->getName();
+
 
 include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'configManager', 'js', 'JeedomConnect');
@@ -60,6 +62,32 @@ foreach ($widgetArray as $widget) {
 asort($widgetTypeAvail);
 
 
+$summaryConfig = config::byKey('object:summary');
+
+$summaryAvailOptions = '';
+foreach ($summaryConfig as $index => $summary) {
+  $icon = $summary['icon'] ;
+  $icon = '';
+
+  if ( array_key_exists('icon',$summary ) ){
+    $matches = array();
+    preg_match('/(.*)class=\"(.*)\"(.*)/', $summary['icon'], $matches);
+
+    if (count($matches) > 3){
+      list($iconType, $iconImg) = explode(" ", $matches[2], 2);
+      $iconType = ($iconType=='icon') ? 'jeedom' : 'fa';
+      $iconImg = ($iconType=='fa') ? str_replace('fa-','',$iconImg) : $iconImg;
+      $icon = 'data-icon-source="'.$iconType.'" data-icon-name="'.$iconImg.'"';
+    }
+  }
+
+  $summaryAvailOptions .= '<option value="'.$summary['key'].'" data-key="'.$summary['key'].'" 
+                        data-name="'.$summary['name'].'" '.$icon.'
+                        >' . $summary['name'] . '</option>' ;
+
+}
+
+
 ?>
 
 <link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
@@ -68,17 +96,22 @@ asort($widgetTypeAvail);
 
 <div style="display:none;" id="jc-assistant"></div>
 
-<a class="btn btn-success pull-right" onclick="save()"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
-<a class="btn btn-danger pull-right" onclick="resetConfig()"><i class="fa fa-times-circle"></i> {{Réinitialiser}}</a>
+<div id="" class="col-sm-12">
+    <legend class="col-sm-3 pull-left">Personnalisation de &gt; <?=$eqName?> &lt;</legend>
+    <div class="pull-right">
+      <a class="btn btn-success pull-right" onclick="save()"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
+      <a class="btn btn-danger pull-right" onclick="resetConfig()"><i class="fa fa-times-circle"></i> {{Réinitialiser}}</a>
+    </div>
+</div>
 
 <div id="widgetConfContainer" class="col-sm-12">
 
   <div id="detailMenu" class="col-sm-2 " style="margin-right: 20px;">
-    <legend> {{Configuration Jeedom Connect}}</legend>
     <div class="tab fixed">
       <button class="tablinks" onclick="openTab(event, 'bottomTab')" id="defaultOpen">Menu du bas</button>
       <button class="tablinks" onclick="openTab(event, 'topTab')">Menu du haut</button>
       <button class="tablinks" onclick="openTab(event, 'roomTab')">Pièces</button>
+      <button class="tablinks" onclick="openTab(event, 'summaryTab')">Résumés</button>
       <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
     </div>
   </div>
@@ -130,7 +163,56 @@ asort($widgetTypeAvail);
       </div>
     </div>
   </div>
+ 
+  <!-- SUMMARY PART -->
 
+  <div id="summaryTab" class="col-sm-12 tabcontent">
+    <div  class="col-sm-7">
+      <form class="form-horizontal">
+        <fieldset>
+          <h3>Résumés</h3>
+            
+            <div class="form-group">
+              <label class="col-sm-5 control-label">{{Encore disponible : }}
+                <sup>
+                    <i class="fas fa-question-circle floatright" title="Non ajouté ci-dessous, mais disponible et paramétré dans la configuration de Jeedom"></i>
+                </sup>
+              </label>
+              <div class="col-sm-7">
+                <select id="selSummaryDetail" class="form-control">
+                  <option value="none" data-key="none">{{Aucun}}</option>
+                  <?php
+                  echo $summaryAvailOptions ;
+                  ?>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="input-group " style="display:inline-flex;">
+              <span class="input-group-btn">
+                <a class="btn btn-success btn-sm " style="margin-top:5px;" id="btn-selectSummary" onclick="selectSummary()"><i class="fa fa-plus-circle"></i> Ajouter ce résumé</a>
+                <a class="btn btn-warning btn-sm " style="margin-top:5px;" id="btn-importAllSummary" onclick="importAllSummary()"><i class="fa fa-plus-circle"></i> Importer tous les résumés</a>
+              </span>
+            </div>
+
+            <ul id="summaryUL" class="tabsLargeUL"></ul>
+        </fieldset>
+      </form>
+    </div>
+
+    <!-- <div class="col-sm-4">
+      <div class="alert alert-info">
+      Vous pouvez customiser les icônes de vos résumés
+      </div>
+      <img src="plugins/JeedomConnect/desktop/img/widget.png" />
+    </div> -->
+  </div>
+
+
+
+
+  <!-- WIDGET PART -->
 
   <div id="widgetsTab" class="col-sm-12 tabcontent">
     <div  class="col-sm-7">

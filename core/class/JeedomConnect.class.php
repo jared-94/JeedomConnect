@@ -34,6 +34,7 @@ class JeedomConnect extends eqLogic {
 			'sections' => array(),
 			'rooms' => array(),
 			'groups' => array(),
+			'summaries' => array(),
 			'widgets' => array()
 		)
 	);
@@ -103,6 +104,12 @@ class JeedomConnect extends eqLogic {
 
 		/*     * *********************Méthodes d'instance************************* */
 
+
+	public static function backup(){
+		JeedomConnectWidget::exportWidgetConf();
+	}
+
+
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
 			mkdir(self::$_config_dir);
@@ -163,6 +170,12 @@ class JeedomConnect extends eqLogic {
 						array_push($widgetIdInGroup, $itemGroup['id'] );
 					}
 				}
+				
+				if (isset($widget['moreWidgets'])){
+					foreach ($widget['moreWidgets'] as $itemGroup) {
+						array_push($widgetIdInGroup, $itemGroup['id'] );
+					}
+				}
 
 				if (isset($widget['room'])){
 					array_push($roomIdList , $widget['room'] ) ;
@@ -188,7 +201,7 @@ class JeedomConnect extends eqLogic {
 			// already detailed in the config file, if not, then add it
 			foreach ($widgetIdInGroup as $item) {
 				if ( ! in_array($item, $widgetList)){
-					log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
+					// log::add('JeedomConnect', 'debug', 'the widget ['. $item . '] does not exist in the config file. Adding it.');
 					$newWidgetData = JeedomConnectWidget::getWidgets( $item );
 
 					if ( empty( $newWidgetData )  ) {
@@ -217,40 +230,44 @@ class JeedomConnect extends eqLogic {
 
 						array_push($widgetList, $newWidgetConf['id'] );
 					}
-					
+
 				}
 			}
 
 			if ( count($moreWidget) >0 ) log::add('JeedomConnect', 'debug', 'more widgets children to add -- ' . json_encode($moreWidget) ) ;
 			$widgetIdInGroup = $moreWidget ;
-		
+
 		}
 
 
 		//add equipement password
 		$pwd = $this->getConfiguration('pwdAction' , null) ;
 		$jsonConfig['payload']['password'] = $pwd ;
-		
+
 		//custom path
 		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect') ;
 
+		//add summary details
+		$objSummary = config::byKey('object:summary') ;
+		$allSummaries = $jsonConfig['payload']['summaries'] ?? [] ;
+		foreach ( $allSummaries as $index => $summary) {
+			if ( array_key_exists($summary['key'] , $objSummary) ){
+				$newSummary = $summary;
+				$newSummary['calcul']=$objSummary[$summary['key']]['calcul'];
+				$newSummary['unit']=$objSummary[$summary['key']]['unit'];
+				$newSummary['count']=$objSummary[$summary['key']]['count'];
+				$newSummary['allowDisplayZero']=  $objSummary[$summary['key']]['allowDisplayZero'] ;
+				$newSummary['ignoreIfCmdOlderThan']=  $objSummary[$summary['key']]['ignoreIfCmdOlderThan'];
 
-		// add room if not exist in the config file but a widget is linked to it
-		// $allRooms = array();
-		// foreach (array_unique($roomIdList) as $item ) {
-		// 	if ($item != 'global') {
-		// 		$roomList = $this->getJeedomObject($item);
-		// 		array_push($allRooms, $roomList);
-		// 	}
-		// }
-		// $jsonConfig['payload']['rooms'] = $allRooms ;
+				$jsonConfig['payload']['summaries'][$index] = $newSummary;
+			}
+		}
 
-		// add summary
-		log::add('JeedomConnect', 'debug', 'GET CONFIG RETURN '.json_encode($jsonConfig));
-		$jsonConfig['payload']['summaryConfig'] = config::byKey('object:summary');
-		
-		if ( $saveGenerated ) file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
-		
+		if ( $saveGenerated ) {
+			cache::set('jcConfig' . $this->getConfiguration('apiKey'), json_encode( $jsonConfig));
+			file_put_contents($config_file_path.'.generated', json_encode( $jsonConfig , JSON_PRETTY_PRINT) );
+		}
+
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
 	}
@@ -258,11 +275,14 @@ class JeedomConnect extends eqLogic {
 
 	public function getGeneratedConfigFile() {
 
-		log::add('JeedomConnect', 'debug', ' retrieved generated file' );
-
 		if ( $this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == ''){
 			log::add('JeedomConnect', 'error', '¤¤¤¤¤ getConfig for ApiKey EMPTY !' );
 			return null;
+		}
+
+		$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
+		if ($cacheConf != '') {
+			return json_decode($cacheConf, true);
 		}
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
@@ -279,22 +299,22 @@ class JeedomConnect extends eqLogic {
 
 	public static function getChoiceData($cmdId){
 		$choice = array();
-	
+
 		$cmd = cmd::byId($cmdId);
-	
+
 		if (! is_object($cmd)){
 			log::add('JeedomConnect', 'warning', $cmdId. ' is not a valid cmd Id');
 			return $choice;
 		}
-		
+
 		$cmdConfig = $cmd->getConfiguration('listValue');
-		
+
 		if ($cmdConfig !=  '') {
 			log::add('JeedomConnect', 'debug', 'value of listValue ' . json_encode($cmdConfig));
-			
+
 			foreach (explode(';', $cmdConfig) as $list) {
-				$selectData = explode('|', $list); 
-				
+				$selectData = explode('|', $list);
+
 				if ( count($selectData) == 1 ) {
 					$id = $value = $selectData[0] ;
 				}
@@ -302,7 +322,7 @@ class JeedomConnect extends eqLogic {
 					$id = $selectData[0] ;
 					$value = $selectData[1] ;
 				}
-	
+
 				$choice_info = array(
 				'id' => $id,
 				'value' => $value
@@ -310,10 +330,10 @@ class JeedomConnect extends eqLogic {
 				array_push($choice, $choice_info);
 			}
 		}
-	
+
 		log::add('JeedomConnect', 'debug', 'final choices list => '.json_encode($choice) );
 		return $choice;
-	
+
 	}
 
 
@@ -327,7 +347,7 @@ class JeedomConnect extends eqLogic {
 		}
 
 		log::add('JeedomConnect', 'debug', ' fx  getWidgetId -- result final ' . json_encode($ids) );
-		return $ids; 
+		return $ids;
 
 	}
 
@@ -508,18 +528,23 @@ class JeedomConnect extends eqLogic {
 		}
 
 		$connectData = array(
-			'useWs' => config::byKey('useWs', 'JeedomConnect', false),
-    	'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
-      'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
-      'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
-      'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
+			'useWs' => $this->getConfiguration('useWs', 0),
+    		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
+      		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
+      		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
+      		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
-			'userHash' => $user->getHash()
+			'userHash' => $user->getHash(),
+			'eqName' => $this->getName()
 		);
 
 		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
-		$request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
-		file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
+
+		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
+		QRcode::png( json_encode($connectData), self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+
+		// $request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
+		// file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
 	}
 
 	public function registerDevice($id, $name) {
@@ -619,9 +644,9 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function setCoordinates($lat, $lgt, $timestamp) {
+	public function setCoordinates($lat, $lgt, $alt, $timestamp) {
 		$positionCmd = $this->getCmd(null, 'position');
-		$positionCmd->event($lat . "," . $lgt, date('Y-m-d H:i:s', strtotime($timestamp)));
+		$positionCmd->event($lat . "," . $lgt . "," . $alt, date('Y-m-d H:i:s', strtotime($timestamp)));
 		$this->setGeofencesByCoordinates($lat, $lgt, $timestamp);
 	}
 
@@ -714,18 +739,32 @@ class JeedomConnect extends eqLogic {
     }
 
     public function postUpdate() {
+		// Position format : latitude,longitude,altitude
+		$positionCmd = $this->getCmd(null, 'position');
+		if (!is_object($positionCmd)) {
+			$positionCmd = new JeedomConnectCmd();
+			$positionCmd->setLogicalId('position');
+			$positionCmd->setEqLogic_id($this->getId());
+			$positionCmd->setType('info');
+			$positionCmd->setSubType('string');
+			$positionCmd->setIsVisible(1);
+		}
+		$positionCmd->setName(__('Position', __FILE__));
+		$positionCmd->save();
 
-			$positionCmd = $this->getCmd(null, 'position');
-				if (!is_object($positionCmd)) {
-					$positionCmd = new JeedomConnectCmd();
-					$positionCmd->setLogicalId('position');
-					$positionCmd->setEqLogic_id($this->getId());
-					$positionCmd->setType('info');
-					$positionCmd->setSubType('string');
-					$positionCmd->setIsVisible(1);
-				}
-				$positionCmd->setName(__('Position', __FILE__));
-				$positionCmd->save();
+		// Activity values : still, on_foot, running, on_bicycle and in_vehicle
+		$activityCmd = $this->getCmd(null, 'activity');
+		if (!is_object($activityCmd)) {
+			$activityCmd = new JeedomConnectCmd();
+			$activityCmd->setLogicalId('activity');
+			$activityCmd->setEqLogic_id($this->getId());
+			$activityCmd->setType('info');
+			$activityCmd->setSubType('string');
+			$activityCmd->setIsVisible(1);
+		}
+		$activityCmd->setName(__('Activité', __FILE__));
+		$activityCmd->save();
+		
     }
 
     public function preRemove() {
@@ -742,7 +781,6 @@ class JeedomConnect extends eqLogic {
 
 		log::add('JeedomConnect', 'debug', 'Checking if widget '.$widgetId.' exist on equipment "' . $this->getName() . '" ['.$this->getConfiguration('apiKey').']' );
 
-		$confStd = $this->getConfig();
 		$conf = $this->getConfig(true);
 		$exist = false ;
 
@@ -760,6 +798,16 @@ class JeedomConnect extends eqLogic {
 		}
 
 		if ( $exist ){
+			$this->generateNewConfigVersion($widgetId);
+		}
+		else{
+			log::add('JeedomConnect', 'debug', $widgetId . ' NOT found in the current equipment');
+		}
+
+	}
+
+	public function generateNewConfigVersion($widgetId='widgets'){
+			$confStd = $this->getConfig();
 			$configVersion = $confStd['payload']['configVersion'] + 1 ;
 			log::add('JeedomConnect', 'debug', $widgetId . ' found in the current equipment -- updating configVersion to ' . $configVersion);
 
@@ -771,15 +819,10 @@ class JeedomConnect extends eqLogic {
 			$this->setConfiguration('configVersion', $configVersion);
 			$this->save();
 
+			log::add('JeedomConnect', 'debug', 'Renewing the version of the widgets configuration');
 			$this->getConfig(true, true) ;
-
-		}
-		else{
-			log::add('JeedomConnect', 'debug', $widgetId . ' NOT found in the current equipment');
-		}
-
+			return true;
 	}
-
 
 	public static function getWidgetParam(){
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
@@ -810,7 +853,9 @@ class JeedomConnect extends eqLogic {
 			if ($remove) {
 				$conf['payload']['widgets'] = array_values($conf['payload']['widgets']);
 				log::add('JeedomConnect', 'info', 'Widget ID '.json_encode($idToRemoveList). ' has been removed on equipement ' . $this->getName() );
-				return self::saveConfig($conf);
+				$this->saveConfig($conf);
+				$this->generateNewConfigVersion();
+				return;
 			}
 			else{
 				log::add('JeedomConnect', 'info', 'Widget ID '.json_encode($idToRemoveList). ' not found in equipement ' . $this->getName() );

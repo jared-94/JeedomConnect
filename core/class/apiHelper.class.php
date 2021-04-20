@@ -177,7 +177,6 @@ class apiHelper {
   //PLUGIN CONF FUNCTIONS
   function getPluginConfig() {
   	return array(
-  		'useWs' => config::byKey('useWs', 'JeedomConnect', false),
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
   		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
   		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
@@ -221,12 +220,11 @@ class apiHelper {
  }
 
  // Config Watcher
- public static function lookForNewConfig($eqLogic, $config) {
+ public static function lookForNewConfig($eqLogic, $prevConfig) {
    $configVersion = $eqLogic->getConfiguration('configVersion');
    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
-   if ($configVersion != $config['payload']['configVersion']) {
+   if ($configVersion != $prevConfig) {
       log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
-      //return $eqLogic->getConfig(true);
       return $eqLogic->getGeneratedConfigFile();
     }
     return false;
@@ -255,7 +253,7 @@ class apiHelper {
        array_push($result_obj['payload'], $event['option']);
      }
      if ($event['name'] == 'scenario::update') {
-       if (in_array($event['option']['scenario_id'], $scIds) || $client->sendAllSc) {
+       if (in_array($event['option']['scenario_id'], $scIds)) {
          $sc_info = array(
            'id' => $event['option']['scenario_id'],
            'status' => $event['option']['state'],
@@ -309,6 +307,92 @@ class apiHelper {
    }
    log::add('JeedomConnect', 'info', 'Send history (' . count($result['payload']['data']) . ' points)');
    return $result;
+ }
+
+ //EXEC ACTIONS
+ public static function execCmd($id, $options = null) {
+   $cmd = cmd::byId($id);
+   if (!is_object($cmd)) {
+     log::add('JeedomConnect', 'error', "Can't find command");
+     return;
+   }
+   try {
+     $cmd->execCmd($options);
+   } catch (Exception $e) {
+     log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function execMultipleCmd($cmdList) {
+   foreach ($cmdList as $cmd) {
+     self::execCmd($cmd['id'], $cmd['options']);
+   }
+ }
+
+ public static function execSc($id, $options = null) {
+   if ($options == null) {
+     $options = array(
+       'action' => 'start',
+       'scenario_id' => $id
+     );
+   }
+   try {
+     scenarioExpression::createAndExec('action', 'scenario', $options);
+   } catch (Exception $e) {
+     log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function stopSc($id) {
+   try {
+     $sc = scenario::byId($id);
+     $sc->stop();
+   } catch (Exception $e) {
+     log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ public static function setActiveSc($id, $active) {
+   try {
+     $sc = scenario::byId($id);
+     $sc->setIsActive($active);
+     $sc->save();
+   } catch (Exception $e) {
+     log::add('JeedomConnect', 'error', $e->getMessage());
+   }
+ }
+
+ // FILES
+ public static function getFiles($folder) {
+   $dir = __DIR__ . '/../../../..' . $folder;
+   $result = array();
+   $dh = new DirectoryIterator($dir);
+
+   foreach ($dh as $item) {
+       if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
+           if (!$item->isDir()) {
+               array_push($result, array(
+                 'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
+                 'timestamp' => $item->getMTime()
+               ) );
+           }
+       }
+   }
+   return  array(
+     'type' => 'SET_FILES',
+     'payload' => array(
+       'path' => $folder,
+       'files' => $result
+     )
+   );
+ }
+
+
+ public static function removeFile($file) {
+   $filePath =  __DIR__ . '/../../../..' . $file;
+   $pathInfo = pathinfo($file);
+   unlink($filePath);
+   return self::getFiles($pathInfo['dirname']);
  }
 
 }

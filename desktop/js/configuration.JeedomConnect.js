@@ -319,17 +319,27 @@ function getSimpleModal(_options, _callback) {
     }
     setSimpleModalData(_options.fields);
     $("#simpleModal").dialog({title: _options.title, buttons: {
-      "Annuler": function() {
-        $(this).dialog("close");
-      },
-      "Valider": function(result) {
-        if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-          _callback(result);
+        "Annuler": function() {
+          $(this).dialog("close");
+         },
+        Save: {
+			text: "Valider",
+			id: "saveSimple",
+			click: function(result) {
+      
+                if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+                    _callback(result);
+                }
+                $(this).dialog('close');
+            }
         }
-        $(this).dialog('close');
-      }
-    }});
+        }
+    });
     $('#simpleModal').dialog('open');
+    $('#simpleModal').keydown(function(e) { if (e.which == 13) {
+		$('#saveSimple').click();
+		return false;
+	}})
   };
 
 

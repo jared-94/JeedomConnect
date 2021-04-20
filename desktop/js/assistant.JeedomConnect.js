@@ -1,3 +1,95 @@
+$("#widgetsUL").sortable({axis: "y", cursor: "move", items: ".widgetItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	beforeStop: function(ev, ui) {
+		if ($(ui.item).hasClass('widgetGroup') && $(ui.item).parent().hasClass('widgetGroup') ) {
+			alert("Déplacement d'un groupe dans un groupe non autorisé !");
+			$(this).sortable('cancel');
+		}
+	},
+	update: function( event, ui){ 
+		$('#widgetsUL > .widgetItem').each((i, el) => { 
+			if ( $( el ).hasClass( "widgetGroup" ) ){
+				var groupId = $(el).data('id') ;
+				var groupItem = 0 ; 
+
+				$(el).next().find('.widgetItem').each((i2, el2) => { 
+					var widgetId = $(el2).data('id') ;
+					var widgetIndex = $(el2).data('index') ;
+					var widgetParentId = $(el2).data('parentid') ;
+					var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+					widgetToMove.index = groupItem ; 
+					widgetToMove.parentId = groupId ; 
+					groupItem ++;
+
+				} );
+				
+				var groupToEdit = configData.payload.groups.find(g => g.id == groupId);
+				groupToEdit.index = i ; 
+				$(el).data('index', i) ;
+			}
+			else{
+				var widgetId = $(el).data('id') ;
+				var widgetIndex = $(el).data('index') ;
+				var widgetParentId = $(el).data('parentid') ;
+				var widgetToMove = configData.payload.widgets.find(w => w.id == widgetId & w.index == widgetIndex & w.parentId == widgetParentId);
+				
+				var widgetParentIdNew = $(el).parent().data('id') ;
+				
+				widgetToMove.index = i ; 
+				widgetToMove.parentId = widgetParentIdNew ; 
+				$(el).data('index', i) ;
+				$(el).data('parentid',widgetParentIdNew) ;
+			}
+
+		});
+		refreshWidgetsContent();
+
+	} });
+
+$("#summaryUL").sortable({axis: "y", cursor: "move", items: ".summaryItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#summaryUL > .summaryItem').each((i, el) => { 
+					var summaryKey = $(el).data('id') ;
+					var summaryToMove = configData.payload.summaries.find(summary => summary.key == summaryKey);
+					summaryToMove.index = i;
+					}
+			);
+
+	} });
+
+$("#roomUL").sortable({axis: "y", cursor: "move", items: ".roomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#roomUL > .roomItem').each((i, el) => { 
+					var roomId = $(el).data('id') ;
+					var roomToMove = configData.payload.rooms.find(room => room.id == roomId);
+					roomToMove.index = i;
+					}
+			);
+
+	} });	
+
+$("#bottomUL").sortable({axis: "y", cursor: "move", items: ".bottomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#bottomUL > .bottomItem').each((i, el) => { 
+					var tabId = $(el).data('id') ;
+					var tabToMove = configData.payload.tabs.find(tab => tab.id == tabId);
+					tabToMove.index = i;
+					}
+			);
+
+	} });	
+
+$("#topUL").sortable({axis: "y", cursor: "move", items: ".topItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#topUL > .topItem').each((i, el) => { 
+					var tabId = $(el).data('id') ;
+					var tabToMove = configData.payload.sections.find(tab => tab.id == tabId);
+					tabToMove.index = i;
+					}
+			);
+
+	} });	
+
+
 function openTab(evt, tabName) {
 	if (tabName == "bottomTab") {
 		refreshBottomTabData();
@@ -5,6 +97,8 @@ function openTab(evt, tabName) {
 		refreshTopTabData();
 	} else if (tabName == "roomTab") {
 		refreshRoomData();
+	} else if (tabName == "summaryTab") {
+		refreshSummaryData();
 	} else if (tabName == "widgetsTab") {
 		refreshWidgetData();
 	}
@@ -84,7 +178,7 @@ function getIconModal(_options, _callback) {
 				}
 
 				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-		        _callback(result);
+		        _callback(result, _options);
 		    }
 
 				$(this).dialog('close');
@@ -129,64 +223,76 @@ function getSimpleModal(_options, _callback) {
 			text: "Valider",
 			id: "saveSimple",
 			click: function() {
-				$('#simpleModalAlert').hide();
-				var result = {};
-		  	if (_options.fields.find(i => i.type == "enable")) {
-			  	result.enable = $("#mod-enable-input").is(':checked');
-		  	}
-		  	if (_options.fields.find(i => i.type == "name")) {
-					if ($("#mod-name-input").val() == '') {
-						$('#div_simpleModalAlert').showAlert({message: 'Le nom est obligatoire', level: 'danger'});
-						throw {};
+				try{
+					$('#simpleModalAlert').hide();
+					var result = {};
+					if (_options.fields.find(i => i.type == "enable")) {
+						result.enable = $("#mod-enable-input").is(':checked');
 					}
-			  	result.name = $("#mod-name-input").val();
-		  	}
-		  	if (_options.fields.find(i => i.type == "icon")) {
-					let icon = htmlToIcon($("#icon-div").children().first());
-					if (icon.source == undefined) {
-						$('#div_simpleModalAlert').showAlert({message: "L'icône est obligatoire", level: 'danger'});
-						throw {};
+					if (_options.fields.find(i => i.type == "name")) {
+						if ($("#mod-name-input").val() == '') {
+							throw 'Le nom est obligatoire';
+						}
+						result.name = $("#mod-name-input").val();
 					}
-					result.icon = htmlToIcon($("#icon-div").children().first());
-		  	}
-		  	if (_options.fields.find(i => i.type == "move")) {
-			  	result.moveToId = $("#mod-move-input").val();
-		  	}
-		  	if (_options.fields.find(i => i.type == "expanded")) {
-			  	result.expanded = $("#mod-expanded-input").is(':checked');
-		  	}
-		  	if (_options.fields.find(i => i.type == "widget")) {
-          if ( $("#mod-widget-input").val() == undefined){
-						$('#simpleModalAlert').showAlert({message: 'Choix obligatoire', level: 'danger'});
-						return;
+					if (_options.fields.find(i => i.type == "icon")) {
+						let icon = htmlToIcon($("#icon-div").children().first());
+						if (icon.source == undefined) {
+							throw "L'icône est obligatoire";
+						}
+						result.icon = htmlToIcon($("#icon-div").children().first());
 					}
-			  	result.widgetId = $("#mod-widget-input").val();
-			  	result.widgetName = $("#mod-widget-input option:selected").text();
-		  	}
-				if (_options.fields.find(i => i.type == "object")) {
-					result.object = $("#object-select  option:selected").val();
-					result.name = $("#object-select  option:selected").text();
-				}
-				if (_options.fields.find(i => i.type == "swipeUp")) {
-					let choice = $("#swipeUp-select option:selected").val();
-					if (choice == 'cmd') {
-						result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
-					} else if (choice == 'sc') {
-						result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') }
+					if (_options.fields.find(i => i.type == "move")) {
+						result.moveToId = $("#mod-move-input").val();
 					}
-				}
-				if (_options.fields.find(i => i.type == "swipeDown")) {
-					let choice = $("#swipeDown-select option:selected").val();
-					if (choice == 'cmd') {
-						result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
-					} else if (choice == 'sc') {
-						result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId') }
+					if (_options.fields.find(i => i.type == "expanded")) {
+						result.expanded = $("#mod-expanded-input").is(':checked');
 					}
-				}
-				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-					_callback(result);
-				}
-				$(this).dialog('close');
+					if (_options.fields.find(i => i.type == "widget")) {
+						if ( $("#mod-widget-input").val() == undefined){
+							throw 'Choix obligatoire';
+						}
+						result.widgetId = $("#mod-widget-input").val();
+						result.widgetName = $("#mod-widget-input option:selected").text();
+					}
+					if (_options.fields.find(i => i.type == "object")) {
+						result.object = $("#object-select  option:selected").val();
+						result.name = $("#object-select  option:selected").text();
+					}
+					if (_options.fields.find(i => i.type == "swipeUp")) {
+						let choice = $("#swipeUp-select option:selected").val();
+						if (choice == 'cmd') {
+							result.swipeUp = { type: 'cmd', id: $("#swipeUp-cmd-input").attr('cmdId') }
+						} else if (choice == 'sc') {
+							result.swipeUp = { type: 'sc', id: $("#swipeUp-sc-input").attr('scId') , tags :$("#swipeUp-sc-tags-input").val() }
+						}
+					}
+					if (_options.fields.find(i => i.type == "swipeDown")) {
+						let choice = $("#swipeDown-select option:selected").val();
+						if (choice == 'cmd') {
+							result.swipeDown = { type: 'cmd', id: $("#swipeDown-cmd-input").attr('cmdId') }
+						} else if (choice == 'sc') {
+							result.swipeDown = { type: 'sc', id: $("#swipeDown-sc-input").attr('scId'), tags :$("#swipeDown-sc-tags-input").val() }
+						}
+					}
+					if (_options.fields.find(i => i.type == "action")) {
+						let choice = $("#action-select option:selected").val();
+						if (choice == 'cmd') {
+							result.action = { type: 'cmd', id: $("#action-cmd-input").attr('cmdId') }
+						} else if (choice == 'sc') {
+							result.action = { type: 'sc', id: $("#action-sc-input").attr('scId'), tags :$("#action-sc-tags-input").val() }
+						}
+					}
+					if ($.trim(result) != '' && 'function' == typeof(_callback)) {
+						_callback(result);
+					}
+					$(this).dialog('close');
+
+				} 
+				catch (error) {
+					$('#div_simpleModalAlert').showAlert({message: error, level: 'danger'});
+					console.error(error);
+			  	}
 	   		}
 		} }});
 
