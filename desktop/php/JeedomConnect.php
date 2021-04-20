@@ -13,8 +13,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray= JeedomConnectWidget::getWidgets();
 
-
+$jcFilter = $_GET['jcFilter'] ?? '';
 $orderBy = $_GET['jcOrderBy'] ?? 'object';
+$widgetSearch = $_GET['jcSearch'] ?? '';
+
 switch ($orderBy) {
 	case 'name':
 		$widgetName = array_column($widgetArray, 'name');
@@ -49,12 +51,14 @@ foreach ($widgetArray as $widget) {
 	$id = $widget['id'];
 	$widgetType = $widget['type'];
 
+	$styleHide = ($jcFilter == '') ? '' : ( $jcFilter == $widgetType ? '' : 'style="display:none;"' ) ;
+
 	//used later by the filter select item
 	if(!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType]=$allConfig[$widgetType];
 
 	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong>' ;
 
-	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" title="id='.$id.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" '.$styleHide.' title="id='.$id.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 	$listWidget .= '<img src="' . $img . '"/>';
 	$listWidget .= '<br>';
 	$listWidget .= '<span class="name">' . $name . '</span>';
@@ -63,7 +67,7 @@ foreach ($widgetArray as $widget) {
 }
 
 
-$optionsOrderBy = '' ;
+$optionsOrderBy = $_GET['jcOrderBy'] ?? '';
 $orderByArray = array (
 		"object" => "Pièce",
 		"name" => "Nom",
@@ -76,19 +80,16 @@ foreach ($orderByArray as $key => $value) {
 }
 
 
-$typeSelectionParam = $_GET['jcFilterBy'] ?? '';
-
 asort($widgetTypeArray);
 $typeSelection2 = '';
 $hasSelected = false ;
 foreach ($widgetTypeArray as $key => $value) {
-	$selected = ($key ==  $typeSelectionParam) ? 'selected' : '' ;
-	$hasSelected = $hasSelected || ($key ==  $typeSelectionParam) ;
+	$selected = ($key ==  $jcFilter) ? 'selected' : '' ;
+	$hasSelected = $hasSelected || ($key ==  $jcFilter) ;
 	$typeSelection2 .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
 }
 $sel = $hasSelected ? '' : 'selected' ;
 $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2 ;
-
 
 
 ?>
@@ -158,11 +159,15 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 					?>
 				</select>
 			</span>
+			<span id="eraseFilterChoice" class="btn roundedRight">
+				<!-- <i class="fas fa-times"></i> -->
+				<i class="fas fa-trash-alt"></i>
+			</span>
 			</div>
 		</legend>
 		<!-- Champ de recherche widget -->
 		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget"/>
+			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget"  value="<?=$widgetSearch?>" />
 			<div class="input-group-btn">
 				<a id="bt_resetSearchWidget" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>

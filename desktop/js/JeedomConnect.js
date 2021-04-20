@@ -274,20 +274,38 @@ $("#removeDevice").click(function() {
 
 $('#in_searchWidget').off('keyup').keyup(function() {
   var search = $(this).value()
+  var widgetFilter = $("#widgetTypeSelect option:selected").val();   
+
   if (search == '') {
-    $('.widgetDisplayCard').show()
+    if ( widgetFilter == 'none' ){
+      $('.widgetDisplayCard').show()
+    }
+    else{
+      $('.widgetDisplayCard').each(function() {
+        widgetType = $(this).attr('data-widget_type') ;
+        if (widgetFilter == widgetType ){
+          $(this).closest('.widgetDisplayCard').show()
+        }
+      })
+    }
     $('.eqLogicThumbnailContainer').packery()
     return
   }
+
+
   $('.widgetDisplayCard').hide()
   search = normTextLower(search)
   var text
   var widgetId
+
   $('.widgetDisplayCard').each(function() {
     text = normTextLower($(this).children('.name').text())
     widgetId = normTextLower($(this).attr('data-widget_id'))
+    widgetType = $(this).attr('data-widget_type') ;
     if (text.indexOf(search) >= 0 || widgetId.indexOf(search) >= 0) {
-      $(this).closest('.widgetDisplayCard').show()
+      if (widgetFilter == 'none' || widgetFilter == widgetType ){
+        $(this).closest('.widgetDisplayCard').show()
+      }
     }
   })
   $('.eqLogicThumbnailContainer').packery()
@@ -2065,6 +2083,9 @@ function saveWidget() {
               }
               modifyWithoutSave = false
               url += '&saveSuccessFull=1'
+
+              url = getCustomParamUrl(url, vars);
+
               loadPage(url)
             }
             else{
@@ -2099,6 +2120,35 @@ function saveWidget() {
     $('#widget-alert').showAlert({message: error, level: 'danger'});
     console.error(error);
   }
+
+}
+
+function getCustomParamUrl(url, vars){
+
+
+  for (var i in vars) {
+    if (i != 'jcOrderBy' && i != 'jcFilter' && i != 'jcSearch') {
+      url += i + '=' + vars[i].replace('#', '') + '&'
+    }
+  }
+
+  
+  var widgetFilter = $("#widgetTypeSelect option:selected").val();   
+  if (widgetFilter != 'none'){
+    url += '&jcFilter='+widgetFilter
+  }
+  
+  var widgetOrder = $("#widgetOrder option:selected").val();   
+  if (widgetOrder != 'none'){
+    url += '&jcOrderBy='+widgetOrder
+  }
+
+  var widgetSearch = $("#in_searchWidget").val().trim();   
+  if (widgetSearch != ''){
+    url += '&jcSearch='+widgetSearch
+  }
+
+  return url;
 
 }
 
@@ -2291,12 +2341,9 @@ function updateOrderWidget(){
   
   var vars = getUrlVars()
   var url = 'index.php?'
-  for (var i in vars) {
-    if (i != 'jcOrderBy') {
-      url += i + '=' + vars[i].replace('#', '') + '&'
-    }
-  }
-  url += 'jcOrderBy='+type;
+  
+  url = getCustomParamUrl(url, vars) ;
+
   loadPage(url)
 
 }
@@ -2343,6 +2390,12 @@ $('#widgetTypeSelect').on('change', function() {
   if ( typeSelected != 'none'){
 	  $( '.widgetDisplayCard' ).not( "[data-widget_type=" + typeSelected + "]" ).hide();
   }
+  
+  var widgetSearch = $("#in_searchWidget").val().trim();   
+  if (widgetSearch != ''){
+    $('#in_searchWidget').keyup()
+  }
+
   $('.eqLogicThumbnailContainer').packery();
 
 });
@@ -2414,3 +2467,26 @@ function getCmdDetail(_params, _callback) {
   };
   $.ajax(paramsAJAX);
 };
+
+
+
+$( document ).ready(function() {
+  var widgetSearch = $("#in_searchWidget").val().trim();   
+  if (widgetSearch != ''){
+    $('#in_searchWidget').keyup()
+  }
+});
+
+
+$('#eraseFilterChoice').off('click').on('click', function() {
+  var vars = getUrlVars()
+  var url = 'index.php?'
+  for (var i in vars) {
+    if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull' &&
+          i != 'jcOrderBy' && i != 'jcSearch' && i != 'jcFilter') {
+      url += i + '=' + vars[i].replace('#', '') + '&'
+    }
+  }
+  
+  loadPage(url)
+})
