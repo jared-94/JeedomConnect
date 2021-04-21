@@ -1509,8 +1509,8 @@ function idToHuman(string, infos) {
   if (!match) { return string; }
   match.forEach(item => {
     const info = infos.find(i => i.id == item.replace(/\#/g, ""));
-    if (info) {
-      result = result.replace(item, info.human);
+    if (info && info.human != '') {
+        result = result.replace(item, info.human);
     }
   });
   return result;
