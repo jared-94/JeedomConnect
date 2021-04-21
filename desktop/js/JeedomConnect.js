@@ -1433,13 +1433,14 @@ function refreshMoreInfos() {
   let div = '';
   moreInfos.forEach(item => {
     var unit = item.unit || '';
-    div += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}">
+    div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
           <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.human}' disabled>
           <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
           <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" value='${item.name}'>
           <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
           <input style="width:80px;position:absolute; margin-left:175px;" id="${item.id}-unit-input" value='${unit}'>
-          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:260px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
+          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-left:265px;cursor:grab!important;" aria-hidden="true"></i>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:5px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
           </div>`;
   });
   $("#moreInfos-div").html(div);
@@ -1642,6 +1643,25 @@ function loadSortable(elt){
             refreshCmdListOption(JSON.stringify(opt));
 
         } });
+  }
+
+  if (elt == 'moreInfos' || elt == 'all'){
+    $("#moreInfos-div").sortable({axis: "y", cursor: "move", items: ".moreInfosItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+      update: function( event, ui){ 
+          moreInfos = [];
+          $('#moreInfos-div > .moreInfosItem').each((i, el) => { 
+              info = {};
+              info.id = $(el).data('id') ;
+              info.human = $(el).find("#"+info.id+"-input").val();
+              info.name = $(el).find("#"+info.id+"-name-input").val();
+              info.unit = $(el).find("#"+info.id+"-unit-input").val();
+              moreInfos.push(info);
+          }
+        );
+        refreshMoreInfos();
+      }
+    });
+
   }
 
 }
