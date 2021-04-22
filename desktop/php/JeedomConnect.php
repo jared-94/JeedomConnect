@@ -339,6 +339,13 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									</div>
 							</div>
 
+							<div class="form-group">
+									<label class="col-sm-3 control-label">{{Ajouter altitude à la position}}</label>
+									<div class="col-sm-7">
+										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
+									</div>
+							</div>
+
 
 							<legend><i class="fa fa-bug"></i>  {{Partager le fichier de configuration}}</legend>
 							<div class="form-group">

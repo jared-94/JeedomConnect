@@ -646,7 +646,11 @@ class JeedomConnect extends eqLogic {
 
 	public function setCoordinates($lat, $lgt, $alt, $timestamp) {
 		$positionCmd = $this->getCmd(null, 'position');
-		$positionCmd->event($lat . "," . $lgt . "," . $alt, date('Y-m-d H:i:s', strtotime($timestamp)));
+		$info = $lat . "," . $lgt;
+		if ($this->getConfiguration('addAltitude', false)) {
+			$info += "," . $alt;
+		}
+		$positionCmd->event($info, date('Y-m-d H:i:s', strtotime($timestamp)));
 		$this->setGeofencesByCoordinates($lat, $lgt, $timestamp);
 	}
 
