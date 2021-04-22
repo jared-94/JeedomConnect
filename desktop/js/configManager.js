@@ -1419,7 +1419,7 @@ function setCondValue(elm) {
 function setCondToHuman() {
 	configData.payload.background.condImages.forEach(cond => {
 		let input = $("#cond-input-"+cond.index);
-		let value = cond.condition.slice();
+		let value = cond.condition ? cond.condition.slice() : '';
 		const match = value.match(/#.*?#/g);
 		if (match) {
 			match.forEach(item => {

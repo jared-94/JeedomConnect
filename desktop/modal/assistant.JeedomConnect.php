@@ -309,15 +309,15 @@ foreach ($summaryConfig as $index => $summary) {
     </div>
     <div class="rightContent">
       <div class="alert alert-info">
-        Vous pouvez ici configurer le fond d'écran du menu principal de l'application. Utilisez de péréfrence des images adaptées à la taille de votre écran.
+        Vous pouvez ici configurer le fond d'écran de la page principale de l'application. Utilisez de préférence des images adaptées à la taille de votre écran.
       </div>
       <div class="alert alert-info">
         Pour les conditions, utilisez les opérateurs ==, !=, <, >, <=, >=, &&, ||
       </div>
       <div class="alert alert-info">
         Variables disponibles :<br/>
-        - #bottomTabId# : id du menu bas<br/>
-        - #topTabId# : id du menu haut
+        - #bottomTabId# : id du menu bas en cours<br/>
+        - #topTabId# : id du menu haut en cours
       </div>
     </div>
   </div>
