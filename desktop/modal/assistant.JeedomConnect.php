@@ -113,6 +113,7 @@ foreach ($summaryConfig as $index => $summary) {
       <button class="tablinks" onclick="openTab(event, 'roomTab')">Pièces</button>
       <button class="tablinks" onclick="openTab(event, 'summaryTab')">Résumés</button>
       <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
+      <button class="tablinks" onclick="openTab(event, 'backgroundTab')">Fond d'écran</button>
     </div>
   </div>
 
@@ -273,6 +274,51 @@ foreach ($summaryConfig as $index => $summary) {
       Vous pouvez ajouter des widgets, ainsi que des groupes pour les classer.
       </div>
       <img src="plugins/JeedomConnect/desktop/img/widget.png" />
+    </div>    
+  </div>
+
+  <!-- BACKGROUND PART -->
+
+  <div id="backgroundTab" class="tabcontent">
+    <div class="leftContent">
+      <h3>Fond d'écran</h3>
+
+      <div class="form-group" style="margin-top:20px;">
+         <label class="col-sm-5 control-label" >{{Image si aucune condition vérifiée}}</label>
+         <div class="col-sm-7">
+            <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une image' onclick="getBgImg();">
+              <i class='fas fa-flag'></i> Image 
+            </a>
+            <a id="bg-icon-div" onclick='removeBgImg();'> </a>
+          </div>
+      </div>
+
+      <div class="form-group">
+         <label class="col-sm-5 control-label" >{{Image sous conditions :}}</label>
+         <div class="col-sm-7">
+            <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Ajouter une condition' onclick="addCondImg();">
+              <i class='fas fa-plus'></i> Ajouter 
+            </a>
+          </div>
+      </div>
+
+         <div>
+            <div id="condImgList"></div>
+          </div>
+
+    </div>
+    <div class="rightContent">
+      <div class="alert alert-info">
+        Vous pouvez ici configurer le fond d'écran du menu principal de l'application. Utilisez de péréfrence des images adaptées à la taille de votre écran.
+      </div>
+      <div class="alert alert-info">
+        Pour les conditions, utilisez les opérateurs ==, !=, <, >, <=, >=, &&, ||
+      </div>
+      <div class="alert alert-info">
+        Variables disponibles :<br/>
+        - #bottomTabId# : id du menu bas<br/>
+        - #topTabId# : id du menu haut
+      </div>
     </div>
   </div>
 </div>

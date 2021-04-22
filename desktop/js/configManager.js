@@ -35,6 +35,7 @@ function initData() {
 	refreshRoomData();
 	refreshSummaryData();
 	refreshWidgetData();
+	refreshBackgroundData();
 }
 
 function refreshBottomTabData() {
@@ -43,7 +44,7 @@ function refreshBottomTabData() {
 	});
 	var items = [];
 	$.each( tabs, function( key, val ) {
-		items.push( `<li data-id="${val.id}" class="bottomItem"><a  onclick="editBottomTabModal('${val.id}');">
+		items.push( `<li data-id="${val.id}" class="bottomItem" title="id=${val.id}"><a  onclick="editBottomTabModal('${val.id}');">
 			${iconToHtml(val.icon)}<i style="margin-left:10px;"></i>${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
@@ -84,7 +85,7 @@ function refreshTopTabContent() {
 
 	items = [];
 	$.each( tabs, function( key, val ) {
-		items.push( `<li data-id="${val.id}" class="topItem"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
+		items.push( `<li data-id="${val.id}" class="topItem" title="id=${val.id}"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>	
 
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
@@ -220,7 +221,8 @@ function resetConfig() {
 					'rooms': [],
 					'groups': [],
 					'summaries': [],
-					'widgets': []
+					'widgets': [],
+					'background': {}
 				}
 		};
 		initData();
@@ -1320,3 +1322,147 @@ function duplicateWidget(widgetId) {
 	incrementIdCounter();
 	refreshWidgetsContent();
 }
+
+// BACKGROUND FUNCTIONS	
+
+function refreshBackgroundData() {
+	if (configData.payload.background == undefined) {
+		configData.payload.background = {};
+	}
+	if (configData.payload.background.image) {
+		$("#bg-icon-div").html(iconToHtml(configData.payload.background.image));
+	}
+	if (configData.payload.background.condImages == undefined) {
+		configData.payload.background.condImages = [];
+	}
+	configData.payload.background.condImages.sort(function(s,t) {
+		return s.index - t.index;
+	});
+	//console.log(configData.payload.background.condImages)
+	var condHtml = '';
+	(configData.payload.background.condImages || []).forEach(cond => {
+		condHtml += `
+		<div data-id="${cond.index}" class='input-group condImgItem'>
+			Si
+			<input style="width:450px;height:31px;margin-left:5px" class=' roundedLeft' index="${cond.index}" id="cond-input-${cond.index}"
+			 onchange="setCondValue(this)" />
+			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('${cond.index}');">
+                    <i class='fas fa-list-alt'></i></a>
+			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBgCondImg(this)"><i class="fas fa-plus-square">
+			</i> Image </a>
+			<a data-id="icon-div">${iconToHtml(cond.image)}</a>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeCondImg('${cond.index}');"></i>
+  		</div>
+		`;
+	});
+	$("#condImgList").html(condHtml);
+	setCondToHuman();
+}	
+
+function getBgImg() {
+	getIconModal({ title: "Choisir un fond d'écran", withIcon: "0", withImg: "1", icon: htmlToIcon($("#bg-icon-div").children().first()) }, (result) => {
+	  $("#bg-icon-div").html(iconToHtml(result));
+	  configData.payload.background.image = result;
+	})
+}
+
+function removeBgImg() {
+	$("#bg-icon-div").html("");
+	delete configData.payload.background.image;
+}
+
+function addCondImg() {
+	if (configData.payload.background.condImages == undefined) {
+		configData.payload.background.condImages = [];
+	}
+	configData.payload.background.condImages.push({
+		index: getMaxIndex(configData.payload.background.condImages) +1
+	});
+	refreshBackgroundData();
+}
+
+function selectInfoCmd(index) {
+	let input = $("#cond-input-"+index);
+  	jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
+		input.val( [input.val().slice(0, input[0].selectionStart), result.human, input.val().slice(input[0].selectionStart)].join('') );
+		setCondValue(input);
+  	})
+}
+
+function setCondValue(elm) {	
+	var curCond = configData.payload.background.condImages.find(c => c.index == $(elm).attr('index'));
+	let res = $(elm).val()
+	const match = res.match(/#.*?#/g);
+	if (match) {
+		match.forEach(item => {
+			$.post({
+				url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+				data: {
+				  action: 'humanReadableToCmd',
+				  human: item
+				},
+				cache: false,
+				dataType: 'json',
+				async: false,
+				success: function( data ) {
+				  if (data.state == 'ok') {
+					res = res.replace(item, data.result)
+				  }
+				}
+			  });
+		});			
+	}
+	curCond.condition = res;
+}
+
+function setCondToHuman() {
+	configData.payload.background.condImages.forEach(cond => {
+		let input = $("#cond-input-"+cond.index);
+		let value = cond.condition.slice();
+		const match = value.match(/#.*?#/g);
+		if (match) {
+			match.forEach(item => {
+				$.post({
+					url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+					data: {
+					  action: 'cmdToHumanReadable',
+					  strWithCmdId: item
+					},
+					cache: false,
+					dataType: 'json',
+					async: false,
+					success: function( data ) {
+					  if (data.state == 'ok') {
+						value = value.replace(item, data.result);
+					  }
+					}
+				  });
+			});
+		}
+		input.val(value);
+	});
+}
+
+function getBgCondImg(elm) {
+	var curCond = configData.payload.background.condImages.find(c => c.index == $(elm).attr('index'));
+	var newElt = $(elm).nextAll("a[data-id^='icon-']:first") ;
+	
+	getIconModal({ title: "Choisir un fond d'écran", withIcon: "0", withImg: "1", icon: htmlToIcon(newElt.children().first()) , elt:newElt}, (result, _params) => {
+	  curCond.image = result;
+	  $(_params.elt).html(iconToHtml(result));
+	});
+}
+
+function removeCondImg(index) {	
+	configData.payload.background.condImages = configData.payload.background.condImages.filter(c => c.index != index);
+
+	configData.payload.background.condImages.forEach(item => {
+		if (item.index > index) {
+			item.index = item.index - 1;
+		}
+	});
+	refreshBackgroundData();
+}
+  
+  

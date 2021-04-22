@@ -49,6 +49,20 @@ class apiHelper {
         }
       }
     }
+    if (array_key_exists('background', $config['payload'])) {
+      foreach ($config['payload']['background']['condImages'] as $cond) {
+        preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
+        if (count($matches) > 0) {
+          $matches = array_unique($matches[0]);
+          foreach($matches as $match) {
+            $cmd = cmd::byId(str_replace('#', '', $match));
+					  if (is_object($cmd)) {
+              array_push($return, str_replace('#', '', $match));
+            }
+          }
+        }
+      }
+    }
     return array_unique($return);
   }
 
