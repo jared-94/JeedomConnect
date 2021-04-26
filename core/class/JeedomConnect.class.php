@@ -351,6 +351,17 @@ class JeedomConnect extends eqLogic {
 
 	}
 
+	public function isWidgetIncluded($widgetId){
+		
+		$ids = $this->getWidgetId();
+
+		if ( in_array( $widgetId, $ids) ){
+			return true;
+		}
+		return false;
+
+	}
+
 	public function getJeedomObject($id){
 
 		$obj = jeeObject::byId($id) ;
