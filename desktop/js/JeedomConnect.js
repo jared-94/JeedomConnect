@@ -120,8 +120,18 @@ $('.eqLogicAction[data-action=addWidget]').off('click').on('click', function() {
 })
 
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function() {
-  $('#md_modal').dialog({title: "{{Synthèse globale des widgets}}"});
-  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
+  $('body').append('<div id="widgetSummaryModal"></div>');
+  $('#widgetSummaryModal').dialog({title: "{{Synthèse globale des widgets}}", 
+        closeText: 'sure !?',
+        autoOpen: false,
+        modal: true,
+        width: 0.9*$(window).width(),
+        height: 0.8*$(window).height(),
+        closeOnEscape: false,
+        // open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+        close: function(ev, ui){check_before_closing();}
+  });
+  $('#widgetSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
 
