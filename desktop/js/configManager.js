@@ -36,6 +36,7 @@ function initData() {
 	refreshSummaryData();
 	refreshWidgetData();
 	refreshBackgroundData();
+	refreshWeatherData();
 }
 
 function refreshBottomTabData() {
@@ -222,7 +223,8 @@ function resetConfig() {
 					'groups': [],
 					'summaries': [],
 					'widgets': [],
-					'background': {}
+					'background': {},
+					'weather': {},
 				}
 		};
 		initData();
@@ -1463,6 +1465,39 @@ function removeCondImg(index) {
 		}
 	});
 	refreshBackgroundData();
+}
+
+// WEATHER FUNCTIONS
+
+function refreshWeatherData() {
+	if (configData.payload.weather) {
+		$("#weather-input").val(configData.payload.weather.human);
+	}
+}
+
+function removeWeatherEq() {
+	delete configData.payload.weather;
+	$("#weather-input").val('');
+}
+
+function getWeatherEq() {
+	jeedom.eqLogic.getSelectModal({eqLogic: {eqType_name: 'weather'}}, function(result) {
+		$("#weather-input").val(result.human);
+		jeedom.eqLogic.getCmd({id: result.id, success: function(cmdList) {
+			configData.payload.weather = {
+				eqType_name: 'weather',
+				eqLogicId: result.id,
+				human: result.human,
+				sunrise: cmdList.find(c => c.logicalId == 'sunrise')?.id,
+				sunset: cmdList.find(c => c.logicalId == 'sunset')?.id,
+				temperature: cmdList.find(c => c.logicalId == 'temperature')?.id,
+				temperature_min: cmdList.find(c => c.logicalId == 'temperature_min')?.id,
+				temperature_max: cmdList.find(c => c.logicalId == 'temperature_max')?.id,
+				condition_id: cmdList.find(c => c.logicalId == 'condition_id')?.id,
+				condition: cmdList.find(c => c.logicalId == 'condition')?.id,
+			}
+		}});
+	  })
 }
   
   

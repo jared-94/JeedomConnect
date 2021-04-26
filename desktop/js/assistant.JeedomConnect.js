@@ -114,6 +114,8 @@ function openTab(evt, tabName) {
 		refreshWidgetData();
 	} else if (tabName == "backgroundTab") {
 		refreshBackgroundData();
+	} else if (tabName == "weatherTab") {
+		refreshWeatherData();
 	}
 	var i, tabcontent, tablinks;
 	tabcontent = document.getElementsByClassName("tabcontent");
@@ -381,3 +383,4 @@ function isIcon(icon) {
 	}
 	return false;
 }
+

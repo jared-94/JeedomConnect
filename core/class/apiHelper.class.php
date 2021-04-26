@@ -63,6 +63,17 @@ class apiHelper {
         }
       }
     }
+    if (array_key_exists('weather', $config['payload'])) {
+       $return = array_merge($return, array(
+         $config['payload']['weather']['condition'],
+         $config['payload']['weather']['condition_id'],
+         $config['payload']['weather']['sunrise'],
+         $config['payload']['weather']['sunset'],
+         $config['payload']['weather']['temperature'],
+         $config['payload']['weather']['temperature_min'],
+         $config['payload']['weather']['temperature_max']
+       ));
+    }
     return array_unique($return);
   }
 

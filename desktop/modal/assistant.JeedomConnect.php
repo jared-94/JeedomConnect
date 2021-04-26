@@ -114,6 +114,7 @@ foreach ($summaryConfig as $index => $summary) {
       <button class="tablinks" onclick="openTab(event, 'summaryTab')">Résumés</button>
       <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
       <button class="tablinks" onclick="openTab(event, 'backgroundTab')">Fond d'écran</button>
+      <button class="tablinks" onclick="openTab(event, 'weatherTab')">Météo</button>
     </div>
   </div>
 
@@ -321,6 +322,31 @@ foreach ($summaryConfig as $index => $summary) {
       </div>
     </div>
   </div>
-</div>
 
+  <!-- WEATHER PART -->
+
+  <div id="weatherTab" class="tabcontent">
+    <div class="leftContent">
+      <h3>Météo</h3>
+      
+      <div class="input-group input-group-sm" style="width: 90%">
+        <span class="input-group-addon roundedLeft">Equipement</span>
+        <input class="expressionAttr form-control input-sm" id="weather-input"  value="" disabled >
+        <span class="input-group-btn">
+          <a class="btn btn-default listEquipementInfo"  tooltip="Sélectionner un équipement" onclick="getWeatherEq();" ><i class="fas fa-list-alt"></i></a>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeWeatherEq();"></i>
+        </span>
+      </div>
+
+    </div>
+    <div class="rightContent">
+      <div class="alert alert-info">
+        Vous pouvez ici configurer la météo. Seul le plugin officiel Weather est compatible.
+      </div>      
+    </div>
+  </div>
+
+
+
+</div>
 </div>
