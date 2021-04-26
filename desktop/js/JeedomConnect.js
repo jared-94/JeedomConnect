@@ -45,14 +45,14 @@ function refreshWidgetDetails(){
 $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '.widgetDisplayCard', function() {
 
     var eqId = $(this).attr('data-widget_id');
-    editWidgetModal(eqId, true, true);
+    editWidgetModal(eqId, true, true, true);
 
 })
 
 
-function editWidgetModal(widgetId,  removeAction, exit) {
+function editWidgetModal(widgetId,  removeAction, exit, duplicate) {
   var widgetToEdit = allWidgetsDetail.find(w => w.id == widgetId);
-  getWidgetModal({title:"Editer un widget", eqId : widgetId, widget:widgetToEdit, removeAction: removeAction, exit : exit}, function(result) {
+  getWidgetModal({title:"Editer un widget", eqId : widgetId, widget:widgetToEdit, removeAction: removeAction, exit : exit, duplicate: duplicate}, function(result) {
     refreshWidgetDetails();
     if (! exit) refreshWidgetsContent();
   });
@@ -91,7 +91,7 @@ function getWidgetModal(_options, _callback) {
     $('.widgetMenu .removeWidget').hide();
   }
 
-  if ( $('#widgetOptions').attr('widget-id') == undefined || $('#widgetOptions').attr('widget-id') == ''){
+  if ( $('#widgetOptions').attr('widget-id') == undefined || $('#widgetOptions').attr('widget-id') == '' || !(_options.duplicate) ){
     $('.widgetMenu .duplicateWidget').hide();
   }
   else{
@@ -117,6 +117,11 @@ function getWidgetModal(_options, _callback) {
 
 $('.eqLogicAction[data-action=addWidget]').off('click').on('click', function() {
   getWidgetModal({title:"Configuration du widget", removeAction: false, exit : true});
+})
+
+$('.eqLogicAction[data-action=showSummary]').off('click').on('click', function() {
+  $('#md_modal').dialog({title: "{{Synthèse globale des widgets}}"});
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
 
@@ -2106,10 +2111,11 @@ function saveWidget() {
               loadPage(url)
             }
             else{
-              refreshWidgetDetails();
-              refreshWidgetsContent();
-
+              
               if ( $( "#selWidgetDetail" ).length > 0 ) {
+                  refreshWidgetDetails();
+                  refreshWidgetsContent();
+
                   //if it's a new widget
                   if (widgetId == undefined || widgetId == ''){
 
@@ -2183,10 +2189,15 @@ function duplicateWidget(){
 
 }
 
-function removeWidget(){
+function removeWidget(itemId){
   var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>" ;
   
-  var widgetId = $("#widgetOptions").attr('widget-id') ;
+  if ( itemId == undefined){
+    var widgetId = $("#widgetOptions").attr('widget-id') ;
+  }
+  else{
+    var widgetId = itemId ; 
+  }
 
   $.post({
 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
