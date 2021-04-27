@@ -552,10 +552,13 @@ class JeedomConnect extends eqLogic {
 		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
 
 		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
-		QRcode::png( json_encode($connectData), self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+		try{
+			QRcode::png( json_encode($connectData), self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to generate a QR code : ' . $e->getMessage());
+		}
 
-		// $request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
-		// file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
 	}
 
 	public function registerDevice($id, $name) {
