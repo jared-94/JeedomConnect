@@ -32,6 +32,13 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
 <table id="table_JcWidgetSummary" class="table table-bordered table-condensed tablesorter stickyHead">
   <thead>
     <tr>
+      <th colspan="7" data-sorter="false" data-filter="false">&nbsp;</th>
+      <th colspan="4" data-sorter="false" data-filter="false" style="text-align:center;">Masquer</th>
+      <th  data-sorter="false" data-filter="false" style="text-align:center;">Bloquer</th>
+      <th  data-sorter="false" data-filter="false" style="text-align:center;">Nb</th>
+      <th  data-sorter="false" data-filter="false" style="text-align:center;">&nbsp;</th>
+    </tr>
+    <tr>
       <th>{{ID}}</th>
       <th>{{Type}}</th>
       <th data-sorter="select-text">{{Pièce}}</th>
@@ -40,11 +47,11 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
       <th data-sorter="checkbox" data-filter="false">{{Visible}}</th>
       <th data-sorter="select-text" data-filter="false">{{Affichage forcé}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Titre}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Sous-Titre}}</th>
-      <th data-sorter="checkbox" data-filter="false" style="max-width:65px;">{{Statut}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Icon}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Bloquer détails}}</th>
-      <th >{{nb Eq}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{ss-Titre}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Statut}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Icône}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{détails}}</th>
+      <th >{{Eq}}</th>
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>
   </thead>
@@ -54,5 +61,5 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
 
 
 <?php include_file('desktop', 'widgetsummary.JeedomConnect', 'js', 'JeedomConnect'); ?>
-<?php include_file('desktop', 'Assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop/common', 'utils', 'js'); ?>

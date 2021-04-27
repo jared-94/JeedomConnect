@@ -1,4 +1,4 @@
-$('#md_modal').off('click', '#bt_removeJcWidgetSummary').on('click', '#bt_removeJcWidgetSummary', function() {
+$('#widgetSummaryModal').off('click', '#bt_removeJcWidgetSummary').on('click', '#bt_removeJcWidgetSummary', function() {
 
     var myData = $('#table_JcWidgetSummary .removeWidget:checked');
     var count = myData.length;
@@ -40,7 +40,7 @@ $('#md_modal').off('click', '#bt_removeJcWidgetSummary').on('click', '#bt_remove
                         }
                         else{
                             $('.tr_object[data-widget_id='+widgetId+']').remove();
-
+                            $('#widgetSummaryModal').attr('data-has-changes', true);
                         }
                     }
                 })
@@ -81,16 +81,11 @@ $('#bt_saveJcWidgetSummary').off('click').on('click', function() {
                         });
                     }
                     else{
-                        var vars = getUrlVars()
-                        var url = 'index.php?'
-                        for (var i in vars) {
-                        if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-                            url += i + '=' + vars[i].replace('#', '') + '&'
-                        }
-                        }
-                        modifyWithoutSave = false
-                        url += '&saveSuccessFull=1'
-                        loadPage(url)
+                        $('#alert_JcWidgetSummary').showAlert({
+                            message: 'Sauvegarde effectuée',
+                            level: 'success'
+                        });
+                        $('#widgetSummaryModal').attr('data-has-changes', true);
                     }
                     
                 }
@@ -139,7 +134,7 @@ $('#bt_updateWidgetSummary').off('click').on('click', function() {
 })
 
 
-$('#md_modal').off('click', '.removeWidget').on('click', '.removeWidget', function() {
+$('#widgetSummaryModal').off('click', '.removeWidget').on('click', '.removeWidget', function() {
 
     var myData = $('#table_JcWidgetSummary .removeWidget:checked');
     var count = myData.length;
@@ -181,13 +176,11 @@ function displayWidgetSummaryData(myId = ''){
             }
             else{
                 if ( myId == ''){
-                    console.log('adding all data', data.result)
                     $('#table_JcWidgetSummary tbody').html(data.result);
                     $("#table_JcWidgetSummary").trigger("update");
 
                 }
                 else{
-                    console.log('updating '+ myId+ ' with data', data.result)
                     $('#table_JcWidgetSummary .tr_object[data-widget_id='+myId+']').html(data.result);
                     $("#table_JcWidgetSummary").trigger("update");
                 }
@@ -199,9 +192,35 @@ function displayWidgetSummaryData(myId = ''){
 
 }
 
+function check_before_closing(){
+    var hasChanges = $('#widgetSummaryModal').attr('data-has-changes');
+    if ( hasChanges == 'true' ){
+        var vars = getUrlVars()
+        var url = 'index.php?'
+        delete vars['id']
+        delete vars['saveSuccessFull']
+        delete vars['removeSuccessFull']
+        
+        url = getCustomParamUrl(url, vars);
+        modifyWithoutSave = false
+        loadPage(url);
+    }
+    $("#widgetSummaryModal").dialog('destroy').remove();
+}
 
 $(document).ready(function(){
-    initTableSorter()
+    $("#table_JcWidgetSummary").tablesorter({
+        widthFixed: true,
+        sortLocaleCompare: true,
+        sortList: [ [2,0],[3,0] ],
+        theme : 'bootstrap',
+        headerTemplate: '{content} {icon}',
+        widgets: ["zebra", "filter", "uitheme", 'stickyHeaders'],
+        widgetOptions: {
+           resizable : false,
+           resizable_addLastColumn : true
+        }
+    })
     displayWidgetSummaryData();
     
 });

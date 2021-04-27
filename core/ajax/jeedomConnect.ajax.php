@@ -176,7 +176,7 @@ try {
 
 			// **********    ROOM    ****************
 			$html .= '<td >';
-			$html .='<select class="objectAttr"  data-l1key="roomId">';
+			$html .='<select style="width:150px;" class="objectAttr"  data-l1key="roomId">';
 			$html .='<option value="none">Aucun</option>';
 			
 			foreach ((jeeObject::buildTree(null, false)) as $object) {
