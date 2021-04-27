@@ -190,7 +190,23 @@ try {
 
 			$html .= '<td style="width:40px;"><input type="text" class="objectAttr" data-l1key="name" value="' . cmd::cmdToHumanReadable($widget['name']) .'" /></td>';
 			
-			$html .= '<td style="width:40px;"><input type="text" class="objectAttr"  data-l1key="subtitle" value="' . cmd::cmdToHumanReadable( $widgetJC['subtitle'] ) .'" /></td>';
+
+			// **********   SUBTITLE    ****************
+			$hasSubTitle = false;
+			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
+			{
+				if ($opt['id'] != 'subtitle') continue;	
+				$hasSubTitle = true;
+				break;
+			}
+			if ( $hasSubTitle ){
+				$html .= '<td style="width:40px;"><input type="text" class="objectAttr"  data-l1key="subtitle" value="' . cmd::cmdToHumanReadable( $widgetJC['subtitle'] ) .'" /></td>';
+			}
+			else{
+				$html .= '<td style="width:40px;"></td>';
+			}
+
+			// **********  END SUBTITLE ****************
 			
 			if ($widget['enable']) {
 				$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="enable" /></td>';
