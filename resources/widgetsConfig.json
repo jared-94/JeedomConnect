@@ -856,10 +856,6 @@
 						{
 							"id":"hideTitle",
 							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
 						}
 					]
 				}
@@ -892,10 +888,6 @@
 						{
 							"id":"hideTitle",
 							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
 						}
 					]
 				}
@@ -936,10 +928,6 @@
 						{
 							"id":"hideTitle",
 							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
 						}
 					]
 				}
