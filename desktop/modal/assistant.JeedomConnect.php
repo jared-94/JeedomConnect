@@ -317,15 +317,20 @@ foreach ($summaryConfig as $index => $summary) {
       </div>
       <div class="alert alert-info">
         Variables disponibles :<br/>
-        - <b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus haut)<br/>
-        - <b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus bas)<br/>
-        - <b>#screenId#</b> : id de la page en cours. Valeurs possibles :<br/>
-        &ensp;  ** 1 : Page principale<br/>
-        &ensp;  ** 2 : Page Pièces<br/>
-        &ensp;  ** 3 : Page Notifications<br/>
-        &ensp;  ** 4 : Page scénarios<br/>
-        &ensp;  ** 5 : Page Préférences<br/>
-        - <b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces
+        <ul>
+          <li><b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus haut)</li>
+          <li><b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus bas)</li>
+          <li><b>#screenId#</b> : id de la page en cours. Valeurs possibles :
+            <ul>
+              <li>1 : Page principale</li>
+              <li>2 : Page Pièces</li>
+              <li>3 : Page Notifications</li>
+              <li>4 : Page scénarios</li>
+              <li>5 : Page Préférences</li>
+            </ul>
+            </li>
+          <li><b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces</li>
+        </ul>
       </div>
     </div>
   </div>
