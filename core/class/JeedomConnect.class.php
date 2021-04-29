@@ -1134,6 +1134,85 @@ class JeedomConnect extends eqLogic {
 		return;
 	}
 
+
+	public static function migrateCondImg(){
+		try{
+			$hasChangesConf = false;
+			//****** UPDATE ALL WIDGETS CONFIG  ******
+			foreach ( JeedomConnectWidget::getWidgets() as $widget){
+				$currentChange = false;
+				$widgetId = $widget['id'];
+				$widgetJC = json_decode($widget['widgetJC'], true);
+
+				if ( isset($widgetJC['statusImages']) && count($widgetJC['statusImages']) > 0 ){
+					
+					foreach ($widgetJC['statusImages'] as $key => $value) {
+						if ( isset($value['operator']) && isset($value['info']) && isset($value['value']) ){
+							$hasChangesConf = true; //to make the new generation action [last one]
+							$currentChange = true;
+							
+							$operator = $value['operator'] == '=' ? '==' : $value['operator'] ;
+
+							$cond = '#'. $value['info']['id']. '# ' . $operator . ' ' . $value['value'];
+							$value['condition'] = $cond ; 
+							unset($value['info']);
+							unset($value['operator']);
+							unset($value['value']);
+							$widgetJC['statusImages'][$key] = $value ; 
+						}
+					}
+
+					if ($currentChange) JeedomConnectWidget::setConfiguration($widgetId, 'widgetJC', json_encode($widgetJC) );
+				
+				}
+			}
+
+
+			//****** UPDATE ALL EQUIPMENT JSON CONFIG (summary)  ******
+			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$hasChangesEq = false;
+				$jsonConfig = $eqLogic->getConfig();
+
+				foreach ( $jsonConfig['payload']['summaries']  as $main => $summary){
+					
+					if ( isset($summary['statusImages']) && count($summary['statusImages']) > 0 ){
+						
+						foreach ($summary['statusImages'] as $key => $value) {
+							$currentChange = false;
+							if ( isset($value['operator']) && isset($value['info']) && isset($value['value']) ){
+								$hasChangesEq = true;  // for the global save action [one before the last]
+
+								$operator = $value['operator'] == '=' ? '==' : $value['operator'] ;
+			
+								$cond = '#'. $value['info']['id']. '# ' . $operator . ' ' . $value['value'];
+								$value['condition'] = $cond ; 
+								unset($value['info']);
+								unset($value['operator']);
+								unset($value['value']);
+								$summary['statusImages'][$key] = $value ; 
+								$currentChange = true;
+							}
+						}
+
+						if( $currentChange ) $jsonConfig['payload']['summaries'][$main] = $summary;
+						
+					}
+				}
+
+				if ( $hasChangesEq || $hasChangesConf ) {
+					$eqLogic->saveConfig($jsonConfig);
+					$eqLogic->generateNewConfigVersion() ;
+				}
+				
+			}
+
+			config::save('migration::imgCond', 'done' , 'JeedomConnect') ;
+		}	
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to migrate Img Condition : ' . $e->getMessage());
+		}
+	}
+
 }
 
 
