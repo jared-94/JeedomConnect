@@ -201,11 +201,13 @@ class apiHelper {
 
   //PLUGIN CONF FUNCTIONS
   function getPluginConfig() {
+    $plugin = update::byLogicalId('JeedomConnect');
   	return array(
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
   		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
   		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
-  		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090')
+  		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
+      'pluginJeedomVersion' => $plugin->getLocalVersion()
   	);
   }
 
