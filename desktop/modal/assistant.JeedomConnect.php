@@ -326,8 +326,8 @@ foreach ($summaryConfig as $index => $summary) {
       <div class="alert alert-info">
         Variables disponibles :
         <ul>
-          <li><b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus haut)</li>
-          <li><b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus bas)</li>
+          <li><b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus bas)</li>
+          <li><b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus haut)</li>
           <li><b>#screenId#</b> : id de la page en cours. Valeurs possibles :
             <ul>
               <li>1 : Page principale</li>
