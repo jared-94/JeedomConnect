@@ -989,9 +989,9 @@ function saveSummary() {
 				}
 				imgCat.forEach(item => {
 					item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-					item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-					item.operator = $("#operator-"+item.index).val();
-					item.value = $("#"+item.index+"-value").val();
+					getCmdIdFromHumanName({alert: '#summary-alert', stringData: $("#cond-input-"+item.index).val() }, function(result, _params){
+						item.condition = result ;
+					  } ) ; 
 				});
 				result[option.id] = imgCat;
 			}	
@@ -1347,8 +1347,8 @@ function refreshBackgroundData() {
 		<div data-id="${cond.index}" class='input-group condImgItem'>
 			Si
 			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${cond.index}" id="cond-input-${cond.index}"
-			 onchange="setCondValue(this)" />
-			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('${cond.index}');">
+			 onchange="setCondValue(this, 'bg')" />
+			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#cond-input-${cond.index}', 'bg');">
                     <i class='fas fa-list-alt'></i></a>
 			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBgCondImg(this)"><i class="fas fa-plus-square">
 			</i> Image </a>
@@ -1359,7 +1359,7 @@ function refreshBackgroundData() {
 		`;
 	});
 	$("#condImgList").html(condHtml);
-	setCondToHuman();
+	setCondToHuman('bg');
 }	
 
 function getBgImg() {
@@ -1384,67 +1384,6 @@ function addCondImg() {
 	refreshBackgroundData();
 }
 
-function selectInfoCmd(index) {
-	let input = $("#cond-input-"+index);
-  	jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
-		input.val( [input.val().slice(0, input[0].selectionStart), result.human, input.val().slice(input[0].selectionStart)].join('') );
-		setCondValue(input);
-  	})
-}
-
-function setCondValue(elm) {	
-	var curCond = configData.payload.background.condImages.find(c => c.index == $(elm).attr('index'));
-	let res = $(elm).val()
-	const match = res.match(/#.*?#/g);
-	if (match) {
-		match.forEach(item => {
-			$.post({
-				url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-				data: {
-				  action: 'humanReadableToCmd',
-				  human: item
-				},
-				cache: false,
-				dataType: 'json',
-				async: false,
-				success: function( data ) {
-				  if (data.state == 'ok') {
-					res = res.replace(item, data.result)
-				  }
-				}
-			  });
-		});			
-	}
-	curCond.condition = res;
-}
-
-function setCondToHuman() {
-	configData.payload.background.condImages.forEach(cond => {
-		let input = $("#cond-input-"+cond.index);
-		let value = cond.condition ? cond.condition.slice() : '';
-		const match = value.match(/#.*?#/g);
-		if (match) {
-			match.forEach(item => {
-				$.post({
-					url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-					data: {
-					  action: 'cmdToHumanReadable',
-					  strWithCmdId: item
-					},
-					cache: false,
-					dataType: 'json',
-					async: false,
-					success: function( data ) {
-					  if (data.state == 'ok') {
-						value = value.replace(item, data.result);
-					  }
-					}
-				  });
-			});
-		}
-		input.val(value);
-	});
-}
 
 function getBgCondImg(elm) {
 	var curCond = configData.payload.background.condImages.find(c => c.index == $(elm).attr('index'));

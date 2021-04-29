@@ -1565,42 +1565,31 @@ function refreshImgListOption(dataType = 'widget') {
   });
 
   imgCat.forEach(item => {
-    curOption += `<div class='input-group jcImgListMovable' data-id="${item.index}" id="imgList-${item.index}">
-    Si :<select id="info-${item.index}" style="width:250px;height:31px;margin-left:5px;">`;
-    options.forEach(info => {
-      curOption += `<option value="${info.id}" type="${info.type}" ${item.info == undefined ? '' : item.info.id == info.id && "selected"}>${info.human}</option>`;
-    });
-    curOption += `</select> <select id="operator-${item.index}" style="width:50px;height:31px; margin-left:5px;">
-      <option value="=" ${item.operator == "=" && "selected"}>=</option>
-      <option value="<" ${item.operator == "<" && "selected"}><</option>
-      <option value=">" ${item.operator == ">" && "selected"}>></option>
-      <option value="!=" ${item.operator == "!=" && "selected"}>!=</option> </select>`;
-
-    curOption +=`<input style="width:150px;height:31px;margin-left:5px;" class=' roundedLeft' id="${item.index}-value" value='${item.value || ''}' >`
     curOption += `
+		<div data-id="${item.index}" class='input-group jcImgListMovable'>
+			Si
+			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${item.index}" id="cond-input-${item.index}" value="${item.condition}"
+			 onchange="setCondValue(this, 'imgList')" />
+			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#cond-input-${item.index}', 'imgList');">
+                    <i class='fas fa-list-alt'></i></a>
+			<a class="btn btn-success roundedRight" index="${item.index}" onclick="imagePicker(this)"><i class="fas fa-plus-square">
+			</i> Image </a>
+			<a data-id="icon-div" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
+  		</div>
+		`;
 
-              <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-plus-square">
-              </i> Image </a>
-              <a data-id="icon-div-${item.index}" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>          
-              <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
-              
-              <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
-              <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i> -->
-              
-              <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
-        `;
 
-    curOption += '</div>'
   });
   $("#imgList-option").html(curOption);
+  setCondToHuman('imgList');
 }
 
 function saveImgOption() {
   imgCat.forEach(item => {
     item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-    item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };;
-    item.operator = $("#operator-"+item.index).val();
-    item.value = $("#"+item.index+"-value").val();
+    item.condition = $("#cond-input-"+item.index).val();
   });
 }
 
@@ -2027,9 +2016,9 @@ function saveWidget() {
 
       imgCat.forEach(item => {
         item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-        item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-        item.operator = $("#operator-"+item.index).val();
-        item.value = $("#"+item.index+"-value").val();
+        getCmdIdFromHumanName({alert: '#widget-alert', stringData: $("#cond-input-"+item.index).val() }, function(result, _params){
+          item.condition = result ;
+        } ) ; 
       });
 
       result[option.id] = imgCat;
@@ -2528,3 +2517,80 @@ $('#eraseFilterChoice').off('click').on('click', function() {
   
   loadPage(url)
 })
+
+
+function selectInfoCmd(elt, conf) {
+	let input = $(elt);
+  	jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
+		input.val( [input.val().slice(0, input[0].selectionStart), result.human, input.val().slice(input[0].selectionStart)].join('') );
+		setCondValue(input, conf);
+  	})
+}
+
+function setCondValue(elm, confArr) {
+  if ( confArr == 'bg' )	{
+    conf = configData.payload.background.condImages
+  }
+  else{
+    conf = imgCat
+  }
+
+	var curCond = conf.find(c => c.index == $(elm).attr('index'));
+	let res = $(elm).val()
+	const match = res.match(/#.*?#/g);
+	if (match) {
+		match.forEach(item => {
+			$.post({
+				url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+				data: {
+				  action: 'humanReadableToCmd',
+				  human: item
+				},
+				cache: false,
+				dataType: 'json',
+				async: false,
+				success: function( data ) {
+				  if (data.state == 'ok') {
+					  res = res.replace(item, data.result)
+				  }
+				}
+			  });
+		});			
+	}
+	curCond.condition = res;
+}
+
+function setCondToHuman(confArr) {
+  if ( confArr == 'bg' )	{
+    conf = configData.payload.background.condImages
+  }
+  else{
+    conf = imgCat
+  }
+
+	conf.forEach(cond => {
+		let input = $("#cond-input-"+cond.index);
+		let value = cond.condition ? cond.condition.slice() : '';
+		const match = value.match(/#.*?#/g);
+		if (match) {
+			match.forEach(item => {
+				$.post({
+					url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+					data: {
+					  action: 'cmdToHumanReadable',
+					  strWithCmdId: item
+					},
+					cache: false,
+					dataType: 'json',
+					async: false,
+					success: function( data ) {
+					  if (data.state == 'ok') {
+						value = value.replace(item, data.result);
+					  }
+					}
+				  });
+			});
+		}
+		input.val(value);
+	});
+}
