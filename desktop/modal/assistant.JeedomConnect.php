@@ -280,54 +280,69 @@ foreach ($summaryConfig as $index => $summary) {
 
   <!-- BACKGROUND PART -->
 
-  <div id="backgroundTab" class="tabcontent">
-    <div class="leftContent">
-      <h3>Fond d'écran</h3>
+  <div id="backgroundTab" class="col-sm-12 tabcontent">
+    <!--    START LEFT PANEL --->
+	<div  class="col-sm-8">
+      <form class="form-horizontal">
+        <fieldset>
+          <h3>Fond d'écran</h3>
+            
+            <div class="form-group">
+              <label class="col-sm-5 control-label">{{Image si aucune condition vérifiée}}</label>
+              <div class="col-sm-7">
+                <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une image' onclick="getBgImg();">
+                  <i class='fas fa-flag'></i> Image 
+                </a>
+                <a id="bg-icon-div" onclick='removeBgImg();'> </a>
+              </div>
+            </div>
 
-      <div class="form-group" style="margin-top:20px;">
-         <label class="col-sm-5 control-label" >{{Image si aucune condition vérifiée}}</label>
-         <div class="col-sm-7">
-            <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une image' onclick="getBgImg();">
-              <i class='fas fa-flag'></i> Image 
-            </a>
-            <a id="bg-icon-div" onclick='removeBgImg();'> </a>
-          </div>
-      </div>
 
-      <div class="form-group">
-         <label class="col-sm-5 control-label" >{{Image sous conditions :}}</label>
-         <div class="col-sm-7">
-            <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Ajouter une condition' onclick="addCondImg();">
-              <i class='fas fa-plus'></i> Ajouter 
-            </a>
-          </div>
-      </div>
+            <div class="form-group">
+              <label class="col-sm-5 control-label">{{Image sous conditions}}</label>
+              <div class="col-sm-7">
+                <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Ajouter une condition' onclick="addCondImg();">
+                <i class='fas fa-plus'></i> Ajouter 
+              </a>
+              </div>
+            </div>
 
-         <div>
             <div id="condImgList"></div>
-          </div>
-
+        </fieldset>
+      </form>
     </div>
-    <div class="rightContent">
-    <div class="alert alert-info">
+	<!--    END LEFT PANEL --->
+
+	<!--    START RIGHT PANEL --->
+    <div class="col-sm-4">
+      <div class="alert alert-info">
         Vous pouvez ici configurer le fond d'écran de l'application. Utilisez de préférence des images adaptées à la taille de votre écran.
       </div>
+	  
       <div class="alert alert-info">
         Pour les conditions, utilisez les opérateurs ==, !=, <, >, <=, >=, &&, ||
       </div>
+	  
       <div class="alert alert-info">
-        Variables disponibles :<br/>
-        - <b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus haut)<br/>
-        - <b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus bas)<br/>
-        - <b>#screenId#</b> : id de la page en cours. Valeurs possibles :<br/>
-        &ensp;  ** 1 : Page principale<br/>
-        &ensp;  ** 2 : Page Pièces<br/>
-        &ensp;  ** 3 : Page Notifications<br/>
-        &ensp;  ** 4 : Page scénarios<br/>
-        &ensp;  ** 5 : Page Préférences<br/>
-        - <b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces
+        Variables disponibles :
+        <ul>
+          <li><b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus haut)</li>
+          <li><b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus bas)</li>
+          <li><b>#screenId#</b> : id de la page en cours. Valeurs possibles :
+            <ul>
+              <li>1 : Page principale</li>
+              <li>2 : Page Pièces</li>
+              <li>3 : Page Notifications</li>
+              <li>4 : Page scénarios</li>
+              <li>5 : Page Préférences</li>
+            </ul>
+            </li>
+          <li><b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces</li>
+        </ul>
       </div>
+	  
     </div>
+	<!--    END RIGHT PANEL --->
   </div>
 
   <!-- WEATHER PART -->

@@ -1346,7 +1346,7 @@ function refreshBackgroundData() {
 		condHtml += `
 		<div data-id="${cond.index}" class='input-group condImgItem'>
 			Si
-			<input style="width:450px;height:31px;margin-left:5px" class=' roundedLeft' index="${cond.index}" id="cond-input-${cond.index}"
+			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${cond.index}" id="cond-input-${cond.index}"
 			 onchange="setCondValue(this)" />
 			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('${cond.index}');">
                     <i class='fas fa-list-alt'></i></a>
