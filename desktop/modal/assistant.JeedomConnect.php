@@ -343,6 +343,7 @@ foreach ($summaryConfig as $index => $summary) {
 	  
     </div>
 	<!--    END RIGHT PANEL --->
+  </div>
 
   <!-- WEATHER PART -->
 
