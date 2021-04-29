@@ -3768,6 +3768,15 @@
 						"category": "string"
 					},
 					{
+						"id": "streamUrlInfo",
+						"name": "Commande URL flux",
+						"required": false,
+						"category": "cmd",
+						"type": "info",
+						"subtype": "other",
+						"description": "Commande info contenant l'URL du flux"
+					},
+					{
 						"id": "onlyOnLan",
 						"name": "Flux vidéo uniquement sur le LAN",
 						"required": false,
