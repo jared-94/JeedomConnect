@@ -287,13 +287,19 @@ class JeedomConnect extends eqLogic {
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
 		if (! file_exists($config_file_path)){
-			log::add('JeedomConnect', 'warning', 'file ' . $config_file_path . ' does not exist' );
-			return null;
+			log::add('JeedomConnect', 'warning', 'file ' . $config_file_path . ' does not exist  -- new try to generate one' );
+			$this->getConfig(true, true);
 		}
 
-		$configFile = file_get_contents($config_file_path);
-		$jsonConfig = json_decode($configFile, true);
-		return $jsonConfig;
+		try{
+			$configFile = file_get_contents($config_file_path);
+			$jsonConfig = json_decode($configFile, true);
+			return $jsonConfig;
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to generate configuration setting : ' . $e->getMessage());
+			return null;
+		}
 
 	}
 

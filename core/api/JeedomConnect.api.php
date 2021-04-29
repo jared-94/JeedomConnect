@@ -113,6 +113,12 @@ switch ($method) {
 
 		$config = $eqLogic->getGeneratedConfigFile();
 
+    //check config content
+    if( is_null($config) ) {
+      log::add('JeedomConnect', 'warning', "Failed to connect : empty config file");
+      $jsonrpc->makeSuccess(array( 'type' => 'EMPTY_CONFIG_FILE' ));
+      return;
+    }
 		//check config format version
 		if( ! array_key_exists('formatVersion', $config) ) {
 			log::add('JeedomConnect', 'warning', "Failed to connect : bad format version");
