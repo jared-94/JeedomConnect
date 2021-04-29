@@ -309,16 +309,23 @@ foreach ($summaryConfig as $index => $summary) {
 
     </div>
     <div class="rightContent">
-      <div class="alert alert-info">
-        Vous pouvez ici configurer le fond d'écran de la page principale de l'application. Utilisez de préférence des images adaptées à la taille de votre écran.
+    <div class="alert alert-info">
+        Vous pouvez ici configurer le fond d'écran de l'application. Utilisez de préférence des images adaptées à la taille de votre écran.
       </div>
       <div class="alert alert-info">
         Pour les conditions, utilisez les opérateurs ==, !=, <, >, <=, >=, &&, ||
       </div>
       <div class="alert alert-info">
         Variables disponibles :<br/>
-        - #bottomTabId# : id du menu bas en cours<br/>
-        - #topTabId# : id du menu haut en cours
+        - <b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus haut)<br/>
+        - <b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus bas)<br/>
+        - <b>#screenId#</b> : id de la page en cours. Valeurs possibles :<br/>
+        &ensp;  ** 1 : Page principale<br/>
+        &ensp;  ** 2 : Page Pièces<br/>
+        &ensp;  ** 3 : Page Notifications<br/>
+        &ensp;  ** 4 : Page scénarios<br/>
+        &ensp;  ** 5 : Page Préférences<br/>
+        - <b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces
       </div>
     </div>
   </div>
@@ -329,13 +336,11 @@ foreach ($summaryConfig as $index => $summary) {
     <div class="leftContent">
       <h3>Météo</h3>
       
-      <div class="input-group input-group-sm" style="width: 90%">
-        <span class="input-group-addon roundedLeft">Equipement</span>
-        <input class="expressionAttr form-control input-sm" id="weather-input"  value="" disabled >
-        <span class="input-group-btn">
+      <div class="input-group " style="width: 90%">
+        Equipement
+        <input class="roundedLeft" style="margin-left:5px; width:400px" id="weather-input"  value="" disabled >
           <a class="btn btn-default listEquipementInfo"  tooltip="Sélectionner un équipement" onclick="getWeatherEq();" ><i class="fas fa-list-alt"></i></a>
           <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeWeatherEq();"></i>
-        </span>
       </div>
 
     </div>

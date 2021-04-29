@@ -104,7 +104,7 @@ function refreshRoomData() {
 	});
 	var items = [];
 	$.each( rooms, function( key, val ) {
-		items.push( `<li data-id="${val.id}" class="roomItem"><a>${val.name}</a>
+		items.push( `<li data-id="${val.id}" title="id=${val.id}" class="roomItem"><a>${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 			
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
