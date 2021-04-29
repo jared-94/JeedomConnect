@@ -249,7 +249,8 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'GEOLOC':
-		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $params['timestamp']);
+    $ts = array_key_exists('timestampMeta', $params) ? floor( $params['timestampMeta']['systemTime'] / 1000) : strtotime($params['timestamp']);
+		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $ts);
 
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
