@@ -31,6 +31,10 @@ function JeedomConnect_install() {
     mkdir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect'));
   }
 
+  if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
+    JeedomConnect::migrateCondImg() ; 
+  }
+
 }
 
 function JeedomConnect_update() {
@@ -55,6 +59,10 @@ function JeedomConnect_update() {
  
   if (!is_dir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect')  )) {
     mkdir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect'));
+  }
+  
+  if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
+    JeedomConnect::migrateCondImg() ; 
   }
 }
 

@@ -243,7 +243,7 @@ function getSimpleCmd({id, error, success}) {
 }
 
 function getSimpleIcon(name) {
-  getIconModal({ title: "Choisir une icône", withIcon: "1", withImg: "0", icon: htmlToIcon($("#icon-div").children().first()) }, (result) => {
+  getIconModal({ title: "Choisir une icône", withIcon: "1", withImg: "1", icon: htmlToIcon($("#icon-div").children().first()) }, (result) => {
     $("#icon-div").html(iconToHtml(result));
   })
 }

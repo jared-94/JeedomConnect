@@ -287,13 +287,19 @@ class JeedomConnect extends eqLogic {
 
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
 		if (! file_exists($config_file_path)){
-			log::add('JeedomConnect', 'warning', 'file ' . $config_file_path . ' does not exist' );
-			return null;
+			log::add('JeedomConnect', 'warning', 'file ' . $config_file_path . ' does not exist  -- new try to generate one' );
+			$this->getConfig(true, true);
 		}
 
-		$configFile = file_get_contents($config_file_path);
-		$jsonConfig = json_decode($configFile, true);
-		return $jsonConfig;
+		try{
+			$configFile = file_get_contents($config_file_path);
+			$jsonConfig = json_decode($configFile, true);
+			return $jsonConfig;
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to generate configuration setting : ' . $e->getMessage());
+			return null;
+		}
 
 	}
 
@@ -348,6 +354,17 @@ class JeedomConnect extends eqLogic {
 
 		log::add('JeedomConnect', 'debug', ' fx  getWidgetId -- result final ' . json_encode($ids) );
 		return $ids;
+
+	}
+
+	public function isWidgetIncluded($widgetId){
+		
+		$ids = $this->getWidgetId();
+
+		if ( in_array( $widgetId, $ids) ){
+			return true;
+		}
+		return false;
 
 	}
 
@@ -541,10 +558,13 @@ class JeedomConnect extends eqLogic {
 		log::add('JeedomConnect', 'debug', 'Generate qrcode with data '.json_encode($connectData));
 
 		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
-		QRcode::png( json_encode($connectData), self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+		try{
+			QRcode::png( json_encode($connectData), self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to generate a QR code : ' . $e->getMessage());
+		}
 
-		// $request = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' . json_encode($connectData);
-		// file_put_contents(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png', file_get_contents($request));
 	}
 
 	public function registerDevice($id, $name) {
@@ -646,7 +666,11 @@ class JeedomConnect extends eqLogic {
 
 	public function setCoordinates($lat, $lgt, $alt, $timestamp) {
 		$positionCmd = $this->getCmd(null, 'position');
-		$positionCmd->event($lat . "," . $lgt . "," . $alt, date('Y-m-d H:i:s', strtotime($timestamp)));
+		$info = $lat . "," . $lgt;
+		if ($this->getConfiguration('addAltitude', false)) {
+			$info += "," . $alt;
+		}
+		$positionCmd->event($info, date('Y-m-d H:i:s', $timestamp));
 		$this->setGeofencesByCoordinates($lat, $lgt, $timestamp);
 	}
 
@@ -1108,6 +1132,85 @@ class JeedomConnect extends eqLogic {
 		}
 
 		return;
+	}
+
+
+	public static function migrateCondImg(){
+		try{
+			$hasChangesConf = false;
+			//****** UPDATE ALL WIDGETS CONFIG  ******
+			foreach ( JeedomConnectWidget::getWidgets() as $widget){
+				$currentChange = false;
+				$widgetId = $widget['id'];
+				$widgetJC = json_decode($widget['widgetJC'], true);
+
+				if ( isset($widgetJC['statusImages']) && count($widgetJC['statusImages']) > 0 ){
+					
+					foreach ($widgetJC['statusImages'] as $key => $value) {
+						if ( isset($value['operator']) && isset($value['info']) && isset($value['value']) ){
+							$hasChangesConf = true; //to make the new generation action [last one]
+							$currentChange = true;
+							
+							$operator = $value['operator'] == '=' ? '==' : $value['operator'] ;
+
+							$cond = '#'. $value['info']['id']. '# ' . $operator . ' ' . $value['value'];
+							$value['condition'] = $cond ; 
+							unset($value['info']);
+							unset($value['operator']);
+							unset($value['value']);
+							$widgetJC['statusImages'][$key] = $value ; 
+						}
+					}
+
+					if ($currentChange) JeedomConnectWidget::setConfiguration($widgetId, 'widgetJC', json_encode($widgetJC) );
+				
+				}
+			}
+
+
+			//****** UPDATE ALL EQUIPMENT JSON CONFIG (summary)  ******
+			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$hasChangesEq = false;
+				$jsonConfig = $eqLogic->getConfig();
+
+				foreach ( $jsonConfig['payload']['summaries']  as $main => $summary){
+					
+					if ( isset($summary['statusImages']) && count($summary['statusImages']) > 0 ){
+						
+						foreach ($summary['statusImages'] as $key => $value) {
+							$currentChange = false;
+							if ( isset($value['operator']) && isset($value['info']) && isset($value['value']) ){
+								$hasChangesEq = true;  // for the global save action [one before the last]
+
+								$operator = $value['operator'] == '=' ? '==' : $value['operator'] ;
+			
+								$cond = '#'. $value['info']['id']. '# ' . $operator . ' ' . $value['value'];
+								$value['condition'] = $cond ; 
+								unset($value['info']);
+								unset($value['operator']);
+								unset($value['value']);
+								$summary['statusImages'][$key] = $value ; 
+								$currentChange = true;
+							}
+						}
+
+						if( $currentChange ) $jsonConfig['payload']['summaries'][$main] = $summary;
+						
+					}
+				}
+
+				if ( $hasChangesEq || $hasChangesConf ) {
+					$eqLogic->saveConfig($jsonConfig);
+					$eqLogic->generateNewConfigVersion() ;
+				}
+				
+			}
+
+			config::save('migration::imgCond', 'done' , 'JeedomConnect') ;
+		}	
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to migrate Img Condition : ' . $e->getMessage());
+		}
 	}
 
 }

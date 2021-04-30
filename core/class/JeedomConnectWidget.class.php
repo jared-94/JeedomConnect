@@ -160,21 +160,37 @@ class JeedomConnectWidget extends config {
 			$hasChanged = false;
 			$conf = json_decode($widget['conf']['widgetJC'], true) ;
 			
-			if ( ! array_key_exists('widgets', $conf ) ){
+			if ( ! array_key_exists('widgets', $conf ) && ! array_key_exists('moreWidgets', $conf ) ){
 				continue;
 			}
 
-			foreach($conf['widgets'] as $index => $obj){
-				
-				if ( in_array( $obj['id'] ,  $arrayIdToRemove ) ){
-					log::add('JeedomConnect', 'info', 'removing obj id : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' .$widget['id'] );
-					unset($conf['widgets'][$index]);
-					$hasChanged = true;
+			if ( isset($conf['widgets']) ){
+				foreach($conf['widgets'] as $index => $obj){
+					
+					if ( in_array( $obj['id'] ,  $arrayIdToRemove ) ){
+						log::add('JeedomConnect', 'info', 'removing obj id [widgets] : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' .$widget['id'] );
+						unset($conf['widgets'][$index]);
+						$hasChanged = true;
+					}
+					
 				}
-				
+				$conf['widgets'] = array_values($conf['widgets']);
+			}
+
+			if ( isset($conf['moreWidgets']) ){
+				foreach($conf['moreWidgets'] as $index => $obj){
+					
+					if ( in_array( $obj['id'] ,  $arrayIdToRemove ) ){
+						log::add('JeedomConnect', 'info', 'removing obj id [moreWidgets] : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' .$widget['id'] );
+						unset($conf['moreWidgets'][$index]);
+						$hasChanged = true;
+					}
+					
+				}
+				$conf['moreWidgets'] = array_values($conf['moreWidgets']);
 			}
 			
-			$conf['widgets'] = array_values($conf['widgets']);
+			
 			if ($hasChanged) self::setConfiguration(str_replace('widget::','',$widget['id']), 'widgetJC', json_encode($conf) );
 			
 		}

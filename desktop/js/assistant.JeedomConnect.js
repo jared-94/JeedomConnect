@@ -67,6 +67,17 @@ $("#roomUL").sortable({axis: "y", cursor: "move", items: ".roomItem", placeholde
 
 	} });	
 
+$("#condImgList").sortable({axis: "y", cursor: "move", items: ".condImgItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#condImgList > .condImgItem').each((i, el) => { 
+					var itemIndex = $(el).data('id') ;
+					var itemToMove = configData.payload.background.condImages.find(c => c.index == itemIndex);
+					itemToMove.index = i;
+					}
+			);
+
+	} });
+
 $("#bottomUL").sortable({axis: "y", cursor: "move", items: ".bottomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
 	update: function( event, ui){ 
 			$('#bottomUL > .bottomItem').each((i, el) => { 
@@ -101,6 +112,10 @@ function openTab(evt, tabName) {
 		refreshSummaryData();
 	} else if (tabName == "widgetsTab") {
 		refreshWidgetData();
+	} else if (tabName == "backgroundTab") {
+		refreshBackgroundData();
+	} else if (tabName == "weatherTab") {
+		refreshWeatherData();
 	}
 	var i, tabcontent, tablinks;
 	tabcontent = document.getElementsByClassName("tabcontent");
@@ -368,3 +383,4 @@ function isIcon(icon) {
 	}
 	return false;
 }
+

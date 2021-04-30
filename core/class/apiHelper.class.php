@@ -49,6 +49,31 @@ class apiHelper {
         }
       }
     }
+    if (array_key_exists('background', $config['payload'])) {
+      foreach ($config['payload']['background']['condImages'] as $cond) {
+        preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
+        if (count($matches) > 0) {
+          $matches = array_unique($matches[0]);
+          foreach($matches as $match) {
+            $cmd = cmd::byId(str_replace('#', '', $match));
+					  if (is_object($cmd)) {
+              array_push($return, str_replace('#', '', $match));
+            }
+          }
+        }
+      }
+    }
+    if (array_key_exists('weather', $config['payload'])) {
+       $return = array_merge($return, array(
+         $config['payload']['weather']['condition'],
+         $config['payload']['weather']['condition_id'],
+         $config['payload']['weather']['sunrise'],
+         $config['payload']['weather']['sunset'],
+         $config['payload']['weather']['temperature'],
+         $config['payload']['weather']['temperature_min'],
+         $config['payload']['weather']['temperature_max']
+       ));
+    }
     return array_unique($return);
   }
 
@@ -176,11 +201,13 @@ class apiHelper {
 
   //PLUGIN CONF FUNCTIONS
   function getPluginConfig() {
+    $plugin = update::byLogicalId('JeedomConnect');
   	return array(
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
   		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
   		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
-  		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090')
+  		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
+      'pluginJeedomVersion' => $plugin->getLocalVersion()
   	);
   }
 

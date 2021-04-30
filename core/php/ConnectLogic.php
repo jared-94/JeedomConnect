@@ -181,9 +181,18 @@ class ConnectLogic implements MessageComponentInterface
 				$eqLogic->save();
 			}
 
+			//check config content
+			if( is_null($config) ) {
+				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : empty config file");
+				$result = array( 'type' => 'EMPTY_CONFIG_FILE' );
+				$conn->send(json_encode($result));
+				$conn->close();
+	      		return;
+			}
+
 			//check config format version
 			if( ! array_key_exists('formatVersion', $config) ) {
-				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad bad format version");
+				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad format version");
 				$result = array( 'type' => 'FORMAT_VERSION_ERROR' );
 				$conn->send(json_encode($result));
 				$conn->close();
