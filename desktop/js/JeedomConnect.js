@@ -1565,6 +1565,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
 
   imgCat.forEach(item => {
+    /*
     curOption += `
 		<div data-id="${item.index}" class='input-group jcImgListMovable'>
 			Si
@@ -1579,7 +1580,30 @@ function refreshImgListOption(dataType = 'widget') {
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
   		</div>
 		`;
-
+    */
+    curOption += `
+		<div data-id="${item.index}" class='input-group jcImgListMovable'>
+			Si
+			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${item.index}" id="imglist-cond-${item.index}" value="${item.condition}"
+			 onchange="setCondValue(this, 'imgList')" />`;
+    curOption += `
+        <div class="dropdown" id="imglist-cond-select" style="display:inline !important;">
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        <i class="fas fa-plus-square"></i> </a>
+        <ul class="dropdown-menu infos-select" input="imglist-cond-${item.index}">`;
+    if (widget.variables) {
+      widget.variables.forEach(v => {
+        curOption += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+      });
+    }
+    curOption += `</ul></div>` ;
+    curOption += `<a class="btn btn-success roundedRight" index="${item.index}" onclick="imagePicker(this)"><i class="fas fa-plus-square">
+    </i> Image </a>
+    <a data-id="icon-div" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
+    <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+    <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
+    </div>` ;
+    
 
   });
   $("#imgList-option").html(curOption);
@@ -1589,7 +1613,7 @@ function refreshImgListOption(dataType = 'widget') {
 function saveImgOption() {
   imgCat.forEach(item => {
     item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-    item.condition = $("#cond-input-"+item.index).val();
+    item.condition = $("#imglist-cond-"+item.index).val();
   });
 }
 
@@ -2016,7 +2040,7 @@ function saveWidget() {
 
       imgCat.forEach(item => {
         item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-        getCmdIdFromHumanName({alert: '#widget-alert', stringData: $("#cond-input-"+item.index).val() }, function(result, _params){
+        getCmdIdFromHumanName({alert: '#widget-alert', stringData: $("#imglist-cond-"+item.index).val() }, function(result, _params){
           item.condition = result ;
         } ) ; 
       });
@@ -2562,14 +2586,16 @@ function setCondValue(elm, confArr) {
 
 function setCondToHuman(confArr) {
   if ( confArr == 'bg' )	{
-    conf = configData.payload.background.condImages
+    conf = configData.payload.background.condImages;
+    idName = 'cond-input-';
   }
   else{
-    conf = imgCat
+    conf = imgCat;
+    idName = 'imglist-cond-';
   }
 
 	conf.forEach(cond => {
-		let input = $("#cond-input-"+cond.index);
+		let input = $("#"+ idName + cond.index);
 		let value = cond.condition ? cond.condition.slice() : '';
 		const match = value.match(/#.*?#/g);
 		if (match) {
