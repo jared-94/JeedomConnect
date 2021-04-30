@@ -331,7 +331,7 @@ $('#bt_resetSearchIcon').on('click', function() {
 
 
 $('#iconModal ul li a').click(function() {
-  $('.jcpanel .tab-pane').css('display', 'none');
+  $('.jcpanel.tab-pane').css('display', 'none');
 
   var type = $(this).attr('href').replace('#','');
   
