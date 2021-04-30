@@ -1,5 +1,5 @@
 {
-    "typeVersion" : "stable",
+    "typeVersion" : "beta",
     "storeUrl" : "https://play.google.com/store/apps/details?id=com.jeedomconnect.app",
     "enrollment" : "https://play.google.com/apps/testing/com.jeedomconnect.app"
 }
