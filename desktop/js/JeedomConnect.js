@@ -1622,6 +1622,7 @@ function addImgOption(dataType) {
   var maxIndex = getMaxIndex(imgCat);
   imgCat.push({index: maxIndex+1 });
   refreshImgListOption(dataType);
+  if ( dataType == 'widget') refreshInfoSelect();
 }
 
 function loadSortable(elt){
