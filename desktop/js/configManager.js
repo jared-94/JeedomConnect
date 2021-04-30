@@ -1348,8 +1348,22 @@ function refreshBackgroundData() {
 			Si
 			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${cond.index}" id="bg-cond-input-${cond.index}"
 			 onchange="setCondValue(this, 'bg')" />
-			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#bg-cond-input-${cond.index}', 'bg');">
-                    <i class='fas fa-list-alt'></i></a>
+		`;
+
+		condHtml += `
+        <div class="dropdown" id="imglist-cond-select" style="display:inline !important;">
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        <i class="fas fa-plus-square"></i> </a>
+        <ul class="dropdown-menu infos-select" input="bg-cond-input-${cond.index}">
+		<li info="bottomTabId" onclick="infoSelected('#bottomTabId#', this)"><a href="#">#bottomTabId#</a></li>
+		<li info="topTabId" onclick="infoSelected('#topTabId#', this)"><a href="#">#topTabId#</a></li>
+		<li info="screenId" onclick="infoSelected('#screenId#', this)"><a href="#">#screenId#</a></li>
+		<li info="roomId" onclick="infoSelected('#roomId#', this)"><a href="#">#roomId#</a></li>
+		</ul></div>` ;
+
+		condHtml += `
+			<a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#bg-cond-input-${cond.index}', 'bg');">
+            <i class='fas fa-list-alt'></i></a>
 			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBgCondImg(this)"><i class="fas fa-plus-square">
 			</i> Image </a>
 			<a data-id="icon-div">${iconToHtml(cond.image)}</a>

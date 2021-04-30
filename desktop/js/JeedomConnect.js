@@ -1506,7 +1506,9 @@ function refreshInfoSelect() {
 
 function infoSelected(value, el) {
   let inputId = $(el).parent().attr("input")
-  $("#"+inputId).val( $("#"+inputId).val() + value);
+  //$("#"+inputId).val( $("#"+inputId).val() + value);
+  let input = $("#"+inputId);
+  input.val( [input.val().slice(0, input[0].selectionStart), value, input.val().slice(input[0].selectionStart)].join('') );
 }
 
 function refreshStrings() {
