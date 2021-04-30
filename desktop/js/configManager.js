@@ -1346,7 +1346,7 @@ function refreshBackgroundData() {
 		condHtml += `
 		<div data-id="${cond.index}" class='input-group condImgItem'>
 			Si
-			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${cond.index}" id="bg-cond-input-${cond.index}"
+			<input style="width:385px;height:31px;" class=' roundedLeft' index="${cond.index}" id="bg-cond-input-${cond.index}"
 			 onchange="setCondValue(this, 'bg')" />
 		`;
 
@@ -1362,7 +1362,7 @@ function refreshBackgroundData() {
 		</ul></div>` ;
 
 		condHtml += `
-			<a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#bg-cond-input-${cond.index}', 'bg');">
+			<a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:5px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#bg-cond-input-${cond.index}', 'bg');">
             <i class='fas fa-list-alt'></i></a>
 			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBgCondImg(this)"><i class="fas fa-plus-square">
 			</i> Image </a>

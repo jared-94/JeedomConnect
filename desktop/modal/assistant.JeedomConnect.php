@@ -280,7 +280,7 @@ foreach ($summaryConfig as $index => $summary) {
 
   <!-- BACKGROUND PART -->
 
-  <div id="backgroundTab" class="col-sm-12 tabcontent">
+  <div id="backgroundTab" class="col-sm-12 tabcontent" style="width: 100%;">
     <!--    START LEFT PANEL --->
 	<div  class="col-sm-8">
       <form class="form-horizontal">
