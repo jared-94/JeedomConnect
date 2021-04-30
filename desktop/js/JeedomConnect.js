@@ -2588,7 +2588,7 @@ function setCondValue(elm, confArr) {
 function setCondToHuman(confArr) {
   if ( confArr == 'bg' )	{
     conf = configData.payload.background.condImages;
-    idName = 'cond-input-';
+    idName = 'bg-cond-input-';
   }
   else{
     conf = imgCat;
