@@ -1530,11 +1530,11 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant (Froid, Chauffage, Sechage)"
+					"description": "Info qui donne le mode courant (Froid, Chaud, Sechage)"
 				},
 				{
 					"id": "hotAction",
-					"name": "Mode Chauffage",
+					"name": "Mode Chaud",
 					"required": false,
 					"category": "cmd",
 					"type": "action",
