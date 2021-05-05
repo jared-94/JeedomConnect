@@ -172,6 +172,10 @@ switch ($method) {
 		$result = $eqLogic->getGeneratedConfigFile();
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_PWD':
+    $result = $eqLogic->getGeneratedConfigFile();
+    $jsonrpc->makeSuccess(array( 'pwd' => $eqLogic->getConfiguration('pwdAction', null)));
+    break;
   case 'GET_CMD_INFO':
     $result = array(
 	    'type' => 'SET_CMD_INFO',
