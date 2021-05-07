@@ -17,6 +17,7 @@
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
 
 ob_end_clean();
 
@@ -55,11 +56,20 @@ sse( json_encode(array('infos' => array(
   'cmdInfo' => apiHelper::getCmdInfoData($config),
   'scInfo' => apiHelper::getScenarioData($config),
   'objInfo' => apiHelper::getObjectData($config)
-  ))) );
+  ))) 
+);
+
+$eqLogic->setConfiguration('sessionId', $id);
+$eqLogic->setConfiguration('connected', 1);
+$eqLogic->save();
 
 while (true) {
   if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
       log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #".$id);
+      if ($eqLogic->getConfiguration('sessionId', 0) == $id) {
+        $eqLogic->setConfiguration('connected', 0);
+        $eqLogic->save();
+      }
       die();
   }
 
@@ -70,6 +80,18 @@ while (true) {
     sse(json_encode(array($newConfig)));
     sleep(1);
   }
+
+  $actions = JeedomConnectActions::getAllAction($apiKey);
+	if (count($actions) > 0) {
+		$result = array(
+			'type' => 'ACTIONS',
+			'payload' => $actions
+		);
+		log::add('JeedomConnect', 'debug', "send action to #{$id}  ".json_encode(array($result)));
+		sse(json_encode(array($result)));
+		JeedomConnectActions::removeAllAction($apiKey);
+    sleep(1);
+	}
 
   $events = event::changes($lastReadTimestamp);
   $lastReadTimestamp = time();

@@ -5,6 +5,7 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
 
 class ConnectLogic implements MessageComponentInterface
 {
@@ -43,7 +44,7 @@ class ConnectLogic implements MessageComponentInterface
       	$this->authenticatedClients = new \SplObjectStorage;
       	$this->hasAuthenticatedClients = false;
       	$this->hasUnauthenticatedClients = false;
-      	$this->authDelay = 2;
+      	$this->authDelay = 1;
 		$this->pluginVersion = $versionJson->version;
 		$this->appRequire = $versionJson->require;
       	$this->lastReadTimestamp = time();
@@ -69,6 +70,7 @@ class ConnectLogic implements MessageComponentInterface
 			
     	if ($this->hasAuthenticatedClients) {
 			$this->lookForNewConfig();
+			$this->sendActions();
       		$events = \event::changes($this->lastReadTimestamp);
 			$this->lastReadTimestamp = time();
       		$this->broadcastEvents($events);
@@ -200,9 +202,13 @@ class ConnectLogic implements MessageComponentInterface
 			}
 
 			$conn->apiKey = $objectMsg->apiKey;
+			$conn->sessionId = rand(0,1000);
 			$conn->configVersion = $config['payload']['configVersion'];
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
+			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
+			$eqLogic->setConfiguration('connected', 1);
+			$eqLogic->save();
 			\log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
 			$result = array(
 				'type' => 'WELCOME',
@@ -217,7 +223,7 @@ class ConnectLogic implements MessageComponentInterface
 					'scInfo' => \apiHelper::getScenarioData($config),
 					'objInfo' => \apiHelper::getObjectData($config)
 				)
-			);
+			);			
 			\log::add('JeedomConnect', 'info', "Send ".json_encode($result));
 			$conn->send(json_encode($result));
         }
@@ -343,6 +349,11 @@ class ConnectLogic implements MessageComponentInterface
     {
         // Remove client from lists
         \log::add('JeedomConnect', 'info', "Connection #{$conn->resourceId} ({$conn->apiKey}) has disconnected");
+		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
+		if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
+			$eqLogic->setConfiguration('connected', 0);
+			$eqLogic->save();
+		}		
         $this->unauthenticatedClients->detach($conn);
         $this->authenticatedClients->detach($conn);
         $this->setAuthenticatedClientsCount();
@@ -358,6 +369,11 @@ class ConnectLogic implements MessageComponentInterface
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
         \log::add('JeedomConnect', 'error', "An error has occurred: {$e->getMessage()}");
+		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
+		if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
+			$eqLogic->setConfiguration('connected', 0);
+			$eqLogic->save();
+		}
         $conn->close();
         // Remove client from lists
         $this->unauthenticatedClients->detach($conn);
@@ -382,6 +398,23 @@ class ConnectLogic implements MessageComponentInterface
 		}
 	}
 
+	private function sendActions() {
+		foreach ($this->authenticatedClients as $client) {
+			$actions = \JeedomConnectActions::getAllAction($client->apiKey);
+			//\log::add('JeedomConnect', 'debug', "get action  ".json_encode($actions));
+			if (count($actions) > 0) {
+				$result = array(
+					'type' => 'ACTIONS',
+					'payload' => $actions
+				);
+				\log::add('JeedomConnect', 'debug', "send action to #{$client->resourceId}  ".json_encode($result));
+				$client->send(json_encode($result));
+				\JeedomConnectActions::removeAllAction($client->apiKey);
+			}
+		}
+		
+	}
+
 	private function broadcastEvents($events) {
 		foreach ($this->authenticatedClients as $client) {
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
@@ -390,7 +423,7 @@ class ConnectLogic implements MessageComponentInterface
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
-					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
+					//\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
 					$client->send(json_encode($res));
 				}
 			}

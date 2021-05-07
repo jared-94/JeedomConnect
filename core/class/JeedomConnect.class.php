@@ -19,6 +19,7 @@
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
 
 class JeedomConnect extends eqLogic {
 
@@ -788,6 +789,18 @@ class JeedomConnect extends eqLogic {
 		}
 		$activityCmd->setName(__('Activité', __FILE__));
 		$activityCmd->save();
+
+		$goToPageCmd = $this->getCmd(null, 'goToPage');
+		if (!is_object($goToPageCmd)) {
+			$goToPageCmd = new JeedomConnectCmd();
+			$goToPageCmd->setLogicalId('goToPage');
+			$goToPageCmd->setEqLogic_id($this->getId());
+			$goToPageCmd->setType('action');
+			$goToPageCmd->setSubType('message');
+			$goToPageCmd->setIsVisible(1);
+		}
+		$goToPageCmd->setName(__('Ouvrir page', __FILE__));
+		$goToPageCmd->save();
 		
     }
 
@@ -1248,8 +1261,20 @@ class JeedomConnectCmd extends cmd {
 				}
 				$data['payload']['files'] = $files;
 
-      }
+      		}
 			$eqLogic->sendNotif($this->getLogicalId(), $data);
+		}
+		if ($this->getLogicalId() == 'goToPage') {
+			if (!isset($_options['title'])) {
+				return;
+			}
+			$payload = array(
+				'action' => 'goToPage',
+				'pageId' => $_options['title']
+			);
+			if ($eqLogic->getConfiguration('connected', 0) ==1) {
+				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			}			
 		}
 	}
 
