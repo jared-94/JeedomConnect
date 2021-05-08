@@ -32,19 +32,16 @@ class JeedomConnectActions extends config {
 		$result = array();
 		foreach( config::searchKey('action::', self::$_plugin_id )  as $action){
 			if ($action['value']['apiKey'] == $apiKey) {
-				array_push($result, $action['value']['payload']);
+				array_push($result, $action);
 			}			
 		}
 		return $result;
 	}
 
-	public static function removeAllAction($apiKey) {
+	public static function removeAllAction($actions) {
 		log::add(self::$_plugin_id, 'debug', 'removing actions' ) ;
-		foreach( config::searchKey('action::', self::$_plugin_id )  as $action){
-			$value = json_decode($action['value'], true);
-			if ($action['value']['apiKey'] == $apiKey) {
-				self::remove($action['key'], self::$_plugin_id);	
-			}
+		foreach( $actions  as $action){
+			self::remove($action['key'], self::$_plugin_id);
 		}
 	}
 

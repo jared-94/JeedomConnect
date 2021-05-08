@@ -85,11 +85,14 @@ while (true) {
 	if (count($actions) > 0) {
 		$result = array(
 			'type' => 'ACTIONS',
-			'payload' => $actions
+			'payload' => array()
 		);
+    foreach ($actions as $action) {
+      array_push($result['payload'], $action['value']['payload']);
+    }
 		log::add('JeedomConnect', 'debug', "send action to #{$id}  ".json_encode(array($result)));
 		sse(json_encode(array($result)));
-		JeedomConnectActions::removeAllAction($apiKey);
+		JeedomConnectActions::removeAllAction($actions);
     sleep(1);
 	}
 

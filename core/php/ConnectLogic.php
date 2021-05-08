@@ -350,10 +350,12 @@ class ConnectLogic implements MessageComponentInterface
         // Remove client from lists
         \log::add('JeedomConnect', 'info', "Connection #{$conn->resourceId} ({$conn->apiKey}) has disconnected");
 		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
-		if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
-			$eqLogic->setConfiguration('connected', 0);
-			$eqLogic->save();
-		}		
+		if (is_object($eqLogic)) {
+			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
+				$eqLogic->setConfiguration('connected', 0);
+				$eqLogic->save();
+			}
+		}				
         $this->unauthenticatedClients->detach($conn);
         $this->authenticatedClients->detach($conn);
         $this->setAuthenticatedClientsCount();
@@ -370,9 +372,11 @@ class ConnectLogic implements MessageComponentInterface
     {
         \log::add('JeedomConnect', 'error', "An error has occurred: {$e->getMessage()}");
 		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
-		if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
-			$eqLogic->setConfiguration('connected', 0);
-			$eqLogic->save();
+		if (is_object($eqLogic)) {
+			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
+				$eqLogic->setConfiguration('connected', 0);
+				$eqLogic->save();
+			}
 		}
         $conn->close();
         // Remove client from lists
@@ -405,11 +409,14 @@ class ConnectLogic implements MessageComponentInterface
 			if (count($actions) > 0) {
 				$result = array(
 					'type' => 'ACTIONS',
-					'payload' => $actions
+					'payload' => array()
 				);
+				foreach ($actions as $action) {
+					array_push($result['payload'], $action['value']['payload']);
+				}
 				\log::add('JeedomConnect', 'debug', "send action to #{$client->resourceId}  ".json_encode($result));
 				$client->send(json_encode($result));
-				\JeedomConnectActions::removeAllAction($client->apiKey);
+				\JeedomConnectActions::removeAllAction($actions);
 			}
 		}
 		
