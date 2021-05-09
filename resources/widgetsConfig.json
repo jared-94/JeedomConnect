@@ -3773,7 +3773,7 @@
 						"required": false,
 						"category": "cmd",
 						"type": "info",
-						"subtype": "other",
+						"subtype": "string",
 						"description": "Commande info contenant l'URL du flux"
 					},
 					{
