@@ -3762,6 +3762,21 @@
 						"description": "Information supplémentaire affichée sur le widget"
 					},
 					{
+						"id": "username",
+						"name": "Nom d'utilisateur",
+						"required": false,
+						"category": "string",
+						"description": "permet d'utiliser le tag #username# dans l'url de flux et snapshot"
+					},
+					{
+						"id": "password",
+						"name": "Mot de passe",
+						"required": false,
+						"category": "string",
+						"subtype": "password",
+						"description": "permet d'utiliser le tag #password# dans l'url de flux et snapshot"
+					},
+					{
 						"id": "streamUrl",
 						"name": "URL flux",
 						"required": false,
