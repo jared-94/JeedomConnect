@@ -1265,12 +1265,12 @@ class JeedomConnectCmd extends cmd {
 			$eqLogic->sendNotif($this->getLogicalId(), $data);
 		}
 		if ($this->getLogicalId() == 'goToPage') {
-			if (!isset($_options['title'])) {
+			if (!isset($_options['title']) && !isset($_options['message'])) {
 				return;
 			}
 			$payload = array(
 				'action' => 'goToPage',
-				'pageId' => $_options['title']
+				'pageId' => isset($_options['message']) ?  $_options['message'] : $_options['title']
 			);
 			if ($eqLogic->getConfiguration('connected', 0) ==1) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
