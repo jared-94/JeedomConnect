@@ -838,6 +838,18 @@ class JeedomConnect extends eqLogic {
 		$goToPageCmd->setName(__('Ouvrir page', __FILE__));
 		$goToPageCmd->save();
 		
+		$unlinkCmd = $this->getCmd(null, 'unlink');
+		if (!is_object($unlinkCmd)) {
+			$unlinkCmd = new JeedomConnectCmd();
+			$unlinkCmd->setLogicalId('unlink');
+			$unlinkCmd->setEqLogic_id($this->getId());
+			$unlinkCmd->setType('action');
+			$unlinkCmd->setSubType('other');
+			$unlinkCmd->setIsVisible(1);
+		}
+		$unlinkCmd->setName(__('Détacher', __FILE__));
+		$unlinkCmd->save();
+		
     }
 
     public function preRemove() {
@@ -1311,6 +1323,11 @@ class JeedomConnectCmd extends cmd {
 			if ($eqLogic->getConfiguration('connected', 0) ==1) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 			}			
+		}
+		if ($this->getLogicalId() == 'unlink') {
+			$eqLogic->setConfiguration('deviceId', '');
+			$eqLogic->setConfiguration('deviceName', '');
+			$eqLogic->save();
 		}
 	}
 
