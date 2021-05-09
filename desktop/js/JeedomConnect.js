@@ -41,6 +41,25 @@ function refreshWidgetDetails(){
 
 }
 
+$.post({
+  url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+  data: {
+    'action': 'getEquipments'
+  },
+  dataType: 'json',
+  success: function( data ) {
+    if (data.state != 'ok') {
+      $('#div_alert').showAlert({
+        message: data.result,
+        level: 'danger'
+      });
+    }
+    else{
+      allJCEquipments = data.result
+    }
+  }
+});
+
 
 $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '.widgetDisplayCard', function() {
 
@@ -207,7 +226,40 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
 
 });
 
-
+$('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function() {
+  var from = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
+  
+  allJCEquipmentsWithoutCurrent = allJCEquipments.filter(function( obj ) {
+    return obj.id !== from;
+  });
+  getSimpleModal({title: "Recopier vers quel(s) appareil(s)", fields:[{title : "Choix", type: "checkboxes",choices: allJCEquipmentsWithoutCurrent }] }, function(result) {
+    
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        'action': 'copyConfig',
+        'from': from ,
+        'to': result.checkboxes 
+      },
+      dataType: 'json',
+      success: function( data ) {
+        console.log("copyConfig ajax received : ", data) ;
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
+        }
+        else{
+          $('#div_alert').showAlert({
+            message: "C'est fait !",
+            level: 'success'
+          });
+        }
+      }
+    });
+  });
+});
 
 $("#import-btn").click(function() {
 	$("#import-input").click();
@@ -809,8 +861,10 @@ function refreshAddWidgets() {
      curOption += "</div></div></li>";
 
     } else if (option.category == "string") {
+
+      type = (option.subtype != undefined) ? option.subtype : 'text';
       curOption += `<div class='input-group'>
-        <div style="display:flex"><input style="width:340px;" id="${option.id}-input" value=''>`;
+        <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
           if (option.id == 'name') {
             curOption += `
               <div class="dropdown" id="name-select">

@@ -111,6 +111,42 @@ class JeedomConnect extends eqLogic {
 	}
 
 
+	public static function copyConfig($from, $to) {
+
+		$config_file_model = self::$_config_dir . $from . ".json";
+		if (! file_exists($config_file_model)){
+			log::add('JeedomConnect', 'warning', 'file ' . $config_file_model . ' does not exist' );
+			return null;
+		}
+		$configFile = file_get_contents($config_file_model);
+		
+		foreach ($to as $item) {
+
+			if ( $item != $from ) {
+			
+				$config_file_destination = self::$_config_dir . $item . ".json";
+				try {
+					log::add('JeedomConnect', 'debug', 'Copying config file from ' . $from . ' to ' . $item );
+					file_put_contents($config_file_destination, $configFile);
+
+					$eqLogic = eqLogic::byLogicalId($item, 'JeedomConnect');
+					if (! is_object($eqLogic) ) {
+						log::add('JeedomConnect', 'debug', 'no objct found');
+						continue;
+					}
+					$eqLogic->generateNewConfigVersion();
+				} catch (Exception $e) {
+					log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+				}
+			}
+			
+		}
+
+		return true;
+
+
+	}
+
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
 			mkdir(self::$_config_dir);
