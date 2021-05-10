@@ -835,8 +835,20 @@ class JeedomConnect extends eqLogic {
 			$goToPageCmd->setSubType('message');
 			$goToPageCmd->setIsVisible(1);
 		}
-		$goToPageCmd->setName(__('Ouvrir page', __FILE__));
+		$goToPageCmd->setName(__('Afficher page', __FILE__));
 		$goToPageCmd->save();
+
+		$launchAppCmd = $this->getCmd(null, 'launchApp');
+		if (!is_object($launchAppCmd)) {
+			$launchAppCmd = new JeedomConnectCmd();
+			$launchAppCmd->setLogicalId('launchApp');
+			$launchAppCmd->setEqLogic_id($this->getId());
+			$launchAppCmd->setType('action');
+			$launchAppCmd->setSubType('message');
+			$launchAppCmd->setIsVisible(1);
+		}
+		$launchAppCmd->setName(__('Lancer App', __FILE__));
+		$launchAppCmd->save();
 		
 		$unlinkCmd = $this->getCmd(null, 'unlink');
 		if (!is_object($unlinkCmd)) {
@@ -1332,6 +1344,21 @@ class JeedomConnectCmd extends cmd {
 			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 			}			
+		}
+		if ($this->getLogicalId() == 'launchApp') {
+			if (!isset($_options['title']) && !isset($_options['message'])) {
+				return;
+			}
+			$payload = array(
+				'action' => 'launchApp',
+				'packageName' => isset($_options['message']) ?  $_options['message'] : $_options['title']
+			);
+			if ($eqLogic->isConnected()) {
+				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			} 
+			//else {
+			//	$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+			//}			
 		}
 		if ($this->getLogicalId() == 'unlink') {
 			$eqLogic->setConfiguration('deviceId', '');
