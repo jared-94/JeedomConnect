@@ -20,6 +20,7 @@ header('Content-Type: application/json');
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
 
 $jsonData = file_get_contents("php://input");
 log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
@@ -144,6 +145,8 @@ switch ($method) {
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_EVENTS':
+    $eqLogic->setConfiguration('lastSeen', time());
+    $eqLogic->save();
     $config = $eqLogic->getGeneratedConfigFile();
     $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $params['configVersion']);
     if ($newConfig != false) {
@@ -151,6 +154,21 @@ switch ($method) {
       $jsonrpc->makeSuccess(array($newConfig));
       return;
     }
+
+    $actions = JeedomConnectActions::getAllAction($apiKey);
+	  if (count($actions) > 0) {
+		  $result = array(
+			  'type' => 'ACTIONS',
+			  'payload' => array()
+		  );
+      foreach ($actions as $action) {
+        array_push($result['payload'], $action['value']['payload']);
+      }
+		  log::add('JeedomConnect', 'debug', "send action ".json_encode(array($result)));		  
+		  JeedomConnectActions::removeAllAction($actions);
+      $jsonrpc->makeSuccess(array($result));
+      return;
+	  }
     $events = event::changes($params['lastReadTimestamp']);
     $data = apiHelper::getEvents($events, $config);
     $jsonrpc->makeSuccess($data);

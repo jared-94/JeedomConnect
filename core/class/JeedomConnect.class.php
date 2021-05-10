@@ -1274,6 +1274,15 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+	public function isConnected() {
+		$url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
+		if ( $this->getConfiguration('useWs', 0) == 0 && (strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false ) {
+			return time() - $this->getConfiguration('lastSeen', 0) < 3;
+		} else {
+			return $this->getConfiguration('connected', 0) == 1;
+		}
+	}
+
 }
 
 
@@ -1320,7 +1329,7 @@ class JeedomConnectCmd extends cmd {
 				'action' => 'goToPage',
 				'pageId' => isset($_options['message']) ?  $_options['message'] : $_options['title']
 			);
-			if ($eqLogic->getConfiguration('connected', 0) ==1) {
+			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 			}			
 		}
