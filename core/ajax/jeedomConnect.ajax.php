@@ -303,19 +303,19 @@ try {
 			
 
 			//**************  EQUIPEMENT INCLUSION **********************/
-			$nb = 0;
-			$names = '';
-			$label = ' labelObjectHuman';
-			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-				$isIncluded = $eqLogic->isWidgetIncluded($widget['id']);
+			// $nb = 0;
+			// $names = '';
+			// $label = ' labelObjectHuman';
+			// foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			// 	$isIncluded = $eqLogic->isWidgetIncluded($widget['id']);
 
-				if ( $isIncluded ){
-				$nb ++;
-				$names .= ($names == '') ? $eqLogic->getName() : ', ' . $eqLogic->getName();
-				$label = ' label-success';
-				}        
-			}
-			$html .= '<td style="width:60px;" class=""><span class="label '.$label.' nbEquipIncluded" data-title="'.$names.'" title="'.$names.'">' . $nb . '</span></td>';      
+			// 	if ( $isIncluded ){
+			// 	$nb ++;
+			// 	$names .= ($names == '') ? $eqLogic->getName() : ', ' . $eqLogic->getName();
+			// 	$label = ' label-success';
+			// 	}        
+			// }
+			// $html .= '<td style="width:60px;" class=""><span class="label '.$label.' nbEquipIncluded" data-title="'.$names.'" title="'.$names.'">' . $nb . '</span></td>';      
 
 			//************************************/
 
@@ -485,6 +485,28 @@ try {
 
 	}
 
+	if (init('action') == 'getEquipments') {
+		
+		$result = array();
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$id = $eqLogic->getConfiguration('apiKey') ;
+			$name = $eqLogic->getName() ;
+			array_push($result, array('id' => $id, 'name' => $name ) );
+		}
+		ajax::success( $result );
+	
+	}
+
+	if (init('action') == 'copyConfig') {
+		$from = init('from');
+		$toArray = init('to');
+
+		$copy = JeedomConnect::copyConfig($from, $toArray);
+
+		ajax::success( $copy );
+
+	}
+
 	if (init('action') == 'saveConfig') {
     	$config = init('config');
 		$apiKey = init('apiKey');
@@ -502,88 +524,88 @@ try {
 
 			ajax::success();
 		}
-  }
-
-  if (init('action') == 'getConfig') {
-    $apiKey = init('apiKey');
-    $eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-	$allConfig = (init('all') !== null) && init('all') ;
-	$saveGenerated = (init('all') !== null) && init('all') ;
-    if (!is_object($eqLogic)) {
-		ajax::error('Erreur - no equipment found');
 	}
-	else {
-		//$eqLogic->updateConfig();
-		$configJson = $eqLogic->getConfig($allConfig, $saveGenerated);
-		ajax::success($configJson);
-	}
-  }
 
-  if (init('action') == 'getNotifs') {
+	if (init('action') == 'getConfig') {
 		$apiKey = init('apiKey');
-
 		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		$allConfig = (init('all') !== null) && init('all') ;
+		$saveGenerated = (init('all') !== null) && init('all') ;
 		if (!is_object($eqLogic)) {
-			ajax::error('Erreur');
-		} else {
-			$notifs = $eqLogic->getNotifs();
-			ajax::success($notifs);
+			ajax::error('Erreur - no equipment found');
 		}
-  }
-
-  if (init('action') == 'saveNotifs') {
-    $config = init('config');
-		$apiKey = init('apiKey');
-
-		$configJson = json_decode($config, true);
-		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-		if (!is_object($eqLogic) or $configJson == null) {
-			ajax::error('Erreur');
-		} else {
-			$eqLogic->saveNotifs($configJson);
-			ajax::success();
+		else {
+			//$eqLogic->updateConfig();
+			$configJson = $eqLogic->getConfig($allConfig, $saveGenerated);
+			ajax::success($configJson);
 		}
-  }
-
-  if (init('action') == 'uploadImg') {
-    $filename = $_FILES['file']['name'];
-		$destination = __DIR__ . '/../../data/img/user_files/';
-		if (!is_dir($destination)) {
-			mkdir($destination);
-		}
-		$location = $destination.$filename;
-
-		if (move_uploaded_file($_FILES['file']['tmp_name'],$location)){
-			ajax::success();
-		} else {
-			ajax:error();
-		}
-  }
-
-	if (init('action') == 'removeDevice') {
-		$id = init('id');
-		$eqLogic = \eqLogic::byId($id);
-		$eqLogic->removeDevice();
-		ajax::success();
 	}
 
-  if (init('action') == 'getCmd') {
-    $cmd = cmd::byId(init('id'));
-    if (!is_object($cmd)) {
-				throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+	if (init('action') == 'getNotifs') {
+			$apiKey = init('apiKey');
+
+			$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				ajax::error('Erreur');
+			} else {
+				$notifs = $eqLogic->getNotifs();
+				ajax::success($notifs);
+			}
+	}
+
+	if (init('action') == 'saveNotifs') {
+		$config = init('config');
+			$apiKey = init('apiKey');
+
+			$configJson = json_decode($config, true);
+			$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic) or $configJson == null) {
+				ajax::error('Erreur');
+			} else {
+				$eqLogic->saveNotifs($configJson);
+				ajax::success();
+			}
+	}
+
+	if (init('action') == 'uploadImg') {
+		$filename = $_FILES['file']['name'];
+			$destination = __DIR__ . '/../../data/img/user_files/';
+			if (!is_dir($destination)) {
+				mkdir($destination);
+			}
+			$location = $destination.$filename;
+
+			if (move_uploaded_file($_FILES['file']['tmp_name'],$location)){
+				ajax::success();
+			} else {
+				ajax:error();
+			}
+	}
+
+		if (init('action') == 'removeDevice') {
+			$id = init('id');
+			$eqLogic = \eqLogic::byId($id);
+			$eqLogic->removeDevice();
+			ajax::success();
 		}
-    ajax::success(array(
-      'id' => init('id'),
-      'type' => $cmd->getType(),
-      'subType' => $cmd->getSubType(),
-      'humanName' => $cmd->getHumanName(),
-      'minValue' => $cmd->getConfiguration('minValue'),
-      'maxValue' => $cmd->getConfiguration('maxValue'),
-      'unit' => $cmd->getUnite(),
-      'value' => $cmd->getValue(),
-      'icon' => $cmd->getDisplay('icon')
-    ));
-  }
+
+	if (init('action') == 'getCmd') {
+		$cmd = cmd::byId(init('id'));
+		if (!is_object($cmd)) {
+					throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+			}
+		ajax::success(array(
+		'id' => init('id'),
+		'type' => $cmd->getType(),
+		'subType' => $cmd->getSubType(),
+		'humanName' => $cmd->getHumanName(),
+		'minValue' => $cmd->getConfiguration('minValue'),
+		'maxValue' => $cmd->getConfiguration('maxValue'),
+		'unit' => $cmd->getUnite(),
+		'value' => $cmd->getValue(),
+		'icon' => $cmd->getDisplay('icon')
+		));
+	}
 
 	if (init('action') == 'getImgList') {
     $internalImgPath = __DIR__ . '/../../data/img/';
@@ -609,7 +631,7 @@ try {
 			$eqLogic->generateQRCode();
 			ajax::success();
 		}
-  }
+  	}
 
    throw new \Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
 } catch (\Exception $e) {

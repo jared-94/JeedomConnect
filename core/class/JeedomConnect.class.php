@@ -19,6 +19,7 @@
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
 
 class JeedomConnect extends eqLogic {
 
@@ -109,6 +110,42 @@ class JeedomConnect extends eqLogic {
 		JeedomConnectWidget::exportWidgetConf();
 	}
 
+
+	public static function copyConfig($from, $to) {
+
+		$config_file_model = self::$_config_dir . $from . ".json";
+		if (! file_exists($config_file_model)){
+			log::add('JeedomConnect', 'warning', 'file ' . $config_file_model . ' does not exist' );
+			return null;
+		}
+		$configFile = file_get_contents($config_file_model);
+		
+		foreach ($to as $item) {
+
+			if ( $item != $from ) {
+			
+				$config_file_destination = self::$_config_dir . $item . ".json";
+				try {
+					log::add('JeedomConnect', 'debug', 'Copying config file from ' . $from . ' to ' . $item );
+					file_put_contents($config_file_destination, $configFile);
+
+					$eqLogic = eqLogic::byLogicalId($item, 'JeedomConnect');
+					if (! is_object($eqLogic) ) {
+						log::add('JeedomConnect', 'debug', 'no objct found');
+						continue;
+					}
+					$eqLogic->generateNewConfigVersion();
+				} catch (Exception $e) {
+					log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+				}
+			}
+			
+		}
+
+		return true;
+
+
+	}
 
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
@@ -788,6 +825,42 @@ class JeedomConnect extends eqLogic {
 		}
 		$activityCmd->setName(__('Activité', __FILE__));
 		$activityCmd->save();
+
+		$goToPageCmd = $this->getCmd(null, 'goToPage');
+		if (!is_object($goToPageCmd)) {
+			$goToPageCmd = new JeedomConnectCmd();
+			$goToPageCmd->setLogicalId('goToPage');
+			$goToPageCmd->setEqLogic_id($this->getId());
+			$goToPageCmd->setType('action');
+			$goToPageCmd->setSubType('message');
+			$goToPageCmd->setIsVisible(1);
+		}
+		$goToPageCmd->setName(__('Afficher page', __FILE__));
+		$goToPageCmd->save();
+
+		$launchAppCmd = $this->getCmd(null, 'launchApp');
+		if (!is_object($launchAppCmd)) {
+			$launchAppCmd = new JeedomConnectCmd();
+			$launchAppCmd->setLogicalId('launchApp');
+			$launchAppCmd->setEqLogic_id($this->getId());
+			$launchAppCmd->setType('action');
+			$launchAppCmd->setSubType('message');
+			$launchAppCmd->setIsVisible(1);
+		}
+		$launchAppCmd->setName(__('Lancer App', __FILE__));
+		$launchAppCmd->save();
+		
+		$unlinkCmd = $this->getCmd(null, 'unlink');
+		if (!is_object($unlinkCmd)) {
+			$unlinkCmd = new JeedomConnectCmd();
+			$unlinkCmd->setLogicalId('unlink');
+			$unlinkCmd->setEqLogic_id($this->getId());
+			$unlinkCmd->setType('action');
+			$unlinkCmd->setSubType('other');
+			$unlinkCmd->setIsVisible(1);
+		}
+		$unlinkCmd->setName(__('Détacher', __FILE__));
+		$unlinkCmd->save();
 		
     }
 
@@ -1213,6 +1286,15 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+	public function isConnected() {
+		$url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
+		if ( $this->getConfiguration('useWs', 0) == 0 && (strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false ) {
+			return time() - $this->getConfiguration('lastSeen', 0) < 3;
+		} else {
+			return $this->getConfiguration('connected', 0) == 1;
+		}
+	}
+
 }
 
 
@@ -1248,8 +1330,40 @@ class JeedomConnectCmd extends cmd {
 				}
 				$data['payload']['files'] = $files;
 
-      }
+      		}
 			$eqLogic->sendNotif($this->getLogicalId(), $data);
+		}
+		if ($this->getLogicalId() == 'goToPage') {
+			if (!isset($_options['title']) && !isset($_options['message'])) {
+				return;
+			}
+			$payload = array(
+				'action' => 'goToPage',
+				'pageId' => isset($_options['message']) ?  $_options['message'] : $_options['title']
+			);
+			if ($eqLogic->isConnected()) {
+				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			}			
+		}
+		if ($this->getLogicalId() == 'launchApp') {
+			if (!isset($_options['title']) && !isset($_options['message'])) {
+				return;
+			}
+			$payload = array(
+				'action' => 'launchApp',
+				'packageName' => isset($_options['message']) ?  $_options['message'] : $_options['title']
+			);
+			if ($eqLogic->isConnected()) {
+				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			} 
+			//else {
+			//	$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+			//}			
+		}
+		if ($this->getLogicalId() == 'unlink') {
+			$eqLogic->setConfiguration('deviceId', '');
+			$eqLogic->setConfiguration('deviceName', '');
+			$eqLogic->save();
 		}
 	}
 

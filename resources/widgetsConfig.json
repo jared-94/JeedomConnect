@@ -3768,12 +3768,27 @@
 						"category": "string"
 					},
 					{
+						"id": "username",
+						"name": "Nom d'utilisateur",
+						"required": false,
+						"category": "string",
+						"description": "permet d'utiliser le tag #username# dans l'url de flux et snapshot"
+					},
+					{
+						"id": "password",
+						"name": "Mot de passe",
+						"required": false,
+						"category": "string",
+						"subtype": "password",
+						"description": "permet d'utiliser le tag #password# dans l'url de flux et snapshot"
+					},
+					{
 						"id": "streamUrlInfo",
 						"name": "Commande URL flux",
 						"required": false,
 						"category": "cmd",
 						"type": "info",
-						"subtype": "other",
+						"subtype": "string",
 						"description": "Commande info contenant l'URL du flux"
 					},
 					{
@@ -3927,6 +3942,82 @@
 							{
 								"id":"hideSubTitle",
 								"text": "sous-titre"
+							},
+							{
+								"id":"hideIcon",
+								"text": "image"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "appLauncher",
+				"name": "Lanceur d'application",
+				"img": "droid.png",
+				"description": "Permet de lancer une application.<br/> !! Uniquement compatible Android !!",
+				"variables": [
+					{ "name": "room", "descr": "Pièce" }
+				],
+				"options": [
+					{
+						"id": "name",
+						"name": "Nom",
+						"required": true,
+						"category": "string"
+					},
+					{
+						"id": "subtitle",
+						"name": "Sous-titre",
+						"required": false,
+						"category": "stringList",
+						"choices": [],
+						"description": "Information supplémentaire affichée sur le widget"
+					},
+					{
+						"id": "packageName",
+						"name": "Nom du package",
+						"required": true,
+						"category": "string",
+						"description": "Nom du package Android de l'application. Vous pouvez utiliser l'application Package Name Viewer 2.0 pour l'obtenir"
+					},
+					{
+						"id": "image",
+						"name": "Image",
+						"required": false,
+						"category": "img"
+					},
+					{
+						"id":  "statusImages",
+						"name": "Images sous conditions",
+						"required": false,
+						"category": "ifImgs"
+					},
+					{
+						"id": "display",
+						"name": "Affichage forcé",
+						"required": false,
+						"category": "stringList",
+						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+						"description": "Affichage forcé du widget"
+					},
+					{
+						"id": "hideItem",
+						"name": "Eléments à masquer",
+						"category": "choicesList",
+						"description": "En mode vignette, les éléments cochés sont masqués",
+						"choices":[
+							{
+								"id":"hideTitle",
+								"text": "nom"
+							},
+							{
+								"id":"hideSubTitle",
+								"text": "sous-titre"
+							},
+							{
+								"id":"hideStatus",
+								"text": "statut"
 							},
 							{
 								"id":"hideIcon",

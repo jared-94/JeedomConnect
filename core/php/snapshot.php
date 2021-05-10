@@ -34,14 +34,33 @@ $camWidgetId = init('id');
 $widget = JeedomConnectWidget::getConfiguration($camWidgetId, 'widgetJC');
 $conf = json_decode($widget, true );
 $snapUrl = $conf['snapshotUrl'];
+$username = $conf['username'] ?? null;
+$pwd = $conf['password'] ?? null;
 
 if (!is_string($snapUrl)) {
   log::add('JeedomConnect', 'debug', "Can't find snapshot url");
   throw new Exception(__("Can't find snapshot url", __FILE__), -32699);
 }
 
-function getData($url) {
-  $ch = curl_init();
+function getData($url, $username, $pwd ) {
+  	$ch = curl_init();
+	
+	$replaceArr = array(
+		'#username#' => urlencode($username ),
+		'#password#' => urlencode($pwd),
+	);
+
+	$url = str_replace(array_keys($replaceArr), $replaceArr, $url);
+
+	if( ! is_null($username) && ! is_null($pwd) ) {
+		$userPwd = $username . ':' . $pwd ;
+		curl_setopt($ch, CURLOPT_USERPWD, $userPwd);
+		$headers = array(
+		'Content-Type:application/json',
+		'Authorization: Basic ' . base64_encode($userPwd),
+		);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	}
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
@@ -57,7 +76,7 @@ function getData($url) {
 }
 
 
-$data = getData($snapUrl);
+$data = getData($snapUrl, $username, $pwd );
 
 if (!function_exists('imagecreatefromstring')) {
 	echo $data;

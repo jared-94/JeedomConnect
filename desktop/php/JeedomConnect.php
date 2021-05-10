@@ -315,6 +315,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 										<input type="file" accept=".json" id="import-input" style="display:none;" >
 										<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
 										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
+										<a class="btn btn-default" id="copy-btn"><i class="fas fa-copy"></i> {{Copier vers}}</a>
 										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Partagez votre configuration sur un autre équipement"></i>
 									</span>
 
@@ -430,6 +431,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');?>
+<?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect');?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js');?>

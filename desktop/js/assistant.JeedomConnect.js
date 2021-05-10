@@ -244,6 +244,12 @@ function getSimpleModal(_options, _callback) {
 					if (_options.fields.find(i => i.type == "enable")) {
 						result.enable = $("#mod-enable-input").is(':checked');
 					}
+					if (_options.fields.find(i => i.type == "checkboxes")) {
+						checkedVals = $('.checkboxesSelection:checkbox:checked').map(function() {
+							return this.value;
+						}).get();
+						result.checkboxes = checkedVals ;
+					}
 					if (_options.fields.find(i => i.type == "name")) {
 						if ($("#mod-name-input").val() == '') {
 							throw 'Le nom est obligatoire';
@@ -383,4 +389,3 @@ function isIcon(icon) {
 	}
 	return false;
 }
-
