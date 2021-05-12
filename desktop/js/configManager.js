@@ -141,6 +141,7 @@ function refreshWidgetsContent() {
 	$.each( rootElmts, function( key, value ) {
 		var val = allWidgetsDetail.find(w => w.id == value.id) ;
 		if (val  !=undefined && val.type !== undefined) { //it is a widget
+			$( "#selWidgetDetail option[data-widget-id=" +val.id +"]" ).attr('data-exist', true);
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
 			items.push( `<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
@@ -170,6 +171,7 @@ function refreshWidgetsContent() {
 			$.each(curWidgets, function (key, wid) {
 				var w = allWidgetsDetail.find(x => x.id == wid.id) ;
 				if ( w != undefined){
+					$( "#selWidgetDetail option[data-widget-id=" +w.id +"]" ).attr('data-exist', true);
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
 					items.push( `<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
 					<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
@@ -1294,6 +1296,7 @@ function selectWidgetModal() {
 		return;
 	}
 
+	$("#selWidgetDetail option:selected").attr('data-exist', true);
 	result = {};
   	var parentId = $("#widgetsParents-select option:selected").attr('value');
   	var rootElmts = getRootObjects(parentId);
@@ -1308,6 +1311,7 @@ function selectWidgetModal() {
 	configData.payload.widgets.push(result);
 	incrementIdCounter();
 	refreshWidgetsContent();
+	hideWidgetSelect();
 }
 
 function duplicateWidget(widgetId) {

@@ -14,7 +14,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 $widgetArray= JeedomConnectWidget::getWidgets();
 
 $jcFilter = $_GET['jcFilter'] ?? '';
-$orderBy = $_GET['jcOrderBy'] ?? 'object';
+$orderBy = $_GET['jcOrderBy'] ?? config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
 $widgetSearch = $_GET['jcSearch'] ?? '';
 
 switch ($orderBy) {
@@ -67,7 +67,8 @@ foreach ($widgetArray as $widget) {
 }
 
 
-$optionsOrderBy = $_GET['jcOrderBy'] ?? '';
+// $optionsOrderBy = $_GET['jcOrderBy'] ?? '';
+$optionsOrderBy = '';
 $orderByArray = array (
 		"object" => "Pièce",
 		"name" => "Nom",
