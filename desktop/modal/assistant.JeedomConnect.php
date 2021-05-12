@@ -268,7 +268,7 @@ foreach ($summaryConfig as $index => $summary) {
               <label class="col-sm-5 control-label" >{{Type de Widget}}</label>
               <div class="col-sm-7">
                 <select id="selWidgetType" class="form-control">
-                  <option value="none">{{Aucun}}</option>
+                  <option value="all">{{Tous}}</option>
                   <?php
                   foreach ($widgetTypeAvail as $key => $value) {
                     echo '<option value="'.$key.'">'.$widgetTypeAvail[$key].'</option>' ;

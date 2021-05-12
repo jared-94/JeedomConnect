@@ -343,7 +343,7 @@ function hideWidgetSelect(){
 	
 	// hide 'type widget'
 	var typeSelected = $('#selWidgetType option:selected').val() ;
-	if (typeSelected != 'none'){
+	if (typeSelected != 'all'){
 		$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
 	}
 
