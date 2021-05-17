@@ -378,6 +378,7 @@ foreach ($summaryConfig as $index => $summary) {
               <li>3 : Page Notifications</li>
               <li>4 : Page scénarios</li>
               <li>5 : Page Préférences</li>
+              <li>6 : Page Applications</li>
             </ul>
             </li>
           <li><b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces</li>
