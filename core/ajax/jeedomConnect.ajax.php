@@ -303,19 +303,19 @@ try {
 			
 
 			//**************  EQUIPEMENT INCLUSION **********************/
-			// $nb = 0;
-			// $names = '';
-			// $label = ' labelObjectHuman';
-			// foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-			// 	$isIncluded = $eqLogic->isWidgetIncluded($widget['id']);
+			$nb = 0;
+			$names = '';
+			$label = ' labelObjectHuman';
+			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$isIncluded = $eqLogic->isWidgetIncluded($widget['id']);
 
-			// 	if ( $isIncluded ){
-			// 	$nb ++;
-			// 	$names .= ($names == '') ? $eqLogic->getName() : ', ' . $eqLogic->getName();
-			// 	$label = ' label-success';
-			// 	}        
-			// }
-			// $html .= '<td style="width:60px;" class=""><span class="label '.$label.' nbEquipIncluded" data-title="'.$names.'" title="'.$names.'">' . $nb . '</span></td>';      
+				if ( $isIncluded ){
+				$nb ++;
+				$names .= ($names == '') ? $eqLogic->getName() : ', ' . $eqLogic->getName();
+				$label = ' label-success';
+				}        
+			}
+			$html .= '<td style="width:60px;" class=""><span class="label '.$label.' nbEquipIncluded" data-title="'.$names.'" title="'.$names.'">' . $nb . '</span></td>';      
 
 			//************************************/
 
