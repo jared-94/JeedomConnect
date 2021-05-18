@@ -43,7 +43,25 @@ foreach ($widgetsConfigFile['widgets'] as $widget ) {
 //  prepare list of Widget Already Created
 $widgetAvailOptions = '';
 $widgetTypeAvail = [];
+$widgetRoomAvail = [];
 $widgetArray= JeedomConnectWidget::getWidgets();
+
+$orderBy = config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
+switch ($orderBy) {
+	case 'name':
+		$widgetName = array_column($widgetArray, 'name');
+		array_multisort($widgetName, SORT_ASC, $widgetArray);
+		break;
+
+	case 'type':
+		$widgetType = array_column($widgetArray, 'type');
+		$widgetName = array_column($widgetArray, 'name');
+		array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+		break;
+
+	default:
+		break;
+}
 
 $listWidget = '';
 foreach ($widgetArray as $widget) {
@@ -56,10 +74,14 @@ foreach ($widgetArray as $widget) {
 	$id = $widget['id'];
 
   $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ;
-	$widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'">' . $widgetName . $widgetRoom . ' ['.$id.']</option>' ;
+  
+  $widgetRoomAvail[$widget['roomName']] = $widget['roomName'] ;
+	
+  $widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'" data-room-name="'.$widget['roomName'].'">' . $widgetName . $widgetRoom . ' ['.$id.']</option>' ;
 
 }
 asort($widgetTypeAvail);
+asort($widgetRoomAvail);
 
 
 $summaryConfig = config::byKey('object:summary');
@@ -229,10 +251,24 @@ foreach ($summaryConfig as $index => $summary) {
             </div>
 
             <div class="form-group">
+              <label class="col-sm-5 control-label" >{{Pièce}}</label>
+              <div class="col-sm-7">
+                <select id="selWidgetRoom" class="form-control">
+                  <option value="all">{{Toutes}}</option>
+                  <?php
+                  foreach ($widgetRoomAvail as $key => $value) {
+                    echo '<option value="'.$key.'">'.$widgetRoomAvail[$key].'</option>' ;
+                  }
+                  ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
               <label class="col-sm-5 control-label" >{{Type de Widget}}</label>
               <div class="col-sm-7">
                 <select id="selWidgetType" class="form-control">
-                  <option value="">{{Aucun}}</option>
+                  <option value="all">{{Tous}}</option>
                   <?php
                   foreach ($widgetTypeAvail as $key => $value) {
                     echo '<option value="'.$key.'">'.$widgetTypeAvail[$key].'</option>' ;
@@ -252,6 +288,13 @@ foreach ($summaryConfig as $index => $summary) {
                   echo $widgetAvailOptions ;
                   ?>
                 </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-5 control-label" ></label>
+              <div class="col-sm-7">
+                <input class="form-control" type="checkbox" id="hideExist"> {{Masquer les éléments déjà présents}}
               </div>
             </div>
 
@@ -335,6 +378,7 @@ foreach ($summaryConfig as $index => $summary) {
               <li>3 : Page Notifications</li>
               <li>4 : Page scénarios</li>
               <li>5 : Page Préférences</li>
+              <li>6 : Page Applications</li>
             </ul>
             </li>
           <li><b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces</li>

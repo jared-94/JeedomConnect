@@ -143,6 +143,7 @@ $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function()
   $('#widgetSummaryModal').dialog({title: "{{Synthèse globale des widgets}}", 
         autoOpen: false,
         modal: true,
+        closeText: '',
         width: 0.9*$(window).width(),
         height: 0.8*$(window).height(),
         closeOnEscape: false,

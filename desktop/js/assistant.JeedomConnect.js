@@ -325,14 +325,41 @@ function getSimpleModal(_options, _callback) {
 };
 
 
-$('#selWidgetType').on('change', function() {
-	$( '#selWidgetDetail option' ).show();
-	//console.log("filter on type >>" + this.value);
-	var typeSelected = this.value ;
+$('#hideExist').on('change', function() {
+	
+	hideWidgetSelect();
+})
 
-	$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
-
+$('#selWidgetRoom').on('change', function() {
+	hideWidgetSelect();
 });
+
+$('#selWidgetType').on('change', function() {
+	hideWidgetSelect();
+});
+
+function hideWidgetSelect(){
+	$( '#selWidgetDetail option' ).show();
+	
+	// hide 'type widget'
+	var typeSelected = $('#selWidgetType option:selected').val() ;
+	if (typeSelected != 'all'){
+		$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
+	}
+
+
+	var roomSelected = $('#selWidgetRoom option:selected').val() ;
+	if (roomSelected != 'all'){
+		$( '#selWidgetDetail option' ).not( "[data-room-name=" + roomSelected + "]" ).hide();
+	}
+
+	if( $('#hideExist').is(":checked") ) {
+		//hide exist
+		$( '#selWidgetDetail option[data-exist=true]' ).hide();
+	}
+	
+	$("#selWidgetDetail").val($("#selWidgetDetail option:first").val());
+}
 
 
 

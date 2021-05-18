@@ -37,6 +37,19 @@ $pluginVersion = JeedomConnect::getPluginInfo();
 $apkLink = $pluginVersion['enrollment'] ;
 $beta = $pluginVersion['typeVersion'] == 'beta' ;
 
+$orderBy = config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
+$orderByArray = array (
+  "object" => "Pièce",
+  "name" => "Nom",
+  "type" => "Type"
+);
+
+$optionsOrderBy = '';
+foreach ($orderByArray as $key => $value) {
+$selected = ($key ==  $orderBy) ? 'selected' : '';
+$optionsOrderBy .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+}
+
 ?>
 <form class="form-horizontal jeedomConnect">
   
@@ -105,7 +118,7 @@ $beta = $pluginVersion['typeVersion'] == 'beta' ;
 
       <br/>
       <!-- CUSTOM ZONE -->
-      <div class="alert alert-warning" style="text-align:center;">
+      <div class="alert alert-success" style="text-align:center;">
           {{Personnalisation}}
 			</div>
       
@@ -120,6 +133,23 @@ $beta = $pluginVersion['typeVersion'] == 'beta' ;
 					         placeholder="<?=config::byKey('userImgPath', 'JeedomConnect');?>" />
         </div>
       </div>
+
+      <div class="form-group">
+        <label class="col-lg-6 control-label">{{Trie des widgets par défaut}}
+          <sup>
+              <i class="fas fa-question-circle floatright" title="Trie sur la page principale du plugin et dans l'assistant de configuration"></i>
+          </sup>
+        </label>
+        <div class="col-lg-3">
+          <select class="configKey form-control" data-l1key="jcOrderByDefault" >
+            <?php
+              echo $optionsOrderBy;
+            ?>
+          </select>
+        </div>
+      </div>
+
+      
 
 
       <br/>

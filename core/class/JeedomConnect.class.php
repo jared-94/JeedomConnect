@@ -1334,24 +1334,24 @@ class JeedomConnectCmd extends cmd {
 			$eqLogic->sendNotif($this->getLogicalId(), $data);
 		}
 		if ($this->getLogicalId() == 'goToPage') {
-			if (!isset($_options['title']) && !isset($_options['message'])) {
+			if (!empty($_options['title']) && !empty($_options['message'])) {
 				return;
 			}
 			$payload = array(
 				'action' => 'goToPage',
-				'pageId' => isset($_options['message']) ?  $_options['message'] : $_options['title']
+				'pageId' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
 			);
 			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 			}			
 		}
 		if ($this->getLogicalId() == 'launchApp') {
-			if (!isset($_options['title']) && !isset($_options['message'])) {
+			if (!empty($_options['title']) && !empty($_options['message'])) {
 				return;
 			}
 			$payload = array(
 				'action' => 'launchApp',
-				'packageName' => isset($_options['message']) ?  $_options['message'] : $_options['title']
+				'packageName' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
 			);
 			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
