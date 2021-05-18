@@ -344,13 +344,13 @@ function hideWidgetSelect(){
 	// hide 'type widget'
 	var typeSelected = $('#selWidgetType option:selected').val() ;
 	if (typeSelected != 'all'){
-		$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
+		$( '#selWidgetDetail option' ).not( "[data-type='" + typeSelected + "']" ).hide();
 	}
 
 
 	var roomSelected = $('#selWidgetRoom option:selected').val() ;
 	if (roomSelected != 'all'){
-		$( '#selWidgetDetail option' ).not( "[data-room-name=" + roomSelected + "]" ).hide();
+		$( '#selWidgetDetail option' ).not( "[data-room-name='" + roomSelected + "']" ).hide();
 	}
 
 	if( $('#hideExist').is(":checked") ) {
