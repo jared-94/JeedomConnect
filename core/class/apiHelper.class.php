@@ -107,12 +107,12 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getScenarioData($config) {
+  public static function getScenarioData($config, $all=false) {
     $scIds = self::getScenarioList($config);
     $result = array();
 
     foreach (scenario::all() as $sc) {
-      if (in_array($sc->getId(), $scIds)) {
+      if (in_array($sc->getId(), $scIds) || $all) {
         $state = $sc->getCache(array('state', 'lastLaunch'));
         $sc_info = array(
           'id' => $sc->getId(),
@@ -249,7 +249,7 @@ class apiHelper {
  // Config Watcher
  public static function lookForNewConfig($eqLogic, $prevConfig) {
    $configVersion = $eqLogic->getConfiguration('configVersion');
-   //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
+   //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
    if ($configVersion != $prevConfig) {
       log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
       return $eqLogic->getGeneratedConfigFile();
@@ -258,7 +258,7 @@ class apiHelper {
  }
 
  // EVENTS FUNCTION
- public static function getEvents($events, $config) {
+ public static function getEvents($events, $config, $scAll=false) {
    $result_cmd = array(
      'type' => 'CMD_INFO',
      'payload' => array()
@@ -280,7 +280,7 @@ class apiHelper {
        array_push($result_obj['payload'], $event['option']);
      }
      if ($event['name'] == 'scenario::update') {
-       if (in_array($event['option']['scenario_id'], $scIds)) {
+       if (in_array($event['option']['scenario_id'], $scIds) || $scAll) {
          $sc_info = array(
            'id' => $event['option']['scenario_id'],
            'status' => $event['option']['state'],

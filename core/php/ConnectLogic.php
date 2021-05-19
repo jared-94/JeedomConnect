@@ -208,6 +208,7 @@ class ConnectLogic implements MessageComponentInterface
 			$this->hasAuthenticatedClients = true;
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
 			$eqLogic->setConfiguration('connected', 1);
+			$eqLogic->setConfiguration('scAll', 0);
 			$eqLogic->save();
 			\log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
 			$result = array(
@@ -316,7 +317,9 @@ class ConnectLogic implements MessageComponentInterface
 				$this->sendScenarioInfo($from, true);
 				break;
 			case 'UNSUBSCRIBE_SC':
-				$from->sendAllSc = false;
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				$eqLogic->setConfiguration('scAll', 0);
+				$eqLogic->save();
 				break;
 			case 'GET_HISTORY':
 				$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
@@ -426,7 +429,7 @@ class ConnectLogic implements MessageComponentInterface
 		foreach ($this->authenticatedClients as $client) {
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 			$config = $eqLogic->getGeneratedConfigFile();
-			$eventsRes = \apiHelper::getEvents($events, $config);
+			$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
@@ -469,32 +472,17 @@ class ConnectLogic implements MessageComponentInterface
 		$client->send(json_encode($result));
 	}
 
-	public function sendScenarioInfo($client, $all=false) {
+	public function sendScenarioInfo($client, $scAll=false) {
 		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 		$config = $eqLogic->getGeneratedConfigFile();
-		$client->sendAllSc = $all;
-		$scIds = \apiHelper::getScenarioList($config);
-		$result = array(
-			'type' => $all ? 'SET_ALL_SC' : 'SET_SC_INFO',
-			'payload' => array()
-		);
-
-		foreach (\scenario::all() as $sc) {
-			if (in_array($sc->getId(), $scIds) || $all) {
-				$state = $sc->getCache(array('state', 'lastLaunch'));
-				$sc_info = array(
-					'id' => $sc->getId(),
-					'name' => $sc->getName(),
-					'object' => $sc->getObject() == null ? 'Aucun' : $sc->getObject()->getName(),
-					'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
-					'status' => $state['state'],
-					'lastLaunch' => strtotime($state['lastLaunch']),
-					'active' => $sc->getIsActive() ? 1 : 0
-				);
-				array_push($result['payload'], $sc_info);
-			}
+		if ($scAll) {
+			$eqLogic->setConfiguration('scAll', 1);
+			$eqLogic->save();
 		}
-
+		$result = array(
+			'type' => $scAll ? 'SET_ALL_SC' : 'SET_SC_INFO',
+			'payload' => \apiHelper::getScenarioData($config, true)
+		);
 		\log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$client->send(json_encode($result));
 	}

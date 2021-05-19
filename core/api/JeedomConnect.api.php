@@ -170,7 +170,7 @@ switch ($method) {
       return;
 	  }
     $events = event::changes($params['lastReadTimestamp']);
-    $data = apiHelper::getEvents($events, $config);
+    $data = apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     $jsonrpc->makeSuccess($data);
     break;
 	case 'REGISTER_DEVICE':
@@ -208,6 +208,20 @@ switch ($method) {
 	  );
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_ALL_SC':
+    $result = array(
+	    'type' => 'SET_ALL_SC',
+	    'payload' => apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), true)
+	  );
+    $eqLogic->setConfiguration('scAll', 1);
+    $eqLogic->save();
+    log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
+    $jsonrpc->makeSuccess($result);
+    break;
+  case 'UNSUBSCRIBE_SC':
+    $eqLogic->setConfiguration('scAll', 0);
+    $eqLogic->save();
     break;
 	case 'GET_OBJ_INFO':
     $result = array(
