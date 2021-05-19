@@ -3762,12 +3762,6 @@
 						"description": "Information supplémentaire affichée sur le widget"
 					},
 					{
-						"id": "streamUrl",
-						"name": "URL flux",
-						"required": false,
-						"category": "string"
-					},
-					{
 						"id": "username",
 						"name": "Nom d'utilisateur",
 						"required": false,
@@ -3781,6 +3775,12 @@
 						"category": "string",
 						"subtype": "password",
 						"description": "permet d'utiliser le tag #password# dans l'url de flux et snapshot"
+					},
+					{
+						"id": "streamUrl",
+						"name": "URL flux",
+						"required": false,
+						"category": "string"
 					},
 					{
 						"id": "streamUrlInfo",
@@ -3802,6 +3802,15 @@
 						"name": "URL SnapShot",
 						"required": false,
 						"category": "string"
+					},
+					{
+						"id": "snapshotUrlInfo",
+						"name": "Commande Url Snapshot",
+						"required": false,
+						"category": "cmd",
+						"type": "info",
+						"subtype": "string",
+						"description": "Commande info contenant l'URL du snapshot"
 					},
 					{
 						"id": "refreshInterval",

@@ -48,7 +48,7 @@ $id = rand(0,1000);
 log::add('JeedomConnect', 'debug', "eventServer init client #".$id);
 
 
-$config = $eqLogic->getGeneratedConfigFile();
+$config = $eqLogic->getConfig(true);
 $lastReadTimestamp = time();
 $step = 0;
 
@@ -61,6 +61,7 @@ sse( json_encode(array('infos' => array(
 
 $eqLogic->setConfiguration('sessionId', $id);
 $eqLogic->setConfiguration('connected', 1);
+$eqLogic->setConfiguration('scAll', 0);
 $eqLogic->save();
 
 while (true) {
@@ -74,9 +75,9 @@ while (true) {
   }
 
   $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
-  if ($newConfig != false) {
-    $config = $newConfig;
-    log::add('JeedomConnect', 'debug', "eventServer send new config : " . json_encode($newConfig));
+  if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
+    log::add('JeedomConnect', 'debug', "eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
+    $config = $newConfig;    
     sse(json_encode(array($newConfig)));
     sleep(1);
   }
@@ -98,7 +99,7 @@ while (true) {
 
   $events = event::changes($lastReadTimestamp);
   $lastReadTimestamp = time();
-  $data = apiHelper::getEvents($events, $config);
+  $data = apiHelper::getEvents($events, $config, eqLogic::byLogicalId($apiKey, 'JeedomConnect')->getConfiguration('scAll', 0) == 1);
 
   $sendInfo = false;
   foreach ($data as $res) {

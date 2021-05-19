@@ -170,7 +170,7 @@ switch ($method) {
       return;
 	  }
     $events = event::changes($params['lastReadTimestamp']);
-    $data = apiHelper::getEvents($events, $config);
+    $data = apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     $jsonrpc->makeSuccess($data);
     break;
 	case 'REGISTER_DEVICE':
@@ -208,6 +208,20 @@ switch ($method) {
 	  );
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_ALL_SC':
+    $result = array(
+	    'type' => 'SET_ALL_SC',
+	    'payload' => apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), true)
+	  );
+    $eqLogic->setConfiguration('scAll', 1);
+    $eqLogic->save();
+    log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
+    $jsonrpc->makeSuccess($result);
+    break;
+  case 'UNSUBSCRIBE_SC':
+    $eqLogic->setConfiguration('scAll', 0);
+    $eqLogic->save();
     break;
 	case 'GET_OBJ_INFO':
     $result = array(
@@ -261,6 +275,13 @@ switch ($method) {
 		apiHelper::setActiveSc($params['id'], $params['active']);
 		$jsonrpc->makeSuccess();
 		break;
+  case 'SET_BATTERY':
+    $batteryCmd = $eqLogic->getCmd(null, 'battery');
+    if (is_object($batteryCmd)){
+      $batteryCmd->event($params['level'], date('Y-m-d H:i:s', strtotime($params['timestamp'])));
+    } 
+    $jsonrpc->makeSuccess();
+    break;
 	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
@@ -276,6 +297,15 @@ switch ($method) {
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
       $activityCmd->event($params['activity']['type']);
+    }
+
+    if (array_key_exists('battery', $params)) {
+      if ($params['battery']['level'] > -1) {
+        $batteryCmd = $eqLogic->getCmd(null, 'battery');
+        if (is_object($batteryCmd)){
+          $batteryCmd->event($params['battery']['level'] * 100, date('Y-m-d H:i:s', strtotime($ts)));
+        } 
+      }
     }
 		
 
