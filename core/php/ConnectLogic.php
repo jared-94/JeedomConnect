@@ -330,6 +330,14 @@ class ConnectLogic implements MessageComponentInterface
 			case 'REMOVE_FILE':
 				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));
 				break;
+			case 'SET_BATTERY':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				$batteryCmd = $eqLogic->getCmd(null, 'battery');
+				if (is_object($batteryCmd)){
+				  $batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
+				} 
+				$jsonrpc->makeSuccess();
+				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
 				break;

@@ -275,6 +275,13 @@ switch ($method) {
 		apiHelper::setActiveSc($params['id'], $params['active']);
 		$jsonrpc->makeSuccess();
 		break;
+  case 'SET_BATTERY':
+    $batteryCmd = $eqLogic->getCmd(null, 'battery');
+    if (is_object($batteryCmd)){
+      $batteryCmd->event($params['level'], date('Y-m-d H:i:s', strtotime($params['timestamp'])));
+    } 
+    $jsonrpc->makeSuccess();
+    break;
 	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
@@ -290,6 +297,15 @@ switch ($method) {
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
       $activityCmd->event($params['activity']['type']);
+    }
+
+    if (array_key_exists('battery', $params)) {
+      if ($params['battery']['level'] > -1) {
+        $batteryCmd = $eqLogic->getCmd(null, 'battery');
+        if (is_object($batteryCmd)){
+          $batteryCmd->event($params['battery']['level'] * 100, date('Y-m-d H:i:s', strtotime($ts)));
+        } 
+      }
     }
 		
 

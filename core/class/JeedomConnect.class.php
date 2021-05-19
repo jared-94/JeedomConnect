@@ -826,6 +826,18 @@ class JeedomConnect extends eqLogic {
 		$activityCmd->setName(__('Activité', __FILE__));
 		$activityCmd->save();
 
+		$batteryCmd = $this->getCmd(null, 'battery');
+		if (!is_object($batteryCmd)) {
+			$batteryCmd = new JeedomConnectCmd();
+			$batteryCmd->setLogicalId('battery');
+			$batteryCmd->setEqLogic_id($this->getId());
+			$batteryCmd->setType('info');
+			$batteryCmd->setSubType('numeric');
+			$batteryCmd->setIsVisible(1);
+		}
+		$batteryCmd->setName(__('Batterie', __FILE__));
+		$batteryCmd->save();
+
 		$goToPageCmd = $this->getCmd(null, 'goToPage');
 		if (!is_object($goToPageCmd)) {
 			$goToPageCmd = new JeedomConnectCmd();
