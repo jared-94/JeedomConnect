@@ -33,13 +33,31 @@ header('Content-Type: image/jpeg');
 $camWidgetId = init('id');
 $widget = JeedomConnectWidget::getConfiguration($camWidgetId, 'widgetJC');
 $conf = json_decode($widget, true );
-$snapUrl = $conf['snapshotUrl'];
-$username = $conf['username'] ?? null;
-$pwd = $conf['password'] ?? null;
+$snapUrl = getUrl($conf); 
+$username = $conf['username'] ?? null ?: null;
+$pwd = $conf['password'] ?? null ?: null;
 
 if (!is_string($snapUrl)) {
   log::add('JeedomConnect', 'debug', "Can't find snapshot url");
   throw new Exception(__("Can't find snapshot url", __FILE__), -32699);
+}
+
+
+function getUrl($conf){
+	
+	$url = $conf['snapshotUrl'] ?? ''; 
+
+	if( isset($conf['snapshotUrlInfo']) ) {
+		$cmdId = $conf['snapshotUrlInfo']['id'] ;
+		
+		$cmd = cmd::byId($cmdId) ;
+		if ( is_object($cmd) ){
+			$url = $cmd->execCmd();
+			// log::add('JeedomConnect','debug', 'Snapshot will use url comming from cmd info ['.$cmdId.'] => ' . $url);
+		}
+	}
+	// log::add('JeedomConnect','debug', 'url used :' . $url);
+	return $url;
 }
 
 function getData($url, $username, $pwd ) {
