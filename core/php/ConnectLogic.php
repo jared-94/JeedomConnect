@@ -336,7 +336,6 @@ class ConnectLogic implements MessageComponentInterface
 				if (is_object($batteryCmd)){
 				  $batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
 				} 
-				$jsonrpc->makeSuccess();
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
