@@ -114,7 +114,7 @@ class JeedomConnectWidget extends config {
 
 	}
 
-	public static function updateConfig($widgetId, $key, $value){
+	public static function updateConfig($widgetId, $key, $value, $reload = true){
 
 		$widgetSettings 			= self::getConfiguration($widgetId) ;
 		$widgetJC 					= json_decode($widgetSettings['widgetJC'], true) ;
@@ -124,6 +124,7 @@ class JeedomConnectWidget extends config {
 			
 			log::add(self::$_plugin_id, 'debug', 'updateConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value );
 			self::saveConfig($widgetSettings, $widgetId) ;
+			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 			return; 
 		}
 		log::add(self::$_plugin_id, 'debug', 'updateConfig - key ' . $key . ' NOT found');

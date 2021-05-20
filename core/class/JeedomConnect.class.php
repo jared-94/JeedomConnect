@@ -886,6 +886,12 @@ class JeedomConnect extends eqLogic {
     {
     }
 
+	public static function checkAllEquimentsAndUpdateConfig($widgetId){
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$eqLogic->checkEqAndUpdateConfig($widgetId) ;
+		}
+	}
+
 	public function checkEqAndUpdateConfig($widgetId){
 
 		log::add('JeedomConnect', 'debug', 'Checking if widget '.$widgetId.' exist on equipment "' . $this->getName() . '" ['.$this->getConfiguration('apiKey').']' );
