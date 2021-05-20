@@ -278,7 +278,7 @@ switch ($method) {
   case 'SET_BATTERY':
     $batteryCmd = $eqLogic->getCmd(null, 'battery');
     if (is_object($batteryCmd)){
-      $batteryCmd->event($params['level'], date('Y-m-d H:i:s', strtotime($params['timestamp'])));
+      $batteryCmd->event($params['level']);
     } 
     $jsonrpc->makeSuccess();
     break;
