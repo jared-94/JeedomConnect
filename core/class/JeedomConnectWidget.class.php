@@ -114,9 +114,29 @@ class JeedomConnectWidget extends config {
 
 	}
 
+	public static function updateImgPath($widgetId, $newPath, $reload = true){
+		$widgetSettings 			= self::getConfiguration($widgetId) ;
+		if ( empty($widgetSettings) ){
+			log::add(self::$_plugin_id, 'debug', 'updateImgPath - widgetId ' . $widgetId . ' NOT found');
+			return;
+		}
+		
+		$widgetSettings['imgPath'] 		= $newPath ;
+		self::saveConfig($widgetSettings, $widgetId) ;
+		log::add(self::$_plugin_id, 'debug', 'updateImgPath - img path updated to "' . $newPath .'" for widget id [' . $widgetId . ']' );
+		if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
+		return; 
+		
+	}
+
 	public static function updateConfig($widgetId, $key, $value, $reload = true){
 
 		$widgetSettings 			= self::getConfiguration($widgetId) ;
+		if ( empty($widgetSettings) ){
+			log::add(self::$_plugin_id, 'debug', 'updateConfig - widgetId ' . $widgetId . ' NOT found');
+			return;
+		}
+		
 		$widgetJC 					= json_decode($widgetSettings['widgetJC'], true) ;
 		if ( isset($widgetJC[$key]) ){
 			$widgetJC[$key] 		= $value ;
