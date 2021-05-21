@@ -115,13 +115,13 @@ class JeedomConnectWidget extends config {
 	}
 
 	public static function updateImgPath($widgetId, $newPath, $reload = true){
-		$widgetSettings 			= self::getConfiguration($widgetId) ;
+		$widgetSettings = self::getConfiguration($widgetId) ;
 		if ( empty($widgetSettings) ){
 			log::add(self::$_plugin_id, 'debug', 'updateImgPath - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 		
-		$widgetSettings['imgPath'] 		= $newPath ;
+		$widgetSettings['imgPath'] = $newPath ;
 		self::saveConfig($widgetSettings, $widgetId) ;
 		log::add(self::$_plugin_id, 'debug', 'updateImgPath - img path updated to "' . $newPath .'" for widget id [' . $widgetId . ']' );
 		if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
@@ -131,15 +131,15 @@ class JeedomConnectWidget extends config {
 
 	public static function updateConfig($widgetId, $key, $value, $reload = true){
 
-		$widgetSettings 			= self::getConfiguration($widgetId) ;
+		$widgetSettings = self::getConfiguration($widgetId) ;
 		if ( empty($widgetSettings) ){
 			log::add(self::$_plugin_id, 'debug', 'updateConfig - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 		
-		$widgetJC 					= json_decode($widgetSettings['widgetJC'], true) ;
+		$widgetJC = json_decode($widgetSettings['widgetJC'], true) ;
 		if ( isset($widgetJC[$key]) ){
-			$widgetJC[$key] 		= $value ;
+			$widgetJC[$key] = $value ;
 			$widgetSettings['widgetJC'] = json_encode( $widgetJC );
 			
 			log::add(self::$_plugin_id, 'debug', 'updateConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value );
@@ -357,5 +357,59 @@ class JeedomConnectWidget extends config {
 			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
 		}
 	}
+
+
+	//***************  EXPERIMENTAL ZONE  =) ****************************/
+
+	public static function replaceTextConfig($widgetId, $searchAndReplace, $reload = true){
+		//$searchAndReplace = array("icon_user.png" => "icon_userSSS.png", "pas_content.png" => "hyper_content.png");
+
+		$widgetSettings = self::getConfiguration($widgetId) ;
+		if ( empty($widgetSettings) ){
+			log::add(self::$_plugin_id, 'debug', 'replaceTextConfig - widgetId ' . $widgetId . ' NOT found');
+			return;
+		}
+		
+		$widgetJC = json_decode($widgetSettings['widgetJC'], true) ;
+		try{
+			self::replaceJC($widgetJC, $searchAndReplace);
+
+			$widgetSettings['widgetJC'] = json_encode( $widgetJC );
+			log::add(self::$_plugin_id, 'debug', 'replaceTextConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value );
+			self::saveConfig($widgetSettings, $widgetId) ;
+			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
+			return; 
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'replaceTextConfig - ' . $e->getMessage());
+		}
+		
+	}
+
+
+	public static function replaceJC(&$array, $replaces) {
+		foreach ($array as $k => $v) {
+			$new_k = self::replaceJC_word($k, $replaces);
+			if (is_array($v)) {
+				self::replaceJC($v, $replaces);
+			}
+			else {
+				$v = self::replaceJC_word($v, $replaces);
+			}
+			$array[$new_k] = $v;
+			if ($new_k != $k) {
+				unset($array[$k]);
+			}
+		}
+	}
+	
+	function replaceJC_word($word, $replaces) {
+		if (array_key_exists($word, $replaces)) {
+			$word = str_replace($word, $replaces[$word], $word);
+		}
+		return $word;
+	}
+	
+
 
 }
