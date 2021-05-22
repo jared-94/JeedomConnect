@@ -25,6 +25,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
 ?>
 
 <div id="alert_JcWidgetSummary"></div>
+<a class="btn btn-info btn-sm pull-right" id="bt_exportJcWidgetSummary" title="Exporter l'ensemble des widgets au format csv"><i class="fas fa-check-circle"></i> {{Exporter}}</a>
 <a class="btn btn-success btn-sm pull-right" id="bt_saveJcWidgetSummary"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
 <a class="btn btn-default btn-sm pull-right" id="bt_updateWidgetSummary" style="display:none;"><i class="fas fa-sync-alt"></i> {{Rafraichir}}</a>
 <a class="btn btn-danger btn-sm pull-right" id="bt_removeJcWidgetSummary" style="display:none;"><i class="fas fa-trash-alt"></i> {{Supprimer}}</a>
