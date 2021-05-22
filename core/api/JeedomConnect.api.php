@@ -127,6 +127,9 @@ switch ($method) {
       return;
 		}
 
+    $eqLogic->setConfiguration('platformOs', $params['platformOs']);
+    $eqLogic->save();
+
     $result = array(
       'type' => 'WELCOME',
       'payload' => array(

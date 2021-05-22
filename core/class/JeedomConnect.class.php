@@ -627,9 +627,17 @@ class JeedomConnect extends eqLogic {
 			return;
 		}
 		$postData = array(
-			'to' => $this->getConfiguration('token'),
-			'priority' => 'high'
+			'to' => $this->getConfiguration('token')
 		);
+		if ($this->getConfiguration('platformOs') == 'android') {
+			$postData['priority'] = 'high';
+		} else {
+			$postData['notification'] =  array(
+				'title' => 'titre',
+				'body' => 'message'
+			);
+		}
+
 		$data["payload"]["time"] = time();
 		$postData["data"] = $data;
 		foreach ($this->getNotifs()['notifs'] as $notif) {
