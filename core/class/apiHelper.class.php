@@ -336,6 +336,16 @@ class apiHelper {
    return $result;
  }
 
+  // BATTERIES
+  public static function getBatteries(){
+    $result = array(
+      'type' => 'SET_BATTERIES',
+      'payload' => JeedomConnect::getBatteryAllEquipements()
+    );
+    log::add('JeedomConnect', 'debug', 'Send batteries =>' . json_encode($result) );
+    return $result;
+  }
+
  //EXEC ACTIONS
  public static function execCmd($id, $options = null) {
    $cmd = cmd::byId($id);

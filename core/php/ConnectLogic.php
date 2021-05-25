@@ -308,6 +308,10 @@ class ConnectLogic implements MessageComponentInterface
 				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($config));
 				$from->send(json_encode($config));
 				break;
+			case 'GET_BATTERIES':
+				$config = \apiHelper::getBatteries();
+				$from->send(json_encode($config));
+				break;
 			case 'GET_CMD_INFO':
 				$this->sendCmdInfo($from);
 				break;

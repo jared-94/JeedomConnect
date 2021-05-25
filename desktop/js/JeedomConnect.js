@@ -2612,13 +2612,16 @@ function setCondValue(elm, confArr) {
   if ( confArr == 'bg' )	{
     conf = configData.payload.background.condImages
   }
+  else if ( confArr == 'batteries' )	{
+    conf = configData.payload.batteries.condImages
+  }
   else{
     conf = imgCat
   }
 
 	var curCond = conf.find(c => c.index == $(elm).attr('index'));
 	let res = $(elm).val()
-	const match = res.match(/#.*?#/g);
+  const match = res.match(/#.*?#/g);
 	if (match) {
 		match.forEach(item => {
 			$.post({
@@ -2638,13 +2641,17 @@ function setCondValue(elm, confArr) {
 			  });
 		});			
 	}
-	curCond.condition = res;
+  curCond.condition = res;
 }
 
 function setCondToHuman(confArr) {
   if ( confArr == 'bg' )	{
     conf = configData.payload.background.condImages;
     idName = 'bg-cond-input-';
+  }
+  else if ( confArr == 'batteries' )	{
+    conf = configData.payload.batteries.condImages;
+    idName = 'batteries-cond-input-';
   }
   else{
     conf = imgCat;
@@ -2654,7 +2661,7 @@ function setCondToHuman(confArr) {
 	conf.forEach(cond => {
 		let input = $("#"+ idName + cond.index);
 		let value = cond.condition ? cond.condition.slice() : '';
-		const match = value.match(/#.*?#/g);
+    const match = value.match(/#.*?#/g);
 		if (match) {
 			match.forEach(item => {
 				$.post({
@@ -2668,7 +2675,7 @@ function setCondToHuman(confArr) {
 					async: false,
 					success: function( data ) {
 					  if (data.state == 'ok') {
-						value = value.replace(item, data.result);
+						  value = value.replace(item, data.result);
 					  }
 					}
 				  });

@@ -250,6 +250,9 @@ switch ($method) {
 	case 'GET_HISTORY':
 			$jsonrpc->makeSuccess(apiHelper::getHistory($params['id'], $params['options']));
 			break;
+  case 'GET_BATTERIES':
+    $jsonrpc->makeSuccess(apiHelper::getBatteries());
+    break;
   case 'GET_GEOFENCES':
     $result = apiHelper::getGeofencesData($eqLogic);
     log::add('JeedomConnect', 'info', 'GEOFENCES '.json_encode($result));

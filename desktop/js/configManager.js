@@ -37,6 +37,7 @@ function initData() {
 	refreshWidgetData();
 	refreshBackgroundData();
 	refreshWeatherData();
+	refreshBatteriesData('batteries');
 }
 
 function refreshBottomTabData() {
@@ -1458,6 +1459,95 @@ function getWeatherEq() {
 			}
 		}});
 	  })
+}
+
+
+// BATTERIES FUNCTIONS	
+function getDataPayload(pageType){
+
+	if (pageType == 'batteries'){
+		configData.payload.batteries = configData.payload.batteries || {};
+		return {payload : configData.payload.batteries, type: 'battery'}
+	}
+
+
+}
+
+function refreshBatteriesData(pageType) {
+	var type = getDataPayload(pageType);
+	var myData = type.payload;
+	
+	if (myData.condImages == undefined) {
+		myData.condImages = [];
+	}
+	myData.condImages.sort(function(s,t) {
+		return s.index - t.index;
+	});
+	//console.log(myData.condImages)
+	var condHtml = '';
+	(myData.condImages || []).forEach(cond => {
+		condHtml += `
+		<div data-id="${cond.index}" class='input-group condImgItem'>
+			Si
+			<input style="width:385px;height:31px;" class=' roundedLeft' index="${cond.index}" id="batteries-cond-input-${cond.index}"
+			 onchange="setCondValue(this, 'batteries')" />
+		`;
+
+		condHtml += `
+        <div class="dropdown" id="batterieslist-cond-select" style="display:inline !important;">
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        <i class="fas fa-plus-square"></i> </a>
+        <ul class="dropdown-menu infos-select" input="batteries-cond-input-${cond.index}">
+		<li info="plugin" onclick="infoSelected('#plugin#', this)"><a href="#">#plugin#</a></li>
+		<li info="level" onclick="infoSelected('#level#', this)"><a href="#">#level#</a></li>
+		<li info="battery" onclick="infoSelected('#battery#', this)"><a href="#">#battery#</a></li>
+		</ul></div>` ;
+
+		condHtml += `
+			<a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:5px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#batteries-cond-input-${cond.index}', 'batteries');">
+            <i class='fas fa-list-alt'></i></a>
+			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBatteriesCondImg(this)"><i class="fas fa-plus-square">
+			</i> Image </a>
+			<a data-id="icon-div">${iconToHtml(cond.image)}</a>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeBatteryCondImg('${cond.index}');"></i>
+  		</div>
+		`;
+	});
+	$("#batteryImgList").html(condHtml);
+	setCondToHuman('batteries');
+}	
+
+function addBatteryCondImg() {
+	if (configData.payload.batteries.condImages == undefined) {
+		configData.payload.batteries.condImages = [];
+	}
+	configData.payload.batteries.condImages.push({
+		index: getMaxIndex(configData.payload.batteries.condImages) +1
+	});
+	refreshBatteriesData('batteries');
+}
+
+
+function getBatteriesCondImg(elm) {
+	var curCond = configData.payload.batteries.condImages.find(c => c.index == $(elm).attr('index'));
+	var newElt = $(elm).nextAll("a[data-id^='icon-']:first") ;
+	
+	getIconModal({ title: "Choisir une icone", withIcon: "1", withImg: "1", icon: htmlToIcon(newElt.children().first()) , elt:newElt}, (result, _params) => {
+	  curCond.image = result;
+	  $(_params.elt).html(iconToHtml(result));
+	});
+}
+
+function removeBatteryCondImg(index) {	
+	configData.payload.batteries.condImages = configData.payload.batteries.condImages.filter(c => c.index != index);
+
+	configData.payload.batteries.condImages.forEach(item => {
+		if (item.index > index) {
+			item.index = item.index - 1;
+		}
+	});
+	refreshBatteriesData('batteries');
 }
   
   
