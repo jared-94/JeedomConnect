@@ -206,6 +206,7 @@ class ConnectLogic implements MessageComponentInterface
 			$conn->configVersion = $config['payload']['configVersion'];
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
+			$eqLogic->setConfiguration('platformOs', $objectMsg->platformOs);
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
 			$eqLogic->setConfiguration('connected', 1);
 			$eqLogic->setConfiguration('scAll', 0);
@@ -332,10 +333,12 @@ class ConnectLogic implements MessageComponentInterface
 				break;
 			case 'SET_BATTERY':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-				$batteryCmd = $eqLogic->getCmd(null, 'battery');
-				if (is_object($batteryCmd)){
-				  $batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
-				} 
+				if (is_object($eqLogic)) {					
+					$batteryCmd = $eqLogic->getCmd(null, 'battery');
+					if (is_object($batteryCmd)){
+				  		$batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
+					}
+				}				 
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);

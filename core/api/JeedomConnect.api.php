@@ -127,6 +127,9 @@ switch ($method) {
       return;
 		}
 
+    $eqLogic->setConfiguration('platformOs', $params['platformOs']);
+    $eqLogic->save();
+
     $result = array(
       'type' => 'WELCOME',
       'payload' => array(
@@ -303,7 +306,7 @@ switch ($method) {
       if ($params['battery']['level'] > -1) {
         $batteryCmd = $eqLogic->getCmd(null, 'battery');
         if (is_object($batteryCmd)){
-          $batteryCmd->event($params['battery']['level'] * 100, date('Y-m-d H:i:s', strtotime($ts)));
+          $batteryCmd->event($params['battery']['level'] * 100, date('Y-m-d H:i:s', $ts));
         } 
       }
     }

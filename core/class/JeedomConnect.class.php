@@ -627,9 +627,25 @@ class JeedomConnect extends eqLogic {
 			return;
 		}
 		$postData = array(
-			'to' => $this->getConfiguration('token'),
-			'priority' => 'high'
+			'to' => $this->getConfiguration('token')
 		);
+		if ($this->getConfiguration('platformOs') == 'android') {
+			$postData['priority'] = 'high';
+		} else {
+			$postData = array_merge($postData, array(
+				"mutable_content"=>true,
+				"content_available"=>true,
+				"collapse_key"=>"type_a",
+				"apns"=>array(
+					"payload"=>array(
+						"aps"=>array(
+							"contentAvailable"=>true,
+						)
+					)
+				)
+			));
+		}
+
 		$data["payload"]["time"] = time();
 		$postData["data"] = $data;
 		foreach ($this->getNotifs()['notifs'] as $notif) {
@@ -885,6 +901,12 @@ class JeedomConnect extends eqLogic {
     public function postRemove()
     {
     }
+
+	public static function checkAllEquimentsAndUpdateConfig($widgetId){
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$eqLogic->checkEqAndUpdateConfig($widgetId) ;
+		}
+	}
 
 	public function checkEqAndUpdateConfig($widgetId){
 
