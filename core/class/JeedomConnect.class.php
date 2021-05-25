@@ -632,10 +632,18 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('platformOs') == 'android') {
 			$postData['priority'] = 'high';
 		} else {
-			$postData['notification'] =  array(
-				'title' => 'titre',
-				'body' => 'message'
-			);
+			$postData = array_merge($postData, array(
+				"mutable_content"=>true,
+				"content_available"=>true,
+				"collapse_key"=>"type_a",
+				"apns"=>array(
+					"payload"=>array(
+						"aps"=>array(
+							"contentAvailable"=>true,
+						)
+					)
+				)
+			));
 		}
 
 		$data["payload"]["time"] = time();
