@@ -192,6 +192,7 @@ try {
 			
 
 			// **********   SUBTITLE    ****************
+			/*
 			$hasSubTitle = false;
 			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
 			{
@@ -199,7 +200,9 @@ try {
 				$hasSubTitle = true;
 				break;
 			}
-			if ( $hasSubTitle ){
+			*/
+			if (  isset($widgetJC['subtitle']) ){
+			// if ( $hasSubTitle && isset($widgetJC['subtitle']) ){
 				$html .= '<td style="width:40px;"><input type="text" class="objectAttr"  data-l1key="subtitle" value="' . cmd::cmdToHumanReadable( $widgetJC['subtitle'] ) .'" /></td>';
 			}
 			else{
@@ -227,7 +230,7 @@ try {
 			$html .='<option value="none">Aucun</option>';
 			
 			foreach ($dataDisplayMode as $display) {
-				$select = ( $widgetJC['display'] == $display['id']) ? 'selected' : '';
+				$select = ( isset($widgetJC['display']) && $widgetJC['display'] == $display['id']) ? 'selected' : '';
 				$html .=' <option value="' .$display['id'] . '" ' . $select . '>' . $display['name'] . '</option>';
 			}
 			
@@ -249,7 +252,7 @@ try {
 			}
 
 			if ( in_array('hideTitle', $hideOptions) ) {
-				if ($widgetJC['hideTitle']) {
+				if ( isset($widgetJC['hideTitle']) && $widgetJC['hideTitle']) {
 					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideTitle" /></td>';
 				} else {
 					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" /></td>';
@@ -260,7 +263,7 @@ try {
 			}
 
 			if ( in_array('hideSubTitle', $hideOptions) ) {
-				if ($widgetJC['hideSubTitle']) {
+				if ( isset($widgetJC['hideSubTitle']) && $widgetJC['hideSubTitle']) {
 					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideSubTitle"  /></td>';
 				} else {
 					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" /></td>';
@@ -271,7 +274,7 @@ try {
 			}
 			
 			if ( in_array('hideStatus', $hideOptions) ) {
-				if ($widgetJC['hideStatus']) {
+				if ( isset($widgetJC['hideStatus']) && $widgetJC['hideStatus']) {
 					$html .= '<td align="center" style="max-width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideStatus" /></td>';
 				} else {
 					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" /></td>';
@@ -282,7 +285,7 @@ try {
 			}
 
 			if ( in_array('hideIcon', $hideOptions) ) {
-				if ($widgetJC['hideIcon']) {
+				if ( isset($widgetJC['hideIcon']) && $widgetJC['hideIcon']) {
 					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideIcon" /></td>';
 				} else {
 					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" /></td>';
@@ -295,7 +298,7 @@ try {
 
 
 
-			if ($widgetJC['blockDetail']) {
+			if (isset($widgetJC['blockDetail']) && $widgetJC['blockDetail']) {
 				$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="blockDetail" /></td>';
 			} else {
 				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="blockDetail" /></td>';
