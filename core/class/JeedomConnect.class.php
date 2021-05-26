@@ -1363,8 +1363,10 @@ class JeedomConnect extends eqLogic {
 		$plugin = ucfirst($eqLogic->getEqType_name());
 		
 		$object_name = 'Aucun';
+		$object_id = null;
 		if (is_object($eqLogic->getObject())) {
 			$object_name = $eqLogic->getObject()->getName();
+			$object_id = $eqLogic->getObject()->getId();
 		}
 		
 		if ($eqLogic->getStatus('battery') <= $eqLogic->getConfiguration('battery_danger_threshold', config::byKey('battery::danger'))) {
@@ -1375,6 +1377,7 @@ class JeedomConnect extends eqLogic {
 		
 		$result['eqName'] = $eqLogic->getName();
 		$result['roomName'] = $object_name;
+		$result['roomId'] = $object_id;
 		$result['plugin'] = $plugin ;
 
 		$result['level'] = $level ;
