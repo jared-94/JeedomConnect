@@ -137,7 +137,7 @@ foreach ($summaryConfig as $index => $summary) {
       <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
       <button class="tablinks" onclick="openTab(event, 'backgroundTab')">Fond d'écran</button>
       <button class="tablinks" onclick="openTab(event, 'weatherTab')">Météo</button>
-      <button class="tablinks" onclick="openTab(event, 'batteryTab')">Batterie</button>
+      <button class="tablinks" onclick="openTab(event, 'batteryTab')">Batteries</button>
     </div>
   </div>
 
