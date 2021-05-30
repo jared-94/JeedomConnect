@@ -818,9 +818,10 @@ function refreshAddWidgets() {
     <div class="description">${description}</div>`;
 
     if (option.category == "cmd") {
+      isDisabled = isJcExpert ? '' : 'disabled';
       curOption += `<table><tr class="cmd">
             <td>
-              <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' disabled>
+              <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled}>
               <td>
                  <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}', '${option.value}');">
                     <i class='fas fa-list-alt'></i></a>
@@ -1164,6 +1165,7 @@ function refreshCmdListOption(optionsJson) {
     return s.index - t.index;
   });
   cmdCat.forEach(item => {
+    isDisabled = isJcExpert ? '' : 'disabled';
     //open the div
     curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;" data-id="${item.id}" data-index="${item.index}">`;
 
@@ -1172,7 +1174,7 @@ function refreshCmdListOption(optionsJson) {
       
             curOption +=`<div class="input-group input-group-sm" style="width: 100%">
                             <span class="input-group-addon roundedLeft" style="width: 100px">Commande</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' disabled>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' ${isDisabled}>
                         </div>`;
 
             

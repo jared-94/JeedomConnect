@@ -149,7 +149,17 @@ $optionsOrderBy .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
         </div>
       </div>
 
-      
+      <div class="form-group">
+        <label class="col-lg-6 control-label">{{Activer le mode Expert}}
+          <sup>
+              <i class="fas fa-question-circle floatright" title="Permet de laisser l'utilisateur modifier les commandes manuellement"></i>
+          </sup>
+        </label>
+        <div class="col-lg-3">
+          <input type="checkbox" class="configKey" data-l1key="isExpert" />
+        </div>
+      </div>
+
 
 
       <br/>
