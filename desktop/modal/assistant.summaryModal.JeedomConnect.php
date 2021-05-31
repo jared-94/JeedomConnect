@@ -67,7 +67,7 @@ if (!isConnect('admin')) {
 		<div class="col-sm-10 borderLef">
 			<h3 style="margin-left:25px;">Options du résumé</h3><br>
 			<div style="margin-left:25px; font-size:12px; margin-top:-20px; margin-bottom:15px;">Les options marquées d'une étoile sont obligatoires.</div>
-			<form class="form-horizontal summaryForm" style="overflow: hidden;">
+			<form class="form-horizontal summaryForm">
 				<ul id="summaryOptions" style="padding-left:10px; list-style-type:none;">
 				</ul>
 			</form>

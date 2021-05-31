@@ -35,6 +35,8 @@ function initData() {
 	refreshRoomData();
 	refreshSummaryData();
 	refreshWidgetData();
+	refreshBackgroundData();
+	refreshWeatherData();
 }
 
 function refreshBottomTabData() {
@@ -43,7 +45,7 @@ function refreshBottomTabData() {
 	});
 	var items = [];
 	$.each( tabs, function( key, val ) {
-		items.push( `<li data-id="${val.id}" class="bottomItem"><a  onclick="editBottomTabModal('${val.id}');">
+		items.push( `<li data-id="${val.id}" class="bottomItem" title="id=${val.id}"><a  onclick="editBottomTabModal('${val.id}');">
 			${iconToHtml(val.icon)}<i style="margin-left:10px;"></i>${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
@@ -84,7 +86,7 @@ function refreshTopTabContent() {
 
 	items = [];
 	$.each( tabs, function( key, val ) {
-		items.push( `<li data-id="${val.id}" class="topItem"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
+		items.push( `<li data-id="${val.id}" class="topItem" title="id=${val.id}"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>	
 
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
@@ -102,7 +104,7 @@ function refreshRoomData() {
 	});
 	var items = [];
 	$.each( rooms, function( key, val ) {
-		items.push( `<li data-id="${val.id}" class="roomItem"><a>${val.name}</a>
+		items.push( `<li data-id="${val.id}" title="id=${val.id}" class="roomItem"><a>${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 			
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
@@ -137,11 +139,14 @@ function refreshWidgetsContent() {
 	items = [];
 	//console.log(" ==== tous les widgets ===> " , allWidgetsDetail) ;
 	$.each( rootElmts, function( key, value ) {
+		var hideSpan = '<span class="pull-right"><i class="fas fa-eye-slash"></i></span>';
 		var val = allWidgetsDetail.find(w => w.id == value.id) ;
 		if (val  !=undefined && val.type !== undefined) { //it is a widget
+			$( "#selWidgetDetail option[data-widget-id=" +val.id +"]" ).attr('data-exist', true);
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
+			var enable = val.enable ? '' : hideSpan;
 			items.push( `<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
-			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}<br/>
+			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}${enable}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 			
@@ -168,8 +173,10 @@ function refreshWidgetsContent() {
 			$.each(curWidgets, function (key, wid) {
 				var w = allWidgetsDetail.find(x => x.id == wid.id) ;
 				if ( w != undefined){
+					$( "#selWidgetDetail option[data-widget-id=" +w.id +"]" ).attr('data-exist', true);
+					var enableSub = w.enable ? '' : hideSpan;
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
-					items.push( `<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}</a>
+					items.push( `<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}${enableSub}</a>
 					<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 					
 					<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
@@ -220,7 +227,9 @@ function resetConfig() {
 					'rooms': [],
 					'groups': [],
 					'summaries': [],
-					'widgets': []
+					'widgets': [],
+					'background': {},
+					'weather': {},
 				}
 		};
 		initData();
@@ -985,9 +994,9 @@ function saveSummary() {
 				}
 				imgCat.forEach(item => {
 					item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-					item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-					item.operator = $("#operator-"+item.index).val();
-					item.value = $("#"+item.index+"-value").val();
+					getCmdIdFromHumanName({alert: '#summary-alert', stringData: $("#imglist-cond-"+item.index).val() }, function(result, _params){
+						item.condition = result ;
+					  } ) ; 
 				});
 				result[option.id] = imgCat;
 			}	
@@ -1097,7 +1106,7 @@ function refreshAddSummaries(_options) {
 				curOption += `<option value="${item.id}">${item.name}</option>`;
 			})
 			if (option.id == "subtitle") {
-				curOption += `<option value="custom">Personalisé</option></select>`;
+				curOption += `<option value="custom">Personnalisé</option></select>`;
 				curOption += `<div style="display:flex">
 					<input style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'>`;
 
@@ -1290,6 +1299,7 @@ function selectWidgetModal() {
 		return;
 	}
 
+	$("#selWidgetDetail option:selected").attr('data-exist', true);
 	result = {};
   	var parentId = $("#widgetsParents-select option:selected").attr('value');
   	var rootElmts = getRootObjects(parentId);
@@ -1304,6 +1314,7 @@ function selectWidgetModal() {
 	configData.payload.widgets.push(result);
 	incrementIdCounter();
 	refreshWidgetsContent();
+	hideWidgetSelect();
 }
 
 function duplicateWidget(widgetId) {
@@ -1320,3 +1331,133 @@ function duplicateWidget(widgetId) {
 	incrementIdCounter();
 	refreshWidgetsContent();
 }
+
+// BACKGROUND FUNCTIONS	
+
+function refreshBackgroundData() {
+	if (configData.payload.background == undefined) {
+		configData.payload.background = {};
+	}
+	if (configData.payload.background.image) {
+		$("#bg-icon-div").html(iconToHtml(configData.payload.background.image));
+	}
+	if (configData.payload.background.condImages == undefined) {
+		configData.payload.background.condImages = [];
+	}
+	configData.payload.background.condImages.sort(function(s,t) {
+		return s.index - t.index;
+	});
+	//console.log(configData.payload.background.condImages)
+	var condHtml = '';
+	(configData.payload.background.condImages || []).forEach(cond => {
+		condHtml += `
+		<div data-id="${cond.index}" class='input-group condImgItem'>
+			Si
+			<input style="width:385px;height:31px;" class=' roundedLeft' index="${cond.index}" id="bg-cond-input-${cond.index}"
+			 onchange="setCondValue(this, 'bg')" />
+		`;
+
+		condHtml += `
+        <div class="dropdown" id="imglist-cond-select" style="display:inline !important;">
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        <i class="fas fa-plus-square"></i> </a>
+        <ul class="dropdown-menu infos-select" input="bg-cond-input-${cond.index}">
+		<li info="bottomTabId" onclick="infoSelected('#bottomTabId#', this)"><a href="#">#bottomTabId#</a></li>
+		<li info="topTabId" onclick="infoSelected('#topTabId#', this)"><a href="#">#topTabId#</a></li>
+		<li info="screenId" onclick="infoSelected('#screenId#', this)"><a href="#">#screenId#</a></li>
+		<li info="roomId" onclick="infoSelected('#roomId#', this)"><a href="#">#roomId#</a></li>
+		</ul></div>` ;
+
+		condHtml += `
+			<a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:5px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#bg-cond-input-${cond.index}', 'bg');">
+            <i class='fas fa-list-alt'></i></a>
+			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBgCondImg(this)"><i class="fas fa-plus-square">
+			</i> Image </a>
+			<a data-id="icon-div">${iconToHtml(cond.image)}</a>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeCondImg('${cond.index}');"></i>
+  		</div>
+		`;
+	});
+	$("#condImgList").html(condHtml);
+	setCondToHuman('bg');
+}	
+
+function getBgImg() {
+	getIconModal({ title: "Choisir un fond d'écran", withIcon: "0", withImg: "1", icon: htmlToIcon($("#bg-icon-div").children().first()) }, (result) => {
+	  $("#bg-icon-div").html(iconToHtml(result));
+	  configData.payload.background.image = result;
+	})
+}
+
+function removeBgImg() {
+	$("#bg-icon-div").html("");
+	delete configData.payload.background.image;
+}
+
+function addCondImg() {
+	if (configData.payload.background.condImages == undefined) {
+		configData.payload.background.condImages = [];
+	}
+	configData.payload.background.condImages.push({
+		index: getMaxIndex(configData.payload.background.condImages) +1
+	});
+	refreshBackgroundData();
+}
+
+
+function getBgCondImg(elm) {
+	var curCond = configData.payload.background.condImages.find(c => c.index == $(elm).attr('index'));
+	var newElt = $(elm).nextAll("a[data-id^='icon-']:first") ;
+	
+	getIconModal({ title: "Choisir un fond d'écran", withIcon: "0", withImg: "1", icon: htmlToIcon(newElt.children().first()) , elt:newElt}, (result, _params) => {
+	  curCond.image = result;
+	  $(_params.elt).html(iconToHtml(result));
+	});
+}
+
+function removeCondImg(index) {	
+	configData.payload.background.condImages = configData.payload.background.condImages.filter(c => c.index != index);
+
+	configData.payload.background.condImages.forEach(item => {
+		if (item.index > index) {
+			item.index = item.index - 1;
+		}
+	});
+	refreshBackgroundData();
+}
+
+// WEATHER FUNCTIONS
+
+function refreshWeatherData() {
+	if (configData.payload.weather) {
+		$("#weather-input").val(configData.payload.weather.human);
+	}
+}
+
+function removeWeatherEq() {
+	delete configData.payload.weather;
+	$("#weather-input").val('');
+}
+
+function getWeatherEq() {
+	jeedom.eqLogic.getSelectModal({eqLogic: {eqType_name: 'weather'}}, function(result) {
+		$("#weather-input").val(result.human);
+		jeedom.eqLogic.getCmd({id: result.id, success: function(cmdList) {
+			configData.payload.weather = {
+				eqType_name: 'weather',
+				eqLogicId: result.id,
+				human: result.human,
+				sunrise: cmdList.find(c => c.logicalId == 'sunrise')?.id,
+				sunset: cmdList.find(c => c.logicalId == 'sunset')?.id,
+				temperature: cmdList.find(c => c.logicalId == 'temperature')?.id,
+				temperature_min: cmdList.find(c => c.logicalId == 'temperature_min')?.id,
+				temperature_max: cmdList.find(c => c.logicalId == 'temperature_max')?.id,
+				condition_id: cmdList.find(c => c.logicalId == 'condition_id')?.id,
+				condition: cmdList.find(c => c.logicalId == 'condition')?.id,
+			}
+		}});
+	  })
+}
+  
+  

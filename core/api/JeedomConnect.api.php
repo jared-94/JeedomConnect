@@ -20,6 +20,7 @@ header('Content-Type: application/json');
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
 
 $jsonData = file_get_contents("php://input");
 log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
@@ -113,12 +114,21 @@ switch ($method) {
 
 		$config = $eqLogic->getGeneratedConfigFile();
 
+    //check config content
+    if( is_null($config) ) {
+      log::add('JeedomConnect', 'warning', "Failed to connect : empty config file");
+      $jsonrpc->makeSuccess(array( 'type' => 'EMPTY_CONFIG_FILE' ));
+      return;
+    }
 		//check config format version
 		if( ! array_key_exists('formatVersion', $config) ) {
 			log::add('JeedomConnect', 'warning', "Failed to connect : bad format version");
       $jsonrpc->makeSuccess(array( 'type' => 'FORMAT_VERSION_ERROR' ));
       return;
 		}
+
+    $eqLogic->setConfiguration('platformOs', $params['platformOs']);
+    $eqLogic->save();
 
     $result = array(
       'type' => 'WELCOME',
@@ -138,6 +148,8 @@ switch ($method) {
     $jsonrpc->makeSuccess($result);
     break;
   case 'GET_EVENTS':
+    $eqLogic->setConfiguration('lastSeen', time());
+    $eqLogic->save();
     $config = $eqLogic->getGeneratedConfigFile();
     $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $params['configVersion']);
     if ($newConfig != false) {
@@ -145,8 +157,23 @@ switch ($method) {
       $jsonrpc->makeSuccess(array($newConfig));
       return;
     }
+
+    $actions = JeedomConnectActions::getAllAction($apiKey);
+	  if (count($actions) > 0) {
+		  $result = array(
+			  'type' => 'ACTIONS',
+			  'payload' => array()
+		  );
+      foreach ($actions as $action) {
+        array_push($result['payload'], $action['value']['payload']);
+      }
+		  log::add('JeedomConnect', 'debug', "send action ".json_encode(array($result)));		  
+		  JeedomConnectActions::removeAllAction($actions);
+      $jsonrpc->makeSuccess(array($result));
+      return;
+	  }
     $events = event::changes($params['lastReadTimestamp']);
-    $data = apiHelper::getEvents($events, $config);
+    $data = apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     $jsonrpc->makeSuccess($data);
     break;
 	case 'REGISTER_DEVICE':
@@ -166,6 +193,9 @@ switch ($method) {
 		$result = $eqLogic->getGeneratedConfigFile();
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_PWD':
+    $jsonrpc->makeSuccess(array( 'pwd' => $eqLogic->getConfiguration('pwdAction', null)));
+    break;
   case 'GET_CMD_INFO':
     $result = array(
 	    'type' => 'SET_CMD_INFO',
@@ -181,6 +211,20 @@ switch ($method) {
 	  );
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_ALL_SC':
+    $result = array(
+	    'type' => 'SET_ALL_SC',
+	    'payload' => apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), true)
+	  );
+    $eqLogic->setConfiguration('scAll', 1);
+    $eqLogic->save();
+    log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
+    $jsonrpc->makeSuccess($result);
+    break;
+  case 'UNSUBSCRIBE_SC':
+    $eqLogic->setConfiguration('scAll', 0);
+    $eqLogic->save();
     break;
 	case 'GET_OBJ_INFO':
     $result = array(
@@ -234,6 +278,13 @@ switch ($method) {
 		apiHelper::setActiveSc($params['id'], $params['active']);
 		$jsonrpc->makeSuccess();
 		break;
+  case 'SET_BATTERY':
+    $batteryCmd = $eqLogic->getCmd(null, 'battery');
+    if (is_object($batteryCmd)){
+      $batteryCmd->event($params['level']);
+    } 
+    $jsonrpc->makeSuccess();
+    break;
 	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
@@ -243,11 +294,21 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'GEOLOC':
-		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $params['timestamp']);
+    $ts = array_key_exists('timestampMeta', $params) ? floor( $params['timestampMeta']['systemTime'] / 1000) : strtotime($params['timestamp']);
+		$eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $ts);
 
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
       $activityCmd->event($params['activity']['type']);
+    }
+
+    if (array_key_exists('battery', $params)) {
+      if ($params['battery']['level'] > -1) {
+        $batteryCmd = $eqLogic->getCmd(null, 'battery');
+        if (is_object($batteryCmd)){
+          $batteryCmd->event($params['battery']['level'] * 100, date('Y-m-d H:i:s', $ts));
+        } 
+      }
     }
 		
 

@@ -67,6 +67,17 @@ $("#roomUL").sortable({axis: "y", cursor: "move", items: ".roomItem", placeholde
 
 	} });	
 
+$("#condImgList").sortable({axis: "y", cursor: "move", items: ".condImgItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#condImgList > .condImgItem').each((i, el) => { 
+					var itemIndex = $(el).data('id') ;
+					var itemToMove = configData.payload.background.condImages.find(c => c.index == itemIndex);
+					itemToMove.index = i;
+					}
+			);
+
+	} });
+
 $("#bottomUL").sortable({axis: "y", cursor: "move", items: ".bottomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
 	update: function( event, ui){ 
 			$('#bottomUL > .bottomItem').each((i, el) => { 
@@ -101,6 +112,10 @@ function openTab(evt, tabName) {
 		refreshSummaryData();
 	} else if (tabName == "widgetsTab") {
 		refreshWidgetData();
+	} else if (tabName == "backgroundTab") {
+		refreshBackgroundData();
+	} else if (tabName == "weatherTab") {
+		refreshWeatherData();
 	}
 	var i, tabcontent, tablinks;
 	tabcontent = document.getElementsByClassName("tabcontent");
@@ -229,6 +244,12 @@ function getSimpleModal(_options, _callback) {
 					if (_options.fields.find(i => i.type == "enable")) {
 						result.enable = $("#mod-enable-input").is(':checked');
 					}
+					if (_options.fields.find(i => i.type == "checkboxes")) {
+						checkedVals = $('.checkboxesSelection:checkbox:checked').map(function() {
+							return this.value;
+						}).get();
+						result.checkboxes = checkedVals ;
+					}
 					if (_options.fields.find(i => i.type == "name")) {
 						if ($("#mod-name-input").val() == '') {
 							throw 'Le nom est obligatoire';
@@ -304,14 +325,41 @@ function getSimpleModal(_options, _callback) {
 };
 
 
-$('#selWidgetType').on('change', function() {
-	$( '#selWidgetDetail option' ).show();
-	//console.log("filter on type >>" + this.value);
-	var typeSelected = this.value ;
+$('#hideExist').on('change', function() {
+	
+	hideWidgetSelect();
+})
 
-	$( '#selWidgetDetail option' ).not( "[data-type=" + typeSelected + "]" ).hide();
-
+$('#selWidgetRoom').on('change', function() {
+	hideWidgetSelect();
 });
+
+$('#selWidgetType').on('change', function() {
+	hideWidgetSelect();
+});
+
+function hideWidgetSelect(){
+	$( '#selWidgetDetail option' ).show();
+	
+	// hide 'type widget'
+	var typeSelected = $('#selWidgetType option:selected').val() ;
+	if (typeSelected != 'all'){
+		$( '#selWidgetDetail option' ).not( "[data-type='" + typeSelected + "']" ).hide();
+	}
+
+
+	var roomSelected = $('#selWidgetRoom option:selected').val() ;
+	if (roomSelected != 'all'){
+		$( '#selWidgetDetail option' ).not( "[data-room-name='" + roomSelected + "']" ).hide();
+	}
+
+	if( $('#hideExist').is(":checked") ) {
+		//hide exist
+		$( '#selWidgetDetail option[data-exist=true]' ).hide();
+	}
+	
+	$("#selWidgetDetail").val($("#selWidgetDetail option:first").val());
+}
 
 
 

@@ -57,6 +57,16 @@ function setSimpleModalData(options) {
 			<label class='col-xs-3  required' >Actif</label>
 			<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="mod-enable-input" ${value}></div></div></div></li>`;
 			items.push(enable);
+		} else if (option.type == "checkboxes") {
+			
+      checkboxes = `<li><div class='form-group'>
+			<label class='col-xs-3  required' >${option.title}</label>
+			<div class='col-xs-9'><div class='input-group'>`;
+        option.choices.forEach(item => {
+		      checkboxes += `<input type="checkbox" class="checkboxesSelection" style="width:150px;" value="${item.id}" >${item.name}<br/>`;
+		    });
+        checkboxes += `</div></div></div></li>`;
+			items.push(checkboxes);
 		} else if (option.type == "name") {
 			var value = option.value ? option.value : '';
 			name = `<li><div class='form-group'>
@@ -243,7 +253,7 @@ function getSimpleCmd({id, error, success}) {
 }
 
 function getSimpleIcon(name) {
-  getIconModal({ title: "Choisir une icône", withIcon: "1", withImg: "0", icon: htmlToIcon($("#icon-div").children().first()) }, (result) => {
+  getIconModal({ title: "Choisir une icône", withIcon: "1", withImg: "1", icon: htmlToIcon($("#icon-div").children().first()) }, (result) => {
     $("#icon-div").html(iconToHtml(result));
   })
 }

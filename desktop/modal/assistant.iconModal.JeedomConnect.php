@@ -66,7 +66,7 @@ $myFiles = get_all_files($customPath);
 
 <div class="tab-content" style="overflow-y:scroll;">
   <!-- Jeedom icons -->
-    <div role="tabpanel" class="tab-pane active" id="tabicon" source="jeedom" style="width:calc(100% - 20px); display:none">
+    <div role="tabpanel" class="tab-pane jcpanel active" id="tabicon" source="jeedom" style="width:calc(100% - 20px); display:none">
       <?php
       $scanPaths = array('core/css/icon');
       $div = '';
@@ -109,7 +109,7 @@ $myFiles = get_all_files($customPath);
     </div>
 
     <!-- Material -->
-    <div role="tabpanel" class="tab-pane" id="tabicon" source="md" style="width:calc(100% - 20px); display:none">
+    <div role="tabpanel" class="tab-pane jcpanel" id="tabicon" source="md" style="width:calc(100% - 20px); display:none">
       <?php
       $div = '';
       $dir = 'plugins/JeedomConnect/desktop/css/md/css';
@@ -141,7 +141,7 @@ $myFiles = get_all_files($customPath);
     </div>
 
     <!-- FA -->
-    <div role="tabpanel" class="tab-pane active" id="tabicon" source="fa" style="width:calc(100% - 20px); display:none">
+    <div role="tabpanel" class="tab-pane jcpanel active" id="tabicon" source="fa" style="width:calc(100% - 20px); display:none">
       <?php
 
       $div = '';
@@ -178,7 +178,7 @@ $myFiles = get_all_files($customPath);
     </div>
 
     <!-- JC -->
-    <div role="tabpanel" class="tab-pane active" id="tabimg" source="jc" style="width:calc(100% - 20px); display:none">
+    <div role="tabpanel" class="tab-pane jcpanel active" id="tabimg" source="jc" style="width:calc(100% - 20px); display:none">
       <div class="imgContainer">
 			  <div id="div_imageGallery">
           <?php
@@ -200,7 +200,7 @@ $myFiles = get_all_files($customPath);
     </div>
 
     <!-- USER -->
-    <div role="tabpanel" class="tab-pane active" id="tabimg" source="user" style="width:calc(100% - 20px); display:none">
+    <div role="tabpanel" class="tab-pane jcpanel active" id="tabimg" source="user" style="width:calc(100% - 20px); display:none">
       <div class="imgContainer">
         <div id="div_imageGallery" source="user">
           <?php
@@ -331,7 +331,7 @@ $('#bt_resetSearchIcon').on('click', function() {
 
 
 $('#iconModal ul li a').click(function() {
-  $('.tab-pane').css('display', 'none');
+  $('.jcpanel.tab-pane').css('display', 'none');
 
   var type = $(this).attr('href').replace('#','');
   

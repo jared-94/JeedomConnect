@@ -49,6 +49,31 @@ class apiHelper {
         }
       }
     }
+    if (array_key_exists('background', $config['payload'])) {
+      foreach ($config['payload']['background']['condImages'] as $cond) {
+        preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
+        if (count($matches) > 0) {
+          $matches = array_unique($matches[0]);
+          foreach($matches as $match) {
+            $cmd = cmd::byId(str_replace('#', '', $match));
+					  if (is_object($cmd)) {
+              array_push($return, str_replace('#', '', $match));
+            }
+          }
+        }
+      }
+    }
+    if (array_key_exists('weather', $config['payload'])) {
+       $return = array_merge($return, array(
+         $config['payload']['weather']['condition'],
+         $config['payload']['weather']['condition_id'],
+         $config['payload']['weather']['sunrise'],
+         $config['payload']['weather']['sunset'],
+         $config['payload']['weather']['temperature'],
+         $config['payload']['weather']['temperature_min'],
+         $config['payload']['weather']['temperature_max']
+       ));
+    }
     return array_unique($return);
   }
 
@@ -82,12 +107,12 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getScenarioData($config) {
+  public static function getScenarioData($config, $all=false) {
     $scIds = self::getScenarioList($config);
     $result = array();
 
     foreach (scenario::all() as $sc) {
-      if (in_array($sc->getId(), $scIds)) {
+      if (in_array($sc->getId(), $scIds) || $all) {
         $state = $sc->getCache(array('state', 'lastLaunch'));
         $sc_info = array(
           'id' => $sc->getId(),
@@ -176,11 +201,13 @@ class apiHelper {
 
   //PLUGIN CONF FUNCTIONS
   function getPluginConfig() {
+    $plugin = update::byLogicalId('JeedomConnect');
   	return array(
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
   		'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
   		'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
-  		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090')
+  		'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
+      'pluginJeedomVersion' => $plugin->getLocalVersion()
   	);
   }
 
@@ -222,7 +249,7 @@ class apiHelper {
  // Config Watcher
  public static function lookForNewConfig($eqLogic, $prevConfig) {
    $configVersion = $eqLogic->getConfiguration('configVersion');
-   //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$config['payload']['configVersion']);
+   //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
    if ($configVersion != $prevConfig) {
       log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
       return $eqLogic->getGeneratedConfigFile();
@@ -231,7 +258,7 @@ class apiHelper {
  }
 
  // EVENTS FUNCTION
- public static function getEvents($events, $config) {
+ public static function getEvents($events, $config, $scAll=false) {
    $result_cmd = array(
      'type' => 'CMD_INFO',
      'payload' => array()
@@ -253,7 +280,7 @@ class apiHelper {
        array_push($result_obj['payload'], $event['option']);
      }
      if ($event['name'] == 'scenario::update') {
-       if (in_array($event['option']['scenario_id'], $scIds)) {
+       if (in_array($event['option']['scenario_id'], $scIds) || $scAll) {
          $sc_info = array(
            'id' => $event['option']['scenario_id'],
            'status' => $event['option']['state'],

@@ -33,15 +33,52 @@ header('Content-Type: image/jpeg');
 $camWidgetId = init('id');
 $widget = JeedomConnectWidget::getConfiguration($camWidgetId, 'widgetJC');
 $conf = json_decode($widget, true );
-$snapUrl = $conf['snapshotUrl'];
+$snapUrl = getUrl($conf); 
+$username = $conf['username'] ?? null ?: null;
+$pwd = $conf['password'] ?? null ?: null;
 
 if (!is_string($snapUrl)) {
   log::add('JeedomConnect', 'debug', "Can't find snapshot url");
   throw new Exception(__("Can't find snapshot url", __FILE__), -32699);
 }
 
-function getData($url) {
-  $ch = curl_init();
+
+function getUrl($conf){
+	
+	$url = $conf['snapshotUrl'] ?? ''; 
+
+	if( isset($conf['snapshotUrlInfo']) ) {
+		$cmdId = $conf['snapshotUrlInfo']['id'] ;
+		
+		$cmd = cmd::byId($cmdId) ;
+		if ( is_object($cmd) ){
+			$url = $cmd->execCmd();
+			// log::add('JeedomConnect','debug', 'Snapshot will use url comming from cmd info ['.$cmdId.'] => ' . $url);
+		}
+	}
+	// log::add('JeedomConnect','debug', 'url used :' . $url);
+	return $url;
+}
+
+function getData($url, $username, $pwd ) {
+  	$ch = curl_init();
+	
+	$replaceArr = array(
+		'#username#' => urlencode($username ),
+		'#password#' => urlencode($pwd),
+	);
+
+	$url = str_replace(array_keys($replaceArr), $replaceArr, $url);
+
+	if( ! is_null($username) && ! is_null($pwd) ) {
+		$userPwd = $username . ':' . $pwd ;
+		curl_setopt($ch, CURLOPT_USERPWD, $userPwd);
+		$headers = array(
+		'Content-Type:application/json',
+		'Authorization: Basic ' . base64_encode($userPwd),
+		);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	}
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
@@ -57,7 +94,7 @@ function getData($url) {
 }
 
 
-$data = getData($snapUrl);
+$data = getData($snapUrl, $username, $pwd );
 
 if (!function_exists('imagecreatefromstring')) {
 	echo $data;

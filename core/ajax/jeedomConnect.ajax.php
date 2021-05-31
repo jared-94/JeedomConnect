@@ -154,6 +154,213 @@ try {
 		ajax::success(array('eqLogic' => $nbEq));
 	}
 
+	if (init('action') == 'getWidgetMass') {
+		$ids = init('id') ?? '' ;
+		$allWidgets = JeedomConnectWidget::getWidgets($ids);
+
+		$jsonConfig = json_decode( file_get_contents(__DIR__ . '/../../resources/widgetsConfig.json')  , true);
+		$widgetArrayConfig = array();
+		foreach ($jsonConfig['widgets'] as $config) {
+			$widgetArrayConfig[ $config['type'] ]=  $config ;
+		}
+		
+		$html = '';
+		foreach ($allWidgets as $widget) {
+			$widgetJC = json_decode($widget['widgetJC'], true);
+			$html .= (empty($ids)) ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" >' : '' ;
+			$html .= '<td style="width:40px;"><span class="label label-info objectAttr bt_openWidget" data-l1key="widgetId" style="cursor: pointer !important;">' . $widget['id'] . '</span></td>';
+			
+			// **********    TYPE    ****************
+			$html .= '<td style="width:40px;"><span class="label objectAttr" data-l1key="type" data-l2key="'. $widget['type'] .'">' . str_replace('de génériques ', '',  $widgetArrayConfig[$widget['type']]['name'] ) . '</span></td>';
+			
+
+			// **********    ROOM    ****************
+			$html .= '<td >';
+			$html .='<select style="width:150px;" class="objectAttr"  data-l1key="roomId">';
+			$html .='<option value="none">Aucun</option>';
+			
+			foreach ((jeeObject::buildTree(null, false)) as $object) {
+				$select = ( $widget['roomId'] == $object->getId()) ? 'selected' : '';
+				$html .=' <option value="' . $object->getId() . '" ' . $select . '>' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+			}
+			
+			$html .='</select>';
+			$html .='</td>';
+			// ****************************************
+
+			$html .= '<td style="width:40px;"><input type="text" class="objectAttr" data-l1key="name" value="' . cmd::cmdToHumanReadable($widget['name']) .'" /></td>';
+			
+
+			// **********   SUBTITLE    ****************
+			$hasSubTitle = false;
+			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
+			{
+				if ($opt['id'] != 'subtitle') continue;	
+				$hasSubTitle = true;
+				break;
+			}
+			if ( $hasSubTitle ){
+				$html .= '<td style="width:40px;"><input type="text" class="objectAttr"  data-l1key="subtitle" value="' . cmd::cmdToHumanReadable( $widgetJC['subtitle'] ) .'" /></td>';
+			}
+			else{
+				$html .= '<td style="width:40px;"></td>';
+			}
+
+			// **********  END SUBTITLE ****************
+			
+			if ($widget['enable']) {
+				$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="enable" /></td>';
+			} else {
+				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="enable" /></td>';
+			}
+
+			// **********    DISPLAY    ****************
+			$dataDisplayMode = array();
+			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
+			{
+				if ($opt['id'] != 'display') continue;	
+				$dataDisplayMode = $opt['choices'];
+				break;
+			}
+			$html .= '<td style="width:150px;">';
+			$html .='<select class="objectAttr"  data-l1key="display">';
+			$html .='<option value="none">Aucun</option>';
+			
+			foreach ($dataDisplayMode as $display) {
+				$select = ( $widgetJC['display'] == $display['id']) ? 'selected' : '';
+				$html .=' <option value="' .$display['id'] . '" ' . $select . '>' . $display['name'] . '</option>';
+			}
+			
+			$html .='</select>';
+			$html .='</td>';
+			// ************ END DISPLAY **************
+
+			
+			// **********    HIDE OTIONS    ****************
+			$hideOptions = array();
+			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
+			{
+				if ($opt['id'] != 'hideItem') continue;	
+				
+				foreach ($opt['choices'] as $choice) {
+					$hideOptions[] = $choice['id'];	
+				}
+				break;
+			}
+
+			if ( in_array('hideTitle', $hideOptions) ) {
+				if ($widgetJC['hideTitle']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideTitle" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" /></td>';
+				}
+			}
+			else{
+				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" disabled /></td>';
+			}
+
+			if ( in_array('hideSubTitle', $hideOptions) ) {
+				if ($widgetJC['hideSubTitle']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideSubTitle"  /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" /></td>';
+				}
+			}
+			else{
+				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" disabled /></td>';
+			}
+			
+			if ( in_array('hideStatus', $hideOptions) ) {
+				if ($widgetJC['hideStatus']) {
+					$html .= '<td align="center" style="max-width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideStatus" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" /></td>';
+				}
+			}
+			else{
+				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" disabled /></td>';
+			}
+
+			if ( in_array('hideIcon', $hideOptions) ) {
+				if ($widgetJC['hideIcon']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideIcon" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" /></td>';
+				}
+			}
+			else{
+				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" disabled /></td>';
+			}
+			// **********    END HIDE OTIONS    ****************
+
+
+
+			if ($widgetJC['blockDetail']) {
+				$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="blockDetail" /></td>';
+			} else {
+				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="blockDetail" /></td>';
+			}
+			
+
+			//**************  EQUIPEMENT INCLUSION **********************/
+			$nb = 0;
+			$names = '';
+			$label = ' labelObjectHuman';
+			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+				$isIncluded = $eqLogic->isWidgetIncluded($widget['id']);
+
+				if ( $isIncluded ){
+				$nb ++;
+				$names .= ($names == '') ? $eqLogic->getName() : ', ' . $eqLogic->getName();
+				$label = ' label-success';
+				}        
+			}
+			$html .= '<td style="width:60px;" class=""><span class="label '.$label.' nbEquipIncluded" data-title="'.$names.'" title="'.$names.'">' . $nb . '</span></td>';      
+
+			//************************************/
+
+			$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="removeWidget"/></td>';
+			
+			$html .= (empty($ids)) ? '</tr>' : '' ;
+		}
+	
+		ajax::success($html);
+	
+	}
+
+	if (init('action') == 'updateWidgetMass') {
+
+		$widgetReceived = init('widgetsObj');
+		
+		foreach ($widgetReceived as $widgetData) {
+			$existingWidget = JeedomConnectWidget::getConfiguration($widgetData['widgetId']) ;
+			log::add('JeedomConnect', 'debug', 'massUpdate - widget ['.$widgetData['widgetId'].'] will be updated -- current data '. json_encode($existingWidget) );
+
+			$widgetJC = json_decode($existingWidget['widgetJC'], true) ;
+
+			$widgetJC['enable'] = boolval( $widgetData['enable'] ) ;
+			$widgetJC['name'] = cmd::humanReadableToCmd( $widgetData['name'] ) ;
+			$widgetJC['subtitle'] = cmd::humanReadableToCmd( $widgetData['subtitle'] ) ; 
+			
+			$widgetJC['room'] = intval( $widgetData['roomId'] ) ;
+			
+			$widgetJC['display'] = $widgetData['display'];
+				
+			$widgetJC['hideTitle'] = boolval($widgetData['hideTitle']);
+			$widgetJC['hideSubTitle'] = boolval($widgetData['hideSubTitle']);
+			$widgetJC['hideStatus'] = boolval($widgetData['hideStatus']);
+			$widgetJC['hideIcon'] = boolval($widgetData['hideIcon']);
+			$widgetJC['blockDetail'] = boolval($widgetData['blockDetail']);
+
+			$existingWidget['widgetJC'] = json_encode( $widgetJC );
+
+			JeedomConnectWidget::saveConfig($existingWidget, $widgetData['widgetId']) ;
+
+		}
+
+		ajax::success();
+	}
+
 	if (init('action') == 'countWigdetUsage') {
 		$data = JeedomConnectWidget::countWidgetByEq();
 		ajax::success($data);
@@ -278,6 +485,28 @@ try {
 
 	}
 
+	if (init('action') == 'getEquipments') {
+		
+		$result = array();
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$id = $eqLogic->getConfiguration('apiKey') ;
+			$name = $eqLogic->getName() ;
+			array_push($result, array('id' => $id, 'name' => $name ) );
+		}
+		ajax::success( $result );
+	
+	}
+
+	if (init('action') == 'copyConfig') {
+		$from = init('from');
+		$toArray = init('to');
+
+		$copy = JeedomConnect::copyConfig($from, $toArray);
+
+		ajax::success( $copy );
+
+	}
+
 	if (init('action') == 'saveConfig') {
     	$config = init('config');
 		$apiKey = init('apiKey');
@@ -295,88 +524,88 @@ try {
 
 			ajax::success();
 		}
-  }
-
-  if (init('action') == 'getConfig') {
-    $apiKey = init('apiKey');
-    $eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-	$allConfig = (init('all') !== null) && init('all') ;
-	$saveGenerated = (init('all') !== null) && init('all') ;
-    if (!is_object($eqLogic)) {
-		ajax::error('Erreur - no equipment found');
 	}
-	else {
-		//$eqLogic->updateConfig();
-		$configJson = $eqLogic->getConfig($allConfig, $saveGenerated);
-		ajax::success($configJson);
-	}
-  }
 
-  if (init('action') == 'getNotifs') {
+	if (init('action') == 'getConfig') {
 		$apiKey = init('apiKey');
-
 		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		$allConfig = (init('all') !== null) && init('all') ;
+		$saveGenerated = (init('all') !== null) && init('all') ;
 		if (!is_object($eqLogic)) {
-			ajax::error('Erreur');
-		} else {
-			$notifs = $eqLogic->getNotifs();
-			ajax::success($notifs);
+			ajax::error('Erreur - no equipment found');
 		}
-  }
-
-  if (init('action') == 'saveNotifs') {
-    $config = init('config');
-		$apiKey = init('apiKey');
-
-		$configJson = json_decode($config, true);
-		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-		if (!is_object($eqLogic) or $configJson == null) {
-			ajax::error('Erreur');
-		} else {
-			$eqLogic->saveNotifs($configJson);
-			ajax::success();
+		else {
+			//$eqLogic->updateConfig();
+			$configJson = $eqLogic->getConfig($allConfig, $saveGenerated);
+			ajax::success($configJson);
 		}
-  }
-
-  if (init('action') == 'uploadImg') {
-    $filename = $_FILES['file']['name'];
-		$destination = __DIR__ . '/../../data/img/user_files/';
-		if (!is_dir($destination)) {
-			mkdir($destination);
-		}
-		$location = $destination.$filename;
-
-		if (move_uploaded_file($_FILES['file']['tmp_name'],$location)){
-			ajax::success();
-		} else {
-			ajax:error();
-		}
-  }
-
-	if (init('action') == 'removeDevice') {
-		$id = init('id');
-		$eqLogic = \eqLogic::byId($id);
-		$eqLogic->removeDevice();
-		ajax::success();
 	}
 
-  if (init('action') == 'getCmd') {
-    $cmd = cmd::byId(init('id'));
-    if (!is_object($cmd)) {
-				throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+	if (init('action') == 'getNotifs') {
+			$apiKey = init('apiKey');
+
+			$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				ajax::error('Erreur');
+			} else {
+				$notifs = $eqLogic->getNotifs();
+				ajax::success($notifs);
+			}
+	}
+
+	if (init('action') == 'saveNotifs') {
+		$config = init('config');
+			$apiKey = init('apiKey');
+
+			$configJson = json_decode($config, true);
+			$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic) or $configJson == null) {
+				ajax::error('Erreur');
+			} else {
+				$eqLogic->saveNotifs($configJson);
+				ajax::success();
+			}
+	}
+
+	if (init('action') == 'uploadImg') {
+		$filename = $_FILES['file']['name'];
+			$destination = __DIR__ . '/../../data/img/user_files/';
+			if (!is_dir($destination)) {
+				mkdir($destination);
+			}
+			$location = $destination.$filename;
+
+			if (move_uploaded_file($_FILES['file']['tmp_name'],$location)){
+				ajax::success();
+			} else {
+				ajax:error();
+			}
+	}
+
+		if (init('action') == 'removeDevice') {
+			$id = init('id');
+			$eqLogic = \eqLogic::byId($id);
+			$eqLogic->removeDevice();
+			ajax::success();
 		}
-    ajax::success(array(
-      'id' => init('id'),
-      'type' => $cmd->getType(),
-      'subType' => $cmd->getSubType(),
-      'humanName' => $cmd->getHumanName(),
-      'minValue' => $cmd->getConfiguration('minValue'),
-      'maxValue' => $cmd->getConfiguration('maxValue'),
-      'unit' => $cmd->getUnite(),
-      'value' => $cmd->getValue(),
-      'icon' => $cmd->getDisplay('icon')
-    ));
-  }
+
+	if (init('action') == 'getCmd') {
+		$cmd = cmd::byId(init('id'));
+		if (!is_object($cmd)) {
+					throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+			}
+		ajax::success(array(
+		'id' => init('id'),
+		'type' => $cmd->getType(),
+		'subType' => $cmd->getSubType(),
+		'humanName' => $cmd->getHumanName(),
+		'minValue' => $cmd->getConfiguration('minValue'),
+		'maxValue' => $cmd->getConfiguration('maxValue'),
+		'unit' => $cmd->getUnite(),
+		'value' => $cmd->getValue(),
+		'icon' => $cmd->getDisplay('icon')
+		));
+	}
 
 	if (init('action') == 'getImgList') {
     $internalImgPath = __DIR__ . '/../../data/img/';
@@ -402,7 +631,7 @@ try {
 			$eqLogic->generateQRCode();
 			ajax::success();
 		}
-  }
+  	}
 
    throw new \Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
 } catch (\Exception $e) {

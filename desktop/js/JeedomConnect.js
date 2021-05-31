@@ -41,18 +41,37 @@ function refreshWidgetDetails(){
 
 }
 
+$.post({
+  url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+  data: {
+    'action': 'getEquipments'
+  },
+  dataType: 'json',
+  success: function( data ) {
+    if (data.state != 'ok') {
+      $('#div_alert').showAlert({
+        message: data.result,
+        level: 'danger'
+      });
+    }
+    else{
+      allJCEquipments = data.result
+    }
+  }
+});
+
 
 $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '.widgetDisplayCard', function() {
 
     var eqId = $(this).attr('data-widget_id');
-    editWidgetModal(eqId, true, true);
+    editWidgetModal(eqId, true, true, true);
 
 })
 
 
-function editWidgetModal(widgetId,  removeAction, exit) {
+function editWidgetModal(widgetId,  removeAction, exit, duplicate) {
   var widgetToEdit = allWidgetsDetail.find(w => w.id == widgetId);
-  getWidgetModal({title:"Editer un widget", eqId : widgetId, widget:widgetToEdit, removeAction: removeAction, exit : exit}, function(result) {
+  getWidgetModal({title:"Editer un widget", eqId : widgetId, widget:widgetToEdit, removeAction: removeAction, exit : exit, duplicate: duplicate}, function(result) {
     refreshWidgetDetails();
     if (! exit) refreshWidgetsContent();
   });
@@ -91,7 +110,7 @@ function getWidgetModal(_options, _callback) {
     $('.widgetMenu .removeWidget').hide();
   }
 
-  if ( $('#widgetOptions').attr('widget-id') == undefined || $('#widgetOptions').attr('widget-id') == ''){
+  if ( $('#widgetOptions').attr('widget-id') == undefined || $('#widgetOptions').attr('widget-id') == '' || !(_options.duplicate) ){
     $('.widgetMenu .duplicateWidget').hide();
   }
   else{
@@ -117,6 +136,21 @@ function getWidgetModal(_options, _callback) {
 
 $('.eqLogicAction[data-action=addWidget]').off('click').on('click', function() {
   getWidgetModal({title:"Configuration du widget", removeAction: false, exit : true});
+})
+
+$('.eqLogicAction[data-action=showSummary]').off('click').on('click', function() {
+  $('body').append('<div id="widgetSummaryModal"></div>');
+  $('#widgetSummaryModal').dialog({title: "{{Synthèse globale des widgets}}", 
+        autoOpen: false,
+        modal: true,
+        closeText: '',
+        width: 0.9*$(window).width(),
+        height: 0.8*$(window).height(),
+        closeOnEscape: false,
+        // open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+        close: function(ev, ui){check_before_closing();}
+  });
+  $('#widgetSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
 
@@ -193,7 +227,40 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
 
 });
 
-
+$('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function() {
+  var from = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
+  
+  allJCEquipmentsWithoutCurrent = allJCEquipments.filter(function( obj ) {
+    return obj.id !== from;
+  });
+  getSimpleModal({title: "Recopier vers quel(s) appareil(s)", fields:[{title : "Choix", type: "checkboxes",choices: allJCEquipmentsWithoutCurrent }] }, function(result) {
+    
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        'action': 'copyConfig',
+        'from': from ,
+        'to': result.checkboxes 
+      },
+      dataType: 'json',
+      success: function( data ) {
+        console.log("copyConfig ajax received : ", data) ;
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
+        }
+        else{
+          $('#div_alert').showAlert({
+            message: "C'est fait !",
+            level: 'success'
+          });
+        }
+      }
+    });
+  });
+});
 
 $("#import-btn").click(function() {
 	$("#import-input").click();
@@ -274,20 +341,38 @@ $("#removeDevice").click(function() {
 
 $('#in_searchWidget').off('keyup').keyup(function() {
   var search = $(this).value()
+  var widgetFilter = $("#widgetTypeSelect option:selected").val();   
+
   if (search == '') {
-    $('.widgetDisplayCard').show()
+    if ( widgetFilter == 'none' ){
+      $('.widgetDisplayCard').show()
+    }
+    else{
+      $('.widgetDisplayCard').each(function() {
+        widgetType = $(this).attr('data-widget_type') ;
+        if (widgetFilter == widgetType ){
+          $(this).closest('.widgetDisplayCard').show()
+        }
+      })
+    }
     $('.eqLogicThumbnailContainer').packery()
     return
   }
+
+
   $('.widgetDisplayCard').hide()
   search = normTextLower(search)
   var text
   var widgetId
+
   $('.widgetDisplayCard').each(function() {
     text = normTextLower($(this).children('.name').text())
     widgetId = normTextLower($(this).attr('data-widget_id'))
+    widgetType = $(this).attr('data-widget_type') ;
     if (text.indexOf(search) >= 0 || widgetId.indexOf(search) >= 0) {
-      $(this).closest('.widgetDisplayCard').show()
+      if (widgetFilter == 'none' || widgetFilter == widgetType ){
+        $(this).closest('.widgetDisplayCard').show()
+      }
     }
   })
   $('.eqLogicThumbnailContainer').packery()
@@ -777,8 +862,10 @@ function refreshAddWidgets() {
      curOption += "</div></div></li>";
 
     } else if (option.category == "string") {
+
+      type = (option.subtype != undefined) ? option.subtype : 'text';
       curOption += `<div class='input-group'>
-        <div style="display:flex"><input style="width:340px;" id="${option.id}-input" value=''>`;
+        <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
           if (option.id == 'name') {
             curOption += `
               <div class="dropdown" id="name-select">
@@ -805,7 +892,7 @@ function refreshAddWidgets() {
         curOption += `<option value="${item.id}">${item.name}</option>`;
       })
       if (option.id == "subtitle") {
-        curOption += `<option value="custom">Personalisé</option></select>`;
+        curOption += `<option value="custom">Personnalisé</option></select>`;
         curOption += `<div style="display:flex">
   					<input style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'>`;
 
@@ -1415,13 +1502,14 @@ function refreshMoreInfos() {
   let div = '';
   moreInfos.forEach(item => {
     var unit = item.unit || '';
-    div += `<div class='input-group' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}">
+    div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
           <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.human}' disabled>
           <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
           <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" value='${item.name}'>
           <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
           <input style="width:80px;position:absolute; margin-left:175px;" id="${item.id}-unit-input" value='${unit}'>
-          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:260px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
+          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-left:265px;cursor:grab!important;" aria-hidden="true"></i>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:5px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
           </div>`;
   });
   $("#moreInfos-div").html(div);
@@ -1472,7 +1560,9 @@ function refreshInfoSelect() {
 
 function infoSelected(value, el) {
   let inputId = $(el).parent().attr("input")
-  $("#"+inputId).val( $("#"+inputId).val() + value);
+  //$("#"+inputId).val( $("#"+inputId).val() + value);
+  let input = $("#"+inputId);
+  input.val( [input.val().slice(0, input[0].selectionStart), value, input.val().slice(input[0].selectionStart)].join('') );
 }
 
 function refreshStrings() {
@@ -1491,8 +1581,8 @@ function idToHuman(string, infos) {
   if (!match) { return string; }
   match.forEach(item => {
     const info = infos.find(i => i.id == item.replace(/\#/g, ""));
-    if (info) {
-      result = result.replace(item, info.human);
+    if (info && info.human != '') {
+        result = result.replace(item, info.human);
     }
   });
   return result;
@@ -1531,42 +1621,55 @@ function refreshImgListOption(dataType = 'widget') {
   });
 
   imgCat.forEach(item => {
-    curOption += `<div class='input-group jcImgListMovable' data-id="${item.index}" id="imgList-${item.index}">
-    Si :<select id="info-${item.index}" style="width:250px;height:31px;margin-left:5px;">`;
-    options.forEach(info => {
-      curOption += `<option value="${info.id}" type="${info.type}" ${item.info == undefined ? '' : item.info.id == info.id && "selected"}>${info.human}</option>`;
-    });
-    curOption += `</select> <select id="operator-${item.index}" style="width:50px;height:31px; margin-left:5px;">
-      <option value="=" ${item.operator == "=" && "selected"}>=</option>
-      <option value="<" ${item.operator == "<" && "selected"}><</option>
-      <option value=">" ${item.operator == ">" && "selected"}>></option>
-      <option value="!=" ${item.operator == "!=" && "selected"}>!=</option> </select>`;
-
-    curOption +=`<input style="width:150px;height:31px;margin-left:5px;" class=' roundedLeft' id="${item.index}-value" value='${item.value || ''}' >`
+    /*
     curOption += `
+		<div data-id="${item.index}" class='input-group jcImgListMovable'>
+			Si
+			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${item.index}" id="cond-input-${item.index}" value="${item.condition}"
+			 onchange="setCondValue(this, 'imgList')" />
+			 <a class='btn btn-default btn-sm cursor bt_selectTrigger' style=";margin-right:10px;" tooltip='Ajouter une commande' onclick="selectInfoCmd('#cond-input-${item.index}', 'imgList');">
+                    <i class='fas fa-list-alt'></i></a>
+			<a class="btn btn-success roundedRight" index="${item.index}" onclick="imagePicker(this)"><i class="fas fa-plus-square">
+			</i> Image </a>
+			<a data-id="icon-div" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
+  		</div>
+		`;
+    */
+    curOption += `
+		<div data-id="${item.index}" class='input-group jcImgListMovable'>
+			Si
+			<input style="width:385px;height:31px;margin-left:5px" class=' roundedLeft' index="${item.index}" id="imglist-cond-${item.index}" value="${item.condition}"
+			 onchange="setCondValue(this, 'imgList')" />`;
+    curOption += `
+        <div class="dropdown" id="imglist-cond-select" style="display:inline !important;">
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        <i class="fas fa-plus-square"></i> </a>
+        <ul class="dropdown-menu infos-select" input="imglist-cond-${item.index}">`;
+    if (widget.variables) {
+      widget.variables.forEach(v => {
+        curOption += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+      });
+    }
+    curOption += `</ul></div>` ;
+    curOption += `<a class="btn btn-success roundedRight" index="${item.index}" onclick="imagePicker(this)"><i class="fas fa-plus-square">
+    </i> Image </a>
+    <a data-id="icon-div" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
+    <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+    <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
+    </div>` ;
+    
 
-              <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-plus-square">
-              </i> Image </a>
-              <a data-id="icon-div-${item.index}" id="icon-div-${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>          
-              <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
-              
-              <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upImgOption('${item.index}');"></i>
-              <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downImgOption('${item.index}');"></i> -->
-              
-              <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteImgOption('${item.index}');"></i>
-        `;
-
-    curOption += '</div>'
   });
   $("#imgList-option").html(curOption);
+  setCondToHuman('imgList');
 }
 
 function saveImgOption() {
   imgCat.forEach(item => {
     item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-    item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };;
-    item.operator = $("#operator-"+item.index).val();
-    item.value = $("#"+item.index+"-value").val();
+    item.condition = $("#imglist-cond-"+item.index).val();
   });
 }
 
@@ -1575,6 +1678,7 @@ function addImgOption(dataType) {
   var maxIndex = getMaxIndex(imgCat);
   imgCat.push({index: maxIndex+1 });
   refreshImgListOption(dataType);
+  if ( dataType == 'widget') refreshInfoSelect();
 }
 
 function loadSortable(elt){
@@ -1624,6 +1728,25 @@ function loadSortable(elt){
             refreshCmdListOption(JSON.stringify(opt));
 
         } });
+  }
+
+  if (elt == 'moreInfos' || elt == 'all'){
+    $("#moreInfos-div").sortable({axis: "y", cursor: "move", items: ".moreInfosItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+      update: function( event, ui){ 
+          moreInfos = [];
+          $('#moreInfos-div > .moreInfosItem').each((i, el) => { 
+              info = {};
+              info.id = $(el).data('id') ;
+              info.human = $(el).find("#"+info.id+"-input").val();
+              info.name = $(el).find("#"+info.id+"-name-input").val();
+              info.unit = $(el).find("#"+info.id+"-unit-input").val();
+              moreInfos.push(info);
+          }
+        );
+        refreshMoreInfos();
+      }
+    });
+
   }
 
 }
@@ -1974,9 +2097,9 @@ function saveWidget() {
 
       imgCat.forEach(item => {
         item.image = htmlToIcon($("#icon-div-"+item.index).children().first());
-        item.info = { id: $("#info-"+item.index+" option:selected").attr('value'), type: $("#info-"+item.index+" option:selected").attr('type') };
-        item.operator = $("#operator-"+item.index).val();
-        item.value = $("#"+item.index+"-value").val();
+        getCmdIdFromHumanName({alert: '#widget-alert', stringData: $("#imglist-cond-"+item.index).val() }, function(result, _params){
+          item.condition = result ;
+        } ) ; 
       });
 
       result[option.id] = imgCat;
@@ -2058,20 +2181,21 @@ function saveWidget() {
             if ($('.widgetMenu .saveWidget').attr('exit-attr') == 'true') {
               var vars = getUrlVars()
               var url = 'index.php?'
-              for (var i in vars) {
-                if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-                  url += i + '=' + vars[i].replace('#', '') + '&'
-                }
-              }
+              delete vars['id']
+              delete vars['saveSuccessFull']
+              delete vars['removeSuccessFull']
+              vars['saveSuccessFull']="1";
+
+              url = getCustomParamUrl(url, vars);
               modifyWithoutSave = false
-              url += '&saveSuccessFull=1'
               loadPage(url)
             }
             else{
-              refreshWidgetDetails();
-              refreshWidgetsContent();
-
+              
               if ( $( "#selWidgetDetail" ).length > 0 ) {
+                  refreshWidgetDetails();
+                  refreshWidgetsContent();
+
                   //if it's a new widget
                   if (widgetId == undefined || widgetId == ''){
 
@@ -2102,6 +2226,33 @@ function saveWidget() {
 
 }
 
+function getCustomParamUrl(url, vars){
+
+  for (var i in vars) {
+    if (i != 'jcOrderBy' && i != 'jcFilter' && i != 'jcSearch') {
+      url += i + '=' + vars[i].replace('#', '') + '&'
+    }
+  }
+
+  var widgetFilter = $("#widgetTypeSelect option:selected").val();   
+  if (widgetFilter != 'none'){
+    url += '&jcFilter='+widgetFilter
+  }
+  
+  var widgetOrder = $("#widgetOrder option:selected").val();   
+  if (widgetOrder != 'none'){
+    url += '&jcOrderBy='+widgetOrder
+  }
+
+  var widgetSearch = $("#in_searchWidget").val().trim();   
+  if (widgetSearch != ''){
+    url += '&jcSearch='+widgetSearch
+  }
+
+  return url;
+
+}
+
 function hideWidget(){
   $("#widgetModal").dialog('destroy').remove();
 }
@@ -2118,10 +2269,15 @@ function duplicateWidget(){
 
 }
 
-function removeWidget(){
+function removeWidget(itemId){
   var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>" ;
   
-  var widgetId = $("#widgetOptions").attr('widget-id') ;
+  if ( itemId == undefined){
+    var widgetId = $("#widgetOptions").attr('widget-id') ;
+  }
+  else{
+    var widgetId = itemId ; 
+  }
 
   $.post({
 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -2291,12 +2447,9 @@ function updateOrderWidget(){
   
   var vars = getUrlVars()
   var url = 'index.php?'
-  for (var i in vars) {
-    if (i != 'jcOrderBy') {
-      url += i + '=' + vars[i].replace('#', '') + '&'
-    }
-  }
-  url += 'jcOrderBy='+type;
+  
+  url = getCustomParamUrl(url, vars) ;
+
   loadPage(url)
 
 }
@@ -2343,6 +2496,12 @@ $('#widgetTypeSelect').on('change', function() {
   if ( typeSelected != 'none'){
 	  $( '.widgetDisplayCard' ).not( "[data-widget_type=" + typeSelected + "]" ).hide();
   }
+  
+  var widgetSearch = $("#in_searchWidget").val().trim();   
+  if (widgetSearch != ''){
+    $('#in_searchWidget').keyup()
+  }
+
   $('.eqLogicThumbnailContainer').packery();
 
 });
@@ -2414,3 +2573,107 @@ function getCmdDetail(_params, _callback) {
   };
   $.ajax(paramsAJAX);
 };
+
+
+
+$( document ).ready(function() {
+  var widgetSearch = $("#in_searchWidget").val().trim();   
+  if (widgetSearch != ''){
+    $('#in_searchWidget').keyup()
+  }
+
+  $('.eqLogicThumbnailContainer').packery();
+});
+
+
+$('#eraseFilterChoice').off('click').on('click', function() {
+  var vars = getUrlVars()
+  var url = 'index.php?'
+  for (var i in vars) {
+    if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull' &&
+          i != 'jcOrderBy' && i != 'jcSearch' && i != 'jcFilter') {
+      url += i + '=' + vars[i].replace('#', '') + '&'
+    }
+  }
+  
+  loadPage(url)
+})
+
+
+function selectInfoCmd(elt, conf) {
+	let input = $(elt);
+  	jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
+		input.val( [input.val().slice(0, input[0].selectionStart), result.human, input.val().slice(input[0].selectionStart)].join('') );
+		setCondValue(input, conf);
+  	})
+}
+
+function setCondValue(elm, confArr) {
+  if ( confArr == 'bg' )	{
+    conf = configData.payload.background.condImages
+  }
+  else{
+    conf = imgCat
+  }
+
+	var curCond = conf.find(c => c.index == $(elm).attr('index'));
+	let res = $(elm).val()
+	const match = res.match(/#.*?#/g);
+	if (match) {
+		match.forEach(item => {
+			$.post({
+				url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+				data: {
+				  action: 'humanReadableToCmd',
+				  human: item
+				},
+				cache: false,
+				dataType: 'json',
+				async: false,
+				success: function( data ) {
+				  if (data.state == 'ok') {
+					  res = res.replace(item, data.result)
+				  }
+				}
+			  });
+		});			
+	}
+	curCond.condition = res;
+}
+
+function setCondToHuman(confArr) {
+  if ( confArr == 'bg' )	{
+    conf = configData.payload.background.condImages;
+    idName = 'bg-cond-input-';
+  }
+  else{
+    conf = imgCat;
+    idName = 'imglist-cond-';
+  }
+
+	conf.forEach(cond => {
+		let input = $("#"+ idName + cond.index);
+		let value = cond.condition ? cond.condition.slice() : '';
+		const match = value.match(/#.*?#/g);
+		if (match) {
+			match.forEach(item => {
+				$.post({
+					url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+					data: {
+					  action: 'cmdToHumanReadable',
+					  strWithCmdId: item
+					},
+					cache: false,
+					dataType: 'json',
+					async: false,
+					success: function( data ) {
+					  if (data.state == 'ok') {
+						value = value.replace(item, data.result);
+					  }
+					}
+				  });
+			});
+		}
+		input.val(value);
+	});
+}

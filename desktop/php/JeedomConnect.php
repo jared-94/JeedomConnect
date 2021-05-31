@@ -13,8 +13,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray= JeedomConnectWidget::getWidgets();
 
+$jcFilter = $_GET['jcFilter'] ?? '';
+$orderBy = $_GET['jcOrderBy'] ?? config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
+$widgetSearch = $_GET['jcSearch'] ?? '';
 
-$orderBy = $_GET['jcOrderBy'] ?? 'object';
 switch ($orderBy) {
 	case 'name':
 		$widgetName = array_column($widgetArray, 'name');
@@ -49,12 +51,14 @@ foreach ($widgetArray as $widget) {
 	$id = $widget['id'];
 	$widgetType = $widget['type'];
 
+	$styleHide = ($jcFilter == '') ? '' : ( $jcFilter == $widgetType ? '' : 'style="display:none;"' ) ;
+
 	//used later by the filter select item
 	if(!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType]=$allConfig[$widgetType];
 
 	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong>' ;
 
-	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" title="id='.$id.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" '.$styleHide.' title="id='.$id.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 	$listWidget .= '<img src="' . $img . '"/>';
 	$listWidget .= '<br>';
 	$listWidget .= '<span class="name">' . $name . '</span>';
@@ -63,7 +67,8 @@ foreach ($widgetArray as $widget) {
 }
 
 
-$optionsOrderBy = '' ;
+// $optionsOrderBy = $_GET['jcOrderBy'] ?? '';
+$optionsOrderBy = '';
 $orderByArray = array (
 		"object" => "Pièce",
 		"name" => "Nom",
@@ -76,19 +81,16 @@ foreach ($orderByArray as $key => $value) {
 }
 
 
-$typeSelectionParam = $_GET['jcFilterBy'] ?? '';
-
 asort($widgetTypeArray);
 $typeSelection2 = '';
 $hasSelected = false ;
 foreach ($widgetTypeArray as $key => $value) {
-	$selected = ($key ==  $typeSelectionParam) ? 'selected' : '' ;
-	$hasSelected = $hasSelected || ($key ==  $typeSelectionParam) ;
+	$selected = ($key ==  $jcFilter) ? 'selected' : '' ;
+	$hasSelected = $hasSelected || ($key ==  $jcFilter) ;
 	$typeSelection2 .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
 }
 $sel = $hasSelected ? '' : 'selected' ;
 $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2 ;
-
 
 
 ?>
@@ -108,6 +110,11 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 				<i class="fas fa-plus-circle"></i>
 				<br>
 				<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
+			</div>
+			<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
+				<i class="fas fa-tasks"></i>
+				<br>
+				<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
 			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
@@ -158,11 +165,15 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 					?>
 				</select>
 			</span>
+			<span id="eraseFilterChoice" class="btn roundedRight">
+				<!-- <i class="fas fa-times"></i> -->
+				<i class="fas fa-trash-alt"></i>
+			</span>
 			</div>
 		</legend>
 		<!-- Champ de recherche widget -->
 		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget"/>
+			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget"  value="<?=$widgetSearch?>" />
 			<div class="input-group-btn">
 				<a id="bt_resetSearchWidget" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>
@@ -305,6 +316,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 										<input type="file" accept=".json" id="import-input" style="display:none;" >
 										<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
 										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
+										<a class="btn btn-default" id="copy-btn"><i class="fas fa-copy"></i> {{Copier vers}}</a>
 										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Partagez votre configuration sur un autre équipement"></i>
 									</span>
 
@@ -331,6 +343,13 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
 									<div class="col-sm-7">
 										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
+									</div>
+							</div>
+
+							<div class="form-group">
+									<label class="col-sm-3 control-label">{{Ajouter altitude à la position}}</label>
+									<div class="col-sm-7">
+										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
 									</div>
 							</div>
 
@@ -413,6 +432,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');?>
+<?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect');?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js');?>

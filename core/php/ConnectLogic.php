@@ -5,6 +5,7 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
 
 class ConnectLogic implements MessageComponentInterface
 {
@@ -43,7 +44,7 @@ class ConnectLogic implements MessageComponentInterface
       	$this->authenticatedClients = new \SplObjectStorage;
       	$this->hasAuthenticatedClients = false;
       	$this->hasUnauthenticatedClients = false;
-      	$this->authDelay = 2;
+      	$this->authDelay = 1;
 		$this->pluginVersion = $versionJson->version;
 		$this->appRequire = $versionJson->require;
       	$this->lastReadTimestamp = time();
@@ -69,6 +70,7 @@ class ConnectLogic implements MessageComponentInterface
 			
     	if ($this->hasAuthenticatedClients) {
 			$this->lookForNewConfig();
+			$this->sendActions();
       		$events = \event::changes($this->lastReadTimestamp);
 			$this->lastReadTimestamp = time();
       		$this->broadcastEvents($events);
@@ -181,9 +183,18 @@ class ConnectLogic implements MessageComponentInterface
 				$eqLogic->save();
 			}
 
+			//check config content
+			if( is_null($config) ) {
+				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : empty config file");
+				$result = array( 'type' => 'EMPTY_CONFIG_FILE' );
+				$conn->send(json_encode($result));
+				$conn->close();
+	      		return;
+			}
+
 			//check config format version
 			if( ! array_key_exists('formatVersion', $config) ) {
-				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad bad format version");
+				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad format version");
 				$result = array( 'type' => 'FORMAT_VERSION_ERROR' );
 				$conn->send(json_encode($result));
 				$conn->close();
@@ -191,9 +202,15 @@ class ConnectLogic implements MessageComponentInterface
 			}
 
 			$conn->apiKey = $objectMsg->apiKey;
+			$conn->sessionId = rand(0,1000);
 			$conn->configVersion = $config['payload']['configVersion'];
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
+			$eqLogic->setConfiguration('platformOs', $objectMsg->platformOs);
+			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
+			$eqLogic->setConfiguration('connected', 1);
+			$eqLogic->setConfiguration('scAll', 0);
+			$eqLogic->save();
 			\log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
 			$result = array(
 				'type' => 'WELCOME',
@@ -208,7 +225,7 @@ class ConnectLogic implements MessageComponentInterface
 					'scInfo' => \apiHelper::getScenarioData($config),
 					'objInfo' => \apiHelper::getObjectData($config)
 				)
-			);
+			);			
 			\log::add('JeedomConnect', 'info', "Send ".json_encode($result));
 			$conn->send(json_encode($result));
         }
@@ -301,7 +318,9 @@ class ConnectLogic implements MessageComponentInterface
 				$this->sendScenarioInfo($from, true);
 				break;
 			case 'UNSUBSCRIBE_SC':
-				$from->sendAllSc = false;
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				$eqLogic->setConfiguration('scAll', 0);
+				$eqLogic->save();
 				break;
 			case 'GET_HISTORY':
 				$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
@@ -311,6 +330,15 @@ class ConnectLogic implements MessageComponentInterface
 				break;
 			case 'REMOVE_FILE':
 				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));
+				break;
+			case 'SET_BATTERY':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				if (is_object($eqLogic)) {					
+					$batteryCmd = $eqLogic->getCmd(null, 'battery');
+					if (is_object($batteryCmd)){
+				  		$batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
+					}
+				}				 
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
@@ -334,6 +362,13 @@ class ConnectLogic implements MessageComponentInterface
     {
         // Remove client from lists
         \log::add('JeedomConnect', 'info', "Connection #{$conn->resourceId} ({$conn->apiKey}) has disconnected");
+		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
+		if (is_object($eqLogic)) {
+			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
+				$eqLogic->setConfiguration('connected', 0);
+				$eqLogic->save();
+			}
+		}				
         $this->unauthenticatedClients->detach($conn);
         $this->authenticatedClients->detach($conn);
         $this->setAuthenticatedClientsCount();
@@ -349,6 +384,13 @@ class ConnectLogic implements MessageComponentInterface
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
         \log::add('JeedomConnect', 'error', "An error has occurred: {$e->getMessage()}");
+		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
+		if (is_object($eqLogic)) {
+			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
+				$eqLogic->setConfiguration('connected', 0);
+				$eqLogic->save();
+			}
+		}
         $conn->close();
         // Remove client from lists
         $this->unauthenticatedClients->detach($conn);
@@ -373,15 +415,35 @@ class ConnectLogic implements MessageComponentInterface
 		}
 	}
 
+	private function sendActions() {
+		foreach ($this->authenticatedClients as $client) {
+			$actions = \JeedomConnectActions::getAllAction($client->apiKey);
+			//\log::add('JeedomConnect', 'debug', "get action  ".json_encode($actions));
+			if (count($actions) > 0) {
+				$result = array(
+					'type' => 'ACTIONS',
+					'payload' => array()
+				);
+				foreach ($actions as $action) {
+					array_push($result['payload'], $action['value']['payload']);
+				}
+				\log::add('JeedomConnect', 'debug', "send action to #{$client->resourceId}  ".json_encode($result));
+				$client->send(json_encode($result));
+				\JeedomConnectActions::removeAllAction($actions);
+			}
+		}
+		
+	}
+
 	private function broadcastEvents($events) {
 		foreach ($this->authenticatedClients as $client) {
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 			$config = $eqLogic->getGeneratedConfigFile();
-			$eventsRes = \apiHelper::getEvents($events, $config);
+			$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
-					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
+					//\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
 					$client->send(json_encode($res));
 				}
 			}
@@ -420,32 +482,17 @@ class ConnectLogic implements MessageComponentInterface
 		$client->send(json_encode($result));
 	}
 
-	public function sendScenarioInfo($client, $all=false) {
+	public function sendScenarioInfo($client, $scAll=false) {
 		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 		$config = $eqLogic->getGeneratedConfigFile();
-		$client->sendAllSc = $all;
-		$scIds = \apiHelper::getScenarioList($config);
-		$result = array(
-			'type' => $all ? 'SET_ALL_SC' : 'SET_SC_INFO',
-			'payload' => array()
-		);
-
-		foreach (\scenario::all() as $sc) {
-			if (in_array($sc->getId(), $scIds) || $all) {
-				$state = $sc->getCache(array('state', 'lastLaunch'));
-				$sc_info = array(
-					'id' => $sc->getId(),
-					'name' => $sc->getName(),
-					'object' => $sc->getObject() == null ? 'Aucun' : $sc->getObject()->getName(),
-					'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
-					'status' => $state['state'],
-					'lastLaunch' => strtotime($state['lastLaunch']),
-					'active' => $sc->getIsActive() ? 1 : 0
-				);
-				array_push($result['payload'], $sc_info);
-			}
+		if ($scAll) {
+			$eqLogic->setConfiguration('scAll', 1);
+			$eqLogic->save();
 		}
-
+		$result = array(
+			'type' => $scAll ? 'SET_ALL_SC' : 'SET_SC_INFO',
+			'payload' => \apiHelper::getScenarioData($config, true)
+		);
 		\log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$client->send(json_encode($result));
 	}

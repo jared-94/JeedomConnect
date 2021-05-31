@@ -43,7 +43,25 @@ foreach ($widgetsConfigFile['widgets'] as $widget ) {
 //  prepare list of Widget Already Created
 $widgetAvailOptions = '';
 $widgetTypeAvail = [];
+$widgetRoomAvail = [];
 $widgetArray= JeedomConnectWidget::getWidgets();
+
+$orderBy = config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
+switch ($orderBy) {
+	case 'name':
+		$widgetName = array_column($widgetArray, 'name');
+		array_multisort($widgetName, SORT_ASC, $widgetArray);
+		break;
+
+	case 'type':
+		$widgetType = array_column($widgetArray, 'type');
+		$widgetName = array_column($widgetArray, 'name');
+		array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+		break;
+
+	default:
+		break;
+}
 
 $listWidget = '';
 foreach ($widgetArray as $widget) {
@@ -56,10 +74,14 @@ foreach ($widgetArray as $widget) {
 	$id = $widget['id'];
 
   $widgetTypeAvail[$type] = $widgetsConfigGlobal[$type] ;
-	$widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'">' . $widgetName . $widgetRoom . ' ['.$id.']</option>' ;
+  
+  $widgetRoomAvail[$widget['roomName']] = $widget['roomName'] ;
+	
+  $widgetAvailOptions .= '<option value="'.$id.'" data-widget-id="'.$id.'" data-type="'.$type.'" data-room-name="'.$widget['roomName'].'">' . $widgetName . $widgetRoom . ' ['.$id.']</option>' ;
 
 }
 asort($widgetTypeAvail);
+asort($widgetRoomAvail);
 
 
 $summaryConfig = config::byKey('object:summary');
@@ -113,6 +135,8 @@ foreach ($summaryConfig as $index => $summary) {
       <button class="tablinks" onclick="openTab(event, 'roomTab')">Pièces</button>
       <button class="tablinks" onclick="openTab(event, 'summaryTab')">Résumés</button>
       <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
+      <button class="tablinks" onclick="openTab(event, 'backgroundTab')">Fond d'écran</button>
+      <button class="tablinks" onclick="openTab(event, 'weatherTab')">Météo</button>
     </div>
   </div>
 
@@ -227,10 +251,24 @@ foreach ($summaryConfig as $index => $summary) {
             </div>
 
             <div class="form-group">
+              <label class="col-sm-5 control-label" >{{Pièce}}</label>
+              <div class="col-sm-7">
+                <select id="selWidgetRoom" class="form-control">
+                  <option value="all">{{Toutes}}</option>
+                  <?php
+                  foreach ($widgetRoomAvail as $key => $value) {
+                    echo '<option value="'.$key.'">'.$widgetRoomAvail[$key].'</option>' ;
+                  }
+                  ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
               <label class="col-sm-5 control-label" >{{Type de Widget}}</label>
               <div class="col-sm-7">
                 <select id="selWidgetType" class="form-control">
-                  <option value="">{{Aucun}}</option>
+                  <option value="all">{{Tous}}</option>
                   <?php
                   foreach ($widgetTypeAvail as $key => $value) {
                     echo '<option value="'.$key.'">'.$widgetTypeAvail[$key].'</option>' ;
@@ -250,6 +288,13 @@ foreach ($summaryConfig as $index => $summary) {
                   echo $widgetAvailOptions ;
                   ?>
                 </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-5 control-label" ></label>
+              <div class="col-sm-7">
+                <input class="form-control" type="checkbox" id="hideExist"> {{Masquer les éléments déjà présents}}
               </div>
             </div>
 
@@ -273,8 +318,99 @@ foreach ($summaryConfig as $index => $summary) {
       Vous pouvez ajouter des widgets, ainsi que des groupes pour les classer.
       </div>
       <img src="plugins/JeedomConnect/desktop/img/widget.png" />
+    </div>    
+  </div>
+
+  <!-- BACKGROUND PART -->
+
+  <div id="backgroundTab" class="col-sm-12 tabcontent" style="width: 100%;">
+    <!--    START LEFT PANEL --->
+	<div  class="col-sm-8">
+      <form class="form-horizontal">
+        <fieldset>
+          <h3>Fond d'écran</h3>
+            
+            <div class="form-group">
+              <label class="col-sm-5 control-label">{{Image si aucune condition vérifiée}}</label>
+              <div class="col-sm-7">
+                <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une image' onclick="getBgImg();">
+                  <i class='fas fa-flag'></i> Image 
+                </a>
+                <a id="bg-icon-div" onclick='removeBgImg();'> </a>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label class="col-sm-5 control-label">{{Image sous conditions}}</label>
+              <div class="col-sm-7">
+                <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Ajouter une condition' onclick="addCondImg();">
+                <i class='fas fa-plus'></i> Ajouter 
+              </a>
+              </div>
+            </div>
+
+            <div id="condImgList"></div>
+        </fieldset>
+      </form>
+    </div>
+	<!--    END LEFT PANEL --->
+
+	<!--    START RIGHT PANEL --->
+    <div class="col-sm-4">
+      <div class="alert alert-info">
+        Vous pouvez ici configurer le fond d'écran de l'application. Utilisez de préférence des images adaptées à la taille de votre écran.
+      </div>
+	  
+      <div class="alert alert-info">
+        Pour les conditions, utilisez les opérateurs ==, !=, <, >, <=, >=, &&, ||
+      </div>
+	  
+      <div class="alert alert-info">
+        Variables disponibles :
+        <ul>
+          <li><b>#bottomTabId#</b> : id du menu bas en cours (visible en survolant la souris sur les menus bas)</li>
+          <li><b>#topTabId#</b> : id du menu haut en cours (visible en survolant la souris sur les menus haut)</li>
+          <li><b>#screenId#</b> : id de la page en cours. Valeurs possibles :
+            <ul>
+              <li>1 : Page principale</li>
+              <li>2 : Page Pièces</li>
+              <li>3 : Page Notifications</li>
+              <li>4 : Page scénarios</li>
+              <li>5 : Page Préférences</li>
+              <li>6 : Page Applications</li>
+            </ul>
+            </li>
+          <li><b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces</li>
+        </ul>
+      </div>
+	  
+    </div>
+	<!--    END RIGHT PANEL --->
+  </div>
+
+  <!-- WEATHER PART -->
+
+  <div id="weatherTab" class="tabcontent">
+    <div class="leftContent">
+      <h3>Météo</h3>
+      
+      <div class="input-group " style="width: 90%">
+        Equipement
+        <input class="roundedLeft" style="margin-left:5px; width:400px" id="weather-input"  value="" disabled >
+          <a class="btn btn-default listEquipementInfo"  tooltip="Sélectionner un équipement" onclick="getWeatherEq();" ><i class="fas fa-list-alt"></i></a>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeWeatherEq();"></i>
+      </div>
+
+    </div>
+    <div class="rightContent">
+      <div class="alert alert-info">
+        Vous pouvez ici configurer la météo. Seul le plugin officiel Weather est compatible.
+      </div>      
     </div>
   </div>
-</div>
 
+
+
+</div>
 </div>
