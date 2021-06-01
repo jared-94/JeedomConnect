@@ -6,6 +6,7 @@ use Ratchet\ConnectionInterface;
 
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
 
 class ConnectLogic implements MessageComponentInterface
 {
@@ -343,6 +344,9 @@ class ConnectLogic implements MessageComponentInterface
 				  		$batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
 					}
 				}				 
+				break;
+			case 'SET_WIDGET':
+				\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
