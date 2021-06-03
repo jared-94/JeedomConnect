@@ -287,6 +287,8 @@ switch ($method) {
     if (is_object($batteryCmd)){
       $batteryCmd->event($params['level']);
     } 
+    $eqLogic->setStatus("battery", $params['level']);
+    $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
     $jsonrpc->makeSuccess();
     break;
   case 'SET_WIDGET':
