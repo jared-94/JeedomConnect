@@ -150,6 +150,17 @@ class JeedomConnectWidget extends config {
 		log::add(self::$_plugin_id, 'debug', 'updateConfig - key ' . $key . ' NOT found');
 	}
 
+	public static function updateWidgetConfig($widgetId, $config) {
+		$widgetSettings = self::getConfiguration($widgetId) ;
+		if ( empty($widgetSettings) ){
+			log::add(self::$_plugin_id, 'debug', 'updateConfig - widgetId ' . $widgetId . ' NOT found');
+			return;
+		}
+		$widgetSettings['widgetJC'] = json_encode( $config );
+		self::saveConfig($widgetSettings, $widgetId) ;
+		JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
+	}
+
 	public static function saveConfig($conf, $widgetId = null){
 
 		$cpl = '';

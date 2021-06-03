@@ -78,6 +78,17 @@ $("#condImgList").sortable({axis: "y", cursor: "move", items: ".condImgItem", pl
 
 	} });
 
+$("#batteryImgList").sortable({axis: "y", cursor: "move", items: ".condImgItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
+	update: function( event, ui){ 
+			$('#batteryImgList > .condImgItem').each((i, el) => { 
+					var itemIndex = $(el).data('id') ;
+					var itemToMove = configData.payload.batteries.condImages.find(c => c.index == itemIndex);
+					itemToMove.index = i;
+					}
+			);
+
+	} });
+
 $("#bottomUL").sortable({axis: "y", cursor: "move", items: ".bottomItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
 	update: function( event, ui){ 
 			$('#bottomUL > .bottomItem').each((i, el) => { 
@@ -116,6 +127,8 @@ function openTab(evt, tabName) {
 		refreshBackgroundData();
 	} else if (tabName == "weatherTab") {
 		refreshWeatherData();
+	} else if (tabName == "batteryTab") {
+		refreshBatteriesData('batteries');
 	}
 	var i, tabcontent, tablinks;
 	tabcontent = document.getElementsByClassName("tabcontent");

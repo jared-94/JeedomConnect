@@ -47,6 +47,11 @@ $customPath = config::byKey('userImgPath', 'JeedomConnect') ;
 
 $myFiles = get_all_files($customPath);
 
+$iconName = array_column($myFiles, 'name');
+// $iconName = array_column($myFiles, 'path');
+array_multisort($iconName, SORT_ASC, $myFiles);
+		
+
 
 ?>
 

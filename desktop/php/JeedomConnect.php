@@ -9,6 +9,10 @@ sendVarToJS('userImgPath', $customPath );
 // Déclaration des variables obligatoires
 $plugin = plugin::byId('JeedomConnect');
 sendVarToJS('eqType', $plugin->getId());
+
+$isExpert = config::byKey('isExpert', 'JeedomConnect') ? true : false ;
+sendVarToJS('isJcExpert', $isExpert );
+
 $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray= JeedomConnectWidget::getWidgets();

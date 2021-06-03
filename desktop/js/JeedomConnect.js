@@ -818,9 +818,10 @@ function refreshAddWidgets() {
     <div class="description">${description}</div>`;
 
     if (option.category == "cmd") {
+      isDisabled = isJcExpert ? '' : 'disabled';
       curOption += `<table><tr class="cmd">
             <td>
-              <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' disabled>
+              <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled}>
               <td>
                  <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}', '${option.value}');">
                     <i class='fas fa-list-alt'></i></a>
@@ -1164,6 +1165,7 @@ function refreshCmdListOption(optionsJson) {
     return s.index - t.index;
   });
   cmdCat.forEach(item => {
+    isDisabled = isJcExpert ? '' : 'disabled';
     //open the div
     curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;" data-id="${item.id}" data-index="${item.index}">`;
 
@@ -1172,7 +1174,7 @@ function refreshCmdListOption(optionsJson) {
       
             curOption +=`<div class="input-group input-group-sm" style="width: 100%">
                             <span class="input-group-addon roundedLeft" style="width: 100px">Commande</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' disabled>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' ${isDisabled}>
                         </div>`;
 
             
@@ -2612,13 +2614,16 @@ function setCondValue(elm, confArr) {
   if ( confArr == 'bg' )	{
     conf = configData.payload.background.condImages
   }
+  else if ( confArr == 'batteries' )	{
+    conf = configData.payload.batteries.condImages
+  }
   else{
     conf = imgCat
   }
 
 	var curCond = conf.find(c => c.index == $(elm).attr('index'));
 	let res = $(elm).val()
-	const match = res.match(/#.*?#/g);
+  const match = res.match(/#.*?#/g);
 	if (match) {
 		match.forEach(item => {
 			$.post({
@@ -2638,13 +2643,17 @@ function setCondValue(elm, confArr) {
 			  });
 		});			
 	}
-	curCond.condition = res;
+  curCond.condition = res;
 }
 
 function setCondToHuman(confArr) {
   if ( confArr == 'bg' )	{
     conf = configData.payload.background.condImages;
     idName = 'bg-cond-input-';
+  }
+  else if ( confArr == 'batteries' )	{
+    conf = configData.payload.batteries.condImages;
+    idName = 'batteries-cond-input-';
   }
   else{
     conf = imgCat;
@@ -2654,7 +2663,7 @@ function setCondToHuman(confArr) {
 	conf.forEach(cond => {
 		let input = $("#"+ idName + cond.index);
 		let value = cond.condition ? cond.condition.slice() : '';
-		const match = value.match(/#.*?#/g);
+    const match = value.match(/#.*?#/g);
 		if (match) {
 			match.forEach(item => {
 				$.post({
@@ -2668,7 +2677,7 @@ function setCondToHuman(confArr) {
 					async: false,
 					success: function( data ) {
 					  if (data.state == 'ok') {
-						value = value.replace(item, data.result);
+						  value = value.replace(item, data.result);
 					  }
 					}
 				  });

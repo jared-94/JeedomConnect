@@ -21,6 +21,7 @@ header('Content-Type: application/json');
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
 
 $jsonData = file_get_contents("php://input");
 log::add('JeedomConnect', 'debug', 'HTTP API received '.$jsonData);
@@ -250,6 +251,9 @@ switch ($method) {
 	case 'GET_HISTORY':
 			$jsonrpc->makeSuccess(apiHelper::getHistory($params['id'], $params['options']));
 			break;
+  case 'GET_BATTERIES':
+    $jsonrpc->makeSuccess(apiHelper::getBatteries());
+    break;
   case 'GET_GEOFENCES':
     $result = apiHelper::getGeofencesData($eqLogic);
     log::add('JeedomConnect', 'info', 'GEOFENCES '.json_encode($result));
@@ -283,6 +287,10 @@ switch ($method) {
     if (is_object($batteryCmd)){
       $batteryCmd->event($params['level']);
     } 
+    $jsonrpc->makeSuccess();
+    break;
+  case 'SET_WIDGET':
+    JeedomConnectWidget::updateWidgetConfig($params['widgetId'], $params['widget']);
     $jsonrpc->makeSuccess();
     break;
 	case 'ADD_GEOFENCE':

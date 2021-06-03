@@ -137,6 +137,7 @@ foreach ($summaryConfig as $index => $summary) {
       <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
       <button class="tablinks" onclick="openTab(event, 'backgroundTab')">Fond d'écran</button>
       <button class="tablinks" onclick="openTab(event, 'weatherTab')">Météo</button>
+      <button class="tablinks" onclick="openTab(event, 'batteryTab')">Batteries</button>
     </div>
   </div>
 
@@ -379,6 +380,7 @@ foreach ($summaryConfig as $index => $summary) {
               <li>4 : Page scénarios</li>
               <li>5 : Page Préférences</li>
               <li>6 : Page Applications</li>
+              <li>7 : Page Batteries</li>
             </ul>
             </li>
           <li><b>#roomId#</b> : id de la pièce en cours lorsqu'on est dans la page Pièces. Utilisez 0 pour le premier onglet Pièces</li>
@@ -409,6 +411,61 @@ foreach ($summaryConfig as $index => $summary) {
       </div>      
     </div>
   </div>
+
+
+  <!-- BATTERY PART -->
+
+  <div id="batteryTab" class="col-sm-12 tabcontent" style="width: 100%;">
+    <!--    START LEFT PANEL --->
+	<div  class="col-sm-8">
+      <form class="form-horizontal">
+        <fieldset>
+          <h3>Batteries</h3>
+            
+            <div class="form-group">
+              <label class="col-sm-5 control-label">{{Image sous conditions}}</label>
+              <div class="col-sm-7">
+                <a class='btn btn-default btn-sm cursor bt_BatteryImgSelection' tooltip='Ajouter une condition' onclick="addBatteryCondImg();">
+                <i class='fas fa-plus'></i> Ajouter 
+              </a>
+              </div>
+            </div>
+
+            <div id="batteryImgList"></div>
+        </fieldset>
+      </form>
+    </div>
+	<!--    END LEFT PANEL --->
+
+	<!--    START RIGHT PANEL --->
+    <div class="col-sm-4">
+      <div class="alert alert-info">
+        Vous pouvez configurer ici les conditions et icones à utiliser pour afficher les équipements ayant des batteries.
+      </div>
+	  
+      <div class="alert alert-info">
+        Pour les conditions, utilisez les opérateurs ==, !=, <, >, <=, >=, &&, ||
+      </div>
+	  
+      <div class="alert alert-info">
+        Variables disponibles :
+        <ul>
+          <li><b>#plugin#</b> : le nom du plugin (id)</li>
+          <li><b>#battery#</b> : pourcentage de la batterie restante</li>
+          <li><b>#level#</b> : niveau de criticité. Valeurs possibles :
+            <ul>
+              <li>good</li>
+              <li>warning</li>
+              <li>critical</li>
+            </ul>
+            </li>
+        </ul>
+      </div>
+	  
+    </div>
+	<!--    END RIGHT  --->
+  </div>
+	<!--    END BATTERY PANEL --->
 
 
 
