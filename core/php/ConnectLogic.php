@@ -343,6 +343,8 @@ class ConnectLogic implements MessageComponentInterface
 					if (is_object($batteryCmd)){
 				  		$batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
 					}
+					$eqLogic->setStatus("battery", $msg['payload']['level']);
+					$eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
 				}				 
 				break;
 			case 'SET_WIDGET':
