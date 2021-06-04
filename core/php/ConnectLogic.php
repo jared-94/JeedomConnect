@@ -219,6 +219,8 @@ class ConnectLogic implements MessageComponentInterface
 					'pluginVersion' => $this->pluginVersion,
 					'useWs' => $eqLogic->getConfiguration('useWs', 0),
 					'userHash' => $user->getHash(),
+					'userId' => $user->getId(),
+					'userProfil' => $user->getProfils(),
 					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
