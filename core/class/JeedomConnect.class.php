@@ -1482,7 +1482,7 @@ class JeedomConnect extends eqLogic {
 								break;
 						}
 
-
+						$daemonData['last_launch'] = $daemon_info['last_launch'];
 						switch ($daemon_info['state']) {
 							case 'ok':
 								$daemonData['state'] = 'OK';
