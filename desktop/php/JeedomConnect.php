@@ -357,6 +357,13 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									</div>
 							</div>
 
+							<div class="form-group">
+									<label class="col-sm-3 control-label">{{Masquer la batterie sur page Equipement Jeedom}}</label>
+									<div class="col-sm-7">
+										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="hideBattery" type="checkbox" >
+									</div>
+							</div>
+
 
 							<legend><i class="fa fa-bug"></i>  {{Partager le fichier de configuration}}</legend>
 							<div class="form-group">

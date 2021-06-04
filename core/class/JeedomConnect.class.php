@@ -804,6 +804,11 @@ class JeedomConnect extends eqLogic {
 
 		}
 
+		if ($this->getConfiguration('hideBattery')  ) {
+			// log::add('JeedomConnect', 'debug', 'hiding battery : -2');
+			$this->setStatus("battery");
+		}
+
     }
 
     public function preUpdate() {
