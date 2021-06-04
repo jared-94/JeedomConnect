@@ -1573,16 +1573,7 @@ class JeedomConnect extends eqLogic {
 		// get the number of update availables
 		$nb = update::nbNeedUpdate();
 
-		// retrieve if the user connected to that equipment is administrator
-		$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-		$userId = $eqLogic->getConfiguration('userId', -1);
-		$user = user::byId($userId) ;
-		$profil = null ;
-		if ( is_object($user) ){
-			$profil = $user->getProfils();
-		}
-	
-		$result = array('plugins' => $allPluginsData, 'jeedom' => $jeedomData, 'nbUpdate' => $nb, 'userId' => $userId, 'userProfil' => $profil);
+		$result = array('plugins' => $allPluginsData, 'jeedom' => $jeedomData, 'nbUpdate' => $nb );
 		return $result;
 
 	}
