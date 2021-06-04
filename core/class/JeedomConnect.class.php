@@ -734,12 +734,12 @@ class JeedomConnect extends eqLogic {
 				if ($dist < $cmd->getConfiguration('radius')) {
 					if ($cmd->execCmd() != 1) {
 						log::add('JeedomConnect', 'debug', "Set 1 for geofence " . $cmd->getName());
-						$cmd->event(1, date('Y-m-d H:i:s', strtotime($timestamp)));
+						$cmd->event(1, date('Y-m-d H:i:s', $timestamp));
 					}
 				} else {
 					if ($cmd->execCmd() != 0) {
 						log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $cmd->getName());
-						$cmd->event(0, date('Y-m-d H:i:s', strtotime($timestamp)));
+						$cmd->event(0, date('Y-m-d H:i:s', $timestamp));
 					}
 				}
 			}
