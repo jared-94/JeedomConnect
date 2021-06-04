@@ -268,7 +268,13 @@ switch ($method) {
     $jsonrpc->makeSuccess(apiHelper::getJeedomHealthDetails($apiKey));
     break;
   case 'DAEMON_RESTART':
-    $jsonrpc->makeSuccess(apiHelper::restartDaemon($params['userId'], $params['pluginId'] ));
+    $jsonrpc->makeSuccess(array('result' => apiHelper::restartDaemon($params['userId'], $params['pluginId'] ) ) );
+    break;
+  case 'GET_PLUGINS_UPDATE':
+    $jsonrpc->makeSuccess(apiHelper::getPluginsUpdate());
+    break;
+  case 'DO_PLUGIN_UPDATE':
+    $jsonrpc->makeSuccess( array('result' => apiHelper::doUpdate($params['pluginId']) ) );
     break;
 	case 'CMD_EXEC':
 		apiHelper::execCmd($params['id'], $params['options']);

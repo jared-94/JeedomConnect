@@ -373,6 +373,39 @@ class apiHelper {
   }
 
 
+  // PLUGINS UPDATE
+
+  public static function doUpdate($pluginId){
+    try{
+      $update = update::byLogicalId($pluginId);
+      
+      if ( ! is_object($update) )  {
+        log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
+        return false;
+      }
+      
+      $update->doUpdate();
+      return true;
+
+    }
+    catch (Exception $e) {
+      log::add('JeedomConnect', 'error', 'doUpdate -- ' . $e->getMessage());
+      return false;
+    }
+    
+  }
+
+  public static function getPluginsUpdate(){
+
+    $result = array(
+      'type' => 'SET_PLUGINS_UPDATE',
+      'payload' => JeedomConnect::getPluginsUpdate()
+    );
+    log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result) );
+    return $result;
+  }
+
+
   // JEEDOM & PLUGINS HEALTH
 
   public static function restartDaemon($userId, $pluginId){

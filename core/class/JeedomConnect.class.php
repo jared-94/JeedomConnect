@@ -1537,8 +1537,8 @@ class JeedomConnect extends eqLogic {
 				$pluginData['id'] = $plugin_id ;
 				$pluginData['name'] = $plugin->getName();
 				$pluginData['img'] = $plugin->getPathImgIcon();
-				$pluginData['versionDate'] = $versionType ;
-				$pluginData['versionType'] = $versionDate ;
+				$pluginData['versionDate'] = $versionDate ;
+				$pluginData['versionType'] = $versionType ;
 				$pluginData['error'] = $asNok ;
 				$pluginData['pending'] = $asPending ; 
 				$pluginData['portInfo'] = $portInfo;
@@ -1576,6 +1576,52 @@ class JeedomConnect extends eqLogic {
 		$result = array('plugins' => $allPluginsData, 'jeedom' => $jeedomData, 'nbUpdate' => $nb );
 		return $result;
 
+	}
+
+	
+
+	public static function getPluginsUpdate(){
+		$nbNeedUpdate = update::nbNeedUpdate();
+
+		$updateArr = array();
+		if ( $nbNeedUpdate != 0 ) {
+			
+			foreach (update::all() as $update) {
+			
+				if (strtolower($update->getStatus()) != 'update' ) continue;
+				
+				$item = array();
+				if ($update->getType() == 'core') {
+					$item['pluginId'] =  $update->getLogicalId();
+					$item['message'] = 'La mise à jour du core n\'est possible depuis l\'application';
+				}
+				else if ($update->getType() == 'plugin') {
+					$item['pluginId'] =  $update->getLogicalId();
+					try {
+						$plugin = plugin::byId($update->getLogicalId());
+
+						$item['currentVersion'] =  $update->getLocalVersion() ;
+						$item['updateVersion'] = $update->getRemoteVersion() ;
+						
+						$item['pluginType'] = $update->getConfiguration('version'); 
+						
+						$item['changelogLink'] =  $plugin->getChangelog() ;
+						$item['docLink'] =  $plugin->getDocumentation() ;
+						
+						$item['doNotUpdate'] = $update->getConfiguration('doNotUpdate') == 1 ;
+					
+					} catch (Exception $e) {
+						log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage() );
+						$item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
+					}
+				}
+				array_push( $updateArr ,$item);
+			}
+
+		}
+
+		$result = array('nbUpdate' => $nbNeedUpdate, 'pluginsToUpdate' => $updateArr);
+		return $result;
 	}
 
 }
