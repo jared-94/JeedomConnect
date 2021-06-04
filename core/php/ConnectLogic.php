@@ -337,15 +337,7 @@ class ConnectLogic implements MessageComponentInterface
 				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));
 				break;
 			case 'SET_BATTERY':
-				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-				if (is_object($eqLogic)) {					
-					$batteryCmd = $eqLogic->getCmd(null, 'battery');
-					if (is_object($batteryCmd)){
-				  		$batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
-					}
-					$eqLogic->setStatus("battery", $msg['payload']['level']);
-					$eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-				}				 
+				\apiHelper::saveBatteryEquipment($from->apiKey, $msg['payload']['level']);
 				break;
 			case 'SET_WIDGET':
 				\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);

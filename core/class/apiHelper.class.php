@@ -346,6 +346,32 @@ class apiHelper {
     return $result;
   }
 
+
+  public static function saveBatteryEquipment($apiKey, $level){
+    
+    $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+
+    if(is_object($eqLogic)){
+     
+      $batteryCmd = $eqLogic->getCmd(null, 'battery');
+     
+      if (is_object($batteryCmd)){
+        $batteryCmd->event($level);
+      } 
+     
+      if (! $eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2 ){
+        $eqLogic->setStatus("battery", $level);
+        $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page '); 
+      }
+
+    }
+    else{
+      log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | not able to retrieve an equipment for apiKey ' . $apiKey );
+    }
+
+  }
+
  //EXEC ACTIONS
  public static function execCmd($id, $options = null) {
    $cmd = cmd::byId($id);
