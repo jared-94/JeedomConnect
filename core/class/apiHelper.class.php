@@ -372,6 +372,30 @@ class apiHelper {
 
   }
 
+
+  // JEEDOM & PLUGINS HEALTH
+
+  public static function restartDaemon($userId, $pluginId){
+    $_plugin = \plugin::byId($pluginId);
+    if ( is_object($_plugin) ){
+      log::add('JeedomConnect', 'debug', 'DAEMON restart by [' . $userId . '] =>' . $pluginId );
+      $_plugin->deamon_start(true);
+      return true;
+    }
+    return false;
+  }
+
+  public static function getJeedomHealthDetails($apiKey){
+
+    $result = array(
+      'type' => 'SET_JEEDOM_GLOBAL_HEALTH',
+      'payload' => JeedomConnect::getHealthDetails($apiKey)
+    );
+    log::add('JeedomConnect', 'debug', 'Send health =>' . json_encode($result) );
+    return $result;
+  }
+
+
  //EXEC ACTIONS
  public static function execCmd($id, $options = null) {
    $cmd = cmd::byId($id);

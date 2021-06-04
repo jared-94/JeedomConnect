@@ -322,6 +322,14 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_ALL_SC':
 				$this->sendScenarioInfo($from, true);
 				break;
+			case 'GET_JEEDOM_GLOBAL_HEALTH':
+				$health = \apiHelper::getJeedomHealthDetails($from->apiKey) ;
+				$from->send(json_encode($health));
+				break;
+			case 'DAEMON_RESTART':
+				$result = \apiHelper::restartDaemon($msg['payload']['userId'], $msg['payload']['pluginId'] );
+				$from->send(json_encode(array('result' => $result)));
+				break;
 			case 'UNSUBSCRIBE_SC':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				$eqLogic->setConfiguration('scAll', 0);

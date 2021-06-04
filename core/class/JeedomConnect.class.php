@@ -1396,6 +1396,197 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
+	/******************************************************************************
+	 * ************** FUNCTIONS TO RETRIEVE HEALTH DETAILS
+	 * **************       FOR JEEDOM and PLUGINS
+	 * ****************************************************************************
+	 */
+
+	public static function getHealthDetails($apiKey){
+		$allPluginsData = array();
+
+		foreach  (plugin::listPlugin(true) as $plugin) {
+
+			if ($plugin->getHasDependency() == 1 || $plugin->getHasOwnDeamon() == 1 || method_exists($plugin->getId(), 'health')) {
+				$plugin_id = $plugin->getId();
+
+				$asNok = 0;
+				$asPending = 0;
+				
+				$daemonInfo = null;
+				if ($plugin->getHasOwnDeamon() == 1) {
+					if ($plugin->deamon_info()['auto'] == 1) {
+						$daemonInfo = "{{Démon en mode automatique}}";
+					} else {
+						$daemonInfo = "{{Démon en mode manuel}}";
+					}
+				}
+				
+				$portInfo = null;
+				if (config::byKey('port', $plugin->getId()) != '') {
+					$portInfo = ucfirst(config::byKey('port', $plugin->getId()));
+				}
+				
+				if (file_exists(dirname(plugin::getPathById($plugin_id)) . '/../desktop/modal/health.php')) {
+					$hasSpecificHealth = true;
+					$hasSpecificHealthIcon = '  <i data-pluginname="' . $plugin->getName() . '" data-pluginid="' . $plugin->getId() . '" class="fas fa-medkit bt_healthSpecific pull-right cursor" title="Santé spécifique"></i>';
+				}
+				
+				$dependencyInfo = null;
+				if ($plugin->getHasDependency() == 1 ){
+					try {
+						$dependancy_info = $plugin->dependancy_info();
+						switch ($dependancy_info['state']) {
+							case 'ok':
+								$dependencyInfo = 'OK';
+								break;
+							case 'in_progress':
+								$dependencyInfo = 'En cours';
+								$asPending += 1;
+								break;
+							default:
+								$dependencyInfo = 'KO';
+								$asNok += 1;
+								break  ;
+						}
+					
+					} catch(Exception $e) {
+						log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting dependancy_info -- ' . $e->getMessage() ) ;
+					}
+				}
+
+				$daemonData = array();
+				if ($plugin->getHasOwnDeamon() == 1) {
+					try {
+					
+						$daemonData['setup'] = array();
+						$daemon_info = $plugin->deamon_info();
+						
+						$daemonData['setup']['mode'] = $daemon_info['auto'] ? 'auto' : 'manuel';
+						
+						$daemonData['setup']['message'] = null;
+						
+						switch ($daemon_info['launchable']) {
+							case 'ok':
+								$daemonData['setup']['status'] = 'OK';
+								break;
+							case 'nok':
+								if ($daemon_info['auto'] != 1) {
+									$daemonData['setup']['status'] = 'Désactivé';
+								} 
+								else {
+									$daemonData['setup']['status'] = 'KO';
+									$daemonData['setup']['message'] =  $daemon_info['launchable_message'];
+									$asNok += 1;
+								}
+								break;
+						}
+
+
+						switch ($daemon_info['state']) {
+							case 'ok':
+								$daemonData['state'] = 'OK';
+								break;
+							case 'nok':
+								if ($daemon_info['auto'] != 1) {
+									$daemonData['state'] = 'Désactivé';
+								} 
+								else {
+									$daemonData['state'] = 'KO';
+									$asNok += 1;
+								}
+								break;
+						}
+					
+					} catch (Exception $e) {
+						log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting daemon_info -- ' . $e->getMessage() ) ;
+					}
+				}
+				
+				$healthData = array();
+				if (method_exists($plugin->getId(), 'health')) {
+
+					try {
+						foreach ( $plugin_id::health() as $result) {
+							$item = array();
+							$item['test'] = $result['test'];
+							$item['advice'] = $result['advice'] ;
+								
+							if (! $result['state']) {
+								$asNok += 1;
+							}
+							$item['result']= $result['result'];
+							
+							array_push( $healthData, $item ) ;
+						}
+					} catch (Exception $e) {
+						log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting health info -- ' . $e->getMessage() ) ;
+					}
+				}
+
+
+				$update = $plugin->getUpdate();
+				$versionType = $versionDate = null;
+				if (is_object($update)) {
+					$versionType = $update->getConfiguration('version');
+					$versionDate = $update->getLocalVersion() ;
+				}
+
+				$pluginData = array();
+
+				$pluginData['id'] = $plugin_id ;
+				$pluginData['name'] = $plugin->getName();
+				$pluginData['img'] = $plugin->getPathImgIcon();
+				$pluginData['versionDate'] = $versionType ;
+				$pluginData['versionType'] = $versionDate ;
+				$pluginData['error'] = $asNok ;
+				$pluginData['pending'] = $asPending ; 
+				$pluginData['portInfo'] = $portInfo;
+				$pluginData['dependencyInfo'] = $dependencyInfo;
+				$pluginData['daemonData'] = $daemonData ;
+				$pluginData['healthData'] = $healthData;
+
+				array_push($allPluginsData, $pluginData);
+			}
+		}
+
+		$jeedomData = array() ;
+		foreach ((jeedom::health()) as $datas) {
+			$item = array();
+			$item['name'] = $datas['name'];
+			$item['comment'] = $datas['comment'];
+			
+			if ($datas['state'] === 2) {
+				$item['state'] = 'warning' ;
+			} else if ($datas['state']) {
+				$item['state'] = 'OK' ;
+			} else {
+				$item['state'] = 'KO' ;
+			}
+
+			$item['result']= $datas['result'];
+			
+			array_push( $jeedomData, $item ) ;
+			
+		}
+
+		// get the number of update availables
+		$nb = update::nbNeedUpdate();
+
+		// retrieve if the user connected to that equipment is administrator
+		$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		$userId = $eqLogic->getConfiguration('userId', -1);
+		$user = user::byId($userId) ;
+		$profil = null ;
+		if ( is_object($user) ){
+			$profil = $user->getProfils();
+		}
+	
+		$result = array('plugins' => $allPluginsData, 'jeedom' => $jeedomData, 'nbUpdate' => $nb, 'userId' => $userId, 'userProfil' => $profil);
+		return $result;
+
+	}
+
 }
 
 

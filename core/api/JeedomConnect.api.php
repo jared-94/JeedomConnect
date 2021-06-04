@@ -262,6 +262,12 @@ switch ($method) {
       $jsonrpc->makeSuccess($result);
     }
     break;
+  case 'GET_JEEDOM_GLOBAL_HEALTH':
+    $jsonrpc->makeSuccess(apiHelper::getJeedomHealthDetails($apiKey));
+    break;
+  case 'DAEMON_RESTART':
+    $jsonrpc->makeSuccess(apiHelper::restartDaemon($params['userId'], $params['pluginId'] ));
+    break;
 	case 'CMD_EXEC':
 		apiHelper::execCmd($params['id'], $params['options']);
 		$jsonrpc->makeSuccess();
