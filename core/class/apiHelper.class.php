@@ -418,6 +418,16 @@ class apiHelper {
     return false;
   }
 
+  public static function stopDaemon($userId, $pluginId){
+    $_plugin = \plugin::byId($pluginId);
+    if ( is_object($_plugin) ){
+      log::add('JeedomConnect', 'debug', 'DAEMON stopped by [' . $userId . '] =>' . $pluginId );
+      $_plugin->deamon_stop();
+      return true;
+    }
+    return false;
+  }
+
   public static function getJeedomHealthDetails($apiKey){
 
     $result = array(

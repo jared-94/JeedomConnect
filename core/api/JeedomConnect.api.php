@@ -270,6 +270,9 @@ switch ($method) {
   case 'DAEMON_RESTART':
     $jsonrpc->makeSuccess(array('result' => apiHelper::restartDaemon($params['userId'], $params['pluginId'] ) ) );
     break;
+  case 'DAEMON_STOP':
+    $jsonrpc->makeSuccess(array('result' => apiHelper::stopDaemon($params['userId'], $params['pluginId'] ) ) );
+    break;
   case 'GET_PLUGINS_UPDATE':
     $jsonrpc->makeSuccess(apiHelper::getPluginsUpdate());
     break;
