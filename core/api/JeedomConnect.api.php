@@ -267,10 +267,10 @@ switch ($method) {
   case 'GET_JEEDOM_GLOBAL_HEALTH':
     $jsonrpc->makeSuccess(apiHelper::getJeedomHealthDetails($apiKey));
     break;
-  case 'DAEMON_RESTART':
+  case 'DAEMON_PLUGIN_RESTART':
     $jsonrpc->makeSuccess(array('result' => apiHelper::restartDaemon($params['userId'], $params['pluginId'] ) ) );
     break;
-  case 'DAEMON_STOP':
+  case 'DAEMON_PLUGIN_STOP':
     $jsonrpc->makeSuccess(array('result' => apiHelper::stopDaemon($params['userId'], $params['pluginId'] ) ) );
     break;
   case 'GET_PLUGINS_UPDATE':

@@ -336,11 +336,11 @@ class ConnectLogic implements MessageComponentInterface
 				$health = \apiHelper::getJeedomHealthDetails($from->apiKey) ;
 				$from->send(json_encode($health));
 				break;
-			case 'DAEMON_RESTART':
+			case 'DAEMON_PLUGIN_RESTART':
 				$result = \apiHelper::restartDaemon($msg['payload']['userId'], $msg['payload']['pluginId'] );
 				$from->send(json_encode(array('result' => $result)));
 				break;
-			case 'DAEMON_STOP':
+			case 'DAEMON_PLUGIN_STOP':
 				$result = \apiHelper::stopDaemon($msg['payload']['userId'], $msg['payload']['pluginId'] );
 				$from->send(json_encode(array('result' => $result)));
 				break;
