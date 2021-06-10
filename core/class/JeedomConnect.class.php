@@ -262,6 +262,11 @@ class JeedomConnect extends eqLogic {
 							}
 						}
 
+						if ( $newWidgetConf['type'] == 'choices-list'){
+							$choices = self::getChoiceData($newWidgetConf['listAction']['id'] ) ;
+							$newWidgetConf['choices'] = $choices;
+						}
+
 						$maxIndex = $maxIndex +1;
 						$jsonConfig['payload']['widgets'][$maxIndex] = $newWidgetConf;
 
