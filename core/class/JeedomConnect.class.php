@@ -1600,6 +1600,9 @@ class JeedomConnect extends eqLogic {
 					try {
 						$plugin = plugin::byId($update->getLogicalId());
 
+						$item['name'] = $plugin->getName();
+						$item['img'] = $plugin->getPathImgIcon();
+
 						$item['currentVersion'] =  $update->getLocalVersion() ;
 						$item['updateVersion'] = $update->getRemoteVersion() ;
 						
