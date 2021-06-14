@@ -1602,6 +1602,10 @@ class JeedomConnect extends eqLogic {
 					if ($update->getType() == 'core') {
 						$item['message'] = 'La mise à jour du core n\'est possible depuis l\'application';
 						$item['doNotUpdate'] = true;
+						$item['name'] =  'Jeedom Core' ;
+
+						$version = substr(jeedom::version(), 0, 3);
+						$item['changelogLink'] =  'https://doc.jeedom.com/' . config::byKey('language', 'core', 'fr_FR') . '/core/'.$version.'/changelog' ;
 					}
 					else{
 						$plugin = plugin::byId($update->getLogicalId());
