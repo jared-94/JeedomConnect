@@ -34,14 +34,14 @@ class apiHelper {
           }
           if ($item == 'moreInfos') {
             foreach ($value as $i => $info) {
-              if ($info['type'] == 'cmd') {
+              if (isset($info['type']) && $info['type'] == 'cmd') {
                 array_push($return, $info['id']);
               }
             }
           }
           if ($item == 'moreInfos') {
             foreach ($value as $i => $info) {
-              if ($info['type'] == 'cmd') {
+              if (isset($info['type']) && $info['type'] == 'cmd') {
                 array_push($return, $info['id']);
               }
             }
