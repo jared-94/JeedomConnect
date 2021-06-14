@@ -1596,32 +1596,31 @@ class JeedomConnect extends eqLogic {
 				if (strtolower($update->getStatus()) != 'update' ) continue;
 				
 				$item = array();
-				if ($update->getType() == 'core') {
-					$item['pluginId'] =  $update->getLogicalId();
-					$item['message'] = 'La mise à jour du core n\'est possible depuis l\'application';
-				}
-				else if ($update->getType() == 'plugin') {
-					$item['pluginId'] =  $update->getLogicalId();
-					try {
-						$plugin = plugin::byId($update->getLogicalId());
+				$item['pluginId'] =  $update->getLogicalId();
+				try {
 
+					if ($update->getType() == 'core') {
+						$item['message'] = 'La mise à jour du core n\'est possible depuis l\'application';
+						$item['doNotUpdate'] = true;
+					}
+					else{
+						$plugin = plugin::byId($update->getLogicalId());
 						$item['name'] = $plugin->getName();
 						$item['img'] = $plugin->getPathImgIcon();
-
-						$item['currentVersion'] =  $update->getLocalVersion() ;
-						$item['updateVersion'] = $update->getRemoteVersion() ;
-						
-						$item['pluginType'] = $update->getConfiguration('version'); 
-						
 						$item['changelogLink'] =  $plugin->getChangelog() ;
 						$item['docLink'] =  $plugin->getDocumentation() ;
-						
 						$item['doNotUpdate'] = $update->getConfiguration('doNotUpdate') == 1 ;
-					
-					} catch (Exception $e) {
-						log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage() );
-						$item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
+						$item['pluginType'] = $update->getConfiguration('version'); 
 					}
+					
+					$item['currentVersion'] =  $update->getLocalVersion() ;
+					$item['updateVersion'] = $update->getRemoteVersion() ;
+					
+					
+				
+				} catch (Exception $e) {
+					log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage() );
+					$item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
 				}
 				array_push( $updateArr ,$item);
 			}
