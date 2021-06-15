@@ -34,14 +34,14 @@ class apiHelper {
           }
           if ($item == 'moreInfos') {
             foreach ($value as $i => $info) {
-              if ($info['type'] == 'cmd') {
+              if (isset($info['type']) && $info['type'] == 'cmd') {
                 array_push($return, $info['id']);
               }
             }
           }
           if ($item == 'moreInfos') {
             foreach ($value as $i => $info) {
-              if ($info['type'] == 'cmd') {
+              if (isset($info['type']) && $info['type'] == 'cmd') {
                 array_push($return, $info['id']);
               }
             }
@@ -345,6 +345,99 @@ class apiHelper {
     log::add('JeedomConnect', 'debug', 'Send batteries =>' . json_encode($result) );
     return $result;
   }
+
+
+  public static function saveBatteryEquipment($apiKey, $level){
+    
+    $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+
+    if(is_object($eqLogic)){
+     
+      $batteryCmd = $eqLogic->getCmd(null, 'battery');
+     
+      if (is_object($batteryCmd)){
+        $batteryCmd->event($level);
+      } 
+     
+      if (! $eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2 ){
+        $eqLogic->setStatus("battery", $level);
+        $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page '); 
+      }
+
+    }
+    else{
+      log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | not able to retrieve an equipment for apiKey ' . $apiKey );
+    }
+
+  }
+
+
+  // PLUGINS UPDATE
+
+  public static function doUpdate($pluginId){
+    try{
+      $update = update::byLogicalId($pluginId);
+      
+      if ( ! is_object($update) )  {
+        log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
+        return false;
+      }
+      
+      $update->doUpdate();
+      return true;
+
+    }
+    catch (Exception $e) {
+      log::add('JeedomConnect', 'error', 'doUpdate -- ' . $e->getMessage());
+      return false;
+    }
+    
+  }
+
+  public static function getPluginsUpdate(){
+
+    $result = array(
+      'type' => 'SET_PLUGINS_UPDATE',
+      'payload' => JeedomConnect::getPluginsUpdate()
+    );
+    log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result) );
+    return $result;
+  }
+
+
+  // JEEDOM & PLUGINS HEALTH
+
+  public static function restartDaemon($userId, $pluginId){
+    $_plugin = \plugin::byId($pluginId);
+    if ( is_object($_plugin) ){
+      log::add('JeedomConnect', 'debug', 'DAEMON restart by [' . $userId . '] =>' . $pluginId );
+      $_plugin->deamon_start(true);
+      return true;
+    }
+    return false;
+  }
+
+  public static function stopDaemon($userId, $pluginId){
+    $_plugin = \plugin::byId($pluginId);
+    if ( is_object($_plugin) ){
+      log::add('JeedomConnect', 'debug', 'DAEMON stopped by [' . $userId . '] =>' . $pluginId );
+      $_plugin->deamon_stop();
+      return true;
+    }
+    return false;
+  }
+
+  public static function getJeedomHealthDetails($apiKey){
+
+    $result = array(
+      'type' => 'SET_JEEDOM_GLOBAL_HEALTH',
+      'payload' => JeedomConnect::getHealthDetails($apiKey)
+    );
+    log::add('JeedomConnect', 'debug', 'Send health =>' . json_encode($result) );
+    return $result;
+  }
+
 
  //EXEC ACTIONS
  public static function execCmd($id, $options = null) {

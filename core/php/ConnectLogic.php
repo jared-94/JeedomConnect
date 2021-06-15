@@ -219,6 +219,8 @@ class ConnectLogic implements MessageComponentInterface
 					'pluginVersion' => $this->pluginVersion,
 					'useWs' => $eqLogic->getConfiguration('useWs', 0),
 					'userHash' => $user->getHash(),
+					'userId' => $user->getId(),
+					'userProfil' => $user->getProfils(),
 					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
@@ -322,6 +324,26 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_ALL_SC':
 				$this->sendScenarioInfo($from, true);
 				break;
+			case 'GET_PLUGINS_UPDATE':
+				$pluginUpdate = \apiHelper::getPluginsUpdate() ;
+				$from->send(json_encode($pluginUpdate));
+				break;
+			case 'DO_PLUGIN_UPDATE':
+				$result = \apiHelper::doUpdate( $msg['payload']['pluginId'] );
+				$from->send(json_encode(array('result' => $result)));
+				break;
+			case 'GET_JEEDOM_GLOBAL_HEALTH':
+				$health = \apiHelper::getJeedomHealthDetails($from->apiKey) ;
+				$from->send(json_encode($health));
+				break;
+			case 'DAEMON_PLUGIN_RESTART':
+				$result = \apiHelper::restartDaemon($msg['payload']['userId'], $msg['payload']['pluginId'] );
+				$from->send(json_encode(array('result' => $result)));
+				break;
+			case 'DAEMON_PLUGIN_STOP':
+				$result = \apiHelper::stopDaemon($msg['payload']['userId'], $msg['payload']['pluginId'] );
+				$from->send(json_encode(array('result' => $result)));
+				break;
 			case 'UNSUBSCRIBE_SC':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				$eqLogic->setConfiguration('scAll', 0);
@@ -337,15 +359,7 @@ class ConnectLogic implements MessageComponentInterface
 				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));
 				break;
 			case 'SET_BATTERY':
-				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-				if (is_object($eqLogic)) {					
-					$batteryCmd = $eqLogic->getCmd(null, 'battery');
-					if (is_object($batteryCmd)){
-				  		$batteryCmd->event($msg['payload']['level'], date('Y-m-d H:i:s'));
-					}
-					$eqLogic->setStatus("battery", $msg['payload']['level']);
-					$eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-				}				 
+				\apiHelper::saveBatteryEquipment($from->apiKey, $msg['payload']['level']);
 				break;
 			case 'SET_WIDGET':
 				\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);

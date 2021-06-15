@@ -137,6 +137,8 @@ switch ($method) {
         'pluginVersion' => $versionJson->version,
         'useWs' => $eqLogic->getConfiguration('useWs', 0),
 				'userHash' => $user->getHash(),
+				'userId' => $user->getId(),
+				'userProfil' => $user->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 				'pluginConfig' => apiHelper::getPluginConfig(),
@@ -262,6 +264,21 @@ switch ($method) {
       $jsonrpc->makeSuccess($result);
     }
     break;
+  case 'GET_JEEDOM_GLOBAL_HEALTH':
+    $jsonrpc->makeSuccess(apiHelper::getJeedomHealthDetails($apiKey));
+    break;
+  case 'DAEMON_PLUGIN_RESTART':
+    $jsonrpc->makeSuccess(array('result' => apiHelper::restartDaemon($params['userId'], $params['pluginId'] ) ) );
+    break;
+  case 'DAEMON_PLUGIN_STOP':
+    $jsonrpc->makeSuccess(array('result' => apiHelper::stopDaemon($params['userId'], $params['pluginId'] ) ) );
+    break;
+  case 'GET_PLUGINS_UPDATE':
+    $jsonrpc->makeSuccess(apiHelper::getPluginsUpdate());
+    break;
+  case 'DO_PLUGIN_UPDATE':
+    $jsonrpc->makeSuccess( array('result' => apiHelper::doUpdate($params['pluginId']) ) );
+    break;
 	case 'CMD_EXEC':
 		apiHelper::execCmd($params['id'], $params['options']);
 		$jsonrpc->makeSuccess();
@@ -283,12 +300,7 @@ switch ($method) {
 		$jsonrpc->makeSuccess();
 		break;
   case 'SET_BATTERY':
-    $batteryCmd = $eqLogic->getCmd(null, 'battery');
-    if (is_object($batteryCmd)){
-      $batteryCmd->event($params['level']);
-    } 
-    $eqLogic->setStatus("battery", $params['level']);
-    $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+    apiHelper::saveBatteryEquipment($apiKey, $params['level']);
     $jsonrpc->makeSuccess();
     break;
   case 'SET_WIDGET':

@@ -1044,8 +1044,8 @@ function refreshCmdData(name, id, value) {
    error: function (error) {},
    success: function (data) {
      $("#"+name+"-input").attr('cmdId', data.result.id);
-     $("#"+name+"-input").val(data.result.humanName);
-     $("#"+name+"-input").attr('title', data.result.humanName);
+     $("#"+name+"-input").val('#' +data.result.humanName + '#');
+     $("#"+name+"-input").attr('title', '#' + data.result.humanName + '#');
      $("#"+name+"-input").attr('cmdType', data.result.type);
      $("#"+name+"-input").attr('cmdSubType', data.result.subType);
      if (data.result.type == 'action') {
