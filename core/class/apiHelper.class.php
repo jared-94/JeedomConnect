@@ -200,7 +200,7 @@ class apiHelper {
   }
 
   //PLUGIN CONF FUNCTIONS
-  function getPluginConfig() {
+  public static function getPluginConfig() {
     $plugin = update::byLogicalId('JeedomConnect');
   	return array(
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
