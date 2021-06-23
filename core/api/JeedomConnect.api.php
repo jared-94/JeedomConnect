@@ -225,6 +225,14 @@ switch ($method) {
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_JEEDOM_DATA':
+    $result = apiHelper::getFullJeedomData();
+		$jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_WIDGET_DATA':
+    $result = apiHelper::getWidgetData();
+    $jsonrpc->makeSuccess($result);
+    break;
   case 'UNSUBSCRIBE_SC':
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->save();

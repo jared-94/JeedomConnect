@@ -114,6 +114,33 @@ class JeedomConnectWidget extends config {
 
 	}
 
+	public static function getWidgetsList(){
+		$widgets = JeedomConnectWidget::getAllConfigurations();		
+
+		$widgetArray = array();
+		if ( ! empty($widgets) ){
+			foreach ($widgets as $widget) {
+				$widgetItem = array() ;
+
+				$widgetJC = json_decode($widget['conf']['widgetJC'], true);
+				$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon() ;
+				$widgetItem['enable'] = $widgetJC['enable'];
+				$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
+				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
+				$widgetItem['roomId'] = $widgetJC['room'] ?? '' ;
+				$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']) ;
+				$widgetItem['roomName'] = (! is_null($widgetRoomObjet) && is_object($widgetRoomObjet) ) ? ( $widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName() ) : 'Aucun';
+				$widgetItem['id'] = $widgetJC['id'] ?? 'none' ;
+
+				array_push($widgetArray, $widgetItem);
+			}
+		}
+		usort($widgetArray, function($a, $b) {return strcmp($a['name'], $b['name']);});
+
+		return $widgetArray;
+
+	}
+
 	public static function updateImgPath($widgetId, $newPath, $reload = true){
 		$widgetSettings = self::getConfiguration($widgetId) ;
 		if ( empty($widgetSettings) ){

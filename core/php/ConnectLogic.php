@@ -324,6 +324,14 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_ALL_SC':
 				$this->sendScenarioInfo($from, true);
 				break;
+			case 'GET_JEEDOM_DATA':
+				$result = \apiHelper::getFullJeedomData();
+				$from->send(json_encode($result));
+				break;
+			case 'GET_WIDGET_DATA':
+				$result = \apiHelper::getWidgetData();
+				$from->send(json_encode($result));
+				break;
 			case 'GET_PLUGINS_UPDATE':
 				$pluginUpdate = \apiHelper::getPluginsUpdate() ;
 				$from->send(json_encode($pluginUpdate));

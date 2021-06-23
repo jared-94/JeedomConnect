@@ -39,13 +39,6 @@ class apiHelper {
               }
             }
           }
-          if ($item == 'moreInfos') {
-            foreach ($value as $i => $info) {
-              if (isset($info['type']) && $info['type'] == 'cmd') {
-                array_push($return, $info['id']);
-              }
-            }
-          }
         }
       }
     }
@@ -256,6 +249,46 @@ class apiHelper {
     }
     return false;
  }
+
+ // JEEDOM FULL DATA
+public static function getFullJeedomData() {
+  $result = array(
+    'type' => 'SET_JEEDOM_DATA',
+    'payload' => array(
+      'cmds' => array(),
+      'eqLogics' => array(),
+      'objects' => array(),
+      'scenarios' => array()
+    )
+  );
+
+  foreach (cmd::all() as $item) {
+    array_push($result['payload']['cmds'], utils::o2a($item));
+  }
+  foreach (eqLogic::all() as $item) {
+    array_push($result['payload']['eqLogics'], utils::o2a($item));
+  }
+  foreach (jeeObject::all() as $item) {
+    array_push($result['payload']['objects'], utils::o2a($item));
+  }
+  foreach (scenario::all() as $item) {
+    array_push($result['payload']['scenarios'], utils::o2a($item));
+  }
+
+  return $result;
+}
+
+//WIDGET DATA
+public static function getWidgetData() {
+  $result = array(
+    'type' => 'SET_WIDGET_DATA',
+    'payload' => array(
+      'widgets' => JeedomConnectWidget::getWidgetsList()
+    )
+  );
+
+  return $result;
+}
 
  // EVENTS FUNCTION
  public static function getEvents($events, $config, $scAll=false) {
