@@ -67,10 +67,10 @@ class JeedomConnectWidget extends config {
 	}
 
 
-	public static function getWidgets($_id = '' ){
+	public static function getWidgets($_id = 'all', $_fullConfig = true ){
 
-		if ( $_id === '' ){
-			log::add(self::$_plugin_id, 'debug', 'getWidgets for all widget');
+		if ( $_id === 'all' ){
+			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widget');
 			$widgets = JeedomConnectWidget::getAllConfigurations();
 		}
 		else{
@@ -91,7 +91,7 @@ class JeedomConnectWidget extends config {
 				$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon() ;
 
 				$widgetJC = json_decode($widget['conf']['widgetJC'], true);
-				$widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
+				if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
 				$widgetItem['enable'] = $widgetJC['enable'];
 				$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
 				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
@@ -115,26 +115,8 @@ class JeedomConnectWidget extends config {
 	}
 
 	public static function getWidgetsList(){
-		$widgets = JeedomConnectWidget::getAllConfigurations();		
-
-		$widgetArray = array();
-		if ( ! empty($widgets) ){
-			foreach ($widgets as $widget) {
-				$widgetItem = array() ;
-
-				$widgetJC = json_decode($widget['conf']['widgetJC'], true);
-				$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon() ;
-				$widgetItem['enable'] = $widgetJC['enable'];
-				$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
-				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
-				$widgetItem['roomId'] = $widgetJC['room'] ?? '' ;
-				$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']) ;
-				$widgetItem['roomName'] = (! is_null($widgetRoomObjet) && is_object($widgetRoomObjet) ) ? ( $widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName() ) : 'Aucun';
-				$widgetItem['id'] = $widgetJC['id'] ?? 'none' ;
-
-				array_push($widgetArray, $widgetItem);
-			}
-		}
+		
+		$widgetArray = self::getWidgets('all', false );
 		usort($widgetArray, function($a, $b) {return strcmp($a['name'], $b['name']);});
 
 		return $widgetArray;
