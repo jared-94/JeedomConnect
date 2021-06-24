@@ -3834,6 +3834,13 @@
 						"description": "100% par défaut (pas de redimensionnement)"
 					},
 					{
+						"id": "aspectRatio",
+						"name": "Ratio",
+						"required": false,
+						"category": "string",
+						"description": "Forcer le ratio (largeur/longueur). Exemple: 0.75"
+					},
+					{
 						"id": "startRecordAction",
 						"name": "Enregistrer",
 						"required": false,
