@@ -57,13 +57,14 @@ switch ($method) {
 		}
 		else{
 			$result = array();
-			foreach ($eqLogics as $eqLogic) {
-        $user = user::byId($eqLogic->getConfiguration('userId'));
-        $userHash = null;
-        if ($user != null) {
-          $userHash = $user->getHash();
-        }
-        if ($userHash == null || $userHash == $params['userHash']) {
+      $userConnected = user::byHash($params['userHash'] ) ;
+      $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
+      foreach ($eqLogics as $eqLogic) {
+      
+        $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
+        $userOnEquipmentHash = ! is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+        
+        if ( strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $params['userHash']) {
           array_push($result, array(
             'logicalId' => $eqLogic->getLogicalId(),
             'name' => $eqLogic->getName(),
