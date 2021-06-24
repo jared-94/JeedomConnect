@@ -58,11 +58,18 @@ switch ($method) {
 		else{
 			$result = array();
 			foreach ($eqLogics as $eqLogic) {
-				array_push($result, array(
-					'logicalId' => $eqLogic->getLogicalId(),
-					'name' => $eqLogic->getName(),
-					'enable' => $eqLogic->getIsEnable()
-				) ) ;
+        $user = user::byId($eqLogic->getConfiguration('userId'));
+        $userHash = null;
+        if ($user != null) {
+          $userHash = $user->getHash();
+        }
+        if ($userHash == null || $userHash == $params['userHash']) {
+          array_push($result, array(
+            'logicalId' => $eqLogic->getLogicalId(),
+            'name' => $eqLogic->getName(),
+            'enable' => $eqLogic->getIsEnable()
+          ) ) ;
+        }				
 			}
     }
 
