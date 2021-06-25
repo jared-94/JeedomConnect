@@ -392,8 +392,10 @@ function htmlToIcon(html) {
 			icon.shadow = true;
 		}
 	}
+	
+	const params = html.attr('iconParams') ? JSON.parse(html.attr('iconParams')) : {};
 
-	return icon;
+	return {...params, ...icon };
 }
 
 function iconToHtml(icon) {
@@ -408,15 +410,15 @@ function iconToHtml(icon) {
 		}
 	}
 	if (icon.source == 'jeedom') {
-		return `<i source="jeedom" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="icon ${icon.name}"></i>`;
+		return `<i iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="jeedom" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="icon ${icon.name}"></i>`;
 	} else if (icon.source == 'md') {
-		return `<i source="md" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="mdi mdi-${icon.name}"></i>`;
+		return `<i iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="md" name="${icon.name}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="mdi mdi-${icon.name}"></i>`;
 	} else if (icon.source == 'fa') {
-		return `<i source="fa" name="${icon.name}" prefix="${icon.prefix || 'fa'}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="${icon.prefix || 'fa'} fa-${icon.name}"></i>`;
+		return `<i iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="fa" name="${icon.name}" prefix="${icon.prefix || 'fa'}" ${icon.color ? 'style="color:'+icon.color+'"' : ''} class="${icon.prefix || 'fa'} fa-${icon.name}"></i>`;
 	} else if (icon.source == 'jc') {
-		return `<img source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
+		return `<img iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
 	} else if (icon.source == 'user') {
-		return `<img source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="${userImgPath}${icon.name}">`;
+		return `<img iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="${userImgPath}${icon.name}">`;
 	}
 	return '';
 }
