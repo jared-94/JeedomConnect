@@ -1311,6 +1311,7 @@ function selectWidgetModal() {
 
 	var widgetSelectedId = $("#selWidgetDetail option:selected").attr('data-widget-id');
 	result.id = parseInt(widgetSelectedId);
+	result.widgetId = configData.idCounter;
 
 	configData.payload.widgets.push(result);
 	incrementIdCounter();
@@ -1327,6 +1328,7 @@ function duplicateWidget(widgetId) {
 	var maxIndex = getMaxIndex(rootElmts);
 	newWidget.index = maxIndex + 1;
 	newWidget.id = widgetToDuplicate.id;
+	newWidget.widgetId = configData.idCounter;
 
 	configData.payload.widgets.push(newWidget);
 	incrementIdCounter();
