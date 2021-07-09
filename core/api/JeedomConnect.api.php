@@ -320,9 +320,12 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'SET_WIDGET':
-    JeedomConnectWidget::updateWidgetConfig($params['widgetId'], $params['widget']);
+    apiHelper::setWidget($apiKey, $params['baseWidget'], $params['customWidget']);
     $jsonrpc->makeSuccess();
     break;
+  case 'SET_CUSTOM_WIDGETS':
+    apiHelper::setCustomWidgetList($apiKey, $params['customWidgetList']);
+    $jsonrpc->makeSuccess();
 	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();

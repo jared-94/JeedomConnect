@@ -4017,6 +4017,12 @@
 						"category": "ifImgs"
 					},
 					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widgets supplémentaires affichés dans la vue détails"
+					},
+					{
 						"id": "display",
 						"name": "Affichage forcé",
 						"required": false,

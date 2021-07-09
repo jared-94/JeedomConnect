@@ -34,9 +34,7 @@ class apiHelper {
           }
           if ($item == 'moreInfos') {
             foreach ($value as $i => $info) {
-              if (isset($info['type']) && $info['type'] == 'cmd') {
-                array_push($return, $info['id']);
-              }
+              array_push($return, $info['id']);
             }
           }
         }
@@ -67,6 +65,17 @@ class apiHelper {
          $config['payload']['weather']['temperature_max']
        ));
     }
+
+    foreach ($config['payload']['customData']['widgets'] as $widgetId => $widget) {
+      foreach ($widget as $item => $value) {
+        if ($item == 'moreInfos') {
+          foreach ($value as $i => $info) {
+            array_push($return, $info['id']);           
+          }
+        }
+      }
+    }
+    
     return array_unique($return);
   }
 
@@ -288,6 +297,35 @@ public static function getWidgetData() {
   );
 
   return $result;
+}
+
+public static function setWidget($apiKey, $baseWidget, $customWidget) {
+  $widgetId = $baseWidget['widgetId'];
+  if ($customWidget != null) {
+    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+    if (empty($customData)) {
+      $customData = array('widgets' => array());
+    }
+    $customData['widgets'][$widgetId] = $customWidget;
+    log::add('JeedomConnect', 'debug', 'custom data' . json_encode($customData) ) ;
+    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+  }
+  if ($baseWidget != null) {
+    log::add('JeedomConnect', 'debug', 'save widget data' ) ;
+    JeedomConnectWidget::updateWidgetConfig($baseWidget);
+  }
+}
+
+public static function setCustomWidgetList($apiKey, $customWidgetList) {
+  foreach ($customWidgetList as $customWidget) {
+    $widgetId = $customWidget['widgetId'];
+    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+    if (empty($customData)) {
+      $customData = array('widgets' => array());
+    }
+    $customData['widgets'][$widgetId] = $customWidget;
+    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+  }  
 }
 
  // EVENTS FUNCTION

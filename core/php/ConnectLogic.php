@@ -370,7 +370,8 @@ class ConnectLogic implements MessageComponentInterface
 				\apiHelper::saveBatteryEquipment($from->apiKey, $msg['payload']['level']);
 				break;
 			case 'SET_WIDGET':
-				\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);
+				\apiHelper::setWidget($from->apiKey, $msg['payload']['baseWidget'], $msg['payload']['customWidget']);
+				//\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
@@ -475,7 +476,7 @@ class ConnectLogic implements MessageComponentInterface
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
-					//\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
+					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
 					$client->send(json_encode($res));
 				}
 			}

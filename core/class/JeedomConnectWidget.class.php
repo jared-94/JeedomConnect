@@ -159,7 +159,8 @@ class JeedomConnectWidget extends config {
 		log::add(self::$_plugin_id, 'debug', 'updateConfig - key ' . $key . ' NOT found');
 	}
 
-	public static function updateWidgetConfig($widgetId, $config) {
+	public static function updateWidgetConfig($config) {
+		$widgetId = $config['id'];
 		$widgetSettings = self::getConfiguration($widgetId) ;
 		if ( empty($widgetSettings) ){
 			log::add(self::$_plugin_id, 'debug', 'updateWidgetConfig - widgetId ' . $widgetId . ' NOT found');

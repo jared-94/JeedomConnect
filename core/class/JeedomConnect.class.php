@@ -231,6 +231,21 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
+		$customData = config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		
+		// moreWidgets in customData
+		if (!empty($customData)) {
+			if (array_key_exists('widgets', $customData)) {
+				foreach ($customData['widgets'] as $widgetId => $customWidget) {
+					if (isset($customWidget['moreWidgets'])){
+						foreach ($customWidget['moreWidgets'] as $itemGroup) {
+							array_push($widgetIdInGroup, array('id' => $itemGroup['id'], 'parentId' =>  $widgetId) );
+						}
+					}
+				}
+			}
+		}
+
 		while ( count($widgetIdInGroup) > 0 ) {
 			$moreWidget = array();
 			// remove duplicate id
@@ -250,9 +265,8 @@ class JeedomConnect extends eqLogic {
 						$newWidgetConf = json_decode($newWidgetJC, true);
 
 						$newWidgetConf['id'] = intval($newWidgetConf['id']) ;
-						$newWidgetConf['parentId'] = intval($item['parentId']) ;
 						$newWidgetConf['index'] = 999999999 ;
-						$newWidgetConf['widgetId'] = ($newWidgetConf['parentId'] + 1) * 100000 + $newWidgetConf['id'];
+						$newWidgetConf['widgetId'] = (intval($item['parentId']) + 1) * 100000 + $newWidgetConf['id'];
 
 						if (isset($newWidgetConf['room'])){
 							array_push($roomIdList , $newWidgetConf['room'] ) ;
@@ -306,6 +320,9 @@ class JeedomConnect extends eqLogic {
 				$jsonConfig['payload']['summaries'][$index] = $newSummary;
 			}
 		}
+
+		//add customData
+		$jsonConfig['payload']['customData'] = config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
 
 		if ( $saveGenerated ) {
 			cache::set('jcConfig' . $this->getConfiguration('apiKey'), json_encode( $jsonConfig));
