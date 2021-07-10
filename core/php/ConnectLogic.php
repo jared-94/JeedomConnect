@@ -371,7 +371,15 @@ class ConnectLogic implements MessageComponentInterface
 				break;
 			case 'SET_WIDGET':
 				\apiHelper::setWidget($from->apiKey, $msg['payload']['baseWidget'], $msg['payload']['customWidget']);
-				//\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);
+				break;
+			case 'SET_CUSTOM_WIDGETS':
+				\apiHelper::setCustomWidgetList($eqLogic, $msg['payload']['customWidgetList']);
+				break;
+			case 'SET_APP_CONFIG':
+				\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);
+				break;
+			case 'GET_APP_CONFIG':	
+				$from->send(json_encode(\apiHelper::getAppConfig($from->apiKey, $msg['payload']['configId'])));
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);

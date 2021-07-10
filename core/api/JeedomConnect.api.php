@@ -294,7 +294,7 @@ switch ($method) {
     break;
   case 'DO_PLUGIN_UPDATE':
     $jsonrpc->makeSuccess( array('result' => apiHelper::doUpdate($params['pluginId']) ) );
-    break;
+    break;  
 	case 'CMD_EXEC':
 		apiHelper::execCmd($params['id'], $params['options']);
 		$jsonrpc->makeSuccess();
@@ -324,8 +324,17 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'SET_CUSTOM_WIDGETS':
-    apiHelper::setCustomWidgetList($apiKey, $params['customWidgetList']);
+    apiHelper::setCustomWidgetList($eqLogic, $params['customWidgetList']);
     $jsonrpc->makeSuccess();
+    break;
+  case 'SET_APP_CONFIG':
+    apiHelper::setAppConfig($apiKey, $params['config']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'GET_APP_CONFIG':
+    $result = apiHelper::getAppConfig($apiKey, $params['configId']);
+    $jsonrpc->makeSuccess($result);
+    break;
 	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();

@@ -316,7 +316,8 @@ public static function setWidget($apiKey, $baseWidget, $customWidget) {
   }
 }
 
-public static function setCustomWidgetList($apiKey, $customWidgetList) {
+public static function setCustomWidgetList($eqLogic, $customWidgetList) {
+  $apiKey = $eqLogic->getConfiguration('apiKey');
   foreach ($customWidgetList as $customWidget) {
     $widgetId = $customWidget['widgetId'];
     $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
@@ -324,7 +325,9 @@ public static function setCustomWidgetList($apiKey, $customWidgetList) {
       $customData = array('widgets' => array());
     }
     $customData['widgets'][$widgetId] = $customWidget;
+    log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData) ) ;
     config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+    $eqLogic->generateNewConfigVersion();
   }  
 }
 
@@ -476,6 +479,48 @@ public static function setCustomWidgetList($apiKey, $customWidgetList) {
     return $result;
   }
 
+  // BACKUPS
+  public static function setAppConfig($apiKey, $config) {
+    $_backup_dir = __DIR__ . '/../../data/backups/';
+    if (!is_dir($_backup_dir)) {
+			mkdir($_backup_dir);
+		}
+    $eqDir = $_backup_dir . $apiKey . '/';
+    if (!is_dir($eqDir)) {
+			mkdir($eqDir);
+		}
+    $backupIndex = config::byKey('backupIndex::' . $apiKey, 'JeedomConnect');
+    if (empty($backupIndex)) {
+      $backupIndex = 0;
+    }
+    $backupIndex ++;
+    config::save('backupIndex::' . $apiKey, $backupIndex, 'JeedomConnect');
+
+    $config_file = $eqDir . urlencode($config['name']) . '-' . $backupIndex . '.json';
+    try {
+			log::add('JeedomConnect', 'debug', 'Saving backup in file : ' . $config_file );
+			file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+		} catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+		}
+  }
+
+  public static function getAppConfig($apiKey, $configId) {
+    $_backup_dir ='/plugins/JeedomConnect/data/backups/';
+    $eqDir = $_backup_dir . $apiKey ;
+    $files = self::getFiles($eqDir);
+    $endFile = '-' . $configId . '.json'; 
+    foreach ($files['payload']['files'] as $file) {
+      if (substr_compare($file['path'], $endFile, - strlen($endFile)) === 0) {
+        $config_file = file_get_contents(__DIR__ . '/../../../..'  . $file['path']);
+        return array(
+          'type' => 'SET_APP_CONFIG',
+          'payload' => array( 'config' => json_decode($config_file) )
+        );
+      }
+    } 
+    return false;   
+  } 
 
   // JEEDOM & PLUGINS HEALTH
 
