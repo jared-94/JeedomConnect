@@ -373,8 +373,16 @@ class ConnectLogic implements MessageComponentInterface
 			case 'SET_WIDGET':
 				\apiHelper::setWidget($msg['payload']['widget']);
 				break;
+			case 'ADD_WIDGETS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::addWidgets($eqLogic, $msg['payload']['widgets'], $msg['payload']['parentId'], $msg['payload']['index']);
+				break;
+			case 'REMOVE_WIDGET':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeWidget($eqLogic, $msg['payload']['widgetId']);
+				break;
 			case 'SET_CUSTOM_WIDGETS':
-        				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+        		$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::setCustomWidgetList($eqLogic, $msg['payload']['customWidgetList']);
 				break;
 			case 'SET_APP_CONFIG':

@@ -324,6 +324,14 @@ switch ($method) {
     apiHelper::setWidget($params['widget']);
     $jsonrpc->makeSuccess();
     break;
+  case 'ADD_WIDGETS':
+    apiHelper::addWidgets($eqLogic, $params['widgets'], $params['parentId'], $params['index']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'REMOVE_WIDGET':
+    apiHelper::removeWidget($eqLogic, $params['widgetId']);
+    $jsonrpc->makeSuccess();
+    break;
   case 'SET_CUSTOM_WIDGETS':
     apiHelper::setCustomWidgetList($eqLogic, $params['customWidgetList']);
     $jsonrpc->makeSuccess();

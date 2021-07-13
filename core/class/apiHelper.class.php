@@ -301,7 +301,65 @@ public static function getWidgetData() {
 
 public static function setWidget($widget) {
   log::add('JeedomConnect', 'debug', 'save widget data' ) ;
-  JeedomConnectWidget::updateWidgetConfig($widget);
+  JeedomConnectWidget::updateWidgetConfig($widget);  
+}
+
+public static function addWidgets($eqLogic, $widgets, $parentId, $index) {
+  $curConfig = $eqLogic->getConfig();
+
+  foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+    if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+      $curConfig['payload']['widgets'][$i]['index'] += count($widgets); 
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $group) {
+    if ($group['parentId'] == $parentId && $group['index'] > $index) {
+      $curConfig['payload']['groups'][$i]['index'] += count($widgets);
+    }
+  }
+
+  $curIndex = $index + 1;
+  foreach ($widgets as $widget) {
+    $curConfig['idCounter'] = $curConfig['idCounter'] + 1;
+    $newWidget = array(
+      'index' => $curIndex,
+      'widgetId' => $curConfig['idCounter'],
+      'id' => $widget['id']
+    );
+    if (!is_null($parentId)) {
+      $newWidget['parentId'] = $parentId;
+    }
+    array_push($curConfig['payload']['widgets'], $newWidget);
+    $curIndex++;
+  }
+  
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function removeWidget($eqLogic, $widgetId) {
+  $curConfig = $eqLogic->getConfig();
+  $toRemove = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
+  if ($toRemove !== false) {
+    $parentId = $curConfig['payload']['widgets'][$toRemove]['parentId'];
+    $index = $curConfig['payload']['widgets'][$toRemove]['index'];
+    unset($curConfig['payload']['widgets'][$toRemove]);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1; 
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if ($group['parentId'] == $parentId && $group['index'] > $index) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
   
 }
 
