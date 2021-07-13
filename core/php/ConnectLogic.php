@@ -370,9 +370,10 @@ class ConnectLogic implements MessageComponentInterface
 				\apiHelper::saveBatteryEquipment($from->apiKey, $msg['payload']['level']);
 				break;
 			case 'SET_WIDGET':
-				\apiHelper::setWidget($from->apiKey, $msg['payload']['baseWidget'], $msg['payload']['customWidget']);
+				\apiHelper::setWidget($msg['payload']['widget']);
 				break;
 			case 'SET_CUSTOM_WIDGETS':
+        				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::setCustomWidgetList($eqLogic, $msg['payload']['customWidgetList']);
 				break;
 			case 'SET_APP_CONFIG':

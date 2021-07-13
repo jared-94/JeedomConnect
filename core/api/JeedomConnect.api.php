@@ -320,7 +320,7 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'SET_WIDGET':
-    apiHelper::setWidget($apiKey, $params['baseWidget'], $params['customWidget']);
+    apiHelper::setWidget($params['widget']);
     $jsonrpc->makeSuccess();
     break;
   case 'SET_CUSTOM_WIDGETS':

@@ -322,7 +322,7 @@ class JeedomConnect extends eqLogic {
 		}
 
 		//add customData
-		$jsonConfig['payload']['customData'] = config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		$jsonConfig['payload']['customData'] = $customData == "" ? array ('widgets' => array ()) : $customData;
 
 		if ( $saveGenerated ) {
 			cache::set('jcConfig' . $this->getConfiguration('apiKey'), json_encode( $jsonConfig));

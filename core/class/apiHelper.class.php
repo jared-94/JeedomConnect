@@ -299,21 +299,10 @@ public static function getWidgetData() {
   return $result;
 }
 
-public static function setWidget($apiKey, $baseWidget, $customWidget) {
-  $widgetId = $baseWidget['widgetId'];
-  if ($customWidget != null) {
-    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
-    if (empty($customData)) {
-      $customData = array('widgets' => array());
-    }
-    $customData['widgets'][$widgetId] = $customWidget;
-    log::add('JeedomConnect', 'debug', 'custom data' . json_encode($customData) ) ;
-    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
-  }
-  if ($baseWidget != null) {
-    log::add('JeedomConnect', 'debug', 'save widget data' ) ;
-    JeedomConnectWidget::updateWidgetConfig($baseWidget);
-  }
+public static function setWidget($widget) {
+  log::add('JeedomConnect', 'debug', 'save widget data' ) ;
+  JeedomConnectWidget::updateWidgetConfig($widget);
+  
 }
 
 public static function setCustomWidgetList($eqLogic, $customWidgetList) {
@@ -610,20 +599,24 @@ public static function setCustomWidgetList($eqLogic, $customWidgetList) {
 
  // FILES
  public static function getFiles($folder) {
-   $dir = __DIR__ . '/../../../..' . $folder;
-   $result = array();
-   $dh = new DirectoryIterator($dir);
-
-   foreach ($dh as $item) {
-       if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
-           if (!$item->isDir()) {
-               array_push($result, array(
-                 'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
-                 'timestamp' => $item->getMTime()
-               ) );
-           }
+  $dir = __DIR__ . '/../../../..' . $folder;
+  $result = array();
+  try {
+    $dh = new DirectoryIterator($dir);
+      foreach ($dh as $item) {
+        if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
+          if (!$item->isDir()) {
+            array_push($result, array(
+              'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
+              'timestamp' => $item->getMTime()
+            ) );
+          }
        }
-   }
+      } 
+  } catch (Exception $e) {
+      log::add('JeedomConnect', 'error', $e->getMessage());
+  }
+   
    return  array(
      'type' => 'SET_FILES',
      'payload' => array(
