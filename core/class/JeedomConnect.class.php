@@ -774,6 +774,10 @@ class JeedomConnect extends eqLogic {
 			$this->setConfiguration('scenariosEnabled', '1');
 			$this->save();
 		}
+		if ($this->getConfiguration('webviewEnabled') == '' ) {
+			$this->setConfiguration('webviewEnabled', '1');
+			$this->save();
+		}
 
     }
 

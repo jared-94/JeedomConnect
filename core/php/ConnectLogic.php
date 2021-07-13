@@ -223,6 +223,7 @@ class ConnectLogic implements MessageComponentInterface
 					'userProfil' => $user->getProfils(),
 					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+					'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
 					'cmdInfo' => \apiHelper::getCmdInfoData($config),
 					'scInfo' => \apiHelper::getScenarioData($config),

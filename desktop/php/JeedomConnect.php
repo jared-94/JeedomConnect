@@ -351,6 +351,13 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							</div>
 
 							<div class="form-group">
+									<label class="col-sm-3 control-label">{{Accès Interface web}}</label>
+									<div class="col-sm-7">
+										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="webviewEnabled" type="checkbox" placeholder="{{}}">
+									</div>
+							</div>
+
+							<div class="form-group">
 									<label class="col-sm-3 control-label">{{Ajouter altitude à la position}}</label>
 									<div class="col-sm-7">
 										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">

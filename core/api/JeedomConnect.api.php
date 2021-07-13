@@ -149,6 +149,7 @@ switch ($method) {
 				'userProfil' => $user->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+        'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
 				'pluginConfig' => apiHelper::getPluginConfig(),
 				'cmdInfo' => apiHelper::getCmdInfoData($config),
 				'scInfo' => apiHelper::getScenarioData($config),
