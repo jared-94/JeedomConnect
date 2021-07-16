@@ -299,6 +299,7 @@ public static function getWidgetData() {
   return $result;
 }
 
+// EDIT FUNCTIONS
 public static function setWidget($widget) {
   log::add('JeedomConnect', 'debug', 'save widget data' ) ;
   JeedomConnectWidget::updateWidgetConfig($widget);  
@@ -374,6 +375,72 @@ public static function setCustomWidgetList($eqLogic, $customWidgetList) {
   }  
   log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData) ) ;
   config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function setGroup($eqLogic, $group) {
+  $curConfig = $eqLogic->getConfig();
+  $toEdit = array_search($group['id'], array_column($curConfig['payload']['groups'], 'id'));
+  if ($toEdit !== false) {
+    $curConfig['payload']['groups'][$toEdit] = $group;
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+} 
+
+public static function removeGroup($eqLogic, $id) {
+  $curConfig = $eqLogic->getConfig();
+  $toRemove = array_search($id, array_column($curConfig['payload']['groups'], 'id'));
+  if ($toRemove !== false) {
+    $parentId = $curConfig['payload']['groups'][$toRemove]['parentId'];
+    $index = $curConfig['payload']['groups'][$toRemove]['index'];
+    unset($curConfig['payload']['groups'][$toRemove]);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1; 
+      }
+      if ($widget['parentId'] == $id) {
+        unset($curConfig['payload']['widgets'][$i]);
+        
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if ($group['parentId'] == $parentId && $group['index'] > $index) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }  
+}
+
+public static function addGroup($eqLogic, $curGroup) {
+  $curConfig = $eqLogic->getConfig();
+  $parentId = $curGroup['parentId'];
+  $index = $curGroup['index'];
+  $maxId = 999000;
+  
+  foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+    if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+      $curConfig['payload']['widgets'][$i]['index'] += 1; 
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $group) {
+    if ($group['parentId'] == $parentId && $group['index'] > $index) {
+      $curConfig['payload']['groups'][$i]['index'] += 1;
+    }
+    if ($group['id'] >= $maxId) {
+      $maxId = $group['id'] + 1;
+    }
+  }
+
+  $curGroup['id'] = $maxId;
+  array_push($curConfig['payload']['groups'], $curGroup);
+  $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
 }
 

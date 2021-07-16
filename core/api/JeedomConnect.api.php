@@ -337,6 +337,18 @@ switch ($method) {
     apiHelper::setCustomWidgetList($eqLogic, $params['customWidgetList']);
     $jsonrpc->makeSuccess();
     break;
+  case 'SET_GROUP':
+    apiHelper::setGroup($eqLogic, $params['group']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'REMOVE_GROUP':
+    apiHelper::removeGroup($eqLogic, $params['id']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'ADD_GROUP':
+    apiHelper::addGroup($eqLogic, $params['group']);
+    $jsonrpc->makeSuccess();
+    break;
   case 'SET_APP_CONFIG':
     apiHelper::setAppConfig($apiKey, $params['config']);
     $jsonrpc->makeSuccess();
