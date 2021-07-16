@@ -778,7 +778,10 @@ class JeedomConnect extends eqLogic {
 			$this->setConfiguration('webviewEnabled', '1');
 			$this->save();
 		}
-
+		if ($this->getConfiguration('editEnabled') == '' ) {
+			$this->setConfiguration('editEnabled', '1');
+			$this->save();
+		}
     }
 
     public function postUpdate() {

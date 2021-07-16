@@ -359,23 +359,22 @@ public static function removeWidget($eqLogic, $widgetId) {
 
     $eqLogic->saveConfig($curConfig);
     $eqLogic->generateNewConfigVersion();
-  }
-  
+  }  
 }
 
 public static function setCustomWidgetList($eqLogic, $customWidgetList) {
   $apiKey = $eqLogic->getConfiguration('apiKey');
+  $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
   foreach ($customWidgetList as $customWidget) {
-    $widgetId = $customWidget['widgetId'];
-    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+    $widgetId = $customWidget['widgetId'];    
     if (empty($customData)) {
       $customData = array('widgets' => array());
     }
-    $customData['widgets'][$widgetId] = $customWidget;
-    log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData) ) ;
-    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
-    $eqLogic->generateNewConfigVersion();
+    $customData['widgets'][$widgetId] = $customWidget;    
   }  
+  log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData) ) ;
+  config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+  $eqLogic->generateNewConfigVersion();
 }
 
  // EVENTS FUNCTION
