@@ -934,6 +934,49 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
+	public function moveWidgetIndex($widgetId, $parentId, $currentIndex, $newIndex){
+		try{
+			log::add('JeedomConnect', 'debug', 'moveWidgetIndex data : ' . $widgetId . ' - ' . $parentId . ' - ' . $currentIndex . ' - ' . $newIndex );
+			$conf = $this->getConfig();
+			if ( $conf ){
+				foreach(array('widgets', 'groups') as $type){
+					log::add('JeedomConnect', 'debug', 'moveWidgetIndex -- dealing with type : ' . $type ) ;
+					foreach ($conf['payload'][$type] as $key => $value) {
+						// log::add('JeedomConnect', 'debug', 'moveWidgetIndex -- checking widget  : ' . json_encode($conf['payload']['widgets'][$key]) ) ;
+						// log::add('JeedomConnect', 'debug', 'moveWidgetIndex -- parentId  : ' . $value['parentId'] ) ;
+						// log::add('JeedomConnect', 'debug', 'moveWidgetIndex -- index : ' . $value['index'] ) ;
+
+						if ( $value['parentId']  != $parentId ) continue;
+						if ( $value['index']  == $currentIndex ){
+							$conf['payload'][$type][$key]['index'] = $newIndex;
+							continue;
+						} 
+
+						if ( $currentIndex < $newIndex){
+							if ( $value['index']  < $currentIndex || $value['index'] > $newIndex ) continue;
+							
+							$conf['payload'][$type][$key]['index'] = intval($conf['payload'][$type][$key]['index']) - 1;
+						}
+						else{
+							if ( $value['index']  > $currentIndex || $value['index'] < $newIndex ) continue;
+								
+							$conf['payload'][$type][$key]['index'] = intval($conf['payload'][$type][$key]['index']) + 1;
+						}
+					}
+				}
+
+				$this->saveConfig($conf);
+			}
+			$this->generateNewConfigVersion();
+			return true;
+		}
+		catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to move index : ' . $e->getMessage());
+			return false;
+		}
+
+	}
+
 	public function removeWidgetConf($idToRemoveList){
 
 		$remove = false;

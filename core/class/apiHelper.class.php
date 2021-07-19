@@ -300,6 +300,17 @@ public static function getWidgetData() {
 }
 
 // EDIT FUNCTIONS
+public static function moveWidgetIndex($apiKey, $widgetId, $parentId, $currentIndex, $newIndex){
+  $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+
+  if(is_object($eqLogic)){
+    return $eqLogic->moveWidgetIndex($widgetId, $parentId, $currentIndex, $newIndex) ;
+    
+  }
+
+  return false;
+}
+
 public static function setWidget($widget) {
   log::add('JeedomConnect', 'debug', 'save widget data' ) ;
   JeedomConnectWidget::updateWidgetConfig($widget);  

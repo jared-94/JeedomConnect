@@ -334,6 +334,10 @@ class ConnectLogic implements MessageComponentInterface
 				$result = \apiHelper::getWidgetData();
 				$from->send(json_encode($result));
 				break;
+			case 'MOVE_WIDGET_INDEX':
+				$result = \apiHelper::moveWidgetIndex($from->apiKey, $msg['payload']['widgetId'], $msg['payload']['parentId'], $msg['payload']['currentIndex'], $msg['payload']['newIndex']);
+				$from->send(json_encode(array('result' => $result)));
+				break;
 			case 'GET_PLUGINS_UPDATE':
 				$pluginUpdate = \apiHelper::getPluginsUpdate() ;
 				$from->send(json_encode($pluginUpdate));

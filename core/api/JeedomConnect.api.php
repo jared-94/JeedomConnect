@@ -243,6 +243,10 @@ switch ($method) {
     $result = apiHelper::getWidgetData();
     $jsonrpc->makeSuccess($result);
     break;
+  case 'MOVE_WIDGET_INDEX':
+    $result = apiHelper::moveWidgetIndex($apiKey, $params['widgetId'], $params['parentId'], $params['currentIndex'], $params['newIndex']);
+    $jsonrpc->makeSuccess(array('result' => $result ) );
+    break;
   case 'UNSUBSCRIBE_SC':
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->save();
@@ -357,7 +361,7 @@ switch ($method) {
     $result = apiHelper::getAppConfig($apiKey, $params['configId']);
     $jsonrpc->makeSuccess($result);
     break;
-	case 'ADD_GEOFENCE':
+  case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
     break;
