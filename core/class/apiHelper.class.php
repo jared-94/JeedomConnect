@@ -123,7 +123,8 @@ class apiHelper {
           'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
           'status' => $state['state'],
           'lastLaunch' => strtotime($state['lastLaunch']),
-          'active' => $sc->getIsActive() ? 1 : 0
+          'active' => $sc->getIsActive() ? 1 : 0,
+          'icon' => $sc->getIcon()
         );
         array_push($result, $sc_info);
       }
