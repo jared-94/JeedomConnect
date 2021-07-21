@@ -124,7 +124,7 @@ class apiHelper {
           'status' => $state['state'],
           'lastLaunch' => strtotime($state['lastLaunch']),
           'active' => $sc->getIsActive() ? 1 : 0,
-          'icon' => $sc->getIcon()
+          'icon' => str_replace('></i>', '', $sc->getIcon(true) )
         );
         array_push($result, $sc_info);
       }
