@@ -243,10 +243,6 @@ switch ($method) {
     $result = apiHelper::getWidgetData();
     $jsonrpc->makeSuccess($result);
     break;
-  case 'MOVE_WIDGET_INDEX':
-    $result = apiHelper::moveWidgetIndex($apiKey, $params['widgetId'], $params['parentId'], $params['currentIndex'], $params['newIndex']);
-    $jsonrpc->makeSuccess(array('result' => $result ) );
-    break;
   case 'UNSUBSCRIBE_SC':
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->save();
@@ -353,6 +349,28 @@ switch ($method) {
     apiHelper::addGroup($eqLogic, $params['group']);
     $jsonrpc->makeSuccess();
     break;
+  case 'REMOVE_GLOBAL_WIDGET':
+    apiHelper::removeGlobalWidget($params['id']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'ADD_GLOBAL_WIDGET':
+    $jsonrpc->makeSuccess(apiHelper::addGlobalWidget($params['widget']));
+    break;
+  case 'SET_BOTTOM_TABS':
+    apiHelper::setBottomTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
+    break;
+  case 'REMOVE_BOTTOM_TAB':
+    apiHelper::removeBottomTab($eqLogic, $params['id']);
+    break;
+  case 'SET_TOP_TABS':
+    apiHelper::setTopTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
+    break;
+  case 'REMOVE_TOP_TAB':
+    apiHelper::removeTopTab($eqLogic, $params['id']);
+    break;
+  case 'SET_PAGE_DATA':
+    apiHelper::setPageData($eqLogic, $params['rootData'], $params['idCounter']);
+    break;
   case 'SET_APP_CONFIG':
     apiHelper::setAppConfig($apiKey, $params['config']);
     $jsonrpc->makeSuccess();
@@ -361,7 +379,7 @@ switch ($method) {
     $result = apiHelper::getAppConfig($apiKey, $params['configId']);
     $jsonrpc->makeSuccess($result);
     break;
-  case 'ADD_GEOFENCE':
+	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
     break;

@@ -334,10 +334,6 @@ class ConnectLogic implements MessageComponentInterface
 				$result = \apiHelper::getWidgetData();
 				$from->send(json_encode($result));
 				break;
-			case 'MOVE_WIDGET_INDEX':
-				$result = \apiHelper::moveWidgetIndex($from->apiKey, $msg['payload']['widgetId'], $msg['payload']['parentId'], $msg['payload']['currentIndex'], $msg['payload']['newIndex']);
-				$from->send(json_encode(array('result' => $result)));
-				break;
 			case 'GET_PLUGINS_UPDATE':
 				$pluginUpdate = \apiHelper::getPluginsUpdate() ;
 				$from->send(json_encode($pluginUpdate));
@@ -401,6 +397,32 @@ class ConnectLogic implements MessageComponentInterface
 			case 'ADD_GROUP':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::addGroup($eqLogic, $msg['payload']['group']);
+				break;
+			case 'REMOVE_GLOBAL_WIDGET':
+				\apiHelper::removeGlobalWidget($msg['payload']['id']);
+				break;
+			case 'ADD_GLOBAL_WIDGET':
+				$from->send(json_encode(\apiHelper::addGlobalWidget($msg['payload']['widget']) ));
+				break;
+			case 'SET_BOTTOM_TABS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setBottomTabList($eqLogic, $msg['payload']['tabs'], $msg['payload']['migrate'], $msg['payload']['idCounter']);
+				break;
+			case 'REMOVE_BOTTOM_TAB':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeBottomTab($eqLogic, $msg['payload']['id']);
+				break;
+			case 'SET_TOP_TABS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setTopTabList($eqLogic, $msg['payload']['tabs'], $msg['payload']['migrate'], $msg['payload']['idCounter']);
+				break;
+			case 'REMOVE_TOP_TAB':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeTopTab($eqLogic, $msg['payload']['id']);
+				break;
+			case 'SET_PAGE_DATA':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setPageData($eqLogic, $msg['payload']['rootData'], $msg['payload']['idCounter']);
 				break;
 			case 'SET_APP_CONFIG':
 				\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);

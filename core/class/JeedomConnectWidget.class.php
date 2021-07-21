@@ -116,7 +116,7 @@ class JeedomConnectWidget extends config {
 
 	public static function getWidgetsList(){
 		
-		$widgetArray = self::getWidgets('all', false );
+		$widgetArray = self::getWidgets('all', true );
 		usort($widgetArray, function($a, $b) {return strcmp($a['name'], $b['name']);});
 
 		return $widgetArray;

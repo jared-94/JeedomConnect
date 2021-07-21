@@ -954,12 +954,12 @@ class JeedomConnect extends eqLogic {
 
 						if ( $currentIndex < $newIndex){
 							if ( $value['index']  < $currentIndex || $value['index'] > $newIndex ) continue;
-							
+
 							$conf['payload'][$type][$key]['index'] = intval($conf['payload'][$type][$key]['index']) - 1;
 						}
 						else{
 							if ( $value['index']  > $currentIndex || $value['index'] < $newIndex ) continue;
-								
+
 							$conf['payload'][$type][$key]['index'] = intval($conf['payload'][$type][$key]['index']) + 1;
 						}
 					}
