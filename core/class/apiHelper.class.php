@@ -124,12 +124,19 @@ class apiHelper {
           'status' => $state['state'],
           'lastLaunch' => strtotime($state['lastLaunch']),
           'active' => $sc->getIsActive() ? 1 : 0,
-          'icon' => str_replace('></i>', '', $sc->getIcon(true) )
+          'icon' => self::getScenarioIcon($sc )
         );
         array_push($result, $sc_info);
       }
     }
     return $result;
+  }
+
+  public static function getScenarioIcon($sc){
+      if (strpos($sc->getDisplay('icon'), '<i') === 0) {
+        return trim(str_replace(array('<i', 'class=', '"', '/>', '></i>'), '', $sc->getDisplay('icon')));
+      }
+      return null;
   }
 
   // OBJECT FUNCTIONS
