@@ -382,6 +382,10 @@ class ConnectLogic implements MessageComponentInterface
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::removeWidget($eqLogic, $msg['payload']['widgetId']);
 				break;
+			case 'MOVE_WIDGET':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::moveWidget($eqLogic, $msg['payload']['widgetId'], $msg['payload']['destinationId']);
+				break;
 			case 'SET_CUSTOM_WIDGETS':
         		$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::setCustomWidgetList($eqLogic, $msg['payload']['customWidgetList']);
@@ -397,6 +401,10 @@ class ConnectLogic implements MessageComponentInterface
 			case 'ADD_GROUP':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::addGroup($eqLogic, $msg['payload']['group']);
+				break;
+			case 'MOVE_GROUP':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::moveGroup($eqLogic, $msg['payload']['groupId'], $msg['payload']['destinationId']);
 				break;
 			case 'REMOVE_GLOBAL_WIDGET':
 				\apiHelper::removeGlobalWidget($msg['payload']['id']);
@@ -419,6 +427,10 @@ class ConnectLogic implements MessageComponentInterface
 			case 'REMOVE_TOP_TAB':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::removeTopTab($eqLogic, $msg['payload']['id']);
+				break;
+			case 'MOVE_TOP_TAB':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::moveTopTab($eqLogic, $msg['payload']['sectionId'], $msg['payload']['destinationId']);
 				break;
 			case 'SET_PAGE_DATA':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');

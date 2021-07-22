@@ -333,6 +333,10 @@ switch ($method) {
     apiHelper::removeWidget($eqLogic, $params['widgetId']);
     $jsonrpc->makeSuccess();
     break;
+  case 'MOVE_WIDGET':
+    apiHelper::moveWidget($eqLogic, $params['widgetId'], $params['destinationId']);
+    $jsonrpc->makeSuccess();
+    break;
   case 'SET_CUSTOM_WIDGETS':
     apiHelper::setCustomWidgetList($eqLogic, $params['customWidgetList']);
     $jsonrpc->makeSuccess();
@@ -347,6 +351,10 @@ switch ($method) {
     break;
   case 'ADD_GROUP':
     apiHelper::addGroup($eqLogic, $params['group']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'MOVE_GROUP':
+    apiHelper::moveGroup($eqLogic, $params['groupId'], $params['destinationId']);
     $jsonrpc->makeSuccess();
     break;
   case 'REMOVE_GLOBAL_WIDGET':
@@ -367,6 +375,10 @@ switch ($method) {
     break;
   case 'REMOVE_TOP_TAB':
     apiHelper::removeTopTab($eqLogic, $params['id']);
+    break;
+  case 'MOVE_TOP_TAB':
+    apiHelper::moveTopTab($eqLogic, $params['sectionId'], $params['destinationId']);
+    $jsonrpc->makeSuccess();
     break;
   case 'SET_PAGE_DATA':
     apiHelper::setPageData($eqLogic, $params['rootData'], $params['idCounter']);

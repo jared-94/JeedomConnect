@@ -133,12 +133,12 @@ class apiHelper {
   }
 
   public static function getScenarioIcon($sc){
-      if (strpos($sc->getDisplay('icon'), '<i') === 0) {
-        return trim(str_replace(array('<i', 'class=', '"', '/>', '></i>'), '', $sc->getDisplay('icon')));
-      }
-      return null;
+    if (strpos($sc->getDisplay('icon'), '<i') === 0) {
+      return trim(str_replace(array('<i', 'class=', '"', '/>', '></i>'), '', $sc->getDisplay('icon')));
+    }
+    return null;
   }
-
+  
   // OBJECT FUNCTIONS
   public static function getObjectList($config) {
   	$return = array();
@@ -371,6 +371,71 @@ public static function removeWidget($eqLogic, $widgetId) {
   }  
 }
 
+public static function moveWidget($eqLogic, $widgetId, $destinationId) {
+  $curConfig = $eqLogic->getConfig();
+  $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
+  if ($widgetIndex === false) {
+    return;
+  }
+
+  $moved = false;
+
+  $oldIndex = $curConfig['payload']['widgets'][$widgetIndex]['index'];
+  $oldParentId = $curConfig['payload']['widgets'][$widgetIndex]['parentId'];
+
+  $newIndex = 0;
+  foreach ($curConfig['payload']['widgets'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+
+  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationIndex !== false) { //destination is a bottom tab
+    $moved = true;
+  } else {
+    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationIndex !== false) { //destination is a top tab  
+      $moved = true;
+    } else {
+      $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
+        if ($destinationIndex !== false) { //destination is a group  
+          $moved = true;
+      }
+    }
+  }
+
+  if ($moved) {
+    $curConfig['payload']['widgets'][$widgetIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['widgets'][$widgetIndex]['index'] = $newIndex;
+    //re-index initial page
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1;
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+
+}
+
 public static function setCustomWidgetList($eqLogic, $customWidgetList) {
   $apiKey = $eqLogic->getConfiguration('apiKey');
   $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
@@ -450,6 +515,66 @@ public static function addGroup($eqLogic, $curGroup) {
   array_push($curConfig['payload']['groups'], $curGroup);
   $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
+}
+
+public static function moveGroup($eqLogic, $groupId, $destinationId) {
+  $curConfig = $eqLogic->getConfig();
+  $groupIndex = array_search($groupId, array_column($curConfig['payload']['groups'], 'id'));
+  if ($groupIndex === false) {
+    return;
+  }
+
+  $moved = false;
+
+  $oldIndex = $curConfig['payload']['groups'][$groupIndex]['index'];
+  $oldParentId = $curConfig['payload']['groups'][$groupIndex]['parentId'];
+
+  $newIndex = 0;
+  foreach ($curConfig['payload']['widgets'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+
+  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationIndex !== false) { //destination is a bottom tab
+    $moved = true;
+  } else {
+    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationIndex !== false) { //destination is a top tab  
+      $moved = true;
+    } 
+  }
+
+  if ($moved) {
+    $curConfig['payload']['groups'][$groupIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['groups'][$groupIndex]['index'] = $newIndex;
+    //re-index initial page
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1;
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+
 }
 
 public static function removeGlobalWidget($id) {
@@ -538,6 +663,7 @@ public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCo
     }
   }
 
+  $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
   $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
   $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
   $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
@@ -684,6 +810,51 @@ public static function removeTopTab($eqLogic, $id) {
     $eqLogic->saveConfig($curConfig);
     $eqLogic->generateNewConfigVersion();
   }  
+}
+
+public static function moveTopTab($eqLogic, $sectionId, $destinationId) {
+  $curConfig = $eqLogic->getConfig();
+  $sectionIndex = array_search($sectionId, array_column($curConfig['payload']['sections'], 'id'));
+  if ($sectionIndex === false) {
+    return;
+  }
+
+  $moved = false;
+
+  $oldIndex = $curConfig['payload']['sections'][$sectionIndex]['index'];
+  $oldParentId = $curConfig['payload']['sections'][$sectionIndex]['parentId'];
+
+  $newIndex = 0;
+  foreach ($curConfig['payload']['sections'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+
+  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationIndex !== false) { //destination is a bottom tab
+    $moved = true;
+  } 
+
+  if ($moved) {
+    $curConfig['payload']['sections'][$sectionIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['sections'][$sectionIndex]['index'] = $newIndex;
+    //re-index initial tab
+    foreach ($curConfig['payload']['sections'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['sections'][$i]['index'] -= 1;
+      }
+    }
+
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+
 }
 
 // Receive root data (already ordered) (widgets, groups) for a page view (index < 0 ==> remove)
