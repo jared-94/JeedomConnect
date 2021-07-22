@@ -67,9 +67,10 @@ $eqLogic->save();
 while (true) {
   if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
       log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #".$id);
-      if ($eqLogic->getConfiguration('sessionId', 0) == $id) {
-        $eqLogic->setConfiguration('connected', 0);
-        $eqLogic->save();
+      $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+      if ($logic->getConfiguration('sessionId', 0) == $id) {
+        $logic->setConfiguration('connected', 0);
+        $logic->save();
       }
       die();
   }

@@ -3602,6 +3602,13 @@
 						"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
 					},
 					{
+						"id": "localUrl",
+						"name": "URL locale",
+						"required": false,
+						"category": "string",
+						"description": "URL utilisée lorsque l'appareil est sur le même réseau que Jeedom"
+					},
+					{
 						"id":  "headerHide",
 						"name": "Cacher la barre du haut",
 						"required": false,
@@ -3834,6 +3841,13 @@
 						"description": "100% par défaut (pas de redimensionnement)"
 					},
 					{
+						"id": "aspectRatio",
+						"name": "Ratio",
+						"required": false,
+						"category": "string",
+						"description": "Forcer le ratio (largeur/longueur). Exemple: 0.75"
+					},
+					{
 						"id": "startRecordAction",
 						"name": "Enregistrer",
 						"required": false,
@@ -4001,6 +4015,12 @@
 						"name": "Images sous conditions",
 						"required": false,
 						"category": "ifImgs"
+					},
+					{
+						"id": "moreWidgets",
+						"name": "Widgets supplémentaires",
+						"category": "widgets",
+						"description": "Widgets supplémentaires affichés dans la vue détails"
 					},
 					{
 						"id": "display",

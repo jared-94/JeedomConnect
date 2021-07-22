@@ -223,6 +223,8 @@ class ConnectLogic implements MessageComponentInterface
 					'userProfil' => $user->getProfils(),
 					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+					'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
+					'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
 					'pluginConfig' => \apiHelper::getPluginConfig(),
 					'cmdInfo' => \apiHelper::getCmdInfoData($config),
 					'scInfo' => \apiHelper::getScenarioData($config),
@@ -277,7 +279,7 @@ class ConnectLogic implements MessageComponentInterface
 		
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
-				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options']);
+				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options'] ?: null);
 				break;
 			case 'CMDLIST_EXEC':
 				\apiHelper::execMultipleCmd($msg['payload']['cmdList']);
@@ -324,6 +326,14 @@ class ConnectLogic implements MessageComponentInterface
 			case 'GET_ALL_SC':
 				$this->sendScenarioInfo($from, true);
 				break;
+			case 'GET_JEEDOM_DATA':
+				$result = \apiHelper::getFullJeedomData();
+				$from->send(json_encode($result));
+				break;
+			case 'GET_WIDGET_DATA':
+				$result = \apiHelper::getWidgetData();
+				$from->send(json_encode($result));
+				break;
 			case 'GET_PLUGINS_UPDATE':
 				$pluginUpdate = \apiHelper::getPluginsUpdate() ;
 				$from->send(json_encode($pluginUpdate));
@@ -362,7 +372,75 @@ class ConnectLogic implements MessageComponentInterface
 				\apiHelper::saveBatteryEquipment($from->apiKey, $msg['payload']['level']);
 				break;
 			case 'SET_WIDGET':
-				\JeedomConnectWidget::updateWidgetConfig($msg['payload']['widgetId'], $msg['payload']['widget']);
+				\apiHelper::setWidget($msg['payload']['widget']);
+				break;
+			case 'ADD_WIDGETS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::addWidgets($eqLogic, $msg['payload']['widgets'], $msg['payload']['parentId'], $msg['payload']['index']);
+				break;
+			case 'REMOVE_WIDGET':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeWidget($eqLogic, $msg['payload']['widgetId']);
+				break;
+			case 'MOVE_WIDGET':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::moveWidget($eqLogic, $msg['payload']['widgetId'], $msg['payload']['destinationId']);
+				break;
+			case 'SET_CUSTOM_WIDGETS':
+        		$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setCustomWidgetList($eqLogic, $msg['payload']['customWidgetList']);
+				break;
+			case 'SET_GROUP':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setGroup($eqLogic, $msg['payload']['group']);
+				break;
+			case 'REMOVE_GROUP':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeGroup($eqLogic, $msg['payload']['id']);
+				break;
+			case 'ADD_GROUP':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::addGroup($eqLogic, $msg['payload']['group']);
+				break;
+			case 'MOVE_GROUP':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::moveGroup($eqLogic, $msg['payload']['groupId'], $msg['payload']['destinationId']);
+				break;
+			case 'REMOVE_GLOBAL_WIDGET':
+				\apiHelper::removeGlobalWidget($msg['payload']['id']);
+				break;
+			case 'ADD_GLOBAL_WIDGET':
+				$from->send(json_encode(\apiHelper::addGlobalWidget($msg['payload']['widget']) ));
+				break;
+			case 'SET_BOTTOM_TABS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setBottomTabList($eqLogic, $msg['payload']['tabs'], $msg['payload']['migrate'], $msg['payload']['idCounter']);
+				break;
+			case 'REMOVE_BOTTOM_TAB':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeBottomTab($eqLogic, $msg['payload']['id']);
+				break;
+			case 'SET_TOP_TABS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setTopTabList($eqLogic, $msg['payload']['tabs'], $msg['payload']['migrate'], $msg['payload']['idCounter']);
+				break;
+			case 'REMOVE_TOP_TAB':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::removeTopTab($eqLogic, $msg['payload']['id']);
+				break;
+			case 'MOVE_TOP_TAB':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::moveTopTab($eqLogic, $msg['payload']['sectionId'], $msg['payload']['destinationId']);
+				break;
+			case 'SET_PAGE_DATA':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setPageData($eqLogic, $msg['payload']['rootData'], $msg['payload']['idCounter']);
+				break;
+			case 'SET_APP_CONFIG':
+				\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);
+				break;
+			case 'GET_APP_CONFIG':	
+				$from->send(json_encode(\apiHelper::getAppConfig($from->apiKey, $msg['payload']['configId'])));
 				break;
 			case 'ADD_GEOFENCE':
 				$this->addGeofence($from, $msg['payload']['geofence']);
@@ -467,7 +545,7 @@ class ConnectLogic implements MessageComponentInterface
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
-					//\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
+					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : ".json_encode($res));
 					$client->send(json_encode($res));
 				}
 			}

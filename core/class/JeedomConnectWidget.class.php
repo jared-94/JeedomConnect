@@ -67,10 +67,10 @@ class JeedomConnectWidget extends config {
 	}
 
 
-	public static function getWidgets($_id = '' ){
+	public static function getWidgets($_id = 'all', $_fullConfig = true ){
 
-		if ( $_id === '' ){
-			log::add(self::$_plugin_id, 'debug', 'getWidgets for all widget');
+		if ( $_id === 'all' ){
+			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widget');
 			$widgets = JeedomConnectWidget::getAllConfigurations();
 		}
 		else{
@@ -91,7 +91,7 @@ class JeedomConnectWidget extends config {
 				$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon() ;
 
 				$widgetJC = json_decode($widget['conf']['widgetJC'], true);
-				$widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
+				if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
 				$widgetItem['enable'] = $widgetJC['enable'];
 				$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
 				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
@@ -110,6 +110,15 @@ class JeedomConnectWidget extends config {
 
 			//log::add(self::$_plugin_id, 'debug', ' final result sent >' . json_encode($widgetArray) );
 		}
+		return $widgetArray;
+
+	}
+
+	public static function getWidgetsList(){
+		
+		$widgetArray = self::getWidgets('all', true );
+		usort($widgetArray, function($a, $b) {return strcmp($a['name'], $b['name']);});
+
 		return $widgetArray;
 
 	}
@@ -150,7 +159,8 @@ class JeedomConnectWidget extends config {
 		log::add(self::$_plugin_id, 'debug', 'updateConfig - key ' . $key . ' NOT found');
 	}
 
-	public static function updateWidgetConfig($widgetId, $config) {
+	public static function updateWidgetConfig($config) {
+		$widgetId = $config['id'];
 		$widgetSettings = self::getConfiguration($widgetId) ;
 		if ( empty($widgetSettings) ){
 			log::add(self::$_plugin_id, 'debug', 'updateWidgetConfig - widgetId ' . $widgetId . ' NOT found');

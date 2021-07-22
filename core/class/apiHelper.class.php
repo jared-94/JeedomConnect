@@ -34,16 +34,7 @@ class apiHelper {
           }
           if ($item == 'moreInfos') {
             foreach ($value as $i => $info) {
-              if (isset($info['type']) && $info['type'] == 'cmd') {
-                array_push($return, $info['id']);
-              }
-            }
-          }
-          if ($item == 'moreInfos') {
-            foreach ($value as $i => $info) {
-              if (isset($info['type']) && $info['type'] == 'cmd') {
-                array_push($return, $info['id']);
-              }
+              array_push($return, $info['id']);
             }
           }
         }
@@ -74,6 +65,17 @@ class apiHelper {
          $config['payload']['weather']['temperature_max']
        ));
     }
+
+    foreach ($config['payload']['customData']['widgets'] as $widgetId => $widget) {
+      foreach ($widget as $item => $value) {
+        if ($item == 'moreInfos') {
+          foreach ($value as $i => $info) {
+            array_push($return, $info['id']);           
+          }
+        }
+      }
+    }
+    
     return array_unique($return);
   }
 
@@ -121,7 +123,8 @@ class apiHelper {
           'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
           'status' => $state['state'],
           'lastLaunch' => strtotime($state['lastLaunch']),
-          'active' => $sc->getIsActive() ? 1 : 0
+          'active' => $sc->getIsActive() ? 1 : 0,
+          'icon' => self::getScenarioIcon($sc )
         );
         array_push($result, $sc_info);
       }
@@ -129,6 +132,13 @@ class apiHelper {
     return $result;
   }
 
+  public static function getScenarioIcon($sc){
+    if (strpos($sc->getDisplay('icon'), '<i') === 0) {
+      return trim(str_replace(array('<i', 'class=', '"', '/>', '></i>'), '', $sc->getDisplay('icon')));
+    }
+    return null;
+  }
+  
   // OBJECT FUNCTIONS
   public static function getObjectList($config) {
   	$return = array();
@@ -200,7 +210,7 @@ class apiHelper {
   }
 
   //PLUGIN CONF FUNCTIONS
-  function getPluginConfig() {
+  public static function getPluginConfig() {
     $plugin = update::byLogicalId('JeedomConnect');
   	return array(
   		'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
@@ -256,6 +266,633 @@ class apiHelper {
     }
     return false;
  }
+
+ // JEEDOM FULL DATA
+public static function getFullJeedomData() {
+  $result = array(
+    'type' => 'SET_JEEDOM_DATA',
+    'payload' => array(
+      'cmds' => array(),
+      'eqLogics' => array(),
+      'objects' => array(),
+      'scenarios' => array()
+    )
+  );
+
+  foreach (cmd::all() as $item) {
+    array_push($result['payload']['cmds'], utils::o2a($item));
+  }
+  foreach (eqLogic::all() as $item) {
+    array_push($result['payload']['eqLogics'], utils::o2a($item));
+  }
+  foreach (jeeObject::all() as $item) {
+    array_push($result['payload']['objects'], utils::o2a($item));
+  }
+  foreach (scenario::all() as $item) {
+    array_push($result['payload']['scenarios'], utils::o2a($item));
+  }
+
+  return $result;
+}
+
+//WIDGET DATA
+public static function getWidgetData() {
+  $result = array(
+    'type' => 'SET_WIDGET_DATA',
+    'payload' => array(
+      'widgets' => JeedomConnectWidget::getWidgetsList()
+    )
+  );
+
+  return $result;
+}
+
+// EDIT FUNCTIONS
+public static function setWidget($widget) {
+  log::add('JeedomConnect', 'debug', 'save widget data' ) ;
+  JeedomConnectWidget::updateWidgetConfig($widget);  
+}
+
+public static function addWidgets($eqLogic, $widgets, $parentId, $index) {
+  $curConfig = $eqLogic->getConfig();
+
+  foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+    if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+      $curConfig['payload']['widgets'][$i]['index'] += count($widgets); 
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $group) {
+    if ($group['parentId'] == $parentId && $group['index'] > $index) {
+      $curConfig['payload']['groups'][$i]['index'] += count($widgets);
+    }
+  }
+
+  $curIndex = $index + 1;
+  foreach ($widgets as $widget) {
+    $curConfig['idCounter'] = $curConfig['idCounter'] + 1;
+    $newWidget = array(
+      'index' => $curIndex,
+      'widgetId' => $curConfig['idCounter'],
+      'id' => $widget['id']
+    );
+    if (!is_null($parentId)) {
+      $newWidget['parentId'] = $parentId;
+    }
+    array_push($curConfig['payload']['widgets'], $newWidget);
+    $curIndex++;
+  }
+  
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function removeWidget($eqLogic, $widgetId) {
+  $curConfig = $eqLogic->getConfig();
+  $toRemove = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
+  if ($toRemove !== false) {
+    $parentId = $curConfig['payload']['widgets'][$toRemove]['parentId'];
+    $index = $curConfig['payload']['widgets'][$toRemove]['index'];
+    unset($curConfig['payload']['widgets'][$toRemove]);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1; 
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if ($group['parentId'] == $parentId && $group['index'] > $index) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }  
+}
+
+public static function moveWidget($eqLogic, $widgetId, $destinationId) {
+  $curConfig = $eqLogic->getConfig();
+  $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
+  if ($widgetIndex === false) {
+    return;
+  }
+
+  $moved = false;
+
+  $oldIndex = $curConfig['payload']['widgets'][$widgetIndex]['index'];
+  $oldParentId = $curConfig['payload']['widgets'][$widgetIndex]['parentId'];
+
+  $newIndex = 0;
+  foreach ($curConfig['payload']['widgets'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+
+  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationIndex !== false) { //destination is a bottom tab
+    $moved = true;
+  } else {
+    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationIndex !== false) { //destination is a top tab  
+      $moved = true;
+    } else {
+      $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
+        if ($destinationIndex !== false) { //destination is a group  
+          $moved = true;
+      }
+    }
+  }
+
+  if ($moved) {
+    $curConfig['payload']['widgets'][$widgetIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['widgets'][$widgetIndex]['index'] = $newIndex;
+    //re-index initial page
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1;
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+
+}
+
+public static function setCustomWidgetList($eqLogic, $customWidgetList) {
+  $apiKey = $eqLogic->getConfiguration('apiKey');
+  $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+  foreach ($customWidgetList as $customWidget) {
+    $widgetId = $customWidget['widgetId'];    
+    if (empty($customData)) {
+      $customData = array('widgets' => array());
+    }
+    $customData['widgets'][$widgetId] = $customWidget;    
+  }  
+  log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData) ) ;
+  config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function setGroup($eqLogic, $group) {
+  $curConfig = $eqLogic->getConfig();
+  $toEdit = array_search($group['id'], array_column($curConfig['payload']['groups'], 'id'));
+  if ($toEdit !== false) {
+    $curConfig['payload']['groups'][$toEdit] = $group;
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+} 
+
+public static function removeGroup($eqLogic, $id) {
+  $curConfig = $eqLogic->getConfig();
+  $toRemove = array_search($id, array_column($curConfig['payload']['groups'], 'id'));
+  if ($toRemove !== false) {
+    $parentId = $curConfig['payload']['groups'][$toRemove]['parentId'];
+    $index = $curConfig['payload']['groups'][$toRemove]['index'];
+    unset($curConfig['payload']['groups'][$toRemove]);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1; 
+      }
+      if ($widget['parentId'] == $id) {
+        unset($curConfig['payload']['widgets'][$i]);
+        
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if ($group['parentId'] == $parentId && $group['index'] > $index) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }  
+}
+
+public static function addGroup($eqLogic, $curGroup) {
+  $curConfig = $eqLogic->getConfig();
+  $parentId = $curGroup['parentId'];
+  $index = $curGroup['index'];
+  $maxId = 999000;
+  
+  foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+    if ($widget['parentId'] == $parentId && $widget['index'] > $index) {
+      $curConfig['payload']['widgets'][$i]['index'] += 1; 
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $group) {
+    if ($group['parentId'] == $parentId && $group['index'] > $index) {
+      $curConfig['payload']['groups'][$i]['index'] += 1;
+    }
+    if ($group['id'] >= $maxId) {
+      $maxId = $group['id'] + 1;
+    }
+  }
+
+  $curGroup['id'] = $maxId;
+  array_push($curConfig['payload']['groups'], $curGroup);
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function moveGroup($eqLogic, $groupId, $destinationId) {
+  $curConfig = $eqLogic->getConfig();
+  $groupIndex = array_search($groupId, array_column($curConfig['payload']['groups'], 'id'));
+  if ($groupIndex === false) {
+    return;
+  }
+
+  $moved = false;
+
+  $oldIndex = $curConfig['payload']['groups'][$groupIndex]['index'];
+  $oldParentId = $curConfig['payload']['groups'][$groupIndex]['parentId'];
+
+  $newIndex = 0;
+  foreach ($curConfig['payload']['widgets'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+  foreach ($curConfig['payload']['groups'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+
+  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationIndex !== false) { //destination is a bottom tab
+    $moved = true;
+  } else {
+    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationIndex !== false) { //destination is a top tab  
+      $moved = true;
+    } 
+  }
+
+  if ($moved) {
+    $curConfig['payload']['groups'][$groupIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['groups'][$groupIndex]['index'] = $newIndex;
+    //re-index initial page
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] -= 1;
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['groups'][$i]['index'] -= 1;
+      }
+    }
+
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+
+}
+
+public static function removeGlobalWidget($id) {
+  JeedomConnectWidget::removeWidget($id);
+}
+
+public static function addGlobalWidget($widget) {
+  $newConfWidget = array() ;
+  $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_resources_dir . 'widgetsConfig.json'), true);
+	$imgPath = '';
+	foreach ($widgetsConfigJonFile['widgets'] as $config) {
+	  if ( $config['type'] == $widget['type']){
+		  $imgPath = 'plugins/JeedomConnect/data/img/'. $config['img'];
+		  break;
+	  }
+  }
+  $widgetId = JeedomConnectWidget::incrementIndex();
+  $widget['id'] = $widgetId;
+
+	$newConfWidget['imgPath'] = $imgPath ;
+  $newConfWidget['widgetJC'] = json_encode($widget) ;
+
+  config::save('widget::'.$widgetId, $newConfWidget , JeedomConnectWidget::$_plugin_id ) ;
+  
+  return array(
+    'type' => 'SET_SINGLE_WIDGET_DATA',
+    'payload' => $widget
+  );
+}
+
+public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
+  $curConfig = $eqLogic->getConfig();
+  $curConfig['idCounter'] = $idCounter;  
+
+  //remove children
+  foreach ($tabs as $tab) {
+    $oldTabIndex = array_search($tab['id'], array_column($curConfig['payload']['tabs'], 'id')); 
+    if ( $tab['index'] < 0 ) { //tabs with negative index have to be removed
+      if ($oldTabIndex !== false) {
+        unset($curConfig['payload']['tabs'][$oldTabIndex]);
+      }
+      $sectionsToRemove = array();
+      foreach ($curConfig['payload']['sections'] as $i => $section) {
+        if ($section['parentId'] == $tab['id']) {
+          array_push($sectionsToRemove, $section['id']);
+          unset($curConfig['payload']['sections'][$i]);
+        }
+      }
+      $groupsToRemove = array();
+      foreach ($curConfig['payload']['groups'] as $i => $group) {
+        if ($group['parentId'] == $tab['id'] || in_array($group['parentId'], $sectionsToRemove)) {
+          array_push($groupsToRemove, $group['id']);
+          unset($curConfig['payload']['groups'][$i]);
+        }
+      }
+      foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+        if ($widget['parentId'] == $tab['id'] || in_array($widget['parentId'], $groupsToRemove) || in_array($widget['parentId'], $sectionsToRemove)) {
+          unset($curConfig['payload']['widgets'][$i]);
+        }
+      }
+    } else {
+      if ($oldTabIndex !== false) {
+        $curConfig['payload']['tabs'][$oldTabIndex] = $tab;
+      } else {
+        array_push($curConfig['payload']['tabs'], $tab);
+      }
+    }
+  }
+
+  if ($migrate) {
+    $firstTab = array_search(0, array_column($tabs, 'index'));
+    $id = $tabs[$firstTab]['id'];
+    if (count($curConfig['payload']['sections']) > 0) {
+      foreach ($curConfig['payload']['sections'] as $i => $section) {
+        $curConfig['payload']['sections'][$i]['parentId'] = $id;
+      }
+    } else {
+      foreach ($curConfig['payload']['groups'] as $i => $group) {
+        $curConfig['payload']['groups'][$i]['parentId'] = $id;
+      }
+      foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+        if ($widget['parentId'] < 999000) {
+          $curConfig['payload']['widgets'][$i]['parentId'] = $id;
+        }        
+      }
+    }
+  }
+
+  $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+  $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+  $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+  $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function removeBottomTab($eqLogic, $id) {
+  $curConfig = $eqLogic->getConfig();
+  $toRemove = array_search($id, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($toRemove !== false) {
+    $index = $curConfig['payload']['tabs'][$toRemove]['index'];
+    unset($curConfig['payload']['tabs'][$toRemove]);
+
+    // remove children
+    $sectionsToRemove = array();
+    foreach ($curConfig['payload']['sections'] as $i => $section) {
+      if ($section['parentId'] == $id) {
+        array_push($sectionsToRemove, $section['id']);
+        unset($curConfig['payload']['sections'][$i]);
+      }
+    }
+    $groupsToRemove = array();
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if ($group['parentId'] == $id || in_array($group['parentId'], $sectionsToRemove)) {
+        array_push($groupsToRemove, $group['id']);
+        unset($curConfig['payload']['groups'][$i]);
+      }
+    }
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if ($widget['parentId'] == $id || in_array($widget['parentId'], $groupsToRemove) || in_array($widget['parentId'], $sectionsToRemove)) {
+        unset($curConfig['payload']['widgets'][$i]);
+      }
+    }
+    //re-index tabs
+    foreach ($curConfig['payload']['tabs'] as $i => $tab) {
+      if ($tab['parentId'] == $parentId && $tab['index'] > $index) {
+        $curConfig['payload']['tabs'][$i]['index'] -= 1;
+      }
+    }
+    
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }  
+}
+
+public static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
+  if (count($tabs) == 0) {
+    return;
+  }
+  $curConfig = $eqLogic->getConfig();
+  $curConfig['idCounter'] = $idCounter;
+
+  //remove children
+  foreach ($tabs as $tab) {
+    $oldTabIndex = array_search($tab['id'], array_column($curConfig['payload']['sections'], 'id')); 
+    if ( $tab['index'] < 0 ) { //tabs with negative index have to be removed
+      if ($oldTabIndex !== false) {
+        unset($curConfig['payload']['sections'][$oldTabIndex]);
+      }
+      $groupsToRemove = array();
+      foreach ($curConfig['payload']['groups'] as $i => $group) {
+        if ($group['parentId'] == $tab['id']) {
+          array_push($groupsToRemove, $group['id']);
+          unset($curConfig['payload']['groups'][$i]);
+        }
+      }
+      foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+        if ($widget['parentId'] == $tab['id'] || in_array($widget['parentId'], $groupsToRemove)) {
+          unset($curConfig['payload']['widgets'][$i]);
+        }
+      }
+    } else {
+      if ($oldTabIndex !== false) {
+        $curConfig['payload']['sections'][$oldTabIndex] = $tab;
+      } else {
+        array_push($curConfig['payload']['sections'], $tab);
+      }
+    }
+  }
+
+  if ($migrate) {
+    $firstTab = array_search(0, array_column($tabs, 'index'));
+    $id = $tabs[$firstTab]['id'];
+    $parentId = $tabs[$firstTab]['parentId'];
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if (!isset($group['parentId']) || $group['parentId'] == $parentId) {
+        $curConfig['payload']['groups'][$i]['parentId'] = $id;
+      }
+    }
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if (!isset($widget['parentId']) || $widget['parentId'] == $parentId) {
+        $curConfig['payload']['widgets'][$i]['parentId'] = $id;
+      }        
+    }    
+  }
+
+  $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+  $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+  $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function removeTopTab($eqLogic, $id) {
+  $curConfig = $eqLogic->getConfig();
+  $toRemove = array_search($id, array_column($curConfig['payload']['sections'], 'id'));
+  if ($toRemove !== false) {
+    $parentId = $curConfig['payload']['sections'][$toRemove]['parentId'];
+    $index = $curConfig['payload']['sections'][$toRemove]['index'];
+    unset($curConfig['payload']['sections'][$toRemove]);
+
+    // remove children
+    $groupsToRemove = array();
+    foreach ($curConfig['payload']['groups'] as $i => $group) {
+      if ($group['parentId'] == $id) {
+        array_push($groupsToRemove, $group['id']);
+        unset($curConfig['payload']['groups'][$i]);
+      }
+    }
+    foreach ($curConfig['payload']['widgets'] as $i => $widget) {
+      if ($widget['parentId'] == $id || in_array($widget['parentId'], $groupsToRemove)) {
+        unset($curConfig['payload']['widgets'][$i]);
+      }
+    }
+    //re-index sections
+    foreach ($curConfig['payload']['sections'] as $i => $section) {
+      if ($section['parentId'] == $parentId && $section['index'] > $index) {
+        $curConfig['payload']['sections'][$i]['index'] -= 1;
+      }
+    }
+    
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }  
+}
+
+public static function moveTopTab($eqLogic, $sectionId, $destinationId) {
+  $curConfig = $eqLogic->getConfig();
+  $sectionIndex = array_search($sectionId, array_column($curConfig['payload']['sections'], 'id'));
+  if ($sectionIndex === false) {
+    return;
+  }
+
+  $moved = false;
+
+  $oldIndex = $curConfig['payload']['sections'][$sectionIndex]['index'];
+  $oldParentId = $curConfig['payload']['sections'][$sectionIndex]['parentId'];
+
+  $newIndex = 0;
+  foreach ($curConfig['payload']['sections'] as $i => $item) {
+    if ($item['parentId'] == $destinationId) {
+      $newIndex++;
+    }
+  }
+
+  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationIndex !== false) { //destination is a bottom tab
+    $moved = true;
+  } 
+
+  if ($moved) {
+    $curConfig['payload']['sections'][$sectionIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['sections'][$sectionIndex]['index'] = $newIndex;
+    //re-index initial tab
+    foreach ($curConfig['payload']['sections'] as $i => $item) {
+      if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
+        $curConfig['payload']['sections'][$i]['index'] -= 1;
+      }
+    }
+
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
+    $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+    $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+    $eqLogic->saveConfig($curConfig);
+    $eqLogic->generateNewConfigVersion();
+  }
+
+}
+
+// Receive root data (already ordered) (widgets, groups) for a page view (index < 0 ==> remove)
+public static function setPageData($eqLogic, $rootData, $idCounter) {
+  if (count($rootData) == 0) {
+    return;
+  }
+  $curConfig = $eqLogic->getConfig();
+  $curConfig['idCounter'] = $idCounter;
+  $parentId = $rootData[0]['parentId'] ?? null;
+
+  foreach ($rootData as $element) {
+    $type = 'groups';
+    $id = 'id';
+    if (isset($element['widgetId'])) { //this is a widget
+      $type = 'widgets';
+      $id = 'widgetId';
+    }
+    $oldWidgetIndex = array_search($element[$id], array_column($curConfig['payload'][$type], $id));
+    if ($element['index'] < 0) {
+      if ($oldWidgetIndex !== false) {
+        unset($curConfig['payload'][$type][$oldWidgetIndex]);
+      }
+    } else {
+      if ($oldWidgetIndex !== false) { //update element
+        $curConfig['payload'][$type][$oldWidgetIndex] = $element;
+      } else { //add element
+        array_push($curConfig['payload'][$type], $element);
+      }
+    } 
+  }
+
+  $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
+  $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
 
  // EVENTS FUNCTION
  public static function getEvents($events, $config, $scAll=false) {
@@ -405,6 +1042,48 @@ class apiHelper {
     return $result;
   }
 
+  // BACKUPS
+  public static function setAppConfig($apiKey, $config) {
+    $_backup_dir = __DIR__ . '/../../data/backups/';
+    if (!is_dir($_backup_dir)) {
+			mkdir($_backup_dir);
+		}
+    $eqDir = $_backup_dir . $apiKey . '/';
+    if (!is_dir($eqDir)) {
+			mkdir($eqDir);
+		}
+    $backupIndex = config::byKey('backupIndex::' . $apiKey, 'JeedomConnect');
+    if (empty($backupIndex)) {
+      $backupIndex = 0;
+    }
+    $backupIndex ++;
+    config::save('backupIndex::' . $apiKey, $backupIndex, 'JeedomConnect');
+
+    $config_file = $eqDir . urlencode($config['name']) . '-' . $backupIndex . '.json';
+    try {
+			log::add('JeedomConnect', 'debug', 'Saving backup in file : ' . $config_file );
+			file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+		} catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+		}
+  }
+
+  public static function getAppConfig($apiKey, $configId) {
+    $_backup_dir ='/plugins/JeedomConnect/data/backups/';
+    $eqDir = $_backup_dir . $apiKey ;
+    $files = self::getFiles($eqDir);
+    $endFile = '-' . $configId . '.json'; 
+    foreach ($files['payload']['files'] as $file) {
+      if (substr_compare($file['path'], $endFile, - strlen($endFile)) === 0) {
+        $config_file = file_get_contents(__DIR__ . '/../../../..'  . $file['path']);
+        return array(
+          'type' => 'SET_APP_CONFIG',
+          'payload' => array( 'config' => json_decode($config_file) )
+        );
+      }
+    } 
+    return false;   
+  } 
 
   // JEEDOM & PLUGINS HEALTH
 
@@ -494,20 +1173,24 @@ class apiHelper {
 
  // FILES
  public static function getFiles($folder) {
-   $dir = __DIR__ . '/../../../..' . $folder;
-   $result = array();
-   $dh = new DirectoryIterator($dir);
-
-   foreach ($dh as $item) {
-       if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
-           if (!$item->isDir()) {
-               array_push($result, array(
-                 'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
-                 'timestamp' => $item->getMTime()
-               ) );
-           }
+  $dir = __DIR__ . '/../../../..' . $folder;
+  $result = array();
+  try {
+    $dh = new DirectoryIterator($dir);
+      foreach ($dh as $item) {
+        if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
+          if (!$item->isDir()) {
+            array_push($result, array(
+              'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
+              'timestamp' => $item->getMTime()
+            ) );
+          }
        }
-   }
+      } 
+  } catch (Exception $e) {
+      log::add('JeedomConnect', 'error', $e->getMessage());
+  }
+   
    return  array(
      'type' => 'SET_FILES',
      'payload' => array(

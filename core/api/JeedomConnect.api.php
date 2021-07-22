@@ -57,12 +57,20 @@ switch ($method) {
 		}
 		else{
 			$result = array();
-			foreach ($eqLogics as $eqLogic) {
-				array_push($result, array(
-					'logicalId' => $eqLogic->getLogicalId(),
-					'name' => $eqLogic->getName(),
-					'enable' => $eqLogic->getIsEnable()
-				) ) ;
+      $userConnected = user::byHash($params['userHash'] ) ;
+      $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
+      foreach ($eqLogics as $eqLogic) {
+      
+        $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
+        $userOnEquipmentHash = ! is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+        
+        if ( strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $params['userHash']) {
+          array_push($result, array(
+            'logicalId' => $eqLogic->getLogicalId(),
+            'name' => $eqLogic->getName(),
+            'enable' => $eqLogic->getIsEnable()
+          ) ) ;
+        }				
 			}
     }
 
@@ -141,6 +149,8 @@ switch ($method) {
 				'userProfil' => $user->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+        'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
+        'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
 				'pluginConfig' => apiHelper::getPluginConfig(),
 				'cmdInfo' => apiHelper::getCmdInfoData($config),
 				'scInfo' => apiHelper::getScenarioData($config),
@@ -225,6 +235,14 @@ switch ($method) {
     log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_JEEDOM_DATA':
+    $result = apiHelper::getFullJeedomData();
+		$jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_WIDGET_DATA':
+    $result = apiHelper::getWidgetData();
+    $jsonrpc->makeSuccess($result);
+    break;
   case 'UNSUBSCRIBE_SC':
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->save();
@@ -278,7 +296,7 @@ switch ($method) {
     break;
   case 'DO_PLUGIN_UPDATE':
     $jsonrpc->makeSuccess( array('result' => apiHelper::doUpdate($params['pluginId']) ) );
-    break;
+    break;  
 	case 'CMD_EXEC':
 		apiHelper::execCmd($params['id'], $params['options']);
 		$jsonrpc->makeSuccess();
@@ -304,8 +322,74 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'SET_WIDGET':
-    JeedomConnectWidget::updateWidgetConfig($params['widgetId'], $params['widget']);
+    apiHelper::setWidget($params['widget']);
     $jsonrpc->makeSuccess();
+    break;
+  case 'ADD_WIDGETS':
+    apiHelper::addWidgets($eqLogic, $params['widgets'], $params['parentId'], $params['index']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'REMOVE_WIDGET':
+    apiHelper::removeWidget($eqLogic, $params['widgetId']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'MOVE_WIDGET':
+    apiHelper::moveWidget($eqLogic, $params['widgetId'], $params['destinationId']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'SET_CUSTOM_WIDGETS':
+    apiHelper::setCustomWidgetList($eqLogic, $params['customWidgetList']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'SET_GROUP':
+    apiHelper::setGroup($eqLogic, $params['group']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'REMOVE_GROUP':
+    apiHelper::removeGroup($eqLogic, $params['id']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'ADD_GROUP':
+    apiHelper::addGroup($eqLogic, $params['group']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'MOVE_GROUP':
+    apiHelper::moveGroup($eqLogic, $params['groupId'], $params['destinationId']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'REMOVE_GLOBAL_WIDGET':
+    apiHelper::removeGlobalWidget($params['id']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'ADD_GLOBAL_WIDGET':
+    $jsonrpc->makeSuccess(apiHelper::addGlobalWidget($params['widget']));
+    break;
+  case 'SET_BOTTOM_TABS':
+    apiHelper::setBottomTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
+    break;
+  case 'REMOVE_BOTTOM_TAB':
+    apiHelper::removeBottomTab($eqLogic, $params['id']);
+    break;
+  case 'SET_TOP_TABS':
+    apiHelper::setTopTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
+    break;
+  case 'REMOVE_TOP_TAB':
+    apiHelper::removeTopTab($eqLogic, $params['id']);
+    break;
+  case 'MOVE_TOP_TAB':
+    apiHelper::moveTopTab($eqLogic, $params['sectionId'], $params['destinationId']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'SET_PAGE_DATA':
+    apiHelper::setPageData($eqLogic, $params['rootData'], $params['idCounter']);
+    break;
+  case 'SET_APP_CONFIG':
+    apiHelper::setAppConfig($apiKey, $params['config']);
+    $jsonrpc->makeSuccess();
+    break;
+  case 'GET_APP_CONFIG':
+    $result = apiHelper::getAppConfig($apiKey, $params['configId']);
+    $jsonrpc->makeSuccess($result);
     break;
 	case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
