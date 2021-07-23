@@ -1176,6 +1176,7 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
   $dir = __DIR__ . '/../../../..' . $folder;
   $result = array();
   try {
+    if (is_dir($dir)) {
     $dh = new DirectoryIterator($dir);
       foreach ($dh as $item) {
         if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
@@ -1185,8 +1186,9 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
               'timestamp' => $item->getMTime()
             ) );
           }
-       }
-      } 
+        }
+      }
+    }
   } catch (Exception $e) {
       log::add('JeedomConnect', 'error', $e->getMessage());
   }
