@@ -616,9 +616,8 @@ function deleteRoom(roomId) {
 /* GROUPS */
 
 function addGroupModal() {
-  getSimpleModal({title: "Ajouter un groupe", fields:[{type: "enable", value: true},{type: "name"}, {type: "expanded", value: false}] }, function(result) {
+  getSimpleModal({title: "Ajouter un groupe", fields:[{type: "enable", value: true},{type: "name", required: false}, {type: "expanded", value: false}] }, function(result) {
 		var name = result.name;
-		if (name == '') { return; }
 		var parentId = $("#widgetsParents-select option:selected").attr('value');
 		var rootElmts = getRootObjects(parentId);
 
