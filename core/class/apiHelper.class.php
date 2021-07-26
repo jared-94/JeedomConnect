@@ -894,6 +894,30 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
   $eqLogic->generateNewConfigVersion();
 }
 
+public static function setRooms($eqLogic, $rooms) {
+  $curConfig = $eqLogic->getConfig(); 
+
+  foreach ($rooms as $room) {
+    $oldRoomIndex = array_search($room['id'], array_column($curConfig['payload']['rooms'], 'id')); 
+    if ( $room['index'] < 0 ) { //tabs with negative index have to be removed
+      if ($oldRoomIndex !== false) {
+        unset($curConfig['payload']['rooms'][$oldRoomIndex]);
+      }      
+    } else {
+      if ($oldRoomIndex !== false) {
+        $curConfig['payload']['rooms'][$oldRoomIndex] = $room;
+      } else {
+        array_push($curConfig['payload']['rooms'], $room);
+      }
+    }
+  }
+
+  $curConfig['payload']['rooms'] = array_values($curConfig['payload']['rooms']);
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
  // EVENTS FUNCTION
  public static function getEvents($events, $config, $scAll=false) {
    $result_cmd = array(

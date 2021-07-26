@@ -384,6 +384,9 @@ switch ($method) {
   case 'SET_PAGE_DATA':
     apiHelper::setPageData($eqLogic, $params['rootData'], $params['idCounter']);
     break;
+  case 'SET_ROOMS':
+    apiHelper::setRooms($eqLogic, $params['rooms']);
+    break;
   case 'SET_APP_CONFIG':
     apiHelper::setAppConfig($apiKey, $params['config']);
     $jsonrpc->makeSuccess();
