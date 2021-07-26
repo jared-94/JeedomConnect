@@ -68,7 +68,8 @@ switch ($method) {
           array_push($result, array(
             'logicalId' => $eqLogic->getLogicalId(),
             'name' => $eqLogic->getName(),
-            'enable' => $eqLogic->getIsEnable()
+            'enable' => $eqLogic->getIsEnable(),
+            'useWs' => $eqLogic->getConfiguration('useWs', 0)
           ) ) ;
         }				
 			}
