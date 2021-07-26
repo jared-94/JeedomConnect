@@ -846,18 +846,6 @@
 					"name": "Affichage bloc",
 					"category": "binary",
 					"description": "Affichage du résumé sur plusieurs lignes"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						}
-					]
 				}
 			]
 		},
@@ -878,18 +866,6 @@
 					"name": "Affichage bloc",
 					"category": "binary",
 					"description": "Affichage du résumé sur plusieurs lignes"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						}
-					]
 				}
 			]
 		},
@@ -918,18 +894,6 @@
 					"name": "Affichage bloc",
 					"category": "binary",
 					"description": "Affichage des éléments sur plusieurs lignes"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						}
-					]
 				}
 			]
 		},

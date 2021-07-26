@@ -263,8 +263,9 @@ function getSimpleModal(_options, _callback) {
 						}).get();
 						result.checkboxes = checkedVals ;
 					}
-					if (_options.fields.find(i => i.type == "name")) {
-						if ($("#mod-name-input").val() == '') {
+					const nameField = _options.fields.find(i => i.type == "name");
+					if (nameField) {
+						if (nameField.required !== false && $("#mod-name-input").val() == '') {
 							throw 'Le nom est obligatoire';
 						}
 						result.name = $("#mod-name-input").val();
