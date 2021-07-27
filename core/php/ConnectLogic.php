@@ -363,7 +363,7 @@ class ConnectLogic implements MessageComponentInterface
 				$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
 				break;
 			case 'GET_FILES':
-				$from->send(json_encode(\apiHelper::getFiles($msg['payload']['folder']) ));
+				$from->send(json_encode(\apiHelper::getFiles($msg['payload']['folder'], $msg['payload']['recursive']) ));
 				break;
 			case 'REMOVE_FILE':
 				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));

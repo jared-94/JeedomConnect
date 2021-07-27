@@ -275,7 +275,8 @@ public static function getFullJeedomData() {
       'cmds' => array(),
       'eqLogics' => array(),
       'objects' => array(),
-      'scenarios' => array()
+      'scenarios' => array(),
+      'summariesConfig' => config::byKey('object:summary')
     )
   );
 
@@ -642,6 +643,7 @@ public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCo
         array_push($curConfig['payload']['tabs'], $tab);
       }
     }
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
   }
 
   if ($migrate) {
@@ -749,6 +751,7 @@ public static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCount
         array_push($curConfig['payload']['sections'], $tab);
       }
     }
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
   }
 
   if ($migrate) {
@@ -885,10 +888,8 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
         array_push($curConfig['payload'][$type], $element);
       }
     } 
+    $curConfig['payload'][$type] = array_values($curConfig['payload'][$type]);
   }
-
-  $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
-  $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
 
   $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
@@ -896,10 +897,10 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
 
 public static function setRooms($eqLogic, $rooms) {
   $curConfig = $eqLogic->getConfig(); 
-
-  foreach ($rooms as $room) {
-    $oldRoomIndex = array_search($room['id'], array_column($curConfig['payload']['rooms'], 'id')); 
-    if ( $room['index'] < 0 ) { //tabs with negative index have to be removed
+  
+  foreach ($rooms as $room) {    
+    $oldRoomIndex = array_search($room['id'], array_column($curConfig['payload']['rooms'], 'id'));
+    if ( $room['index'] < 0 ) { //rooms with negative index have to be removed
       if ($oldRoomIndex !== false) {
         unset($curConfig['payload']['rooms'][$oldRoomIndex]);
       }      
@@ -910,9 +911,8 @@ public static function setRooms($eqLogic, $rooms) {
         array_push($curConfig['payload']['rooms'], $room);
       }
     }
+    $curConfig['payload']['rooms'] = array_values($curConfig['payload']['rooms']);
   }
-
-  $curConfig['payload']['rooms'] = array_values($curConfig['payload']['rooms']);
 
   $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
@@ -1196,7 +1196,7 @@ public static function setRooms($eqLogic, $rooms) {
  }
 
  // FILES
- public static function getFiles($folder) {
+ public static function getFiles($folder, $recursive = false) {
   $dir = __DIR__ . '/../../../..' . $folder;
   $result = array();
   try {
@@ -1209,6 +1209,9 @@ public static function setRooms($eqLogic, $rooms) {
               'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
               'timestamp' => $item->getMTime()
             ) );
+          } else if ($recursive) {
+            $subFolderFiles = self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() )), true);
+            $result = array_merge($result, $subFolderFiles['payload']['files'] );
           }
         }
       }

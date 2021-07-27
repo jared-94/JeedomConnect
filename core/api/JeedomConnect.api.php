@@ -455,7 +455,7 @@ switch ($method) {
     }
     break;
 	case 'GET_FILES':
-		$result =apiHelper::getFiles($params['folder']);
+		$result =apiHelper::getFiles($params['folder']), $params['recursive'];
 		log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$jsonrpc->makeSuccess($result);
 		break;
