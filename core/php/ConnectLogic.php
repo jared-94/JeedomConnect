@@ -440,6 +440,10 @@ class ConnectLogic implements MessageComponentInterface
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::setRooms($eqLogic, $msg['payload']['rooms']);
 				break;
+			case 'SET_SUMMARIES':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setSummaries($eqLogic, $msg['payload']['summaries']);
+				break;
 			case 'SET_APP_CONFIG':
 				\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);
 				break;

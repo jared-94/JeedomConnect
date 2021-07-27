@@ -387,6 +387,9 @@ switch ($method) {
   case 'SET_ROOMS':
     apiHelper::setRooms($eqLogic, $params['rooms']);
     break;
+  case 'SET_SUMMARIES':
+    apiHelper::setSummaries($eqLogic, $params['summaries']);
+    break;
   case 'SET_APP_CONFIG':
     apiHelper::setAppConfig($apiKey, $params['config']);
     $jsonrpc->makeSuccess();
