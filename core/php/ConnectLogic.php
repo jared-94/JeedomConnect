@@ -45,7 +45,7 @@ class ConnectLogic implements MessageComponentInterface
       	$this->authenticatedClients = new \SplObjectStorage;
       	$this->hasAuthenticatedClients = false;
       	$this->hasUnauthenticatedClients = false;
-      	$this->authDelay = 1;
+      	$this->authDelay = 3;
 		$this->pluginVersion = $versionJson->version;
 		$this->appRequire = $versionJson->require;
       	$this->lastReadTimestamp = time();

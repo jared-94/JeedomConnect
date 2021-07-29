@@ -487,6 +487,7 @@ class JeedomConnect extends eqLogic {
 			$jsonConfig['payload']['widgets'] = array_values($jsonConfig['payload']['widgets']);
 			log::add('JeedomConnect', 'info', 'Config file updated for '. $this->getName() . ':' . json_encode($jsonConfig));
 			$this->saveConfig($jsonConfig);
+			$this->generateNewConfigVersion();
 		}
 	}
 
