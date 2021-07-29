@@ -71,7 +71,7 @@ $("#condImgList").sortable({axis: "y", cursor: "move", items: ".condImgItem", pl
 	update: function( event, ui){ 
 			$('#condImgList > .condImgItem').each((i, el) => { 
 					var itemIndex = $(el).data('id') ;
-					var itemToMove = configData.payload.background.condImages.find(c => c.index == itemIndex);
+					var itemToMove = configData.payload.background.condBackgrounds.find(c => c.index == itemIndex);
 					itemToMove.index = i;
 					}
 			);

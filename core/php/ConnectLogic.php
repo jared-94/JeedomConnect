@@ -444,6 +444,10 @@ class ConnectLogic implements MessageComponentInterface
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::setSummaries($eqLogic, $msg['payload']['summaries']);
 				break;
+			case 'SET_BACKGROUNDS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setBackgrounds($eqLogic, $msg['payload']['backgrounds']);
+				break;
 			case 'SET_APP_CONFIG':
 				\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);
 				break;

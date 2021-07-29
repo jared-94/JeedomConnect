@@ -897,22 +897,7 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
 
 public static function setRooms($eqLogic, $rooms) {
   $curConfig = $eqLogic->getConfig(); 
-  
-  foreach ($rooms as $room) {    
-    $oldRoomIndex = array_search($room['id'], array_column($curConfig['payload']['rooms'], 'id'));
-    if ( $room['index'] < 0 ) { //rooms with negative index have to be removed
-      if ($oldRoomIndex !== false) {
-        unset($curConfig['payload']['rooms'][$oldRoomIndex]);
-      }      
-    } else {
-      if ($oldRoomIndex !== false) {
-        $curConfig['payload']['rooms'][$oldRoomIndex] = $room;
-      } else {
-        array_push($curConfig['payload']['rooms'], $room);
-      }
-    }
-    $curConfig['payload']['rooms'] = array_values($curConfig['payload']['rooms']);
-  }
+  $curConfig['payload']['rooms'] = $rooms;
 
   $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
@@ -920,22 +905,15 @@ public static function setRooms($eqLogic, $rooms) {
 
 public static function setSummaries($eqLogic, $summaries) {
   $curConfig = $eqLogic->getConfig(); 
-  
-  foreach ($summaries as $summary) {    
-    $oldSummaryIndex = array_search($summary['key'], array_column($curConfig['payload']['summaries'], 'key'));
-    if ( $summary['index'] < 0 ) { //summaries with negative index have to be removed
-      if ($oldSummaryIndex !== false) {
-        unset($curConfig['payload']['summaries'][$oldSummaryIndex]);
-      }      
-    } else {
-      if ($oldSummaryIndex !== false) {
-        $curConfig['payload']['summaries'][$oldSummaryIndex] = $summary;
-      } else {
-        array_push($curConfig['payload']['summaries'], $summary);
-      }
-    }
-    $curConfig['payload']['summaries'] = array_values($curConfig['payload']['summaries']);
-  }
+  $curConfig['payload']['summaries'] = $summaries;
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function setBackgrounds($eqLogic, $backgrounds) {
+  $curConfig = $eqLogic->getConfig(); 
+  $curConfig['payload']['background'] = $backgrounds;
 
   $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
