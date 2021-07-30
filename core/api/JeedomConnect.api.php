@@ -68,7 +68,8 @@ switch ($method) {
           array_push($result, array(
             'logicalId' => $eqLogic->getLogicalId(),
             'name' => $eqLogic->getName(),
-            'enable' => $eqLogic->getIsEnable()
+            'enable' => $eqLogic->getIsEnable(),
+            'useWs' => $eqLogic->getConfiguration('useWs', 0)
           ) ) ;
         }				
 			}
@@ -383,6 +384,15 @@ switch ($method) {
   case 'SET_PAGE_DATA':
     apiHelper::setPageData($eqLogic, $params['rootData'], $params['idCounter']);
     break;
+  case 'SET_ROOMS':
+    apiHelper::setRooms($eqLogic, $params['rooms']);
+    break;
+  case 'SET_SUMMARIES':
+    apiHelper::setSummaries($eqLogic, $params['summaries']);
+    break;
+  case 'SET_BACKGROUNDS':
+    apiHelper::setBackgrounds($eqLogic, $params['backgrounds']);
+    break;
   case 'SET_APP_CONFIG':
     apiHelper::setAppConfig($apiKey, $params['config']);
     $jsonrpc->makeSuccess();
@@ -451,7 +461,7 @@ switch ($method) {
     }
     break;
 	case 'GET_FILES':
-		$result =apiHelper::getFiles($params['folder']);
+		$result = apiHelper::getFiles($params['folder'], $params['recursive']);
 		log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$jsonrpc->makeSuccess($result);
 		break;

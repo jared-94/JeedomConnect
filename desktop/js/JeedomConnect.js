@@ -2612,7 +2612,7 @@ function selectInfoCmd(elt, conf) {
 
 function setCondValue(elm, confArr) {
   if ( confArr == 'bg' )	{
-    conf = configData.payload.background.condImages
+    conf = configData.payload.background.condBackgrounds
   }
   else if ( confArr == 'batteries' )	{
     conf = configData.payload.batteries.condImages
@@ -2648,7 +2648,7 @@ function setCondValue(elm, confArr) {
 
 function setCondToHuman(confArr) {
   if ( confArr == 'bg' )	{
-    conf = configData.payload.background.condImages;
+    conf = configData.payload.background.condBackgrounds;
     idName = 'bg-cond-input-';
   }
   else if ( confArr == 'batteries' )	{

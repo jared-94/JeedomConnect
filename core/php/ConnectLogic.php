@@ -45,7 +45,7 @@ class ConnectLogic implements MessageComponentInterface
       	$this->authenticatedClients = new \SplObjectStorage;
       	$this->hasAuthenticatedClients = false;
       	$this->hasUnauthenticatedClients = false;
-      	$this->authDelay = 1;
+      	$this->authDelay = 3;
 		$this->pluginVersion = $versionJson->version;
 		$this->appRequire = $versionJson->require;
       	$this->lastReadTimestamp = time();
@@ -363,7 +363,7 @@ class ConnectLogic implements MessageComponentInterface
 				$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
 				break;
 			case 'GET_FILES':
-				$from->send(json_encode(\apiHelper::getFiles($msg['payload']['folder']) ));
+				$from->send(json_encode(\apiHelper::getFiles($msg['payload']['folder'], $msg['payload']['recursive']) ));
 				break;
 			case 'REMOVE_FILE':
 				$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file']) ));
@@ -435,6 +435,18 @@ class ConnectLogic implements MessageComponentInterface
 			case 'SET_PAGE_DATA':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
 				\apiHelper::setPageData($eqLogic, $msg['payload']['rootData'], $msg['payload']['idCounter']);
+				break;
+			case 'SET_ROOMS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setRooms($eqLogic, $msg['payload']['rooms']);
+				break;
+			case 'SET_SUMMARIES':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setSummaries($eqLogic, $msg['payload']['summaries']);
+				break;
+			case 'SET_BACKGROUNDS':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				\apiHelper::setBackgrounds($eqLogic, $msg['payload']['backgrounds']);
 				break;
 			case 'SET_APP_CONFIG':
 				\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);

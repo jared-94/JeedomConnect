@@ -616,9 +616,8 @@ function deleteRoom(roomId) {
 /* GROUPS */
 
 function addGroupModal() {
-  getSimpleModal({title: "Ajouter un groupe", fields:[{type: "enable", value: true},{type: "name"}, {type: "expanded", value: false}] }, function(result) {
+  getSimpleModal({title: "Ajouter un groupe", fields:[{type: "enable", value: true},{type: "name", required: false}, {type: "expanded", value: false}] }, function(result) {
 		var name = result.name;
-		if (name == '') { return; }
 		var parentId = $("#widgetsParents-select option:selected").attr('value');
 		var rootElmts = getRootObjects(parentId);
 
@@ -1341,18 +1340,18 @@ function refreshBackgroundData() {
 	if (configData.payload.background == undefined) {
 		configData.payload.background = {};
 	}
-	if (configData.payload.background.image) {
-		$("#bg-icon-div").html(iconToHtml(configData.payload.background.image));
+	if (configData.payload.background.background?.type == 'image') {
+		$("#bg-icon-div").html(iconToHtml(configData.payload.background.background.options));
 	}
-	if (configData.payload.background.condImages == undefined) {
-		configData.payload.background.condImages = [];
+	if (configData.payload.background.condBackgrounds == undefined) {
+		configData.payload.background.condBackgrounds = [];
 	}
-	configData.payload.background.condImages.sort(function(s,t) {
+	configData.payload.background.condBackgrounds.sort(function(s,t) {
 		return s.index - t.index;
 	});
 	//console.log(configData.payload.background.condImages)
 	var condHtml = '';
-	(configData.payload.background.condImages || []).forEach(cond => {
+	(configData.payload.background.condBackgrounds || []).forEach(cond => {
 		condHtml += `
 		<div data-id="${cond.index}" class='input-group condImgItem'>
 			Si
@@ -1376,7 +1375,7 @@ function refreshBackgroundData() {
             <i class='fas fa-list-alt'></i></a>
 			<a class="btn btn-success roundedRight" index="${cond.index}" onclick="getBgCondImg(this)"><i class="fas fa-plus-square">
 			</i> Image </a>
-			<a data-id="icon-div">${iconToHtml(cond.image)}</a>
+			<a data-id="icon-div">${iconToHtml(cond.background?.type == 'image' ? cond.background.options : '')}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 			<i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="removeCondImg('${cond.index}');"></i>
   		</div>
@@ -1389,40 +1388,40 @@ function refreshBackgroundData() {
 function getBgImg() {
 	getIconModal({ title: "Choisir un fond d'écran", withIcon: "0", withImg: "1", icon: htmlToIcon($("#bg-icon-div").children().first()) }, (result) => {
 	  $("#bg-icon-div").html(iconToHtml(result));
-	  configData.payload.background.image = result;
+	  configData.payload.background.background = {type: 'image', options: result };
 	})
 }
 
 function removeBgImg() {
 	$("#bg-icon-div").html("");
-	delete configData.payload.background.image;
+	delete configData.payload.background.background;
 }
 
 function addCondImg() {
-	if (configData.payload.background.condImages == undefined) {
-		configData.payload.background.condImages = [];
+	if (configData.payload.background.condBackgrounds == undefined) {
+		configData.payload.background.condBackgrounds = [];
 	}
-	configData.payload.background.condImages.push({
-		index: getMaxIndex(configData.payload.background.condImages) +1
+	configData.payload.background.condBackgrounds.push({
+		index: getMaxIndex(configData.payload.background.condBackgrounds) +1
 	});
 	refreshBackgroundData();
 }
 
 
 function getBgCondImg(elm) {
-	var curCond = configData.payload.background.condImages.find(c => c.index == $(elm).attr('index'));
+	var curCond = configData.payload.background.condBackgrounds.find(c => c.index == $(elm).attr('index'));
 	var newElt = $(elm).nextAll("a[data-id^='icon-']:first") ;
 	
 	getIconModal({ title: "Choisir un fond d'écran", withIcon: "0", withImg: "1", icon: htmlToIcon(newElt.children().first()) , elt:newElt}, (result, _params) => {
-	  curCond.image = result;
+		curCond.background = { type: 'image', options: result };
 	  $(_params.elt).html(iconToHtml(result));
 	});
 }
 
 function removeCondImg(index) {	
-	configData.payload.background.condImages = configData.payload.background.condImages.filter(c => c.index != index);
+	configData.payload.background.condBackgrounds = configData.payload.background.condBackgrounds.filter(c => c.index != index);
 
-	configData.payload.background.condImages.forEach(item => {
+	configData.payload.background.condBackgrounds.forEach(item => {
 		if (item.index > index) {
 			item.index = item.index - 1;
 		}

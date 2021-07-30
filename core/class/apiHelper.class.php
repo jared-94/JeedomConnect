@@ -275,23 +275,56 @@ public static function getFullJeedomData() {
       'cmds' => array(),
       'eqLogics' => array(),
       'objects' => array(),
-      'scenarios' => array()
+      'scenarios' => array(),
+      'summariesConfig' => config::byKey('object:summary')
     )
   );
 
   foreach (cmd::all() as $item) {
-    array_push($result['payload']['cmds'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $cmd = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'type' => $array['type'],
+      'subType' => $array['subType'],
+      'eqLogic_id' => $array['eqLogic_id'],
+      'unite' => $array['unite'],
+      'isHistorized' => $array['isHistorized'],
+      'configuration' => $array['configuration'],
+    );
+    array_push($result['payload']['cmds'], $cmd);
   }
   foreach (eqLogic::all() as $item) {
-    array_push($result['payload']['eqLogics'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $eqLogic = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'object_id' => $array['object_id'],
+      'isEnable' => $array['isEnable']
+    );
+    array_push($result['payload']['eqLogics'], $eqLogic);
   }
   foreach (jeeObject::all() as $item) {
-    array_push($result['payload']['objects'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $jeeObject = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'display' => array(
+        'icon' => $array['display']['icon']
+      )
+    );
+    array_push($result['payload']['objects'], $jeeObject);
   }
   foreach (scenario::all() as $item) {
-    array_push($result['payload']['scenarios'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $scenario = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'group' => $array['group'],
+      'object_id' => $array['object_id'],
+    );
+    array_push($result['payload']['scenarios'], $scenario);
   }
-
   return $result;
 }
 
@@ -642,6 +675,7 @@ public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCo
         array_push($curConfig['payload']['tabs'], $tab);
       }
     }
+    $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
   }
 
   if ($migrate) {
@@ -749,6 +783,7 @@ public static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCount
         array_push($curConfig['payload']['sections'], $tab);
       }
     }
+    $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
   }
 
   if ($migrate) {
@@ -885,10 +920,32 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
         array_push($curConfig['payload'][$type], $element);
       }
     } 
+    $curConfig['payload'][$type] = array_values($curConfig['payload'][$type]);
   }
 
-  $curConfig['payload']['groups'] = array_values($curConfig['payload']['groups']);
-  $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function setRooms($eqLogic, $rooms) {
+  $curConfig = $eqLogic->getConfig(); 
+  $curConfig['payload']['rooms'] = $rooms;
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function setSummaries($eqLogic, $summaries) {
+  $curConfig = $eqLogic->getConfig(); 
+  $curConfig['payload']['summaries'] = $summaries;
+
+  $eqLogic->saveConfig($curConfig);
+  $eqLogic->generateNewConfigVersion();
+}
+
+public static function setBackgrounds($eqLogic, $backgrounds) {
+  $curConfig = $eqLogic->getConfig(); 
+  $curConfig['payload']['background'] = $backgrounds;
 
   $eqLogic->saveConfig($curConfig);
   $eqLogic->generateNewConfigVersion();
@@ -1172,10 +1229,11 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
  }
 
  // FILES
- public static function getFiles($folder) {
+ public static function getFiles($folder, $recursive = false) {
   $dir = __DIR__ . '/../../../..' . $folder;
   $result = array();
   try {
+    if (is_dir($dir)) {
     $dh = new DirectoryIterator($dir);
       foreach ($dh as $item) {
         if (!$item->isDot() && substr($item, 0, 1) != '.' ) {
@@ -1184,9 +1242,13 @@ public static function setPageData($eqLogic, $rootData, $idCounter) {
               'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() ))  ,
               'timestamp' => $item->getMTime()
             ) );
+          } else if ($recursive) {
+            $subFolderFiles = self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#','/', $item->getPathname() )), true);
+            $result = array_merge($result, $subFolderFiles['payload']['files'] );
           }
-       }
-      } 
+        }
+      }
+    }
   } catch (Exception $e) {
       log::add('JeedomConnect', 'error', $e->getMessage());
   }

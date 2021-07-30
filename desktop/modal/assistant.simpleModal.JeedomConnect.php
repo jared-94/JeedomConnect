@@ -70,7 +70,7 @@ function setSimpleModalData(options) {
 		} else if (option.type == "name") {
 			var value = option.value ? option.value : '';
 			name = `<li><div class='form-group'>
-			<label class='col-xs-3  required' >Nom</label>
+			<label class='col-xs-3  ${option.required !== false ? 'required' : ''}' >Nom</label>
 			<div class='col-xs-9'><div class='input-group'><input style="width:150px;" id="mod-name-input" value='${value}'></div></div></div></li>`;
 			items.push(name);
 		} else if (option.type == "icon") {

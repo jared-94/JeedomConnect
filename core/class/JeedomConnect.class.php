@@ -448,7 +448,7 @@ class JeedomConnect extends eqLogic {
 		$jsonConfig = $this->getConfig();
 		$changed = false;
 		$idCounter = $jsonConfig['idCounter'];
-
+		//unique widget id
 		foreach ($jsonConfig['payload']['widgets'] as $index => $widget) {
 			if (!array_key_exists("widgetId", $widget) ) {
 				$jsonConfig['payload']['widgets'][$index]['widgetId'] = $idCounter;
@@ -456,13 +456,38 @@ class JeedomConnect extends eqLogic {
 				$changed = true;
 			}
 		}
-
+		//move to new background format
+		if (array_key_exists("condImages", $jsonConfig['payload']['background'])) {
+			$cond = array();
+			foreach ($jsonConfig['payload']['background']['condImages'] as $i => $bgCond) {
+				array_push($cond, array(
+					'index' => $bgCond['index'],
+					'condition' => $bgCond['condition'],
+					'background' => array(
+						'type' => 'image',
+						'options' => $bgCond['image']
+					)
+				));
+			}
+			$jsonConfig['payload']['background']["condBackgrounds"] = $cond;
+			unset($jsonConfig['payload']['background']['condImages']);
+			$changed = true;
+		}
+		if (array_key_exists("image", $jsonConfig['payload']['background'])) {
+			$jsonConfig['payload']['background']["background"] = array(
+				'type' => 'image',
+				'options' => $jsonConfig['payload']['background']['image']
+			);
+			unset($jsonConfig['payload']['background']['image']);
+			$changed = true;
+		}
 			
 		if ($changed) {
 			$jsonConfig['idCounter'] = $idCounter;
 			$jsonConfig['payload']['widgets'] = array_values($jsonConfig['payload']['widgets']);
 			log::add('JeedomConnect', 'info', 'Config file updated for '. $this->getName() . ':' . json_encode($jsonConfig));
 			$this->saveConfig($jsonConfig);
+			$this->generateNewConfigVersion();
 		}
 	}
 
