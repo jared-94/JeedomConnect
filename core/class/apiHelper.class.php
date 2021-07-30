@@ -281,18 +281,50 @@ public static function getFullJeedomData() {
   );
 
   foreach (cmd::all() as $item) {
-    array_push($result['payload']['cmds'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $cmd = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'type' => $array['type'],
+      'subType' => $array['subType'],
+      'eqLogic_id' => $array['eqLogic_id'],
+      'unite' => $array['unite'],
+      'isHistorized' => $array['isHistorized'],
+      'configuration' => $array['configuration'],
+    );
+    array_push($result['payload']['cmds'], $cmd);
   }
   foreach (eqLogic::all() as $item) {
-    array_push($result['payload']['eqLogics'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $eqLogic = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'object_id' => $array['object_id'],
+      'isEnable' => $array['isEnable']
+    );
+    array_push($result['payload']['eqLogics'], $eqLogic);
   }
   foreach (jeeObject::all() as $item) {
-    array_push($result['payload']['objects'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $jeeObject = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'display' => array(
+        'icon' => $array['display']['icon']
+      )
+    );
+    array_push($result['payload']['objects'], $jeeObject);
   }
   foreach (scenario::all() as $item) {
-    array_push($result['payload']['scenarios'], utils::o2a($item));
+    $array = utils::o2a($item);
+    $scenario = array(
+      'id' => $array['id'],
+      'name' => $array['name'],
+      'group' => $array['group'],
+      'object_id' => $array['object_id'],
+    );
+    array_push($result['payload']['scenarios'], $scenario);
   }
-
   return $result;
 }
 
