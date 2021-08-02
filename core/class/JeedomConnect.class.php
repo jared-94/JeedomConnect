@@ -274,7 +274,13 @@ class JeedomConnect extends eqLogic {
 
 						if (isset($newWidgetConf['widgets'])){
 							foreach ($newWidgetConf['widgets'] as $itemWidget) {
-								array_push($moreWidget, intval($itemWidget['id']) );
+                				array_push($moreWidget, array('id' => $itemWidget['id'], 'parentId' =>  $newWidgetConf['widgetId']) );
+							}
+						}
+
+            			if (isset($newWidgetConf['moreWidgets'])){
+							foreach ($newWidgetConf['moreWidgets'] as $itemWidget) {
+                				array_push($moreWidget, array('id' => $itemWidget['id'], 'parentId' =>  $newWidgetConf['widgetId']) );
 							}
 						}
 

@@ -41,7 +41,7 @@ class apiHelper {
       }
     }
     if (array_key_exists('background', $config['payload'])) {
-      foreach ($config['payload']['background']['condImages'] as $cond) {
+      foreach ($config['payload']['background']['condBackgrounds'] as $cond) {
         preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
         if (count($matches) > 0) {
           $matches = array_unique($matches[0]);
