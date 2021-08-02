@@ -432,30 +432,28 @@ public static function moveWidget($eqLogic, $widgetId, $destinationId, $destinat
   }
   
 
-  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
-  if ($destinationIndex !== false) { //destination is a bottom tab
+  $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationParentIndex !== false) { //destination is a bottom tab
     $moved = true;
   } else {
-    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-    if ($destinationIndex !== false) { //destination is a top tab  
+    $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationParentIndex !== false) { //destination is a top tab  
       $moved = true;
     } else {
-      $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
-        if ($destinationIndex !== false) { //destination is a group  
+      $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
+        if ($destinationParentIndex !== false) { //destination is a group  
           $moved = true;
       }
     }
   }
 
-  if ($moved) {
-    $curConfig['payload']['widgets'][$widgetIndex]['parentId'] = $destinationId;
-    $curConfig['payload']['widgets'][$widgetIndex]['index'] = $newIndex;
-    //re-index initial page
+  if ($moved) {    
+    //re-index pages
     foreach ($curConfig['payload']['widgets'] as $i => $item) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['widgets'][$i]['index'] -= 1;
       }
-      if ($item['parentId'] == $destinationId && $item['index'] > $newIndex) {
+      if ($item['parentId'] == $destinationId && $item['index'] >= $newIndex) {
         $curConfig['payload']['widgets'][$i]['index'] += 1;
       }
     }
@@ -463,10 +461,13 @@ public static function moveWidget($eqLogic, $widgetId, $destinationId, $destinat
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['groups'][$i]['index'] -= 1;
       }
-      if ($item['parentId'] == $destinationId && $item['index'] > $newIndex) {
+      if ($item['parentId'] == $destinationId && $item['index'] >= $newIndex) {
         $curConfig['payload']['groups'][$i]['index'] += 1;
       }
     }
+
+    $curConfig['payload']['widgets'][$widgetIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['widgets'][$widgetIndex]['index'] = $newIndex;
 
 
     $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
