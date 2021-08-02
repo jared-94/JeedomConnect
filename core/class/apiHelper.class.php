@@ -404,7 +404,7 @@ public static function removeWidget($eqLogic, $widgetId) {
   }  
 }
 
-public static function moveWidget($eqLogic, $widgetId, $destinationId) {
+public static function moveWidget($eqLogic, $widgetId, $destinationId, $destinationIndex) {
   $curConfig = $eqLogic->getConfig();
   $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
   if ($widgetIndex === false) {
@@ -415,18 +415,22 @@ public static function moveWidget($eqLogic, $widgetId, $destinationId) {
 
   $oldIndex = $curConfig['payload']['widgets'][$widgetIndex]['index'];
   $oldParentId = $curConfig['payload']['widgets'][$widgetIndex]['parentId'];
-
-  $newIndex = 0;
-  foreach ($curConfig['payload']['widgets'] as $i => $item) {
-    if ($item['parentId'] == $destinationId) {
-      $newIndex++;
+  if (isset($destinationIndex)) {
+    $newIndex = $destinationIndex;
+  } else {
+    $newIndex = 0;
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $destinationId) {
+        $newIndex++;
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+     if ($item['parentId'] == $destinationId) {
+       $newIndex++;
+     }
     }
   }
-  foreach ($curConfig['payload']['groups'] as $i => $item) {
-    if ($item['parentId'] == $destinationId) {
-      $newIndex++;
-    }
-  }
+  
 
   $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
   if ($destinationIndex !== false) { //destination is a bottom tab
@@ -451,12 +455,19 @@ public static function moveWidget($eqLogic, $widgetId, $destinationId) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['widgets'][$i]['index'] -= 1;
       }
+      if ($item['parentId'] == $destinationId && $item['index'] > $newIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] += 1;
+      }
     }
     foreach ($curConfig['payload']['groups'] as $i => $item) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['groups'][$i]['index'] -= 1;
       }
+      if ($item['parentId'] == $destinationId && $item['index'] > $newIndex) {
+        $curConfig['payload']['groups'][$i]['index'] += 1;
+      }
     }
+
 
     $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
     $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);

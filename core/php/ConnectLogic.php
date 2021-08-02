@@ -384,7 +384,7 @@ class ConnectLogic implements MessageComponentInterface
 				break;
 			case 'MOVE_WIDGET':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-				\apiHelper::moveWidget($eqLogic, $msg['payload']['widgetId'], $msg['payload']['destinationId']);
+				\apiHelper::moveWidget($eqLogic, $msg['payload']['widgetId'], $msg['payload']['destinationId'], $msg['payload']['destinationIndex']);
 				break;
 			case 'SET_CUSTOM_WIDGETS':
         		$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');

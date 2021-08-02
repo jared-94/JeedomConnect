@@ -335,7 +335,7 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'MOVE_WIDGET':
-    apiHelper::moveWidget($eqLogic, $params['widgetId'], $params['destinationId']);
+    apiHelper::moveWidget($eqLogic, $params['widgetId'], $params['destinationId'], $params['destinationIndex']);
     $jsonrpc->makeSuccess();
     break;
   case 'SET_CUSTOM_WIDGETS':
