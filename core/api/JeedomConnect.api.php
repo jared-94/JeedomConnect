@@ -355,7 +355,7 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'MOVE_GROUP':
-    apiHelper::moveGroup($eqLogic, $params['groupId'], $params['destinationId']);
+    apiHelper::moveGroup($eqLogic, $params['groupId'], $params['destinationId'], $params['destinationIndex']);
     $jsonrpc->makeSuccess();
     break;
   case 'REMOVE_GLOBAL_WIDGET':

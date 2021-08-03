@@ -404,7 +404,7 @@ class ConnectLogic implements MessageComponentInterface
 				break;
 			case 'MOVE_GROUP':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-				\apiHelper::moveGroup($eqLogic, $msg['payload']['groupId'], $msg['payload']['destinationId']);
+				\apiHelper::moveGroup($eqLogic, $msg['payload']['groupId'], $msg['payload']['destinationId'], $msg['payload']['destinationIndex']);
 				break;
 			case 'REMOVE_GLOBAL_WIDGET':
 				\apiHelper::removeGlobalWidget($msg['payload']['id']);
