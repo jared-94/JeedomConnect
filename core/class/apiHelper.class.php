@@ -41,7 +41,7 @@ class apiHelper {
       }
     }
     if (array_key_exists('background', $config['payload'])) {
-      foreach ($config['payload']['background']['condImages'] as $cond) {
+      foreach ($config['payload']['background']['condBackgrounds'] as $cond) {
         preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
         if (count($matches) > 0) {
           $matches = array_unique($matches[0]);
@@ -404,7 +404,7 @@ public static function removeWidget($eqLogic, $widgetId) {
   }  
 }
 
-public static function moveWidget($eqLogic, $widgetId, $destinationId) {
+public static function moveWidget($eqLogic, $widgetId, $destinationId, $destinationIndex) {
   $curConfig = $eqLogic->getConfig();
   $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
   if ($widgetIndex === false) {
@@ -415,48 +415,60 @@ public static function moveWidget($eqLogic, $widgetId, $destinationId) {
 
   $oldIndex = $curConfig['payload']['widgets'][$widgetIndex]['index'];
   $oldParentId = $curConfig['payload']['widgets'][$widgetIndex]['parentId'];
-
-  $newIndex = 0;
-  foreach ($curConfig['payload']['widgets'] as $i => $item) {
-    if ($item['parentId'] == $destinationId) {
-      $newIndex++;
+  if (isset($destinationIndex)) {
+    $newIndex = $destinationIndex;
+  } else {
+    $newIndex = 0;
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $destinationId) {
+        $newIndex++;
+      }
+    }
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+     if ($item['parentId'] == $destinationId) {
+       $newIndex++;
+     }
     }
   }
-  foreach ($curConfig['payload']['groups'] as $i => $item) {
-    if ($item['parentId'] == $destinationId) {
-      $newIndex++;
-    }
-  }
+  
 
-  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
-  if ($destinationIndex !== false) { //destination is a bottom tab
+  $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationParentIndex !== false) { //destination is a bottom tab
     $moved = true;
   } else {
-    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-    if ($destinationIndex !== false) { //destination is a top tab  
+    $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationParentIndex !== false) { //destination is a top tab  
       $moved = true;
     } else {
-      $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
-        if ($destinationIndex !== false) { //destination is a group  
+      $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
+        if ($destinationParentIndex !== false) { //destination is a group  
           $moved = true;
       }
     }
   }
 
-  if ($moved) {
-    $curConfig['payload']['widgets'][$widgetIndex]['parentId'] = $destinationId;
-    $curConfig['payload']['widgets'][$widgetIndex]['index'] = $newIndex;
-    //re-index initial page
+  if ($moved) {    
+    //re-index pages
     foreach ($curConfig['payload']['widgets'] as $i => $item) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['widgets'][$i]['index'] -= 1;
+      }
+      if ($item['parentId'] == $destinationId && $item['index'] >= $newIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] += 1;
       }
     }
     foreach ($curConfig['payload']['groups'] as $i => $item) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['groups'][$i]['index'] -= 1;
       }
+      if ($item['parentId'] == $destinationId && $item['index'] >= $newIndex) {
+        $curConfig['payload']['groups'][$i]['index'] += 1;
+      }
     }
+
+    $curConfig['payload']['widgets'][$widgetIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['widgets'][$widgetIndex]['index'] = $newIndex;
+
 
     $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
     $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
@@ -550,7 +562,7 @@ public static function addGroup($eqLogic, $curGroup) {
   $eqLogic->generateNewConfigVersion();
 }
 
-public static function moveGroup($eqLogic, $groupId, $destinationId) {
+public static function moveGroup($eqLogic, $groupId, $destinationId, $destinationIndex) {
   $curConfig = $eqLogic->getConfig();
   $groupIndex = array_search($groupId, array_column($curConfig['payload']['groups'], 'id'));
   if ($groupIndex === false) {
@@ -562,42 +574,53 @@ public static function moveGroup($eqLogic, $groupId, $destinationId) {
   $oldIndex = $curConfig['payload']['groups'][$groupIndex]['index'];
   $oldParentId = $curConfig['payload']['groups'][$groupIndex]['parentId'];
 
-  $newIndex = 0;
-  foreach ($curConfig['payload']['widgets'] as $i => $item) {
-    if ($item['parentId'] == $destinationId) {
-      $newIndex++;
+  if (isset($destinationIndex)) {
+    $newIndex = $destinationIndex;
+  } else {
+    $newIndex = 0;
+    foreach ($curConfig['payload']['widgets'] as $i => $item) {
+      if ($item['parentId'] == $destinationId) {
+        $newIndex++;
+      }
     }
-  }
-  foreach ($curConfig['payload']['groups'] as $i => $item) {
-    if ($item['parentId'] == $destinationId) {
-      $newIndex++;
+    foreach ($curConfig['payload']['groups'] as $i => $item) {
+      if ($item['parentId'] == $destinationId) {
+        $newIndex++;
+      }
     }
   }
 
-  $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
-  if ($destinationIndex !== false) { //destination is a bottom tab
+  $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['tabs'], 'id'));
+  if ($destinationParentIndex !== false) { //destination is a bottom tab
     $moved = true;
   } else {
-    $destinationIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-    if ($destinationIndex !== false) { //destination is a top tab  
+    $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
+    if ($destinationParentIndex !== false) { //destination is a top tab  
       $moved = true;
     } 
   }
-
-  if ($moved) {
-    $curConfig['payload']['groups'][$groupIndex]['parentId'] = $destinationId;
-    $curConfig['payload']['groups'][$groupIndex]['index'] = $newIndex;
-    //re-index initial page
+  
+  if ($moved) {    
+    //re-index pages
     foreach ($curConfig['payload']['widgets'] as $i => $item) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['widgets'][$i]['index'] -= 1;
+      }
+      if ($item['parentId'] == $destinationId && $item['index'] >= $newIndex) {
+        $curConfig['payload']['widgets'][$i]['index'] += 1;
       }
     }
     foreach ($curConfig['payload']['groups'] as $i => $item) {
       if ($item['parentId'] == $oldParentId && $item['index'] > $oldIndex) {
         $curConfig['payload']['groups'][$i]['index'] -= 1;
       }
+      if ($item['parentId'] == $destinationId && $item['index'] >= $newIndex) {
+        $curConfig['payload']['groups'][$i]['index'] += 1;
+      }
     }
+
+    $curConfig['payload']['groups'][$groupIndex]['parentId'] = $destinationId;
+    $curConfig['payload']['groups'][$groupIndex]['index'] = $newIndex;
 
     $curConfig['payload']['tabs'] = array_values($curConfig['payload']['tabs']);
     $curConfig['payload']['sections'] = array_values($curConfig['payload']['sections']);
