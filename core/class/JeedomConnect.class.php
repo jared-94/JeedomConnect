@@ -103,13 +103,9 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	/*     * *********************Méthodes d'instance************************* */
-
-
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
 	}
-
 
 	public static function copyConfig($from, $to) {
 
@@ -143,6 +139,8 @@ class JeedomConnect extends eqLogic {
 
 		return true;
 	}
+
+	/*     * *********************Méthodes d'instance************************* */
 
 	public function saveConfig($config) {
 		if (!is_dir(self::$_config_dir)) {
@@ -330,7 +328,6 @@ class JeedomConnect extends eqLogic {
 		return $jsonConfig;
 	}
 
-
 	public function getGeneratedConfigFile() {
 
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
@@ -396,11 +393,10 @@ class JeedomConnect extends eqLogic {
 		return $choice;
 	}
 
-
 	public function getWidgetId() {
 		$ids = array();
 
-		$conf = self::getConfig(true);
+		$conf = $this->getConfig(true);
 
 		foreach ($conf['payload']['widgets'] as $item) {
 			array_push($ids, $item['id']);
@@ -431,9 +427,6 @@ class JeedomConnect extends eqLogic {
 		$result = array("id" => intval($obj->getId()), "name" => $obj->getName());
 		return $result;
 	}
-
-
-
 
 	public function updateConfig() {
 		$jsonConfig = $this->getConfig();
@@ -726,8 +719,6 @@ class JeedomConnect extends eqLogic {
 		return floor($dist);
 	}
 
-
-
 	public function preInsert() {
 
 		if ($this->getConfiguration('apiKey') == '') {
@@ -738,7 +729,6 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postInsert() {
-
 		$this->setIsEnable(1);
 		if ($this->getConfiguration('configVersion') == '') {
 			$this->setConfiguration('configVersion', 0);
@@ -980,7 +970,6 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function removeWidgetConf($idToRemoveList) {
-
 		$remove = false;
 
 		$conf = $this->getConfig();
@@ -1012,10 +1001,8 @@ class JeedomConnect extends eqLogic {
 
 	public function resetConfigFile() {
 		log::add('JeedomConnect', 'debug', 'reseting configuration for equipment "' . $this->getName() . '" [' . $this->getConfiguration('apiKey') . ']');
-		self::saveConfig(self::$_initialConfig);
+		$this->saveConfig(self::$_initialConfig);
 	}
-
-
 
 	public static function getPluginInfo() {
 
@@ -1246,7 +1233,6 @@ class JeedomConnect extends eqLogic {
 		return;
 	}
 
-
 	public static function migrateCondImg() {
 		try {
 			$hasChangesConf = false;
@@ -1330,8 +1316,6 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-
-
 	/******************************************************************************
 	 * ************** FUNCTIONS TO RETRIEVE BATTERY DETAILS
 	 * ****************************************************************************
@@ -1348,7 +1332,6 @@ class JeedomConnect extends eqLogic {
 
 		return $list;
 	}
-
 
 	public static function getBatteryDetails($eqLogic) {
 		// $eqLogic = eqLogic::byId($eqLogicId);
@@ -1568,8 +1551,6 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
-
-
 	public static function getPluginsUpdate() {
 		$nbNeedUpdate = update::nbNeedUpdate();
 
@@ -1615,9 +1596,6 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 }
-
-
-
 
 class JeedomConnectCmd extends cmd {
 
