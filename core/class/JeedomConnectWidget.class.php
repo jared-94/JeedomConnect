@@ -394,7 +394,7 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
-	function replaceJC_word($word, $replaces) {
+	public static function replaceJC_word($word, $replaces) {
 		if (array_key_exists($word, $replaces)) {
 			$word = str_replace($word, $replaces[$word], $word);
 		}
