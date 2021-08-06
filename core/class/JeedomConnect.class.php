@@ -396,7 +396,7 @@ class JeedomConnect extends eqLogic {
 	public function getWidgetId() {
 		$ids = array();
 
-		$conf = self::getConfig(true);
+		$conf = $this->getConfig(true);
 
 		foreach ($conf['payload']['widgets'] as $item) {
 			array_push($ids, $item['id']);
@@ -1003,7 +1003,7 @@ class JeedomConnect extends eqLogic {
 
 	public function resetConfigFile() {
 		log::add('JeedomConnect', 'debug', 'reseting configuration for equipment "' . $this->getName() . '" [' . $this->getConfiguration('apiKey') . ']');
-		self::saveConfig(self::$_initialConfig);
+		$this->saveConfig(self::$_initialConfig);
 	}
 
 	public static function getPluginInfo() {
