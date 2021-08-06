@@ -1,13 +1,19 @@
 {
-	"widgets":[
+	"widgets": [
 		{
 			"type": "single-light-switch",
 			"name": "Lumière On/Off",
 			"img": "light100.png",
 			"description": "Gère une lumière simple à deux états allumé/éteind",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				}
 			],
 			"options": [
 				{
@@ -21,7 +27,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -46,7 +65,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -67,7 +86,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -83,7 +102,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -91,21 +123,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -118,8 +150,14 @@
 			"img": "light80.png",
 			"description": "Gère une lumière à intensité variable",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				}
 			],
 			"options": [
 				{
@@ -133,7 +171,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -158,7 +209,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": false,
 					"category": "cmd",
 					"type": "info",
@@ -214,7 +265,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -230,7 +281,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -238,21 +302,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -265,8 +329,14 @@
 			"img": "icon_wheel.png",
 			"description": "Gère une lumière à couleurs",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				}
 			],
 			"options": [
 				{
@@ -280,7 +350,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -323,7 +406,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": false,
 					"category": "cmd",
 					"type": "info",
@@ -388,7 +471,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -404,7 +487,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -412,21 +508,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -439,11 +535,26 @@
 			"img": "groupLight.png",
 			"description": "Gère un groupe de plusieurs widgets lumières",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
-				{ "name": "onNb", "descr": "Nombre de lumières allumées" },
-				{ "name": "offNb", "descr": "Nombre de lumières éteintes" },
-				{ "name": "total", "descr": "Nombre de lumières" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "onNb",
+					"descr": "Nombre de lumières allumées"
+				},
+				{
+					"name": "offNb",
+					"descr": "Nombre de lumières éteintes"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de lumières"
+				}
 			],
 			"options": [
 				{
@@ -457,7 +568,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -465,7 +589,11 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["single-light-switch", "single-light-dim", "single-light-color"],
+					"whiteList": [
+						"single-light-switch",
+						"single-light-dim",
+						"single-light-color"
+					],
 					"description": "Liste des lumières à gérer"
 				},
 				{
@@ -504,7 +632,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -514,7 +642,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -522,21 +663,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -549,8 +690,14 @@
 			"img": "plug6.png",
 			"description": "Widget pour gérer une prise électrique",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				}
 			],
 			"options": [
 				{
@@ -564,7 +711,28 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "value",
+							"name": "Valeur"
+						},
+						{
+							"id": "formatedValue",
+							"name": "Valeur formatée"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -587,7 +755,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -610,7 +778,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -626,7 +794,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -634,21 +815,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -661,12 +842,30 @@
 			"img": "groupPlug.png",
 			"description": "Gère un groupe de plusieurs widgets prises",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'" },
-				{ "name": "onNb", "descr": "Nombre de prises allumées" },
-				{ "name": "offNb", "descr": "Nombre de prises éteintes" },
-				{ "name": "total", "descr": "Nombre de prises" },
-				{ "name": "power", "descr": "Puissance totale" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "onNb",
+					"descr": "Nombre de prises allumées"
+				},
+				{
+					"name": "offNb",
+					"descr": "Nombre de prises éteintes"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de prises"
+				},
+				{
+					"name": "power",
+					"descr": "Puissance totale"
+				}
 			],
 			"options": [
 				{
@@ -680,7 +879,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id": "power", "name": "Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -688,7 +900,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["plug"],
+					"whiteList": [
+						"plug"
+					],
 					"description": "Liste des prises à gérer"
 				},
 				{
@@ -698,7 +912,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -708,7 +922,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -716,21 +943,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -743,9 +970,18 @@
 			"img": "scenario.png",
 			"description": "Gestion d'un scénario",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "active", "descr": "Scénario actif (0 ou 1)" },
-				{ "name": "running", "descr": "En cours d'exécution (0 ou 1)" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "active",
+					"descr": "Scénario actif (0 ou 1)"
+				},
+				{
+					"name": "running",
+					"descr": "En cours d'exécution (0 ou 1)"
+				}
 			],
 			"options": [
 				{
@@ -760,7 +996,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Status"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "status",
+							"name": "Statut"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -776,7 +1025,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -792,7 +1041,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -800,21 +1062,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -838,7 +1100,11 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"blackList": ["widgets-summary", "favorites", "room-summary"],
+					"blackList": [
+						"widgets-summary",
+						"favorites",
+						"room-summary"
+					],
 					"description": "Liste des widgets à afficher"
 				},
 				{
@@ -886,7 +1152,11 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"blackList": ["widgets-summary", "favorites", "room-summary"],
+					"blackList": [
+						"widgets-summary",
+						"favorites",
+						"room-summary"
+					],
 					"description": "Liste des widgets à afficher"
 				},
 				{
@@ -903,347 +1173,10 @@
 			"img": "brightness.png",
 			"description": "Donne la luminosité en Lux",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
-			],
-			"options": [
 				{
-					"id": "name",
-					"name": "Nom",
-					"required": true,
-					"category": "string"
-				},
-				{
-					"id": "subtitle",
-					"name": "Sous-titre",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "statusInfo",
-					"name": "Status",
-					"required": true,
-					"category": "cmd",
-					"type": "info",
-					"subtype": "numeric",
-					"description": "Etat de la luminosité en Lux"
-				},
-				{
-					"id": "image",
-					"name": "Image",
-					"required": false,
-					"category": "img"
-				},
-				{
-					"id":  "statusImages",
-					"name": "Images sous conditions",
-					"required": false,
-					"category": "ifImgs"
-				},
-				{
-					"id": "moreWidgets",
-					"name": "Widgets supplémentaires",
-					"category": "widgets",
-					"description": "Widgets supplémentaires affichés dans la vue détails"
-				},
-				{
-					"id": "display",
-					"name": "Affichage forcé",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id":"hideStatus",
-							"text": "statut"
-						},
-						{
-							"id":"hideIcon",
-							"text": "image"
-						}
-					]
+					"name": "room",
+					"descr": "Pièce"
 				}
-			]
-		},
-		{
-			"type": "humidity",
-			"name": "Humidité",
-			"img": "humidity.png",
-			"description": "Donne l'humidité en %",
-			"variables": [
-				{ "name": "room", "descr": "Pièce" }
-			],
-			"options": [
-				{
-					"id": "name",
-					"name": "Nom",
-					"required": true,
-					"category": "string"
-				},
-				{
-					"id": "subtitle",
-					"name": "Sous-titre",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "statusInfo",
-					"name": "Status",
-					"required": true,
-					"category": "cmd",
-					"type": "info",
-					"subtype": "numeric",
-					"description": "Etat de l'humidité en %"
-				},
-				{
-					"id": "image",
-					"name": "Image",
-					"required": false,
-					"category": "img"
-				},
-				{
-					"id":  "statusImages",
-					"name": "Images sous conditions",
-					"required": false,
-					"category": "ifImgs"
-				},
-				{
-					"id": "moreWidgets",
-					"name": "Widgets supplémentaires",
-					"category": "widgets",
-					"description": "Widgets supplémentaires affichés dans la vue détails"
-				},
-				{
-					"id": "display",
-					"name": "Affichage forcé",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id":"hideStatus",
-							"text": "statut"
-						},
-						{
-							"id":"hideIcon",
-							"text": "image"
-						}
-					]
-				}
-			]
-		},
-		{
-			"type": "temperature",
-			"name": "Température",
-			"img": "temperature.png",
-			"description": "Affiche la température en °C",
-			"variables": [
-				{ "name": "room", "descr": "Pièce" }
-			],
-			"options": [
-				{
-					"id": "name",
-					"name": "Nom",
-					"required": true,
-					"category": "string"
-				},
-				{
-					"id": "subtitle",
-					"name": "Sous-titre",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "statusInfo",
-					"name": "Status",
-					"required": true,
-					"category": "cmd",
-					"type": "info",
-					"subtype": "numeric",
-					"description": "Etat de la température en °C"
-				},
-				{
-					"id": "image",
-					"name": "Image",
-					"required": false,
-					"category": "img",
-					"description": "Image par défaut si aucune condition n'est remplie"
-				},
-				{
-					"id":  "statusImages",
-					"name": "Images sous conditions",
-					"required": false,
-					"category": "ifImgs"
-				},
-				{
-					"id": "moreWidgets",
-					"name": "Widgets supplémentaires",
-					"category": "widgets",
-					"description": "Widgets supplémentaires affichés dans la vue détails"
-				},
-				{
-					"id": "display",
-					"name": "Affichage forcé",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id":"hideStatus",
-							"text": "statut"
-						},
-						{
-							"id":"hideIcon",
-							"text": "image"
-						}
-					]
-				}
-			]
-		},
-		{
-			"type": "power",
-			"name": "Puissance",
-			"img": "power.png",
-			"description": "Donne la puissance consomée en W",
-			"variables": [
-				{ "name": "room", "descr": "Pièce" }
-			],
-			"options": [
-				{
-					"id": "name",
-					"name": "Nom",
-					"required": true,
-					"category": "string"
-				},
-				{
-					"id": "subtitle",
-					"name": "Sous-titre",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
-					"description": "Information supplémentaire affichée sur le widget"
-				},
-				{
-					"id": "statusInfo",
-					"name": "Status",
-					"required": true,
-					"category": "cmd",
-					"type": "info",
-					"subtype": "numeric",
-					"description": "Etat de la puissance en W"
-				},
-				{
-					"id": "image",
-					"name": "Image",
-					"required": false,
-					"category": "img",
-					"description": "Image par défaut si aucune condition n'est remplie"
-				},
-				{
-					"id":  "statusImages",
-					"name": "Images sous conditions",
-					"required": false,
-					"category": "ifImgs"
-				},
-				{
-					"id": "moreWidgets",
-					"name": "Widgets supplémentaires",
-					"category": "widgets",
-					"description": "Widgets supplémentaires affichés dans la vue détails"
-				},
-				{
-					"id": "display",
-					"name": "Affichage forcé",
-					"required": false,
-					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
-						{
-							"id":"hideTitle",
-							"text": "nom"
-						},
-						{
-							"id":"hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id":"hideStatus",
-							"text": "statut"
-						},
-						{
-							"id":"hideIcon",
-							"text": "image"
-						}
-					]
-				}
-			]
-		},
-		{
-			"type": "thermostat",
-			"name": "Thermostat",
-			"img": "thermostatOff.png",
-			"description": "Gère un thermostat. Compatible avec le plugin officiel",
-			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"},
-				{ "name": "lockText", "descr": "Etat 'Vérouillé' ou 'Déverrouillé'" }
 			],
 			"options": [
 				{
@@ -1258,19 +1191,486 @@
 					"required": false,
 					"category": "stringList",
 					"choices": [
-						{"id":"room", "name":"Pièce"},
-						{"id":"elapsedTime", "name":"Temps écoulé"},
-						{"id":"status", "name":"Status"},
-						{"id":"mode", "name":"Mode"},
-						{"id":"temperature", "name":"Température int"},
-						{"id":"temperatureExt", "name":"Température ext"},
-						{"id":"power", "name":"Puissance"}
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
 					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de la luminosité en Lux"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "humidity",
+			"name": "Humidité",
+			"img": "humidity.png",
+			"description": "Donne l'humidité en %",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de l'humidité en %"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "temperature",
+			"name": "Température",
+			"img": "temperature.png",
+			"description": "Affiche la température en °C",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de la température en °C"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img",
+					"description": "Image par défaut si aucune condition n'est remplie"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "power",
+			"name": "Puissance",
+			"img": "power.png",
+			"description": "Donne la puissance consomée en W",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat de la puissance en W"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img",
+					"description": "Image par défaut si aucune condition n'est remplie"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "thermostat",
+			"name": "Thermostat",
+			"img": "thermostatOff.png",
+			"description": "Gère un thermostat. Compatible avec le plugin officiel",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "lockText",
+					"descr": "Etat 'Vérouillé' ou 'Déverrouillé'"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "status",
+							"name": "Statut"
+						},
+						{
+							"id": "mode",
+							"name": "Mode"
+						},
+						{
+							"id": "temperature",
+							"name": "Température int"
+						},
+						{
+							"id": "temperatureExt",
+							"name": "Température ext"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -1324,7 +1724,13 @@
 					"name": "Modes",
 					"required": false,
 					"category": "cmdList",
-					"options": {"type": "action", "subtype": "other", "hasIcon": true, "hasImage": true, "hasName": false }
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": true,
+						"hasImage": true,
+						"hasName": false
+					}
 				},
 				{
 					"id": "powerInfo",
@@ -1365,7 +1771,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1381,7 +1787,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -1389,21 +1808,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -1416,8 +1835,14 @@
 			"img": "cold.png",
 			"description": "Gère un climatiseur",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Eteint' ou 'Allumé'"}
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				}
 			],
 			"options": [
 				{
@@ -1431,7 +1856,24 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"mode", "name":"Mode"}, {"id":"temperature", "name":"Température"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "mode",
+							"name": "Mode"
+						},
+						{
+							"id": "temperature",
+							"name": "Température"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -1456,7 +1898,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -1544,7 +1986,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1560,7 +2002,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -1568,21 +2023,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -1595,7 +2050,10 @@
 			"img": "doorOn.png",
 			"description": "Donne l'état ouvert/fermé d'une porte",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -1609,12 +2067,21 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -1628,7 +2095,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1644,7 +2111,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -1652,21 +2132,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -1679,10 +2159,22 @@
 			"img": "groupDoor.png",
 			"description": "Gère un groupe de plusieurs widgets portes",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "openNb", "descr": "Nombre de portes ouvertes" },
-				{ "name": "closedNb", "descr": "Nombre de portes fermées" },
-				{ "name": "total", "descr": "Nombre de portes" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "openNb",
+					"descr": "Nombre de portes ouvertes"
+				},
+				{
+					"name": "closedNb",
+					"descr": "Nombre de portes fermées"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de portes"
+				}
 			],
 			"options": [
 				{
@@ -1696,7 +2188,16 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -1704,7 +2205,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["door"],
+					"whiteList": [
+						"door"
+					],
 					"description": "Liste des portes à gérer"
 				},
 				{
@@ -1714,7 +2217,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1724,7 +2227,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -1732,21 +2248,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -1759,7 +2275,10 @@
 			"img": "windowClosed.png",
 			"description": "Donne l'état ouvert/fermé d'une fenêtre",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -1773,12 +2292,21 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -1791,7 +2319,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1807,7 +2335,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -1815,21 +2356,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -1842,9 +2383,18 @@
 			"img": "groupWindows.png",
 			"description": "Gère un groupe de plusieurs widgets fenêtres",
 			"variables": [
-				{ "name": "openNb", "descr": "Nombre de fenêtres ouvertes" },
-				{ "name": "closedNb", "descr": "Nombre de fenêtres fermées" },
-				{ "name": "total", "descr": "Nombre de fenêtres" }
+				{
+					"name": "openNb",
+					"descr": "Nombre de fenêtres ouvertes"
+				},
+				{
+					"name": "closedNb",
+					"descr": "Nombre de fenêtres fermées"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de fenêtres"
+				}
 			],
 			"options": [
 				{
@@ -1858,7 +2408,16 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -1866,7 +2425,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["window"],
+					"whiteList": [
+						"window"
+					],
 					"description": "Liste des fenêtres à gérer"
 				},
 				{
@@ -1876,7 +2437,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1886,7 +2447,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -1894,21 +2468,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -1921,8 +2495,14 @@
 			"img": "gateOpen.png",
 			"description": "Gère un portail coulissant",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Ouvert', 'Fermé' ou 'Piéton'" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Ouvert', 'Fermé' ou 'Piéton'"
+				}
 			],
 			"options": [
 				{
@@ -1936,12 +2516,21 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": false,
 					"category": "cmd",
 					"type": "info",
@@ -1981,7 +2570,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -1997,7 +2586,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2005,21 +2607,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2032,8 +2634,14 @@
 			"img": "shutter50.png",
 			"description": "Gère un volet roulant",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status 'Ouvert' ou 'Fermé'" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Ouvert' ou 'Fermé'"
+				}
 			],
 			"options": [
 				{
@@ -2047,12 +2655,25 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": false,
 					"category": "cmd",
 					"type": "info",
@@ -2111,7 +2732,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2127,7 +2748,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2135,21 +2769,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2162,10 +2796,22 @@
 			"img": "groupShutter.png",
 			"description": "Gère un groupe de plusieurs widgets volets",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "openNb", "descr": "Nombre de volets ouvertes" },
-				{ "name": "closedNb", "descr": "Nombre de volets fermées" },
-				{ "name": "total", "descr": "Nombre de volets" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "openNb",
+					"descr": "Nombre de volets ouvertes"
+				},
+				{
+					"name": "closedNb",
+					"descr": "Nombre de volets fermées"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de volets"
+				}
 			],
 			"options": [
 				{
@@ -2179,7 +2825,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"power", "name":"Puissance"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "power",
+							"name": "Puissance"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -2187,7 +2846,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["shutter"],
+					"whiteList": [
+						"shutter"
+					],
 					"description": "Liste des volets à gérer"
 				},
 				{
@@ -2197,7 +2858,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2207,7 +2868,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2215,21 +2889,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2242,7 +2916,10 @@
 			"img": "pirOff.png",
 			"description": "Donne l'état d'un capteur de mouvements",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -2256,12 +2933,21 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -2275,7 +2961,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2291,7 +2977,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2299,21 +2998,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2326,10 +3025,22 @@
 			"img": "groupPIR.png",
 			"description": "Gère un groupe de plusieurs capteurs de mouvements",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "alertNb", "descr": "Nombre de PIR en alerte" },
-				{ "name": "normalNb", "descr": "Nombre de PIR au repos" },
-				{ "name": "total", "descr": "Nombre de PIR" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "alertNb",
+					"descr": "Nombre de PIR en alerte"
+				},
+				{
+					"name": "normalNb",
+					"descr": "Nombre de PIR au repos"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de PIR"
+				}
 			],
 			"options": [
 				{
@@ -2343,7 +3054,16 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -2351,7 +3071,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["pir"],
+					"whiteList": [
+						"pir"
+					],
 					"description": "Liste des capteurs à gérer"
 				},
 				{
@@ -2361,7 +3083,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2371,7 +3093,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2379,21 +3114,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2406,8 +3141,14 @@
 			"img": "alarm_red.png",
 			"description": "Gère une alarme",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "statusText", "descr": "Status de l'alarme" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut de l'alarme"
+				}
 			],
 			"options": [
 				{
@@ -2421,7 +3162,16 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -2435,12 +3185,12 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Status de l'alarme (alarme en cours)"
+					"description": "Statut de l'alarme (alarme en cours)"
 				},
 				{
 					"id": "onAction",
@@ -2464,7 +3214,7 @@
 				},
 				{
 					"id": "immediateInfo",
-					"name": "Status immédiat",
+					"name": "Statut immédiat",
 					"required": false,
 					"category": "cmd",
 					"type": "info",
@@ -2485,7 +3235,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2501,7 +3251,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2509,21 +3272,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2536,10 +3299,22 @@
 			"img": "groupAlarm.png",
 			"description": "Gère un groupe d'alarmes",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "armedNb", "descr": "Nombre d'alarmes armées'" },
-				{ "name": "alarmNb", "descr": "Nombre d'alarme en alerte'" },
-				{ "name": "total", "descr": "Nombre de'alarmes dans le groupe" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "armedNb",
+					"descr": "Nombre d'alarmes armées'"
+				},
+				{
+					"name": "alarmNb",
+					"descr": "Nombre d'alarme en alerte'"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de'alarmes dans le groupe"
+				}
 			],
 			"options": [
 				{
@@ -2553,7 +3328,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"formatedValue", "name":"Status"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "formatedValue",
+							"name": "Statut"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -2561,7 +3349,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["alarm"],
+					"whiteList": [
+						"alarm"
+					],
 					"description": "Liste des alarmes à gérer"
 				},
 				{
@@ -2571,7 +3361,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2581,7 +3371,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2589,21 +3392,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2616,7 +3419,10 @@
 			"img": "information.png",
 			"description": "Widget générique pour afficher les infos d'une commande binaire",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -2630,12 +3436,21 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -2663,7 +3478,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2679,7 +3494,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2687,21 +3515,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2714,10 +3542,22 @@
 			"img": "groupBinary.png",
 			"description": "Gère un groupe de plusieurs widgets générique info binaire",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" },
-				{ "name": "nb0", "descr": "Nombre de binaires valant 0" },
-				{ "name": "nb1", "descr": "Nombre de binaires valant 1" },
-				{ "name": "total", "descr": "Nombre de binaires" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "nb0",
+					"descr": "Nombre de binaires valant 0"
+				},
+				{
+					"name": "nb1",
+					"descr": "Nombre de binaires valant 1"
+				},
+				{
+					"name": "total",
+					"descr": "Nombre de binaires"
+				}
 			],
 			"options": [
 				{
@@ -2731,7 +3571,16 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -2739,7 +3588,9 @@
 					"name": "Widgets",
 					"required": true,
 					"category": "widgets",
-					"whiteList": ["generic-info-binary"],
+					"whiteList": [
+						"generic-info-binary"
+					],
 					"description": "Liste des génériques binaires à gérer"
 				},
 				{
@@ -2749,7 +3600,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2759,7 +3610,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2767,21 +3631,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2794,7 +3658,10 @@
 			"img": "information.png",
 			"description": "Widget générique pour afficher les infos d'une commande info numérique",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -2808,12 +3675,25 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "value",
+							"name": "Valeur"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -2828,11 +3708,13 @@
 					"description": "Image par défaut si aucune condition n'est remplie"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs",
-					"infos": [ "statusInfo" ]
+					"infos": [
+						"statusInfo"
+					]
 				},
 				{
 					"id": "moreWidgets",
@@ -2845,7 +3727,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2853,21 +3748,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2880,7 +3775,10 @@
 			"img": "information.png",
 			"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -2894,12 +3792,25 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "value",
+							"name": "Valeur"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -2913,7 +3824,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -2929,7 +3840,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -2937,21 +3861,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -2964,7 +3888,10 @@
 			"img": "switch.png",
 			"description": "Widget générique pour un switch (commande ON/OFF)",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -2978,7 +3905,24 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}, {"id":"formatedValue", "name":"Valeur formatée"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "value",
+							"name": "Valeur"
+						},
+						{
+							"id": "formatedValue",
+							"name": "Valeur formatée"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -3003,7 +3947,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -3031,7 +3975,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -3047,7 +3991,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -3055,21 +4012,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -3082,7 +4039,10 @@
 			"img": "meter.png",
 			"description": "Gère un slider",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -3096,7 +4056,20 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"status", "name":"Valeur"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "status",
+							"name": "Valeur"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -3110,7 +4083,7 @@
 				},
 				{
 					"id": "statusInfo",
-					"name": "Status",
+					"name": "Statut",
 					"required": true,
 					"category": "cmd",
 					"type": "info",
@@ -3124,7 +4097,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -3140,7 +4113,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -3148,21 +4134,21 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
@@ -3175,7 +4161,10 @@
 			"img": "powerButton.png",
 			"description": "Permet des lancer des commandes action (de tous types)",
 			"variables": [
-				{ "name": "room", "descr": "Pièce" }
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
 			],
 			"options": [
 				{
@@ -3189,7 +4178,12 @@
 					"name": "Sous-titre",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"room", "name":"Pièce"}],
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						}
+					],
 					"description": "Information supplémentaire affichée sur le widget"
 				},
 				{
@@ -3197,7 +4191,13 @@
 					"name": "Actions",
 					"required": true,
 					"category": "cmdList",
-					"options": {"type": "action", "subtype": "", "hasIcon": true, "hasImage": false, "hasName": false }
+					"options": {
+						"type": "action",
+						"subtype": "",
+						"hasIcon": true,
+						"hasImage": false,
+						"hasName": false
+					}
 				},
 				{
 					"id": "image",
@@ -3206,7 +4206,7 @@
 					"category": "img"
 				},
 				{
-					"id":  "statusImages",
+					"id": "statusImages",
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
@@ -3222,7 +4222,20 @@
 					"name": "Affichage forcé",
 					"required": false,
 					"category": "stringList",
-					"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
 					"description": "Affichage forcé du widget"
 				},
 				{
@@ -3230,798 +4243,940 @@
 					"name": "Eléments à masquer",
 					"category": "choicesList",
 					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices":[
+					"choices": [
 						{
-							"id":"hideTitle",
+							"id": "hideTitle",
 							"text": "nom"
 						},
 						{
-							"id":"hideSubTitle",
+							"id": "hideSubTitle",
 							"text": "sous-titre"
 						},
 						{
-							"id":"hideStatus",
+							"id": "hideStatus",
 							"text": "statut"
 						},
 						{
-							"id":"hideIcon",
+							"id": "hideIcon",
 							"text": "image"
 						}
 					]
 				}
 			]
-			},
-			{
-				"type": "choices-list",
-				"name": "Liste de choix",
-				"img": "choices-list.png",
-				"description": "Gère une liste",
-				"variables": [
-					{ "name": "room", "descr": "Pièce" }
-				],
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"room", "name":"Pièce"}, {"id":"status", "name":"Valeur"}],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "listAction",
-						"name": "Action",
-						"required": true,
-						"category": "cmd",
+		},
+		{
+			"type": "choices-list",
+			"name": "Liste de choix",
+			"img": "choices-list.png",
+			"description": "Gère une liste",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "status",
+							"name": "Valeur"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "listAction",
+					"name": "Action",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "select",
+					"value": "statusInfo",
+					"description": "Où est définie la liste des valeurs possible"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"description": "Valeur courante"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "generic-message",
+			"name": "Générique message",
+			"img": "generic-message.png",
+			"description": "Permet l'utilisation d'une commande de type message",
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "msgAction",
+					"name": "Action",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "message",
+					"description": "Commande executée avec les informations 'message' saisies"
+				},
+				{
+					"id": "displayTitle",
+					"name": "Champ Titre",
+					"category": "binary",
+					"description": "Est ce qu'une zone 'titre' doit être affichée sur le widget"
+				},
+				{
+					"id": "keepLastMsg",
+					"name": "Garder le dernier message",
+					"category": "binary",
+					"description": "Conserver le dernier message envoyé pour ne pas avoir à le retaper"
+				},
+				{
+					"id": "sendImage",
+					"name": "Image Envoyer",
+					"required": false,
+					"category": "img",
+					"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "mode",
+			"name": "Mode",
+			"img": "mode.png",
+			"description": "Affiche une liste de modes et permet de les sélectionner",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						},
+						{
+							"id": "elapsedTime",
+							"name": "Temps écoulé"
+						},
+						{
+							"id": "value",
+							"name": "Valeur"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Info mode",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Etat actuel du mode"
+				},
+				{
+					"id": "modes",
+					"name": "Modes",
+					"required": true,
+					"category": "cmdList",
+					"options": {
 						"type": "action",
-						"subtype": "select",
-						"value": "statusInfo",
-						"description": "Où est définie la liste des valeurs possible"
-					},
-					{
-						"id": "statusInfo",
-						"name": "Status",
-						"required": true,
-						"category": "cmd",
-						"type": "info",
-						"description": "Valeur courante"
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "moreWidgets",
-						"name": "Widgets supplémentaires",
-						"category": "widgets",
-						"description": "Widgets supplémentaires affichés dans la vue détails"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideStatus",
-								"text": "statut"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": false
 					}
-				]
-			},
-			{
-				"type": "generic-message",
-				"name": "Générique message",
-				"img": "generic-message.png",
-				"description": "Permet l'utilisation d'une commande de type message",
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"room", "name":"Pièce"}],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "msgAction",
-						"name": "Action",
-						"required": true,
-						"category": "cmd",
-						"type": "action",
-						"subtype": "message",
-						"description": "Commande executée avec les informations 'message' saisies"
-					},
-					{
-						"id": "displayTitle",
-						"name": "Champ Titre",
-						"category": "binary",
-						"description": "Est ce qu'une zone 'titre' doit être affichée sur le widget"
-					},
-					{
-						"id": "keepLastMsg",
-						"name": "Garder le dernier message",
-						"category": "binary",
-						"description": "Conserver le dernier message envoyé pour ne pas avoir à le retaper"
-					},
-					{
-						"id": "sendImage",
-						"name": "Image Envoyer",
-						"required": false,
-						"category": "img",
-						"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "moreWidgets",
-						"name": "Widgets supplémentaires",
-						"category": "widgets",
-						"description": "Widgets supplémentaires affichés dans la vue détails"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideStatus",
-								"text": "statut"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "mode",
-				"name": "Mode",
-				"img": "mode.png",
-				"description": "Affiche une liste de modes et permet de les sélectionner",
-				"variables": [
-					{ "name": "room", "descr": "Pièce" }
-				],
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"room", "name":"Pièce"}, {"id":"elapsedTime", "name":"Temps écoulé"}, {"id":"value", "name":"Valeur"}],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "statusInfo",
-						"name": "Info mode",
-						"required": true,
-						"category": "cmd",
-						"type": "info",
-						"subtype": "string",
-						"description": "Etat actuel du mode"
-					},
-					{
-						"id": "modes",
-						"name": "Modes",
-						"required": true,
-						"category": "cmdList",
-						"options": {"type": "action", "subtype": "other", "hasIcon": false, "hasImage": true, "hasName": false }
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "moreWidgets",
-						"name": "Widgets supplémentaires",
-						"category": "widgets",
-						"description": "Widgets supplémentaires affichés dans la vue détails"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideStatus",
-								"text": "statut"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "webview",
-				"name": "Web View",
-				"img": "web.png",
-				"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web.<br/>Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
-				"variables": [
-					{ "name": "room", "descr": "Pièce" }
-				],
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "url",
-						"name": "URL",
-						"required": true,
-						"category": "string",
-						"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
-					},
-					{
-						"id": "localUrl",
-						"name": "URL locale",
-						"required": false,
-						"category": "string",
-						"description": "URL utilisée lorsque l'appareil est sur le même réseau que Jeedom"
-					},
-					{
-						"id":  "headerHide",
-						"name": "Cacher la barre du haut",
-						"required": false,
-						"category": "binary"
-					},
-					{
-						"id":  "androidHardwareAccelerationDisabled",
-						"name": "Désactiver l'accélération matérielle",
-						"required": false,
-						"category": "binary",
-						"description": "Désactivez si vous rencontrer des problèmes"
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideStatus",
-								"text": "statut"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "geoloc",
-				"name": "Géolocalisation",
-				"img": "geo.png",
-				"description": "Permet d'afficher un point de localisation",
-				"variables": [
-					{ "name": "room", "descr": "Pièce" }
-				],
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "positionInfo",
-						"name": "Position",
-						"required": true,
-						"category": "cmd",
-						"type": "info",
-						"subtype": "string",
-						"description": "Commande chaîne sous la forme latitude,longitude"
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideStatus",
-								"text": "statut"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "camera",
-				"name": "Caméra",
-				"img": "camera.png",
-				"description": "Permet d'afficher une caméra",
-				"variables": [
-					{ "name": "room", "descr": "Pièce" }
-				],
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "username",
-						"name": "Nom d'utilisateur",
-						"required": false,
-						"category": "string",
-						"description": "permet d'utiliser le tag #username# dans l'url de flux et snapshot"
-					},
-					{
-						"id": "password",
-						"name": "Mot de passe",
-						"required": false,
-						"category": "string",
-						"subtype": "password",
-						"description": "permet d'utiliser le tag #password# dans l'url de flux et snapshot"
-					},
-					{
-						"id": "streamUrl",
-						"name": "URL flux",
-						"required": false,
-						"category": "string"
-					},
-					{
-						"id": "streamUrlInfo",
-						"name": "Commande URL flux",
-						"required": false,
-						"category": "cmd",
-						"type": "info",
-						"subtype": "string",
-						"description": "Commande info contenant l'URL du flux"
-					},
-					{
-						"id": "onlyOnLan",
-						"name": "Flux vidéo uniquement sur le LAN",
-						"required": false,
-						"category": "binary"
-					},
-					{
-						"id": "snapshotUrl",
-						"name": "URL SnapShot",
-						"required": false,
-						"category": "string"
-					},
-					{
-						"id": "snapshotUrlInfo",
-						"name": "Commande Url Snapshot",
-						"required": false,
-						"category": "cmd",
-						"type": "info",
-						"subtype": "string",
-						"description": "Commande info contenant l'URL du snapshot"
-					},
-					{
-						"id": "refreshInterval",
-						"name": "Rafraîchissement",
-						"required": false,
-						"category": "string",
-						"description": "Durée en seconde entre deux images (1s par défaut)"
-					},
-					{
-						"id": "compress",
-						"name": "Qualité SnapShot (%)",
-						"required": false,
-						"category": "string",
-						"description": "100% par défaut (haute qualité)"
-					},
-					{
-						"id": "resize",
-						"name": "Taille SnapShot (%)",
-						"required": false,
-						"category": "string",
-						"description": "100% par défaut (pas de redimensionnement)"
-					},
-					{
-						"id": "aspectRatio",
-						"name": "Ratio",
-						"required": false,
-						"category": "string",
-						"description": "Forcer le ratio (largeur/longueur). Exemple: 0.75"
-					},
-					{
-						"id": "startRecordAction",
-						"name": "Enregistrer",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"description": "Commande action pour démarrer un enregistrement"
-					},
-					{
-						"id": "stopRecordAction",
-						"name": "Arrêter Enregistrement",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"description": "Commande action pour arrêter un enregistrement"
-					},
-					{
-						"id": "recordInfo",
-						"name": "Info Enregistrement",
-						"required": false,
-						"category": "cmd",
-						"type": "info",
-						"subtype": "binary",
-						"description": "Commande info d'enregistrement"
-					},
-					{
-						"id": "snapshotAction",
-						"name": "Instantané",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"description": "Commande action pour enregistrer un instantané"
-					},
-					{
-						"id": "recordFolder",
-						"name": "Dossier des enregistrements",
-						"required": false,
-						"category": "string",
-						"description": "par exemple /plugins/camera/data/records/camID"
-					},
-					{
-						"id": "upAction",
-						"name": "Direction haut",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"subtype": "other"
-					},
-					{
-						"id": "downAction",
-						"name": "Direction bas",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"subtype": "other"
-					},
-					{
-						"id": "leftAction",
-						"name": "Direction gauche",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"subtype": "other"
-					},
-					{
-						"id": "rightAction",
-						"name": "Direction droite",
-						"required": false,
-						"category": "cmd",
-						"type": "action",
-						"subtype": "other"
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "displayOnWidget",
-						"name": "Afficher sur carte",
-						"required": false,
-						"category": "binary",
-						"description": "Affichage du lecteur sur les cartes"
-					},
-					{
-						"id": "moreWidgets",
-						"name": "Widgets supplémentaires",
-						"category": "widgets",
-						"description": "Widgets supplémentaires affichés dans la vue détails"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "appLauncher",
-				"name": "Lanceur d'application",
-				"img": "droid.png",
-				"description": "Permet de lancer une application.<br/> !! Uniquement compatible Android !!",
-				"variables": [
-					{ "name": "room", "descr": "Pièce" }
-				],
-				"options": [
-					{
-						"id": "name",
-						"name": "Nom",
-						"required": true,
-						"category": "string"
-					},
-					{
-						"id": "subtitle",
-						"name": "Sous-titre",
-						"required": false,
-						"category": "stringList",
-						"choices": [],
-						"description": "Information supplémentaire affichée sur le widget"
-					},
-					{
-						"id": "packageName",
-						"name": "Nom du package",
-						"required": true,
-						"category": "string",
-						"description": "Nom du package Android de l'application. Vous pouvez utiliser l'application Package Name Viewer 2.0 pour l'obtenir"
-					},
-					{
-						"id": "image",
-						"name": "Image",
-						"required": false,
-						"category": "img"
-					},
-					{
-						"id":  "statusImages",
-						"name": "Images sous conditions",
-						"required": false,
-						"category": "ifImgs"
-					},
-					{
-						"id": "moreWidgets",
-						"name": "Widgets supplémentaires",
-						"category": "widgets",
-						"description": "Widgets supplémentaires affichés dans la vue détails"
-					},
-					{
-						"id": "display",
-						"name": "Affichage forcé",
-						"required": false,
-						"category": "stringList",
-						"choices": [{"id":"widget", "name":"Carte"}, {"id":"miniWidget", "name":"Vignette"}, {"id":"detail", "name":"Détail"}],
-						"description": "Affichage forcé du widget"
-					},
-					{
-						"id": "hideItem",
-						"name": "Eléments à masquer",
-						"category": "choicesList",
-						"description": "En mode vignette, les éléments cochés sont masqués",
-						"choices":[
-							{
-								"id":"hideTitle",
-								"text": "nom"
-							},
-							{
-								"id":"hideSubTitle",
-								"text": "sous-titre"
-							},
-							{
-								"id":"hideStatus",
-								"text": "statut"
-							},
-							{
-								"id":"hideIcon",
-								"text": "image"
-							}
-						]
-					}
-				]
-			}
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "webview",
+			"name": "Web View",
+			"img": "web.png",
+			"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web.<br/>Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "url",
+					"name": "URL",
+					"required": true,
+					"category": "string",
+					"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
+				},
+				{
+					"id": "localUrl",
+					"name": "URL locale",
+					"required": false,
+					"category": "string",
+					"description": "URL utilisée lorsque l'appareil est sur le même réseau que Jeedom"
+				},
+				{
+					"id": "headerHide",
+					"name": "Cacher la barre du haut",
+					"required": false,
+					"category": "binary"
+				},
+				{
+					"id": "androidHardwareAccelerationDisabled",
+					"name": "Désactiver l'accélération matérielle",
+					"required": false,
+					"category": "binary",
+					"description": "Désactivez si vous rencontrer des problèmes"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "geoloc",
+			"name": "Géolocalisation",
+			"img": "geo.png",
+			"description": "Permet d'afficher un point de localisation",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "positionInfo",
+					"name": "Position",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Commande chaîne sous la forme latitude,longitude"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "camera",
+			"name": "Caméra",
+			"img": "camera.png",
+			"description": "Permet d'afficher une caméra",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "username",
+					"name": "Nom d'utilisateur",
+					"required": false,
+					"category": "string",
+					"description": "permet d'utiliser le tag #username# dans l'url de flux et snapshot"
+				},
+				{
+					"id": "password",
+					"name": "Mot de passe",
+					"required": false,
+					"category": "string",
+					"subtype": "password",
+					"description": "permet d'utiliser le tag #password# dans l'url de flux et snapshot"
+				},
+				{
+					"id": "streamUrl",
+					"name": "URL flux",
+					"required": false,
+					"category": "string"
+				},
+				{
+					"id": "streamUrlInfo",
+					"name": "Commande URL flux",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Commande info contenant l'URL du flux"
+				},
+				{
+					"id": "onlyOnLan",
+					"name": "Flux vidéo uniquement sur le LAN",
+					"required": false,
+					"category": "binary"
+				},
+				{
+					"id": "snapshotUrl",
+					"name": "URL SnapShot",
+					"required": false,
+					"category": "string"
+				},
+				{
+					"id": "snapshotUrlInfo",
+					"name": "Commande Url Snapshot",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Commande info contenant l'URL du snapshot"
+				},
+				{
+					"id": "refreshInterval",
+					"name": "Rafraîchissement",
+					"required": false,
+					"category": "string",
+					"description": "Durée en seconde entre deux images (1s par défaut)"
+				},
+				{
+					"id": "compress",
+					"name": "Qualité SnapShot (%)",
+					"required": false,
+					"category": "string",
+					"description": "100% par défaut (haute qualité)"
+				},
+				{
+					"id": "resize",
+					"name": "Taille SnapShot (%)",
+					"required": false,
+					"category": "string",
+					"description": "100% par défaut (pas de redimensionnement)"
+				},
+				{
+					"id": "aspectRatio",
+					"name": "Ratio",
+					"required": false,
+					"category": "string",
+					"description": "Forcer le ratio (largeur/longueur). Exemple: 0.75"
+				},
+				{
+					"id": "startRecordAction",
+					"name": "Enregistrer",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"description": "Commande action pour démarrer un enregistrement"
+				},
+				{
+					"id": "stopRecordAction",
+					"name": "Arrêter Enregistrement",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"description": "Commande action pour arrêter un enregistrement"
+				},
+				{
+					"id": "recordInfo",
+					"name": "Info Enregistrement",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Commande info d'enregistrement"
+				},
+				{
+					"id": "snapshotAction",
+					"name": "Instantané",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"description": "Commande action pour enregistrer un instantané"
+				},
+				{
+					"id": "recordFolder",
+					"name": "Dossier des enregistrements",
+					"required": false,
+					"category": "string",
+					"description": "par exemple /plugins/camera/data/records/camID"
+				},
+				{
+					"id": "upAction",
+					"name": "Direction haut",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "downAction",
+					"name": "Direction bas",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "leftAction",
+					"name": "Direction gauche",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "rightAction",
+					"name": "Direction droite",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "displayOnWidget",
+					"name": "Afficher sur carte",
+					"required": false,
+					"category": "binary",
+					"description": "Affichage du lecteur sur les cartes"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "appLauncher",
+			"name": "Lanceur d'application",
+			"img": "droid.png",
+			"description": "Permet de lancer une application.<br/> !! Uniquement compatible Android !!",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "packageName",
+					"name": "Nom du package",
+					"required": true,
+					"category": "string",
+					"description": "Nom du package Android de l'application. Vous pouvez utiliser l'application Package Name Viewer 2.0 pour l'obtenir"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		}
 	],
-	"summaries" : [
+	"summaries": [
 		{
 			"type": "summary",
 			"name": "Résumé",
