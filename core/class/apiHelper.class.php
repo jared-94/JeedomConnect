@@ -276,7 +276,7 @@ public static function getFullJeedomData() {
       'eqLogics' => array(),
       'objects' => array(),
       'scenarios' => array(),
-      'summariesConfig' => config::byKey('object:summary')
+      'summariesConfig' => array()
     )
   );
 
@@ -309,9 +309,7 @@ public static function getFullJeedomData() {
     $jeeObject = array(
       'id' => $array['id'],
       'name' => $array['name'],
-      'display' => array(
-        'icon' => $array['display']['icon']
-      )
+      'display' => self::getIconAndColor($array['display']['icon']) 
     );
     array_push($result['payload']['objects'], $jeeObject);
   }
@@ -325,7 +323,58 @@ public static function getFullJeedomData() {
     );
     array_push($result['payload']['scenarios'], $scenario);
   }
+
+  foreach (config::byKey('object:summary') as $item ){
+    $item['display'] = self::getIconAndColor($item['icon']) ;
+    $item['icon'] = preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']) ;
+    array_push($result['payload']['summariesConfig'], $item);
+  }
+
   return $result;
+}
+
+public static function getIconAndColor($iconClass){
+    $newIconClass= preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass) ;
+    $matches = array();
+    preg_match('/(.*)class=\"(.*)\"(.*)/', $iconClass, $matches);
+
+    if (count($matches) > 3){
+      list($iconType, $iconImg) = explode(" ", $matches[2], 2);
+      $iconType = ($iconType=='icon') ? 'jeedom' : 'fa';
+      $iconImg = ($iconType=='fa') ? str_replace('fa-','',$iconImg) : $iconImg;
+
+      preg_match('/(.*) icon_(.*)/', $iconImg, $matches);
+      $color = '';
+      if (count($matches) >2){
+        switch ($matches[2]) {
+          case 'blue':
+            $color = '#0000FF';
+            break;
+          case 'yellow':
+            $color = '#FFFF00';
+            break;
+          case 'orange':
+            $color = '#FFA500';
+            break;
+          case 'red':
+            $color = '#FF0000';
+            break;
+          case 'green':
+            $color = '#008000';
+            break;
+          default:
+            $color = '';
+            break;
+        }
+        $iconImg = trim(str_replace('icon_'.$matches[2],'',$iconImg));
+
+      }
+      
+      return array('icon' => $newIconClass, 'source' => $iconType, 'name' => $iconImg, 'color' => $color );
+    }
+    
+    return array('icon' => $newIconClass , 'source' => '', 'name' => '', 'color' => '' );
+      
 }
 
 //WIDGET DATA

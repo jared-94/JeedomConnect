@@ -328,6 +328,7 @@ class ConnectLogic implements MessageComponentInterface
 				break;
 			case 'GET_JEEDOM_DATA':
 				$result = \apiHelper::getFullJeedomData();
+				\log::add('JeedomConnect', 'debug', "Send : ".json_encode($result));
 				$from->send(json_encode($result));
 				break;
 			case 'GET_WIDGET_DATA':

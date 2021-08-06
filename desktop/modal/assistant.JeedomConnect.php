@@ -99,7 +99,35 @@ foreach ($summaryConfig as $index => $summary) {
       list($iconType, $iconImg) = explode(" ", $matches[2], 2);
       $iconType = ($iconType=='icon') ? 'jeedom' : 'fa';
       $iconImg = ($iconType=='fa') ? str_replace('fa-','',$iconImg) : $iconImg;
-      $icon = 'data-icon-source="'.$iconType.'" data-icon-name="'.$iconImg.'"';
+
+      preg_match('/(.*) icon_(.*)/', $iconImg, $matchesbis);
+      $color = '';
+      if (count($matchesbis) >2){
+        switch ($matchesbis[2]) {
+          case 'blue':
+            $color = 'data-icon-color="#0000FF"';
+            break;
+          case 'yellow':
+            $color = 'data-icon-color="#FFFF00"';
+            break;
+          case 'orange':
+            $color = 'data-icon-color="#FFA500"';
+            break;
+          case 'red':
+            $color = 'data-icon-color="#FF0000"';
+            break;
+          case 'green':
+            $color = 'data-icon-color="#008000"';
+            break;
+          default:
+            $color = '';
+            break;
+        }
+        $iconImg = trim(str_replace('icon_'.$matchesbis[2],'',$iconImg));
+
+      }
+
+      $icon = 'data-icon-source="'.$iconType.'" data-icon-name="'.$iconImg.'" '. $color ;
     }
   }
 

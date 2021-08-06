@@ -369,9 +369,8 @@ class JeedomConnectWidget extends config {
 		try {
 			self::replaceJC($widgetJC, $searchAndReplace);
 
-			$widgetSettings['widgetJC'] = json_encode($widgetJC);
-			log::add(self::$_plugin_id, 'debug', 'replaceTextConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value);
-			self::saveConfig($widgetSettings, $widgetId);
+			$widgetSettings['widgetJC'] = json_encode( $widgetJC );
+			self::saveConfig($widgetSettings, $widgetId) ;
 			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 			return;
 		} catch (Exception $e) {

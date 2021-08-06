@@ -778,7 +778,7 @@ function selectSummary(key) {
 	
 	icon = {};  
 	$.each(data[0], function(key, val) {
-		if ( key != 'iconSource' && key != 'iconName') {
+		if ( key != 'iconSource' && key != 'iconName' && key != 'iconColor') {
 			result[key] = val ;
 		}
 		else{
