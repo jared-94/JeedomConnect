@@ -238,6 +238,7 @@ switch ($method) {
     break;
   case 'GET_JEEDOM_DATA':
     $result = apiHelper::getFullJeedomData();
+    log::add('JeedomConnect', 'info', 'Send '.json_encode($result));
 		$jsonrpc->makeSuccess($result);
     break;
   case 'GET_WIDGET_DATA':
