@@ -156,7 +156,7 @@ $('#table_JcWidgetSummary').off('click', '.bt_openWidget').on('click', '.bt_open
 
 })
 
-function displayWidgetSummaryData(myId = ''){
+function displayWidgetSummaryData(myId = 'all'){
 
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -175,7 +175,7 @@ function displayWidgetSummaryData(myId = ''){
                 });
             }
             else{
-                if ( myId == ''){
+                if ( myId == 'all'){
                     $('#table_JcWidgetSummary tbody').html(data.result);
                     $("#table_JcWidgetSummary").trigger("update");
 

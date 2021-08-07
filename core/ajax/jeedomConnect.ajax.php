@@ -155,9 +155,9 @@ try {
 	}
 
 	if (init('action') == 'getWidgetMass') {
-		$ids = init('id') ?? '' ;
-		$allWidgets = JeedomConnectWidget::getWidgets($ids);
-
+		$ids = init('id') ?? 'all' ;
+		$allWidgets = JeedomConnectWidget::getWidgets($ids, true);
+		
 		$jsonConfig = json_decode( file_get_contents(__DIR__ . '/../../resources/widgetsConfig.json')  , true);
 		$widgetArrayConfig = array();
 		foreach ($jsonConfig['widgets'] as $config) {
@@ -167,7 +167,7 @@ try {
 		$html = '';
 		foreach ($allWidgets as $widget) {
 			$widgetJC = json_decode($widget['widgetJC'], true);
-			$html .= (empty($ids)) ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" >' : '' ;
+			$html .= ($ids == 'all') ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" >' : '' ;
 			$html .= '<td style="width:40px;"><span class="label label-info objectAttr bt_openWidget" data-l1key="widgetId" style="cursor: pointer !important;">' . $widget['id'] . '</span></td>';
 			
 			// **********    TYPE    ****************
@@ -324,7 +324,7 @@ try {
 
 			$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="removeWidget"/></td>';
 			
-			$html .= (empty($ids)) ? '</tr>' : '' ;
+			$html .= ($ids == 'all') ? '</tr>' : '' ;
 		}
 	
 		ajax::success($html);
