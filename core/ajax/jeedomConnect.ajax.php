@@ -164,6 +164,20 @@ try {
 			$widgetArrayConfig[ $config['type'] ]=  $config ;
 		}
 		
+		
+		$widgetsByEquipment = array();
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$item = array() ;
+
+			$widgetForEq = $eqLogic->getWidgetId() ;
+			$item['eqId'] = $eqLogic->getId();
+			$item['eqName'] = $eqLogic->getName();
+			$item['widgets'] = $widgetForEq ;
+
+			array_push($widgetsByEquipment, $item);	        
+		}
+		log::add('JeedomConnect', 'debug', 'ajax -- widgetsByEquipment => ' . json_encode($widgetsByEquipment) );
+
 		$html = '';
 		foreach ($allWidgets as $widget) {
 			$widgetJC = json_decode($widget['widgetJC'], true);
@@ -309,13 +323,12 @@ try {
 			$nb = 0;
 			$names = '';
 			$label = ' labelObjectHuman';
-			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-				$isIncluded = $eqLogic->isWidgetIncluded($widget['id']);
-
-				if ( $isIncluded ){
-				$nb ++;
-				$names .= ($names == '') ? $eqLogic->getName() : ', ' . $eqLogic->getName();
-				$label = ' label-success';
+			foreach ($widgetsByEquipment as $item) {
+				
+				if (in_array($widget['id'], $item['widgets'])) {
+					$nb ++;
+					$names .= ($names == '') ? $item['eqName'] : ', ' . $item['eqName'];
+					$label = ' label-success';
 				}        
 			}
 			$html .= '<td style="width:60px;" class=""><span class="label '.$label.' nbEquipIncluded" data-title="'.$names.'" title="'.$names.'">' . $nb . '</span></td>';      
