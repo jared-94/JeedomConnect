@@ -3,19 +3,19 @@ if (!isConnect('admin')) {
 	throw new Exception('{{401 - Accès non autorisé}}');
 }
 
-$customPath = config::byKey('userImgPath', 'JeedomConnect') ;
-sendVarToJS('userImgPath', $customPath );
+$customPath = config::byKey('userImgPath', 'JeedomConnect');
+sendVarToJS('userImgPath', $customPath);
 
 // Déclaration des variables obligatoires
 $plugin = plugin::byId('JeedomConnect');
 sendVarToJS('eqType', $plugin->getId());
 
-$isExpert = config::byKey('isExpert', 'JeedomConnect') ? true : false ;
-sendVarToJS('isJcExpert', $isExpert );
+$isExpert = config::byKey('isExpert', 'JeedomConnect') ? true : false;
+sendVarToJS('isJcExpert', $isExpert);
 
 $eqLogics = eqLogic::byType($plugin->getId());
 
-$widgetArray= JeedomConnectWidget::getWidgets();
+$widgetArray = JeedomConnectWidget::getWidgets();
 
 $jcFilter = $_GET['jcFilter'] ?? '';
 $orderBy = $_GET['jcOrderBy'] ?? config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
@@ -47,54 +47,53 @@ $widgetTypeArray = array();
 $listWidget = '';
 foreach ($widgetArray as $widget) {
 
-	$img = $widget['img'] ;
+	$img = $widget['img'];
 
 	$opacity = $widget['enable'] ? '' : 'disableCard';
-	$widgetName = $widget['name'] ;
-	$widgetRoom = $widget['roomName'] ; ;
+	$widgetName = $widget['name'];
+	$widgetRoom = $widget['roomName'];;
 	$id = $widget['id'];
 	$widgetType = $widget['type'];
 
-	$styleHide = ($jcFilter == '') ? '' : ( $jcFilter == $widgetType ? '' : 'style="display:none;"' ) ;
+	$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
 	//used later by the filter select item
-	if(!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType]=$allConfig[$widgetType];
+	if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
 
-	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">'.$widgetRoom.'</span><br><strong> '.$widgetName.'</strong>' ;
+	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . '</strong>';
 
-	$listWidget .= '<div class="widgetDisplayCard cursor '.$opacity.'" '.$styleHide.' title="id='.$id.'" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+	$listWidget .= '<div class="widgetDisplayCard cursor ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 	$listWidget .= '<img src="' . $img . '"/>';
 	$listWidget .= '<br>';
 	$listWidget .= '<span class="name">' . $name . '</span>';
 	$listWidget .= '</div>';
-
 }
 
 
 // $optionsOrderBy = $_GET['jcOrderBy'] ?? '';
 $optionsOrderBy = '';
-$orderByArray = array (
-		"object" => "Pièce",
-		"name" => "Nom",
-		"type" => "Type"
-	);
+$orderByArray = array(
+	"object" => "Pièce",
+	"name" => "Nom",
+	"type" => "Type"
+);
 
 foreach ($orderByArray as $key => $value) {
 	$selected = ($key ==  $orderBy) ? 'selected' : '';
-	$optionsOrderBy .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+	$optionsOrderBy .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
 }
 
 
 asort($widgetTypeArray);
 $typeSelection2 = '';
-$hasSelected = false ;
+$hasSelected = false;
 foreach ($widgetTypeArray as $key => $value) {
-	$selected = ($key ==  $jcFilter) ? 'selected' : '' ;
-	$hasSelected = $hasSelected || ($key ==  $jcFilter) ;
-	$typeSelection2 .= '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+	$selected = ($key ==  $jcFilter) ? 'selected' : '';
+	$hasSelected = $hasSelected || ($key ==  $jcFilter);
+	$typeSelection2 .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
 }
-$sel = $hasSelected ? '' : 'selected' ;
-$typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2 ;
+$sel = $hasSelected ? '' : 'selected';
+$typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
 
 ?>
@@ -102,7 +101,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 <div class="row row-overflow">
 	<!-- Page d'accueil du plugin -->
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
-		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
+		<legend><i class="fas fa-cog"></i> {{Gestion}}</legend>
 		<!-- Boutons de gestion du plugin -->
 		<div class="eqLogicThumbnailContainer">
 			<div class="cursor eqLogicAction " data-action="add" style="color:rgb(27,161,242);">
@@ -110,7 +109,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 				<br>
 				<span>{{Ajouter un Appareil}}</span>
 			</div>
-			<div class="cursor eqLogicAction " data-action="addWidget"  style="color:rgb(27,161,242);">
+			<div class="cursor eqLogicAction " data-action="addWidget" style="color:rgb(27,161,242);">
 				<i class="fas fa-plus-circle"></i>
 				<br>
 				<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
@@ -131,7 +130,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 		<legend style="margin-top:10px"><i class="fas fa-mobile-alt fa-lg"></i> {{Mes appareils}}</legend>
 		<!-- Champ de recherche -->
 		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic"/>
+			<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic" />
 			<div class="input-group-btn">
 				<a id="bt_resetSearch" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>
@@ -141,7 +140,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 			<?php
 			foreach ($eqLogics as $eqLogic) {
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-				echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
+				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
 				echo '<img src="' . $plugin->getPathImgIcon() . '"/>';
 				echo '<br>';
 				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
@@ -154,30 +153,30 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 		<!--   PANEL DES WIDGETS  -->
 		<legend><i class="fas fa-table"></i> {{Mes widgets}}
 
-			<div class="pull-right" >
-			<span style="margin-right:10px">{{Trie}}
-				<select id="widgetOrder" onchange="updateOrderWidget()" style="width:100px">
-					<?php
+			<div class="pull-right">
+				<span style="margin-right:10px">{{Trie}}
+					<select id="widgetOrder" onchange="updateOrderWidget()" style="width:100px">
+						<?php
 						echo $optionsOrderBy;
-					?>
-				</select>
-			</span>
-			<span>{{Filtre}}
-				<select id="widgetTypeSelect" style="width:auto">
-					<?php
+						?>
+					</select>
+				</span>
+				<span>{{Filtre}}
+					<select id="widgetTypeSelect" style="width:auto">
+						<?php
 						echo $typeSelection;
-					?>
-				</select>
-			</span>
-			<span id="eraseFilterChoice" class="btn roundedRight">
-				<!-- <i class="fas fa-times"></i> -->
-				<i class="fas fa-trash-alt"></i>
-			</span>
+						?>
+					</select>
+				</span>
+				<span id="eraseFilterChoice" class="btn roundedRight">
+					<!-- <i class="fas fa-times"></i> -->
+					<i class="fas fa-trash-alt"></i>
+				</span>
 			</div>
 		</legend>
 		<!-- Champ de recherche widget -->
 		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget"  value="<?=$widgetSearch?>" />
+			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
 			<div class="input-group-btn">
 				<a id="bt_resetSearchWidget" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
 			</div>
@@ -185,7 +184,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 		<!-- Liste des widgets du plugin -->
 		<div class="eqLogicThumbnailContainer" id="widgetsList-div">
 			<?php
-			echo $listWidget ;
+			echo $listWidget;
 			?>
 		</div>
 	</div> <!-- /.eqLogicThumbnailDisplay -->
@@ -221,12 +220,12 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
 								<div class="col-sm-7">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;"/>
-									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement}}"/>
+									<input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
+									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement}}" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" >{{Objet parent}}</label>
+								<label class="col-sm-3 control-label">{{Objet parent}}</label>
 								<div class="col-sm-7">
 									<select id="sel_object" class="eqLogicAttr form-control" data-l1key="object_id">
 										<option value="">{{Aucun}}</option>
@@ -255,28 +254,28 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Options}}</label>
 								<div class="col-sm-7">
-									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" checked/>{{Activer}}</label>
-									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" checked />{{Activer}}</label>
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked />{{Visible}}</label>
 								</div>
 							</div>
 
 							<div class="form-group" style="display:none;">
-								<label class="col-sm-3 control-label" >{{Type}}</label>
+								<label class="col-sm-3 control-label">{{Type}}</label>
 								<div class="col-sm-7">
-									<select id="sel_type" class="eqLogicAttr form-control" data-l1key="configuration"  data-l2key="type">
+									<select id="sel_type" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="type">
 										<option value="mobile">mobile</option>
 									</select>
 								</div>
 							</div>
 							<br>
 
-							<legend><i class="fa fa-cogs"></i>  {{Paramètres}}</legend>
+							<legend><i class="fa fa-cogs"></i> {{Paramètres}}</legend>
 
 							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
-									<div class="col-sm-7">
-										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
-									</div>
+								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -300,7 +299,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									</sup>
 								</label>
 								<div class="col-sm-6 pass_show">
-									<input id="actionPwd" type="password" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="pwdAction" placeholder="{{Mot de passe pour confirmer une action sur l'application}}"/>
+									<input id="actionPwd" type="password" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="pwdAction" placeholder="{{Mot de passe pour confirmer une action sur l'application}}" />
 									<span toggle="#password-field" class="eye fa fa-fw fa-eye field_icon toggle-password"></span>
 								</div>
 							</div>
@@ -317,7 +316,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 								<label class="col-sm-3 control-label">{{Configuration de l'équipement}}</label>
 								<div class="col-sm-7 input-group" style="display:inline-flex;">
 									<span class="input-group-btn">
-										<input type="file" accept=".json" id="import-input" style="display:none;" >
+										<input type="file" accept=".json" id="import-input" style="display:none;">
 										<a class="btn btn-warning" id="export-btn"><i class="fa fa-save"></i> {{Exporter}}</a>
 										<a class="btn btn-primary" id="import-btn"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
 										<a class="btn btn-default" id="copy-btn"><i class="fas fa-copy"></i> {{Copier vers}}</a>
@@ -344,41 +343,41 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 							</div>
 
 							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
-									<div class="col-sm-7">
-										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
-									</div>
+								<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
+								</div>
 							</div>
 
 							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Accès Interface web}}</label>
-									<div class="col-sm-7">
-										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="webviewEnabled" type="checkbox" placeholder="{{}}">
-									</div>
+								<label class="col-sm-3 control-label">{{Accès Interface web}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="webviewEnabled" type="checkbox" placeholder="{{}}">
+								</div>
 							</div>
 							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Droits éditer widgets}}</label>
-									<div class="col-sm-7">
-										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="editEnabled" type="checkbox" placeholder="{{}}">
-									</div>
-							</div>
-
-							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Ajouter altitude à la position}}</label>
-									<div class="col-sm-7">
-										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
-									</div>
+								<label class="col-sm-3 control-label">{{Droits éditer widgets}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="editEnabled" type="checkbox" placeholder="{{}}">
+								</div>
 							</div>
 
 							<div class="form-group">
-									<label class="col-sm-3 control-label">{{Masquer la batterie sur page Equipement Jeedom}}</label>
-									<div class="col-sm-7">
-										<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="hideBattery" type="checkbox" >
-									</div>
+								<label class="col-sm-3 control-label">{{Ajouter altitude à la position}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Masquer la batterie sur page Equipement Jeedom}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="hideBattery" type="checkbox">
+								</div>
 							</div>
 
 
-							<legend><i class="fa fa-bug"></i>  {{Partager le fichier de configuration}}</legend>
+							<legend><i class="fa fa-bug"></i> {{Partager le fichier de configuration}}</legend>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
 								<div class="col-sm-7 input-group" style="display:inline-flex;">
@@ -395,9 +394,9 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 						<!-- Affiche l'icône du plugin par défaut mais vous pouvez y afficher les informations de votre choix -->
 						<div class="col-lg-5">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
-							<div class="form-group" >
-								<div class="alert alert-info" style="width:300px; margin: 10px auto;text-align:center;" >
-									Utilisez l'assistant de configuration pour gérer l'interface de l'application.<br/>
+							<div class="form-group">
+								<div class="alert alert-info" style="width:300px; margin: 10px auto;text-align:center;">
+									Utilisez l'assistant de configuration pour gérer l'interface de l'application.<br />
 									Dans la partie Login de l'application, scannez directement le QR Code.
 								</div>
 							</div>
@@ -415,9 +414,9 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 									<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
 								</div>
 								<div class="alert alert-danger" style=" margin: 10px auto; margin-top:80px; width:400px;">
-									Veuillez re-générer le QR code si vous avez modifié :<br/>
-									* Les adresses dans la config du plugin<br/>
-									* L'utilisateur de cet équipement<br/>
+									Veuillez re-générer le QR code si vous avez modifié :<br />
+									* Les adresses dans la config du plugin<br />
+									* L'utilisateur de cet équipement<br />
 									* La connexion websocket de cet équipement
 								</div>
 							</div>
@@ -430,7 +429,7 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 			<!-- Onglet des commandes de l'équipement -->
 			<div role="tabpanel" class="tab-pane" id="commandtab">
 				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
-				<br/><br/>
+				<br /><br />
 				<div class="table-responsive">
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
@@ -455,8 +454,8 @@ $typeSelection = '<option value="none" '.$sel.'>Tous</option>' . $typeSelection2
 </div><!-- /.row row-overflow -->
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
-<?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');?>
-<?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');?>
-<?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect');?>
+<?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
-<?php include_file('core', 'plugin.template', 'js');?>
+<?php include_file('core', 'plugin.template', 'js'); ?>

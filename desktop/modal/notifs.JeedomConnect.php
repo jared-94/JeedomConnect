@@ -15,13 +15,13 @@
 * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
 */
 if (!isConnect('admin')) {
-    throw new Exception('{{401 - Accès non autorisé}}');
+  throw new Exception('{{401 - Accès non autorisé}}');
 }
 
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
-$customPath = config::byKey('userImgPath', 'JeedomConnect') ;
-sendVarToJS('userImgPath', $customPath );
+$customPath = config::byKey('userImgPath', 'JeedomConnect');
+sendVarToJS('userImgPath', $customPath);
 
 
 include_file('desktop', 'notifs.JeedomConnect', 'js', 'JeedomConnect');
@@ -58,10 +58,10 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
         </div>
         <div class="rightContent">
           <div class="alert alert-info">
-        Vous pouvez ici configurer les canaux de notification (Android 8+). Sur Android (8+), une application peut avoir plusieurs canaux de notifications.
-        Chaque canal peut être personnalisé par l'utilisateur (Sonnerie, vibreur, importance...)
-        </div>
-        <img src="" />
+            Vous pouvez ici configurer les canaux de notification (Android 8+). Sur Android (8+), une application peut avoir plusieurs canaux de notifications.
+            Chaque canal peut être personnalisé par l'utilisateur (Sonnerie, vibreur, importance...)
+          </div>
+          <img src="" />
         </div>
       </div>
 
@@ -73,9 +73,9 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
         </div>
         <div class="rightContent">
           <div class="alert alert-info">
-        Vous pouvez ajouter des commandes de notification personalisées.
-        </div>
-        <img src="" />
+            Vous pouvez ajouter des commandes de notification personalisées.
+          </div>
+          <img src="" />
         </div>
       </div>
     </div>
