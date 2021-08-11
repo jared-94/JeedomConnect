@@ -1,12 +1,14 @@
-$("#notifsUL").sortable({axis: "y", cursor: "move", items: ".notifItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true, 
-	update: function( event, ui){ 
-			$('#notifsUL > .notifItem').each((i, el) => { 
-					var notifId = $(el).data('id') ;
-					var notifToMove = notifData.notifs.find(i => i.id == notifId);
-					notifToMove.index = i;
-				}
-			);
-	} });
+$("#notifsUL").sortable({
+	axis: "y", cursor: "move", items: ".notifItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true,
+	update: function (event, ui) {
+		$('#notifsUL > .notifItem').each((i, el) => {
+			var notifId = $(el).data('id');
+			var notifToMove = notifData.notifs.find(i => i.id == notifId);
+			notifToMove.index = i;
+		}
+		);
+	}
+});
 
 
 function openTab(evt, tabName) {
@@ -31,18 +33,18 @@ function openTab(evt, tabName) {
 function getIconModal(_options, _callback) {
 	$("#iconModal").dialog('destroy').remove();
 	if ($("#iconModal").length == 0) {
-    $('body').append('<div id="iconModal"></div>');
-    $("#iconModal").dialog({
-	  	title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
+		$('body').append('<div id="iconModal"></div>');
+		$("#iconModal").dialog({
+			title: _options.title,
+			closeText: '',
+			autoOpen: false,
+			modal: true,
 			height: (jQuery(window).height() - 150),
-      width: 1500
-    });
+			width: 1500
+		});
 		jQuery.ajaxSetup({
-      async: false
-    });
+			async: false
+		});
 		let params = `&withIcon=${_options.withIcon}&withImg=${_options.withImg}`;
 		if (_options.icon.source) {
 			params += `&source=${_options.icon.source}`;
@@ -57,198 +59,206 @@ function getIconModal(_options, _callback) {
 			params += `&shadow=${_options.icon.shadow}`;
 		}
 
-    $('#iconModal').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
-    jQuery.ajaxSetup({
-      async: true
-    });
+		$('#iconModal').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
+		jQuery.ajaxSetup({
+			async: true
+		});
 	}
 
-	$("#iconModal").dialog({title: _options.title, buttons: {
-    "Annuler": function() {
-      $(this).dialog("close");
-    },
-    Save: {
-			text: "Valider",
-			id: "saveSimple",
-			click: function() {
-				var icon = $('.iconSelected .iconSel').html();
-				if (icon === undefined) {
-					$('#div_iconSelectorAlert').showAlert({message: 'Aucune icône sélectionnée', level: 'danger'});
-					return;
-				}
+	$("#iconModal").dialog({
+		title: _options.title, buttons: {
+			"Annuler": function () {
+				$(this).dialog("close");
+			},
+			Save: {
+				text: "Valider",
+				id: "saveSimple",
+				click: function () {
+					var icon = $('.iconSelected .iconSel').html();
+					if (icon === undefined) {
+						$('#div_iconSelectorAlert').showAlert({ message: 'Aucune icône sélectionnée', level: 'danger' });
+						return;
+					}
 
-				let result = {};
-				result.source = $('.iconSelected .iconSel').children().first().attr("source");
-				result.name = $('.iconSelected .iconSel').children().first().attr("name");
-				if (result.source == 'fa') {
-					result.prefix = $('.iconSelected .iconSel').children().first().attr("prefix");
-				}
-				if ((result.source == 'jeedom' | result.source == 'md' | result.source == 'fa') & $("#mod-color-input").val() != '') {
-					result.color = $("#mod-color-input").val();
-				}
-				if (result.source == 'jc' | result.source == 'user') {
-					result.shadow = $("#bw-input").is(':checked');
-				}
+					let result = {};
+					result.source = $('.iconSelected .iconSel').children().first().attr("source");
+					result.name = $('.iconSelected .iconSel').children().first().attr("name");
+					if (result.source == 'fa') {
+						result.prefix = $('.iconSelected .iconSel').children().first().attr("prefix");
+					}
+					if ((result.source == 'jeedom' | result.source == 'md' | result.source == 'fa') & $("#mod-color-input").val() != '') {
+						result.color = $("#mod-color-input").val();
+					}
+					if (result.source == 'jc' | result.source == 'user') {
+						result.shadow = $("#bw-input").is(':checked');
+					}
 
-				if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-		        _callback(result);
-		    }
+					if ($.trim(result) != '' && 'function' == typeof (_callback)) {
+						_callback(result);
+					}
 
-				$(this).dialog('close');
+					$(this).dialog('close');
+				}
 			}
 		}
-	}});
+	});
 
 	$('#iconModal').dialog('open');
 
 }
 
 function getSimpleModal(_options, _callback) {
-  if (!isset(_options)) {
-    return;
-  }
+	if (!isset(_options)) {
+		return;
+	}
 	$("#simpleModal").dialog('destroy').remove();
-  if ($("#simpleModal").length == 0) {
-    $('body').append('<div id="simpleModal"></div>');
-    $("#simpleModal").dialog({
-	  	title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
-      width: 350
-    });
-    jQuery.ajaxSetup({
-      async: false
-    });
-    $('#simpleModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.simpleModal.JeedomConnect');
-    jQuery.ajaxSetup({
-      async: true
-    });
-  }
-  setSimpleModalData(_options.fields);
-  $("#simpleModal").dialog({title: _options.title, buttons: {
-		"Annuler": function() {
-		$(this).dialog("close");
-		},
-		Save: {
-			text: "Valider",
-			id: "saveSimple",
-			click: function() {
-				try{
-					var result = {};
-					if (_options.fields.find(i => i.type == "enable")) {
-						result.enable = $("#mod-enable-input").is(':checked');
-					}
-					if (_options.fields.find(i => i.type == "name")) {
-						if ( $("#mod-name-input").val() == '' ){
-							throw 'La nom est obligatoire';
+	if ($("#simpleModal").length == 0) {
+		$('body').append('<div id="simpleModal"></div>');
+		$("#simpleModal").dialog({
+			title: _options.title,
+			closeText: '',
+			autoOpen: false,
+			modal: true,
+			width: 350
+		});
+		jQuery.ajaxSetup({
+			async: false
+		});
+		$('#simpleModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.simpleModal.JeedomConnect');
+		jQuery.ajaxSetup({
+			async: true
+		});
+	}
+	setSimpleModalData(_options.fields);
+	$("#simpleModal").dialog({
+		title: _options.title, buttons: {
+			"Annuler": function () {
+				$(this).dialog("close");
+			},
+			Save: {
+				text: "Valider",
+				id: "saveSimple",
+				click: function () {
+					try {
+						var result = {};
+						if (_options.fields.find(i => i.type == "enable")) {
+							result.enable = $("#mod-enable-input").is(':checked');
 						}
-						result.name = $("#mod-name-input").val();
-					}
-					if (_options.fields.find(i => i.type == "icon")) {
-						result.icon = $("#mod-icon-input").val();
-					}
-					if (_options.fields.find(i => i.type == "move")) {
-						result.moveToId = $("#mod-move-input").val();
-					}
-					if (_options.fields.find(i => i.type == "expanded")) {
-						result.expanded = $("#mod-expanded-input").is(':checked');
-					}
-					if (_options.fields.find(i => i.type == "widget")) {
-						result.widgetId = $("#mod-widget-input").val();
-						result.widgetName = $("#mod-widget-input option:selected").text();
-					}
+						if (_options.fields.find(i => i.type == "name")) {
+							if ($("#mod-name-input").val() == '') {
+								throw 'La nom est obligatoire';
+							}
+							result.name = $("#mod-name-input").val();
+						}
+						if (_options.fields.find(i => i.type == "icon")) {
+							result.icon = $("#mod-icon-input").val();
+						}
+						if (_options.fields.find(i => i.type == "move")) {
+							result.moveToId = $("#mod-move-input").val();
+						}
+						if (_options.fields.find(i => i.type == "expanded")) {
+							result.expanded = $("#mod-expanded-input").is(':checked');
+						}
+						if (_options.fields.find(i => i.type == "widget")) {
+							result.widgetId = $("#mod-widget-input").val();
+							result.widgetName = $("#mod-widget-input option:selected").text();
+						}
 
-					if ($.trim(result) != '' && 'function' == typeof(_callback)) {
-						_callback(result);
+						if ($.trim(result) != '' && 'function' == typeof (_callback)) {
+							_callback(result);
+						}
+						$(this).dialog('close');
 					}
-					$(this).dialog('close');
-				}
-				catch(error){
-					$('#div_simpleModalAlert').showAlert({message: error, level: 'danger'});
-					console.error(error);
+					catch (error) {
+						$('#div_simpleModalAlert').showAlert({ message: error, level: 'danger' });
+						console.error(error);
+					}
 				}
 			}
 		}
-  	}});
-  $('#simpleModal').dialog('open');
-  $('#simpleModal').keydown(function(e) { if (e.which == 13) {
-	$('#saveSimple').click();
-	return false;
-}})
+	});
+	$('#simpleModal').dialog('open');
+	$('#simpleModal').keydown(function (e) {
+		if (e.which == 13) {
+			$('#saveSimple').click();
+			return false;
+		}
+	})
 };
 
 
 function getNotifModal(_options, _callback) {
-  if (!isset(_options)) {
-    return;
-  }
-  if ($("#notifModal").length == 0) {
-    $('body').append('<div id="notifModal"></div>');
+	if (!isset(_options)) {
+		return;
+	}
+	if ($("#notifModal").length == 0) {
+		$('body').append('<div id="notifModal"></div>');
 
-    $("#notifModal").dialog({
-	  title: _options.title,
-      closeText: '',
-      autoOpen: false,
-      modal: true,
-      width: 850,
-	  	height: 450
-    });
-    jQuery.ajaxSetup({
-      async: false
-    });
-    $('#notifModal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.notifModal.JeedomConnect');
-    jQuery.ajaxSetup({
-      async: true
-    });
-  }
-  setNotifModalData(_options);
-  $("#notifModal").dialog({title: _options.title, buttons: {
-    "Annuler": function() {
-	  $('#notif-alert').hideAlert();
-      $(this).dialog("close");
-    },
-    "Valider": function() {
-		try{
-      		var result = _options.notif || {};
-			if ($("#mod-notifName-input").val() == '') {
-				throw 'La commande Nom est obligatoire';
-			}
-	  		result.name = $("#mod-notifName-input").val();
-			result.channel = $("#mod-channel-input").val();
-			result.update = $("#update-input").is(':checked')
-			if ($("#mod-color-input").val() != '') {
-				result.color = $("#mod-color-input").val();
-			} 
-			else {
-				result.color = undefined;
-			}
-			result.image = htmlToIcon($("#icon-div").children().first());
-			if (result.image == {}) { delete result.image; }
+		$("#notifModal").dialog({
+			title: _options.title,
+			closeText: '',
+			autoOpen: false,
+			modal: true,
+			width: 850,
+			height: 450
+		});
+		jQuery.ajaxSetup({
+			async: false
+		});
+		$('#notifModal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.notifModal.JeedomConnect');
+		jQuery.ajaxSetup({
+			async: true
+		});
+	}
+	setNotifModalData(_options);
+	$("#notifModal").dialog({
+		title: _options.title, buttons: {
+			"Annuler": function () {
+				$('#notif-alert').hideAlert();
+				$(this).dialog("close");
+			},
+			"Valider": function () {
+				try {
+					var result = _options.notif || {};
+					if ($("#mod-notifName-input").val() == '') {
+						throw 'La commande Nom est obligatoire';
+					}
+					result.name = $("#mod-notifName-input").val();
+					result.channel = $("#mod-channel-input").val();
+					result.update = $("#update-input").is(':checked')
+					if ($("#mod-color-input").val() != '') {
+						result.color = $("#mod-color-input").val();
+					}
+					else {
+						result.color = undefined;
+					}
+					result.image = htmlToIcon($("#icon-div").children().first());
+					if (result.image == {}) { delete result.image; }
 
-			if (actionList.length > 0) {
-				actionList.forEach(item => {
-					item.name = $("#"+item.id+"-name-input").val();
-				});
-				result.actions = actionList;
-			} 
-			else {
-				result.actions = undefined;
-			}
+					if (actionList.length > 0) {
+						actionList.forEach(item => {
+							item.name = $("#" + item.id + "-name-input").val();
+						});
+						result.actions = actionList;
+					}
+					else {
+						result.actions = undefined;
+					}
 
-			if ('function' == typeof(_callback)) {
-				_callback(result);
-			}
+					if ('function' == typeof (_callback)) {
+						_callback(result);
+					}
 
-			$('#notif-alert').hideAlert();
-      		$(this).dialog('close');
+					$('#notif-alert').hideAlert();
+					$(this).dialog('close');
+				}
+				catch (error) {
+					$('#notif-alert').showAlert({ message: error, level: 'danger' });
+					console.error(error);
+				}
+
+			}
 		}
-		catch(error){
-			$('#notif-alert').showAlert({message: error, level: 'danger'});
-			console.error(error);
-		}
-
-    }
-  }});
-  $('#notifModal').dialog('open');
+	});
+	$('#notifModal').dialog('open');
 };
