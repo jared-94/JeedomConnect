@@ -184,7 +184,7 @@ class apiHelper {
   }
 
   // GEOFENCE FUNCTIONS
-  function getGeofencesData($eqLogic) {
+  public static function getGeofencesData($eqLogic) {
     $result = array(
       'type' => 'SET_GEOFENCES',
       'payload' => array(
@@ -778,6 +778,7 @@ class apiHelper {
     $toRemove = array_search($id, array_column($curConfig['payload']['tabs'], 'id'));
     if ($toRemove !== false) {
       $index = $curConfig['payload']['tabs'][$toRemove]['index'];
+      $parentId = $curConfig['payload']['tabs'][$toRemove]['parentId'];
       unset($curConfig['payload']['tabs'][$toRemove]);
 
       // remove children

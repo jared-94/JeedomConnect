@@ -250,7 +250,7 @@ array_multisort($iconName, SORT_ASC, $myFiles);
     <input class="form-control" placeholder="{{Rechercher}}" id="in_searchIconSelector">
   </div>
   <div class="col-sm-1">
-    <a id="bt_resetSearchIcon" class="btn roundedRight" style="/*width:30px; margin-top:32px;*/"><i class="fas fa-times"></i> </a>
+    <a id="bt_resetSearchIcon" class="btn roundedRight"><i class="fas fa-times"></i> </a>
   </div>
 
 </div>

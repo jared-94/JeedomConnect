@@ -223,7 +223,7 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		$customData = json_decode(config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect'), true);
+		$customData = config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
 
 		// moreWidgets in customData
 		if (!empty($customData)) {
@@ -301,7 +301,7 @@ class JeedomConnect extends eqLogic {
 		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect');
 
 		//add summary details
-		$objSummary = json_decode(config::byKey('object:summary'), true);
+		$objSummary = config::byKey('object:summary');
 		$allSummaries = $jsonConfig['payload']['summaries'] ?? [];
 		foreach ($allSummaries as $index => $summary) {
 			if (array_key_exists($summary['key'], $objSummary)) {
