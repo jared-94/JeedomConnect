@@ -565,8 +565,7 @@ try {
 		if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
 			ajax::success();
 		} else {
-			ajax:
-			error();
+			ajax::error();
 		}
 	}
 
@@ -626,6 +625,6 @@ try {
 	if (function_exists('displayException')) {
 		ajax::error(displayException($e), $e->getCode());
 	} else {
-		ajax::error(displayExeption($e), $e->getCode());
+		ajax::error(displayException($e), $e->getCode());
 	}
 }
