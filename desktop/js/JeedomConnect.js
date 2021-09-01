@@ -1508,7 +1508,7 @@ function refreshMoreInfos() {
   moreInfos.forEach(item => {
     var unit = item.unit || '';
     div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
-          <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.human}' disabled>
+          <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled>
           <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
           <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" value='${item.name}'>
           <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
@@ -1518,6 +1518,14 @@ function refreshMoreInfos() {
           </div>`;
   });
   $("#moreInfos-div").html(div);
+  moreInfos.forEach(item => {
+    getHumanName({
+      id: item.id,
+      success: function (data) {
+        $("#" + item.id + "-input").val(data);
+      }
+    });
+  });
   refreshImgListOption();
   refreshInfoSelect();
 }
