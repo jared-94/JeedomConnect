@@ -4091,6 +4091,12 @@
 					"description": "Etat du slider (numérique)"
 				},
 				{
+					"id": "hourFormat",
+					"name": "Heure au format Jeedom",
+					"required": false,
+					"category": "binary"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,

@@ -140,6 +140,30 @@ class JeedomConnect extends eqLogic {
 		return true;
 	}
 
+	public function cleanCustomData() {		
+		$apiKey = $this->getConfiguration('apiKey');
+		$customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+
+		if (!empty($customData)) {
+			if (array_key_exists('widgets', $customData)) {
+				$saveData = false;
+				$config = $this->getConfig();
+				foreach ($customData['widgets'] as $widgetId => $customWidget) {
+					$search = array_search($widgetId, array_column($config['payload']['widgets'], 'widgetId'));
+					if ($search === false) {
+						$saveData = true;
+						unset($customData['widgets'][$widgetId]);
+					}
+				}
+
+				if ($saveData) {
+					log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
+    				config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+				}
+			}
+		}
+	}
+
 	/*     * *********************Méthodes d'instance************************* */
 
 	public function saveConfig($config) {
@@ -863,9 +887,12 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preRemove() {
-		unlink(self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
-		unlink(self::$_config_dir . $this->getConfiguration('apiKey') . ".json");
-		unlink(self::$_notif_dir . $this->getConfiguration('apiKey') . ".json");
+		$apiKey = $this->getConfiguration('apiKey');
+		unlink(self::$_qr_dir . $apiKey . '.png');
+		unlink(self::$_config_dir . $apiKey . ".json");
+		unlink(self::$_notif_dir . $apiKey . ".json");
+		rmdir(__DIR__ . '/../../data/backup/' . $apiKey);
+		config::remove('customData::' . $apiKey, 'JeedomConnect');
 	}
 
 	public function postRemove() {
@@ -992,6 +1019,7 @@ class JeedomConnect extends eqLogic {
 				$conf['payload']['widgets'] = array_values($conf['payload']['widgets']);
 				log::add('JeedomConnect', 'info', 'Widget ID ' . json_encode($idToRemoveList) . ' has been removed on equipement ' . $this->getName());
 				$this->saveConfig($conf);
+				$this->cleanCustomData();
 				$this->generateNewConfigVersion();
 				return;
 			} else {
@@ -1006,6 +1034,7 @@ class JeedomConnect extends eqLogic {
 	public function resetConfigFile() {
 		log::add('JeedomConnect', 'debug', 'reseting configuration for equipment "' . $this->getName() . '" [' . $this->getConfiguration('apiKey') . ']');
 		$this->saveConfig(self::$_initialConfig);
+		$this->cleanCustomData();
 	}
 
 	public static function getPluginInfo() {

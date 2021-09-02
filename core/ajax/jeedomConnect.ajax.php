@@ -509,7 +509,7 @@ try {
 			$eqLogic->save();
 
 			$eqLogic->getConfig(true, true);
-
+			$eqLogic->cleanCustomData();
 			ajax::success();
 		}
 	}

@@ -447,6 +447,7 @@ class apiHelper {
       }
 
       $eqLogic->saveConfig($curConfig);
+      $eqLogic->cleanCustomData();
       $eqLogic->generateNewConfigVersion();
     }
   }
@@ -814,6 +815,7 @@ class apiHelper {
       $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
 
       $eqLogic->saveConfig($curConfig);
+      $eqLogic->cleanCustomData();
       $eqLogic->generateNewConfigVersion();
     }
   }
@@ -875,6 +877,7 @@ class apiHelper {
     $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
 
     $eqLogic->saveConfig($curConfig);
+    $eqLogic->cleanCustomData();
     $eqLogic->generateNewConfigVersion();
   }
 
@@ -911,6 +914,7 @@ class apiHelper {
       $curConfig['payload']['widgets'] = array_values($curConfig['payload']['widgets']);
 
       $eqLogic->saveConfig($curConfig);
+      $eqLogic->cleanCustomData();
       $eqLogic->generateNewConfigVersion();
     }
   }
@@ -991,6 +995,7 @@ class apiHelper {
     }
 
     $eqLogic->saveConfig($curConfig);
+    $eqLogic->cleanCustomData();
     $eqLogic->generateNewConfigVersion();
   }
 
