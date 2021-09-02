@@ -681,11 +681,13 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function setCoordinates($lat, $lgt, $alt, $timestamp) {
+	public function setCoordinates($lat, $lgt, $alt, $activity, $batteryLevel, $timestamp) {
 		$positionCmd = $this->getCmd(null, 'position');
 		$info = $lat . "," . $lgt;
 		if ($this->getConfiguration('addAltitude', false)) {
 			$info .= "," . $alt;
+			$info .= "," . $activity;
+			$info .= "," . $batteryLevel;
 		}
 		$positionCmd->event($info, date('Y-m-d H:i:s', $timestamp));
 		$this->setGeofencesByCoordinates($lat, $lgt, $timestamp);

@@ -412,7 +412,7 @@ switch ($method) {
     break;
   case 'GEOLOC':
     $ts = array_key_exists('timestampMeta', $params) ? floor($params['timestampMeta']['systemTime'] / 1000) : strtotime($params['timestamp']);
-    $eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $ts);
+    $eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $params['activity']['type'], $params['battery']['level'] * 100, $ts);
 
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
