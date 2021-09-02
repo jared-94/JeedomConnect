@@ -1103,7 +1103,7 @@
 					"blackList": [
 						"widgets-summary",
 						"favorites",
-						"room-summary"
+						"room"
 					],
 					"description": "Liste des widgets à afficher"
 				},
@@ -1155,7 +1155,7 @@
 					"blackList": [
 						"widgets-summary",
 						"favorites",
-						"room-summary"
+						"room"
 					],
 					"description": "Liste des widgets à afficher"
 				},
