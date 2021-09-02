@@ -408,8 +408,7 @@ class apiHelper {
     }
 
     $curIndex = $index + 1;
-    foreach ($widgets as $widget) {
-      $curConfig['idCounter'] = $curConfig['idCounter'] + 1;
+    foreach ($widgets as $widget) {      
       $newWidget = array(
         'index' => $curIndex,
         'widgetId' => $curConfig['idCounter'],
@@ -420,6 +419,7 @@ class apiHelper {
       }
       array_push($curConfig['payload']['widgets'], $newWidget);
       $curIndex++;
+      $curConfig['idCounter'] = $curConfig['idCounter'] + 1;
     }
 
     $eqLogic->saveConfig($curConfig);
