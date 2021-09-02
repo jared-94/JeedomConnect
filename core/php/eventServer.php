@@ -80,8 +80,15 @@ while (true) {
   if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
     log::add('JeedomConnect', 'debug', "eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
     $config = $newConfig;
+    sse(
+      json_encode(array('infos' => array(
+        'cmdInfo' => apiHelper::getCmdInfoData($config),
+        'scInfo' => apiHelper::getScenarioData($config),
+        'objInfo' => apiHelper::getObjectData($config)
+      )))
+    );
     sse(json_encode(array($newConfig)));
-    sleep(1);
+    //sleep(1);
   }
 
   $actions = JeedomConnectActions::getAllAction($apiKey);

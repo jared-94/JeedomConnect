@@ -519,9 +519,9 @@ class ConnectLogic implements MessageComponentInterface {
 				$config = $newConfig;
 				\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} with api key " . $client->apiKey);
 				$client->configVersion = $newConfig['payload']['configVersion'];
-				$client->send(json_encode($newConfig));
 				$this->sendCmdInfo($client);
 				$this->sendScenarioInfo($client);
+				$client->send(json_encode($newConfig));				
 			}
 		}
 	}
