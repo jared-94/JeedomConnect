@@ -4094,7 +4094,8 @@
 					"id": "hourFormat",
 					"name": "Heure au format Jeedom",
 					"required": false,
-					"category": "binary"
+					"category": "binary",
+					"description": "Sélecteur d'heure à l'aide d'un slider prenant des valeurs 0--2359"
 				},
 				{
 					"id": "image",
@@ -4202,8 +4203,22 @@
 						"subtype": "",
 						"hasIcon": true,
 						"hasImage": false,
-						"hasName": false
+						"hasName": true
 					}
+				},
+				{
+					"id": "contentCard",
+					"name": "Contenu dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Actions dans la carte plutôt qu'à droite"
+				},
+				{
+					"id": "lineMode",
+					"name": "Mode en ligne",
+					"required": false,
+					"category": "binary",
+					"description": "Affiche les actions sur une seule ligne défilante"
 				},
 				{
 					"id": "image",
