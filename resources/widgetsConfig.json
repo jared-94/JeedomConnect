@@ -3213,6 +3213,35 @@
 					"description": "Commande pour désactiver l'alarme"
 				},
 				{
+					"id": "modeInfo",
+					"name": "Info mode",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Etat actuel du mode de l'alarme"
+				},
+				{
+					"id": "modes",
+					"name": "Modes",
+					"required": false,
+					"category": "cmdList",
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": false
+					}
+				},
+				{
+					"id": "lineMode",
+					"name": "Mode en ligne",
+					"required": false,
+					"category": "binary",
+					"description": "Affiche les modes sur une seule ligne défilante"
+				},
+				{
 					"id": "immediateInfo",
 					"name": "Statut immédiat",
 					"required": false,
