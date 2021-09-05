@@ -9,3 +9,6 @@ data/img/user_files/
 3rdparty/composer.lock
 
 .htaccess
+.bash*
+
+jeedomStub.php

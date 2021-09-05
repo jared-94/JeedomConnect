@@ -15,59 +15,62 @@
 * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
 */
 if (!isConnect('admin')) {
-    throw new Exception('{{401 - Accès non autorisé}}');
+	throw new Exception('{{401 - Accès non autorisé}}');
 }
 
 ?>
 
 <style>
-  .required:after {
-    content:" *";
-    color: red;
-  }
-  #widgetImg {
-	  display:block;
-	  margin-left:auto;
-	  margin-right:auto;
-	  width: 100px;
-	  margin-bottom:25px;
-	  margin-top:15px;
-  }
-  .description {
-	  color:var(--al-info-color);
-	  font-size:11px;
-  }
-  .borderLef{
-	border-left: 1px solid #ccc;
-  }
+	.required:after {
+		content: " *";
+		color: red;
+	}
 
-  .btn-supp{
-	background-color: var(--al-danger-color) !important;
-  }
+	#widgetImg {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		width: 100px;
+		margin-bottom: 25px;
+		margin-top: 15px;
+	}
+
+	.description {
+		color: var(--al-info-color);
+		font-size: 11px;
+	}
+
+	.borderLef {
+		border-left: 1px solid #ccc;
+	}
+
+	.btn-supp {
+		background-color: var(--al-danger-color) !important;
+	}
 </style>
 
 <link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
 
 <div>
-  	<div style="display:none;" id="widget-alert"></div>
-  	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
+	<div style="display:none;" id="widget-alert"></div>
+	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
 		<span class="input-group-btn">
 			<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-			<a class="btn btn-sm btn-default roundedRight duplicateWidget" onclick="duplicateWidget()"><i class="far fa-copy"></i> {{Dupliquer}}
-			</a><a class="btn btn-sm btn-danger roundedRight removeWidget" onclick="removeWidget()"><i class="fas fa-minus-circle"></i> {{Supprimer}}
-			</a><a class="btn btn-sm btn-warning roundedRight hideWidget" onclick="hideWidget()"><i class="fas fa-times"></i> {{Annuler}}
+			<a class="btn btn-sm btn-default roundedLeft duplicateWidget" onclick="duplicateWidget()"><i class="far fa-copy"></i> {{Dupliquer}}
 			</a><a class="btn btn-sm btn-success saveWidget" onclick="saveWidget()"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
+			</a><a class="btn btn-sm btn-warning hideWidget" onclick="hideWidget()"><i class="fas fa-times"></i> {{Annuler}}
+			</a><a class="btn btn-sm btn-danger roundedRight removeWidget" onclick="removeWidget()"><i class="fas fa-minus-circle"></i> {{Supprimer}}
 			</a>
 		</span>
 	</div>
 	<div class="col-sm-12">
 		<div class="col-sm-2">
 			<h3>Choix du widget</h3>
-			<select name="widgetsList" id="widgetsList-select"  onchange="refreshAddWidgets();">
+			<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgets();">
 			</select>
 			<img id="widgetImg" />
 			<div class="alert alert-info" id="widgetDescription"></div>
-      		<div class="alert alert-info" id="widgetVariables"></div>
+			<div class="alert alert-info" id="widgetVariables"></div>
 		</div>
 
 		<div class="col-sm-10 borderLef">
@@ -78,9 +81,9 @@ if (!isConnect('admin')) {
 				</ul>
 			</form>
 		</div>
-  	</div>
+	</div>
 
 </div>
 
- <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect');?>
- <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');?>
+<?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
