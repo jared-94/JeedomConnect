@@ -3186,7 +3186,7 @@
 				{
 					"id": "statusInfo",
 					"name": "Statut",
-					"required": true,
+					"required": false,
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
@@ -3195,7 +3195,7 @@
 				{
 					"id": "onAction",
 					"name": "Action activer",
-					"required": true,
+					"required": false,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
@@ -3205,7 +3205,7 @@
 				{
 					"id": "offAction",
 					"name": "Action désactiver",
-					"required": true,
+					"required": false,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
