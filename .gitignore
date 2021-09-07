@@ -1,6 +1,7 @@
 data/configs/
 data/qrcodes/
 data/notifs/
+data/backups/
 data/img/user_files/
 
 3rdparty/composer.phar
@@ -8,3 +9,7 @@ data/img/user_files/
 3rdparty/composer.lock
 
 .htaccess
+.bash*
+.vscode/
+
+jeedomStub.php

@@ -23,18 +23,17 @@ function JeedomConnect_install() {
   JeedomConnect::displayMessageInfo();
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
-    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/' , 'JeedomConnect') ;
-    $img_dir = __DIR__ . '/../data/img/user_files/';    
+    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
+    $img_dir = __DIR__ . '/../data/img/user_files/';
   }
 
-  if (!is_dir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect')  )) {
-    mkdir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect'));
+  if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
+    mkdir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'));
   }
 
   if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
-    JeedomConnect::migrateCondImg() ; 
+    JeedomConnect::migrateCondImg();
   }
-
 }
 
 function JeedomConnect_update() {
@@ -43,6 +42,7 @@ function JeedomConnect_update() {
 
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->updateConfig();
+    $eqLogic->generateNewConfigVersion();
   }
 
   // message::add( 'JeedomConnect',  'Installation terminée.<br>Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement. Merci de lire <a href=\"https://jared-94.github.io/JeedomConnectDoc/fr_FR/\" target=\"_blank\">la doc</a>.') ;
@@ -53,16 +53,16 @@ function JeedomConnect_update() {
   JeedomConnect::displayMessageInfo();
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
-    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/' , 'JeedomConnect') ;
+    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
     $img_dir = __DIR__ . '/../data/img/user_files/';
   }
- 
-  if (!is_dir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect')  )) {
-    mkdir(__DIR__ . '/../../../'.config::byKey('userImgPath',   'JeedomConnect'));
+
+  if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
+    mkdir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'));
   }
-  
+
   if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
-    JeedomConnect::migrateCondImg() ; 
+    JeedomConnect::migrateCondImg();
   }
 }
 

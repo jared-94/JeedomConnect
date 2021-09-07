@@ -29,15 +29,15 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
 <a class="btn btn-success btn-sm pull-right" id="bt_saveJcWidgetSummary"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
 <a class="btn btn-default btn-sm pull-right" id="bt_updateWidgetSummary" style="display:none;"><i class="fas fa-sync-alt"></i> {{Rafraichir}}</a>
 <a class="btn btn-danger btn-sm pull-right" id="bt_removeJcWidgetSummary" style="display:none;"><i class="fas fa-trash-alt"></i> {{Supprimer}}</a>
-<span style="color:var(--al-info-color);font-size:11px;">Note : vous pouvez éditer un widget en cliquant sur son id. Les modifications que vous réaliserez sur la nouvelle fenêtre ne seront pas répercutées automatiquement sur cette page.<br/>Pour rafraichir les données, cliquez sur le bouton 'rafraichir' une fois qu'il apparaitra.</span>
+<span style="color:var(--al-info-color);font-size:11px;">Note : vous pouvez éditer un widget en cliquant sur son id. Les modifications que vous réaliserez sur la nouvelle fenêtre ne seront pas répercutées automatiquement sur cette page.<br />Pour rafraichir les données, cliquez sur le bouton 'rafraichir' une fois qu'il apparaitra.</span>
 <table id="table_JcWidgetSummary" class="table table-bordered table-condensed tablesorter stickyHead">
   <thead>
     <tr>
       <th colspan="7" data-sorter="false" data-filter="false">&nbsp;</th>
       <th colspan="4" data-sorter="false" data-filter="false" style="text-align:center;">Masquer</th>
-      <th  data-sorter="false" data-filter="false" style="text-align:center;">Bloquer</th>
-      <th  data-sorter="false" data-filter="false" style="text-align:center;">Nb</th>
-      <th  data-sorter="false" data-filter="false" style="text-align:center;">&nbsp;</th>
+      <th data-sorter="false" data-filter="false" style="text-align:center;">Bloquer</th>
+      <th data-sorter="false" data-filter="false" style="text-align:center;">Nb</th>
+      <th data-sorter="false" data-filter="false" style="text-align:center;">&nbsp;</th>
     </tr>
     <tr>
       <th>{{ID}}</th>
@@ -52,7 +52,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
       <th data-sorter="checkbox" data-filter="false">{{Statut}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Icône}}</th>
       <th data-sorter="checkbox" data-filter="false">{{détails}}</th>
-      <th >{{Eq}}</th>
+      <th>{{Eq}}</th>
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>
   </thead>
