@@ -140,7 +140,7 @@ class JeedomConnect extends eqLogic {
 		return true;
 	}
 
-	public function cleanCustomData() {		
+	public function cleanCustomData() {
 		$apiKey = $this->getConfiguration('apiKey');
 		$customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
 
@@ -158,7 +158,7 @@ class JeedomConnect extends eqLogic {
 
 				if ($saveData) {
 					log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
-    				config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+					config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
 				}
 			}
 		}

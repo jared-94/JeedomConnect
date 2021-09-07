@@ -408,7 +408,7 @@ class apiHelper {
     }
 
     $curIndex = $index + 1;
-    foreach ($widgets as $widget) {      
+    foreach ($widgets as $widget) {
       $newWidget = array(
         'index' => $curIndex,
         'widgetId' => $curConfig['idCounter'],

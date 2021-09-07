@@ -521,7 +521,7 @@ class ConnectLogic implements MessageComponentInterface {
 				$client->configVersion = $newConfig['payload']['configVersion'];
 				$this->sendCmdInfo($client);
 				$this->sendScenarioInfo($client);
-				$client->send(json_encode($newConfig));				
+				$client->send(json_encode($newConfig));
 			}
 		}
 	}

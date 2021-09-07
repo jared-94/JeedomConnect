@@ -10,5 +10,6 @@ data/img/user_files/
 
 .htaccess
 .bash*
+.vscode/
 
 jeedomStub.php

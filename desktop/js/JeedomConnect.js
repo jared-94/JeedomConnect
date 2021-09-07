@@ -1183,6 +1183,11 @@ function refreshCmdListOption(optionsJson) {
 
     curOption += getCmdOptions(item);
 
+    curOption += `<div class="input-group input-group-sm" style="width: 100%">
+                            <span class="input-group-addon roundedLeft" style="width: 100px">Nom</span>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="custom-name-${item.id}" data-index="${item.index}" value='' >
+                        </div>`;
+
     curOption += `</div>`;
     // --- END left part --
 
@@ -1240,6 +1245,8 @@ function refreshCmdListOption(optionsJson) {
 
     var pwd = item.pwd ? "checked" : "";
     $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').prop('checked', pwd);
+
+    $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val(item.name || '');
 
     getCmd({
       id: item.id,
@@ -2077,6 +2084,7 @@ function saveWidget() {
             item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
             item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
             item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+            item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
 
             if (item.subtype != undefined && item.subtype != 'other') {
               var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
