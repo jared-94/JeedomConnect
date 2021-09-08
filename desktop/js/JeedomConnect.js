@@ -656,6 +656,9 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-input").val(options.widget[option.id]);
       } else if (option.category == "binary" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").prop('checked', options.widget[option.id] ? "checked" : "");
+      } else if (option.category == "color" & options.widget[option.id] !== undefined) {
+        $("#" + option.id + "-input").val(options.widget[option.id]);
+        $("#" + option.id + "-picker").val(options.widget[option.id]);
       } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
         getHumanName({
@@ -886,6 +889,11 @@ function refreshAddWidgets() {
       curOption += `</div></div></div></li>`;
     } else if (option.category == "binary") {
       curOption += `<div class='input-group'><input type="checkbox" style="width:150px;" id="${option.id}-input"></div>
+         </div></div></li>`;
+    } else if (option.category == "color") {
+      curOption += `<div class='input-group'><input style="width:200px;" id="${option.id}-input" >
+      <input type="color" id="${option.id}-picker"  onchange="colorDefined(this, '${option.id}')">
+      </div>
          </div></div></li>`;
     } else if (option.category == "stringList") {
       curOption += `<div class='input-group'><select style="width:340px;" id="${option.id}-input" onchange="subtitleSelected();">`;
@@ -1578,6 +1586,11 @@ function refreshInfoSelect() {
   refreshStrings();
 }
 
+function colorDefined(c, id) {
+  console.log('id', id)
+  $("#" + id + "-input").val(c.value);
+}
+
 function infoSelected(value, el) {
   let inputId = $(el).parent().attr("input")
   //$("#"+inputId).val( $("#"+inputId).val() + value);
@@ -2045,6 +2058,9 @@ function saveWidget() {
       }
       else if (option.category == "binary") {
         result[option.id] = $("#" + option.id + "-input").is(':checked');
+      }
+      else if (option.category == "color") {
+        result[option.id] = $("#" + option.id + "-input").val();
       }
       else if (option.category == "stringList") {
         if ($("#" + option.id + "-input").val() == 'none' & option.required) {
