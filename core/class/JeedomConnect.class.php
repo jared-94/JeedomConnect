@@ -1675,7 +1675,7 @@ class JeedomConnectCmd extends cmd {
 			$eqLogic->sendNotif($this->getLogicalId(), $data);
 		}
 		if ($this->getLogicalId() == 'goToPage') {
-			if (!empty($_options['title']) && !empty($_options['message'])) {
+			if (empty($_options['title']) && empty($_options['message'])) {
 				return;
 			}
 			$payload = array(
@@ -1699,7 +1699,7 @@ class JeedomConnectCmd extends cmd {
 			}
 		}
 		if ($this->getLogicalId() == 'launchApp') {
-			if (!empty($_options['title']) && !empty($_options['message'])) {
+			if (empty($_options['title']) && empty($_options['message'])) {
 				return;
 			}
 			$payload = array(
