@@ -528,7 +528,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 	private function sendActions() {
 		foreach ($this->authenticatedClients as $client) {
-			$actions = \JeedomConnectActions::getAllAction($client->apiKey);
+			$actions = \JeedomConnectActions::getAllActions($client->apiKey);
 			//\log::add('JeedomConnect', 'debug', "get action  ".json_encode($actions));
 			if (count($actions) > 0) {
 				$result = array(
@@ -540,7 +540,7 @@ class ConnectLogic implements MessageComponentInterface {
 				}
 				\log::add('JeedomConnect', 'debug', "send action to #{$client->resourceId}  " . json_encode($result));
 				$client->send(json_encode($result));
-				\JeedomConnectActions::removeAllAction($actions);
+				\JeedomConnectActions::removeActions($actions);
 			}
 		}
 	}

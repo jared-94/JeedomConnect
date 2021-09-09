@@ -172,7 +172,7 @@ switch ($method) {
       return;
     }
 
-    $actions = JeedomConnectActions::getAllAction($apiKey);
+    $actions = JeedomConnectActions::getAllActions($apiKey);
     if (count($actions) > 0) {
       $result = array(
         'type' => 'ACTIONS',
@@ -182,7 +182,7 @@ switch ($method) {
         array_push($result['payload'], $action['value']['payload']);
       }
       log::add('JeedomConnect', 'debug', "send action " . json_encode(array($result)));
-      JeedomConnectActions::removeAllAction($actions);
+      JeedomConnectActions::removeActions($actions);
       $jsonrpc->makeSuccess(array($result));
       return;
     }
