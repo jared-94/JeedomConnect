@@ -884,6 +884,18 @@ class JeedomConnect extends eqLogic {
 		}
 		$unlinkCmd->setName(__('Détacher', __FILE__));
 		$unlinkCmd->save();
+
+		$toaster = $this->getCmd(null, 'toaster');
+		if (!is_object($toaster)) {
+			$toaster = new JeedomConnectCmd();
+			$toaster->setLogicalId('toaster');
+			$toaster->setEqLogic_id($this->getId());
+			$toaster->setType('action');
+			$toaster->setSubType('message');
+			$toaster->setIsVisible(1);
+		}
+		$toaster->setName(__('Pop-up', __FILE__));
+		$toaster->save();
 	}
 
 	public function preRemove() {
@@ -1669,6 +1681,18 @@ class JeedomConnectCmd extends cmd {
 			$payload = array(
 				'action' => 'goToPage',
 				'pageId' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+			);
+			if ($eqLogic->isConnected()) {
+				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			}
+		}
+		if ($this->getLogicalId() == 'toaster') {
+			if (empty($_options['message'])) {
+				return;
+			}
+			$payload = array(
+				'action' => 'toaster',
+				'pageId' => $_options['message']
 			);
 			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
