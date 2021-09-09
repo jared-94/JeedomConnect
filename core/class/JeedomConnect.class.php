@@ -1692,7 +1692,7 @@ class JeedomConnectCmd extends cmd {
 			}
 			$payload = array(
 				'action' => 'toaster',
-				'pageId' => $_options['message']
+				'message' => $_options['message']
 			);
 			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
