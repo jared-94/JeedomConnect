@@ -4240,14 +4240,16 @@
 					"name": "Contenu dans la carte",
 					"required": false,
 					"category": "binary",
-					"description": "Actions dans la carte plutôt qu'à droite"
+					"description": "Actions dans la carte plutôt qu'à droite",
+					"customizable": true
 				},
 				{
 					"id": "lineMode",
 					"name": "Mode en ligne",
 					"required": false,
 					"category": "binary",
-					"description": "Affiche les actions sur une seule ligne défilante"
+					"description": "Affiche les actions sur une seule ligne défilante",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -5263,12 +5265,14 @@
 					"name": "Intervalle historique",
 					"required": false,
 					"category": "string",
-					"description": "Nombre de jours d'affichage de l'historique"
+					"description": "Nombre de jours d'affichage de l'historique",
+					"customizable": true
 				},
 				{
 					"id": "interpolation",
 					"name": "Interpolation",
 					"required": false,
+					"customizable": true,
 					"category": "stringList",
 					"description": "Voir <a target='blank' href='https://formidable.com/open-source/victory/gallery/interpolation'>une démo ici</a>",
 					"choices": [
@@ -5306,32 +5310,37 @@
 					"id": "displayZoom",
 					"name": "Afficher sélecteur de zoom",
 					"required": false,
-					"category": "binary"
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "color",
 					"name": "Couleur du graphe",
 					"required": false,
 					"category": "color",
-					"description": "Laisser vide pour utiliser la couleur du thème"
+					"description": "Laisser vide pour utiliser la couleur du thème",
+					"customizable": true
 				},
 				{
 					"id": "hideGrid",
 					"name": "Masquer la grille",
 					"required": false,
-					"category": "binary"
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "hideTickY",
 					"name": "Masquer légende verticale",
 					"required": false,
-					"category": "binary"
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "hideTickX",
 					"name": "Masquer légende horizontale",
 					"required": false,
-					"category": "binary"
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "image",
