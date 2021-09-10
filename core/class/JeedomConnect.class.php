@@ -1687,15 +1687,14 @@ class JeedomConnectCmd extends cmd {
 			}
 		}
 		if ($this->getLogicalId() == 'toaster') {
-			if (empty($_options['message'])) {
-				return;
-			}
 			$payload = array(
 				'action' => 'toaster',
 				'message' => $_options['message']
 			);
 			if ($eqLogic->isConnected()) {
 				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			} else {
+				$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
 			}
 		}
 		if ($this->getLogicalId() == 'launchApp') {
