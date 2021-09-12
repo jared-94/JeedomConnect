@@ -1198,7 +1198,7 @@ class apiHelper {
     $endFile = '-' . $configId . '.json';
     foreach ($files['payload']['files'] as $file) {
       if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
-        $config_file = file_get_contents(__DIR__ . '/../../../..'  . $file['path']);
+        $config_file = file_get_contents($file['path']);
         return array(
           'type' => 'SET_APP_CONFIG',
           'payload' => array('config' => json_decode($config_file))
