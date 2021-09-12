@@ -1245,7 +1245,7 @@ class apiHelper {
   public static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command");
+      log::add('JeedomConnect', 'error', "Can't find command [id=" . $id . "]");
       return;
     }
     try {

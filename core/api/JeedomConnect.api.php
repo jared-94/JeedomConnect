@@ -454,7 +454,7 @@ switch ($method) {
     $answer = $params['answer'];
     $cmd = cmd::byId($params['cmdId']);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command");
+      log::add('JeedomConnect', 'error', "Can't find command [id=" . $params['cmdId'] . "]");
       return;
     }
     if ($cmd->askResponse($answer)) {
