@@ -961,12 +961,12 @@ class JeedomConnect extends eqLogic {
 		return true;
 	}
 
-	public static function getWidgetParam() {
+	public static function getWidgetParam($only_name = true) {
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
-			$result[$config['type']] = $config['name'];
+			$result[$config['type']] = $only_name ? $config['name'] : $config;
 		}
 		return $result;
 	}

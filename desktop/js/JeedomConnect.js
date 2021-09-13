@@ -141,6 +141,38 @@ $('.eqLogicAction[data-action=addWidget]').off('click').on('click', function () 
   getWidgetModal({ title: "Configuration du widget", removeAction: false, exit: true });
 })
 
+$('.eqLogicAction[data-action=showError]').off('click').on('click', function () {
+
+  var hide = ($('#spanWidgetErreur').text() == 'Erreur') ? true : false;
+  if (hide) {
+    $('.widgetDisplayCard').not(".hasError").hide();
+  }
+  else {
+    $('.widgetDisplayCard').show();
+  }
+
+
+  var typeSelected = $('#widgetTypeSelect').val();
+
+  if (typeSelected != 'none') {
+    $('.widgetDisplayCard').not("[data-widget_type=" + typeSelected + "]").hide();
+  }
+
+
+  $('.eqLogicThumbnailContainer').packery();
+
+  if (hide) {
+    $('#spanWidgetErreur').text('Tous');
+    $('.eqLogicAction[data-action=showError]').css('color', 'grey');
+  }
+  else {
+    $('#spanWidgetErreur').text('Erreur');
+    $('.eqLogicAction[data-action=showError]').css('color', 'red');
+  }
+  updateWidgetCount()
+
+})
+
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
   $('#widgetSummaryModal').dialog({
@@ -359,7 +391,8 @@ $('#in_searchWidget').off('keyup').keyup(function () {
       })
     }
     $('.eqLogicThumbnailContainer').packery()
-    return
+    updateWidgetCount();
+    return;
   }
 
 
@@ -379,10 +412,12 @@ $('#in_searchWidget').off('keyup').keyup(function () {
     }
   })
   $('.eqLogicThumbnailContainer').packery()
+  updateWidgetCount();
 })
 
 $('#bt_resetSearchWidget').on('click', function () {
   $('#in_searchWidget').val('').keyup()
+  updateWidgetCount();
 })
 
 
@@ -2636,6 +2671,8 @@ $('#widgetTypeSelect').on('change', function () {
 
   $('.eqLogicThumbnailContainer').packery();
 
+  updateWidgetCount();
+
 });
 
 
@@ -2715,7 +2752,23 @@ $(document).ready(function () {
   }
 
   $('.eqLogicThumbnailContainer').packery();
+
+  updateWidgetCount()
 });
+
+$('#widgetsList-div').on('change', function () {
+  updateWidgetCount()
+})
+
+function updateWidgetCount() {
+
+  var nbVisible = $('.widgetDisplayCard:visible').length;
+  var nbTotal = $('.widgetDisplayCard').length;
+
+  var text = (nbTotal != nbVisible) ? nbVisible + "/" + nbTotal : nbTotal;
+
+  $('#coundWidget').text("(" + text + ")");
+}
 
 
 $('#eraseFilterChoice').off('click').on('click', function () {
