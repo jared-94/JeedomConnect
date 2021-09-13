@@ -827,7 +827,7 @@ function refreshAddWidgets() {
       isDisabled = isJcExpert ? '' : 'disabled';
       curOption += `<table><tr class="cmd">
             <td>
-              <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled}>
+              <input class='input-sm form-control roundedLeft needRefresh' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled} configtype='${option.type}' configsubtype='${option.subtype}' configlink='${option.value}'>
               <td>
                  <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}', '${option.value}');">
                     <i class='fas fa-list-alt'></i></a>
@@ -1049,11 +1049,42 @@ function selectCmd(name, type, subtype, value) {
   })
 }
 
+$("#widgetOptions").on('change', '.needRefresh', function () {
+  var info = $(this).val();
+  var name = $(this).attr('id').replace('-input', '');
+  var configlink = $(this).attr('configlink') || 'undefined';
+  refreshCmdData(name, info, configlink);
+
+});
+
+
+
 function refreshCmdData(name, id, value) {
   getCmd({
     id: id,
-    error: function (error) { },
+    error: function (error) {
+      $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
+    },
     success: function (data) {
+      $('#widget-alert').hideAlert();
+
+      var configtype = $("#" + name + "-input").attr('configtype');
+      var configsubtype = $("#" + name + "-input").attr('configsubtype');
+
+      if (configtype != undefined && configtype != data.result.type) {
+        $('#widget-alert').showAlert({
+          message: "La commande " + id + " n'est pas de type '" + configtype + "'", level: 'danger'
+        });
+        return;
+      }
+      if (configsubtype != "undefined" && configsubtype != data.result.subType) {
+        $('#widget-alert').showAlert({
+          message: "La commande " + id + " n'a pas le sous-type '" + configsubtype + "'", level: 'danger'
+        });
+        return;
+      }
+
+
       $("#" + name + "-input").attr('cmdId', data.result.id);
       $("#" + name + "-input").val('#' + data.result.humanName + '#');
       $("#" + name + "-input").attr('title', '#' + data.result.humanName + '#');
@@ -1185,16 +1216,10 @@ function refreshCmdListOption(optionsJson) {
 
     curOption += `<div class="input-group input-group-sm" style="width: 100%">
                             <span class="input-group-addon roundedLeft" style="width: 100px">Commande</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' ${isDisabled}>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions jcCmdListOptionsCommand' data-cmd-id="${item.id}" data-id="name-${item.id}" data-index="${item.index}" value='' ${isDisabled}>
                         </div>`;
-
 
     curOption += getCmdOptions(item);
-
-    curOption += `<div class="input-group input-group-sm" style="width: 100%">
-                            <span class="input-group-addon roundedLeft" style="width: 100px">Nom</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="custom-name-${item.id}" data-index="${item.index}" value='' >
-                        </div>`;
 
     curOption += `</div>`;
     // --- END left part --
@@ -1283,6 +1308,59 @@ function refreshCmdListOption(optionsJson) {
 }
 
 
+$("#widgetOptions").on('focusin', '.jcCmdListOptionsCommand', function () {
+  $(this).attr('data-value-focusin', $(this).val());
+})
+
+$("#widgetOptions").on('focusout', '.jcCmdListOptionsCommand', function () {
+  var previousData = $(this).attr('data-value-focusin');
+  if (previousData != $(this).val()) {
+
+    var elt = $(this);
+    var currentId = elt.attr('data-cmd-id');
+    var currentIndex = elt.attr('data-index');
+
+    getCmd({
+      id: elt.val(),
+      error: function (error) {
+        $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
+      },
+      success: function (data) {
+        $('#widget-alert').hideAlert();
+
+        // remove options of the previous cmd
+        elt.parent().siblings().each(function () {
+          if ($(this).find('.jcCmdListOptions').length !== 0) {
+            $(this).remove();
+          }
+        });
+
+        // create options for the new cmd selected
+        newItem = { id: data.result.id, subtype: data.result.subType, index: currentIndex, name: data.result.name };
+        divListOption = getCmdOptions(newItem);
+        elt.parent().parent().append(divListOption);
+
+        // update cmdCat
+        cmdCat.forEach(item => {
+          console.log('item in CmdCat :', item);
+          if (item.id == currentId && item.index == currentIndex) {
+            console.log('found cmdCat !');
+            item.id = data.result.id;
+            item.name = data.result.humanName;
+            item.subtype = data.result.subType;
+          }
+        })
+        saveCmdList();
+
+      }
+    });
+
+  }
+
+  $(this).attr('data-value-focusin', '');
+})
+
+
 function getCmdOptions(item) {
 
   curOption = '';
@@ -1354,7 +1432,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
-        </div>
+        
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1362,7 +1440,8 @@ function getCmdOptions(item) {
               });
           });
 
-        </script>`;
+        </script>
+        </div>`;
   }
 
   if (item.subtype == 'slider') {
@@ -1375,14 +1454,15 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
             </span>
-        </div>
+        
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
                 $('.jcCmdListOptions[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
               });
           });
-        </script>`;
+        </script>
+        </div>`;
   }
 
   if (item.subtype == 'color') {
@@ -1396,7 +1476,7 @@ function getCmdOptions(item) {
             <span class="input-group-btn">
               <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-index="${item.index}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
             </span>
-        </div>
+        
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
             var el = $(this);
@@ -1407,9 +1487,14 @@ function getCmdOptions(item) {
           $('.colorChooser[data-uid=${customUid}]').off('change').on('change', function () {
             $('.jcCmdListOptions[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value($(this).value())
           });
-        </script>`;
+        </script>
+        </div>`;
   }
 
+  curOption += `<div class="input-group input-group-sm" style="width: 100%">
+                            <span class="input-group-addon roundedLeft" style="width: 100px">Nom</span>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="custom-name-${item.id}" data-index="${item.index}" value='${item.name || ""}' >
+                        </div>`;
 
 
   return curOption;
