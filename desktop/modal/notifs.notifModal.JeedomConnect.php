@@ -88,6 +88,18 @@ if (!isConnect('admin')) {
 
     items.push(updateHtml);
 
+    //Notif ALL
+    var notifAllValue = notif ? notif.notifall ? "checked" : "" : "";
+    var notifAllHtml = `<li><div class='form-group'>
+    <label class='col-xs-3'>Notifier tous les appareils JC</label>
+    <div class='col-xs-9'>
+      <div class="description">Si coché, cette notification sera pris en compte pour l'utilisation de la commande "Notifier les appareils JC"</div>
+    <div class='input-group'>
+      <input type="checkbox" style="width:150px;" id="notifall-checkbox" ${notifAllValue}>
+    </div></div></div></li>`;
+
+    items.push(notifAllHtml);
+
     //Color
     var colorValue = notif ? notif.color || '' : '';
     var colorHtml = `<li><div class='form-group'>

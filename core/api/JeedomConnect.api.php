@@ -460,7 +460,21 @@ switch ($method) {
     if ($cmd->askResponse($answer)) {
       log::add('JeedomConnect', 'debug', 'reply to ask OK');
     }
+
+    // if ASK was sent to other equipment, then we will let them know that an answer was already given
+    if (!empty($params['otherAskCmdId']) && !is_null($params['otherAskCmdId'])) {
+      $eqLogic = eqLogic::byLogicalId($params['apiKey'], 'JeedomConnect');
+      $eqName = $eqLogic->getName();
+
+      foreach ($params['otherAskCmdId'] as $cmdId) {
+        $cmd = JeedomConnectCmd::byId($cmdId);
+        if (is_object($cmd)) {
+          $cmd->cancelAsk($params['notificationId'], $answer, $eqName, $params['dateAnswer']);
+        }
+      }
+    }
     break;
+
   case 'GET_FILES':
     $result = apiHelper::getFiles($params['folder'], $params['recursive']);
     log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
