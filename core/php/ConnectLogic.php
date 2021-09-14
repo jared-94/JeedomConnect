@@ -463,6 +463,13 @@ class ConnectLogic implements MessageComponentInterface {
 			case 'GET_GEOFENCES':
 				$this->sendGeofences($from);
 				break;
+			case 'GET_NOTIFS_CONFIG':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				$from->send(json_encode(array(
+					"type" => "SET_NOTIFS_CONFIG",
+					"payload" => $eqLogic->getNotifs()
+				)));
+				break;
 		}
 	}
 

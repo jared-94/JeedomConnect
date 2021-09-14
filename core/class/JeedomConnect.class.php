@@ -502,9 +502,9 @@ class JeedomConnect extends eqLogic {
 	public function saveNotifs($config) {
 		//update channels
 		$data = array(
-			"type" => "SET_CHANNELS"
+			"type" => "SET_NOTIFS_CONFIG",
+			"payload" => $config
 		);
-		$data["payload"]["channels"] = $config['channels'];
 
 
 		if (!is_dir(self::$_notif_dir)) {
