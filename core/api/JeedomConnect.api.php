@@ -471,4 +471,10 @@ switch ($method) {
     log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_NOTIFS_CONFIG':
+    $jsonrpc->makeSuccess(array(
+      "type" => "SET_NOTIFS_CONFIG",
+      "payload" => $eqLogic->getNotifs()
+    ));
+    break;
 }
