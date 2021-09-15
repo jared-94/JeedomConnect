@@ -277,7 +277,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
-				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options'] ?: null);
+				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options'] ?? null);
 				break;
 			case 'CMDLIST_EXEC':
 				\apiHelper::execMultipleCmd($msg['payload']['cmdList']);
