@@ -423,15 +423,19 @@ class JeedomConnectWidget extends config {
 
 				// log::add('JeedomConnect', 'debug', ' cmd name ' . $option['name'] . '  - matching widget data : ' . json_encode($widget[$option['id']]));
 				if ($option['category'] == "cmd") {
-					$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
-					if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
-						$cmdArrayError[] = $widget['id'];
-					}
-				} elseif ($option['category'] == "cmdList") {
-					foreach ($widget['actions'] as $action) {
-						$cmdWidgetId = $action['id'] ?: null;
+					if (array_key_exists($option['id'], $widget)) {
+						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
 						if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
 							$cmdArrayError[] = $widget['id'];
+						}
+					}
+				} elseif ($option['category'] == "cmdList") {
+					if (array_key_exists('actions', $widget)) {
+						foreach ($widget['actions'] as $action) {
+							$cmdWidgetId = $action['id'] ?: null;
+							if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+								$cmdArrayError[] = $widget['id'];
+							}
 						}
 					}
 				}
