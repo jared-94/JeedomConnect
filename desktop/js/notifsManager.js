@@ -58,7 +58,11 @@ function save() {
 	console.log(notifData);
 	$.post({
 		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-		data: { 'action': 'saveNotifs', 'config': JSON.stringify(notifData), 'apiKey': apiKey },
+		data: {
+			'action': 'saveNotifs',
+			'config': JSON.stringify(notifData),
+			'apiKey': apiKey
+		},
 		success: function () {
 			$('#jc-assistant').showAlert({ message: 'Configuration des notifications sauvegardée', level: 'success' });
 		},

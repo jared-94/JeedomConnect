@@ -277,7 +277,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 		switch ($msg['type']) {
 			case 'CMD_EXEC':
-				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options'] ?: null);
+				\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options'] ?? null);
 				break;
 			case 'CMDLIST_EXEC':
 				\apiHelper::execMultipleCmd($msg['payload']['cmdList']);
@@ -463,6 +463,13 @@ class ConnectLogic implements MessageComponentInterface {
 			case 'GET_GEOFENCES':
 				$this->sendGeofences($from);
 				break;
+			case 'GET_NOTIFS_CONFIG':
+				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+				$from->send(json_encode(array(
+					"type" => "SET_NOTIFS_CONFIG",
+					"payload" => $eqLogic->getNotifs()
+				)));
+				break;
 		}
 	}
 
@@ -528,7 +535,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 	private function sendActions() {
 		foreach ($this->authenticatedClients as $client) {
-			$actions = \JeedomConnectActions::getAllAction($client->apiKey);
+			$actions = \JeedomConnectActions::getAllActions($client->apiKey);
 			//\log::add('JeedomConnect', 'debug', "get action  ".json_encode($actions));
 			if (count($actions) > 0) {
 				$result = array(
@@ -540,7 +547,7 @@ class ConnectLogic implements MessageComponentInterface {
 				}
 				\log::add('JeedomConnect', 'debug', "send action to #{$client->resourceId}  " . json_encode($result));
 				$client->send(json_encode($result));
-				\JeedomConnectActions::removeAllAction($actions);
+				\JeedomConnectActions::removeActions($actions);
 			}
 		}
 	}

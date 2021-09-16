@@ -502,9 +502,9 @@ class JeedomConnect extends eqLogic {
 	public function saveNotifs($config) {
 		//update channels
 		$data = array(
-			"type" => "SET_CHANNELS"
+			"type" => "SET_NOTIFS_CONFIG",
+			"payload" => $config
 		);
-		$data["payload"]["channels"] = $config['channels'];
 
 
 		if (!is_dir(self::$_notif_dir)) {
@@ -523,8 +523,9 @@ class JeedomConnect extends eqLogic {
 			if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
 				$remove = true;
 				foreach ($config['notifs'] as $notif) {
-					if ($cmd->getLogicalId() == $notif['id']) {
+					if ($cmd->getLogicalId() == $notif['id'] || $cmd->getLogicalId() == 'notifall') {
 						$remove = false;
+						break;
 					}
 				}
 				if ($remove) {
@@ -549,6 +550,10 @@ class JeedomConnect extends eqLogic {
 		$cmdNotif->setType('action');
 		$cmdNotif->setSubType('message');
 		$cmdNotif->setIsVisible(1);
+
+		$notifAll = $notif['notifall'] ?: false;
+		$cmdNotif->setConfiguration('notifAll', $notifAll);
+
 		$cmdNotif->save();
 	}
 
@@ -884,6 +889,30 @@ class JeedomConnect extends eqLogic {
 		}
 		$unlinkCmd->setName(__('Détacher', __FILE__));
 		$unlinkCmd->save();
+
+		$toaster = $this->getCmd(null, 'toaster');
+		if (!is_object($toaster)) {
+			$toaster = new JeedomConnectCmd();
+			$toaster->setLogicalId('toaster');
+			$toaster->setEqLogic_id($this->getId());
+			$toaster->setType('action');
+			$toaster->setSubType('message');
+			$toaster->setIsVisible(1);
+		}
+		$toaster->setName(__('Pop-up', __FILE__));
+		$toaster->save();
+
+		$notifall = $this->getCmd(null, 'notifall');
+		if (!is_object($notifall)) {
+			$notifall = new JeedomConnectCmd();
+			$notifall->setLogicalId('notifall');
+			$notifall->setEqLogic_id($this->getId());
+			$notifall->setType('action');
+			$notifall->setSubType('message');
+			$notifall->setIsVisible(1);
+		}
+		$notifall->setName(__('Notifier les appareils JC', __FILE__));
+		$notifall->save();
 	}
 
 	public function preRemove() {
@@ -949,12 +978,12 @@ class JeedomConnect extends eqLogic {
 		return true;
 	}
 
-	public static function getWidgetParam() {
+	public static function getWidgetParam($only_name = true) {
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
-			$result[$config['type']] = $config['name'];
+			$result[$config['type']] = $only_name ? $config['name'] : $config;
 		}
 		return $result;
 	}
@@ -1408,6 +1437,26 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
+	public static function getCmdForAllNotif() {
+		$result = array();
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			// log::add('JeedomConnect', 'debug', '**** checking eqLogic : ' . $eqLogic->getName());
+			if (!$eqLogic->getIsEnable()) continue;
+
+			foreach ($eqLogic->getCmd() as $cmd) {
+				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
+				if ($cmd->getLogicalId() != 'notifall' && strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
+					if ($cmd->getConfiguration('notifAll', false)) {
+						// log::add('JeedomConnect', 'debug', '    ++ adding cmd : ' . $cmd->getId());
+						$result[] = $cmd->getId();
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+
 	/******************************************************************************
 	 * ************** FUNCTIONS TO RETRIEVE HEALTH DETAILS
 	 * **************       FOR JEEDOM and PLUGINS
@@ -1636,63 +1685,126 @@ class JeedomConnectCmd extends cmd {
 		return true;
 	}
 
+	public function cancelAsk($notificationId, $answer, $eqNameAnswered, $dateAnswer) {
+		$eqLogic = $this->getEqLogic();
+
+		$data = array(
+			'type' => 'ASK_ALREADY_ANSWERED',
+			'payload' => array(
+				'notificationId' => $notificationId,
+				'answer' => $answer,
+				'fromEquipement' => $eqNameAnswered,
+				'dateAnswer' => $dateAnswer
+			)
+		);
+
+		// log::add('JeedomConnect', 'debug', ' sending notif data ==> ' . json_encode($data));
+		$eqLogic->sendNotif($this->getLogicalId(), $data);
+	}
+
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {
 			return;
 		}
 		$eqLogic = $this->getEqLogic();
-		if (strpos(strtolower($this->getLogicalId()), 'notif') !== false) {
-			log::add('JeedomConnect', 'info', json_encode($_options));
-			$data = array(
-				'type' => 'DISPLAY_NOTIF',
-				'payload' => array(
-					'cmdId' => $this->getId(),
-					'title' => str_replace("'", "&#039;", $_options['title']),
-					'message' => str_replace("'", "&#039;", $_options['message']),
-					'answer' => $_options['answer'] ?? null,
-					'timeout' => $_options['timeout'] ?? null
-				)
-			);
-			if (isset($_options["files"])) {
-				$files = array();
-				foreach ($_options["files"] as $file) {
-					array_push($files, realpath($file));
+
+		// log::add('JeedomConnect', 'debug', 'start for : ' . $this->getLogicalId());
+
+		$logicalId = ($this->getLogicalId() === 'notifall') ? 'notifall' : ((strpos(strtolower($this->getLogicalId()), 'notif') !== false) ? 'notif' : $this->getLogicalId());
+
+		// log::add('JeedomConnect', 'debug', 'will execute action : ' . $logicalId . ' -- with option ' . json_encode($_options));
+
+		switch ($logicalId) {
+			case 'notifall':
+				$cmdNotif = JeedomConnect::getCmdForAllNotif();
+				$orignalCmdId = $this->getId();
+				$timestamp = time();
+				// log::add('JeedomConnect', 'debug', ' all cmd notif all : ' . json_encode($cmdNotif));
+				foreach ($cmdNotif as $cmdId) {
+					$cmd = cmd::byId($cmdId);
+					$_options['orignalCmdId'] = $orignalCmdId;
+					$_options['notificationId'] = $timestamp;
+
+					$cmdNotifCopy = array_values(array_diff($cmdNotif, array($cmdId)));
+					$_options['otherAskCmdId'] = count($cmdNotifCopy) > 0 ? $cmdNotifCopy : null;
+					$cmd->execute($_options);
 				}
-				$data['payload']['files'] = $files;
-			}
-			$eqLogic->sendNotif($this->getLogicalId(), $data);
-		}
-		if ($this->getLogicalId() == 'goToPage') {
-			if (!empty($_options['title']) && !empty($_options['message'])) {
-				return;
-			}
-			$payload = array(
-				'action' => 'goToPage',
-				'pageId' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
-			);
-			if ($eqLogic->isConnected()) {
-				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
-			}
-		}
-		if ($this->getLogicalId() == 'launchApp') {
-			if (!empty($_options['title']) && !empty($_options['message'])) {
-				return;
-			}
-			$payload = array(
-				'action' => 'launchApp',
-				'packageName' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
-			);
-			if ($eqLogic->isConnected()) {
-				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
-			}
-			//else {
-			//	$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
-			//}
-		}
-		if ($this->getLogicalId() == 'unlink') {
-			$eqLogic->setConfiguration('deviceId', '');
-			$eqLogic->setConfiguration('deviceName', '');
-			$eqLogic->save();
+				break;
+
+			case 'notif':
+				// log::add('JeedomConnect', 'debug', ' ----- running exec notif ! ---------');
+				$data = array(
+					'type' => 'DISPLAY_NOTIF',
+					'payload' => array(
+						'cmdId' => $_options['orignalCmdId'] ?: $this->getId(),
+						'title' => str_replace("'", "&#039;", $_options['title']),
+						'message' => str_replace("'", "&#039;", $_options['message']),
+						'answer' => $_options['answer'] ?? null,
+						'timeout' => $_options['timeout'] ?? null,
+						'notificationId' => $_options['notificationId'] ?? time(),
+						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null
+					)
+				);
+				if (isset($_options["files"])) {
+					$files = array();
+					foreach ($_options["files"] as $file) {
+						array_push($files, realpath($file));
+					}
+					$data['payload']['files'] = $files;
+				}
+				$eqLogic->sendNotif($this->getLogicalId(), $data);
+				break;
+
+			case 'goToPage':
+				if (empty($_options['title']) && empty($_options['message'])) {
+					return;
+				}
+				$payload = array(
+					'action' => 'goToPage',
+					'pageId' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				}
+				break;
+
+			case 'toaster':
+				if (empty($_options['message'])) {
+					return;
+				}
+				$payload = array(
+					'action' => 'toaster',
+					'message' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'launchApp':
+				if (empty($_options['title']) && empty($_options['message'])) {
+					return;
+				}
+				$payload = array(
+					'action' => 'launchApp',
+					'packageName' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				}
+				break;
+
+			case 'launchApp':
+				$eqLogic->setConfiguration('deviceId', '');
+				$eqLogic->setConfiguration('deviceName', '');
+				$eqLogic->save();
+				break;
+
+			default:
+				log::add('JeedomConnect', 'error', 'unknow action [' . $logicalId . '] - options :' . json_encode($_options));
+				break;
 		}
 	}
 }

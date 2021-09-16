@@ -172,7 +172,7 @@ switch ($method) {
       return;
     }
 
-    $actions = JeedomConnectActions::getAllAction($apiKey);
+    $actions = JeedomConnectActions::getAllActions($apiKey);
     if (count($actions) > 0) {
       $result = array(
         'type' => 'ACTIONS',
@@ -182,7 +182,7 @@ switch ($method) {
         array_push($result['payload'], $action['value']['payload']);
       }
       log::add('JeedomConnect', 'debug', "send action " . json_encode(array($result)));
-      JeedomConnectActions::removeAllAction($actions);
+      JeedomConnectActions::removeActions($actions);
       $jsonrpc->makeSuccess(array($result));
       return;
     }
@@ -454,13 +454,27 @@ switch ($method) {
     $answer = $params['answer'];
     $cmd = cmd::byId($params['cmdId']);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command");
+      log::add('JeedomConnect', 'error', "Can't find command [id=" . $params['cmdId'] . "]");
       return;
     }
     if ($cmd->askResponse($answer)) {
       log::add('JeedomConnect', 'debug', 'reply to ask OK');
     }
+
+    // if ASK was sent to other equipment, then we will let them know that an answer was already given
+    if (!empty($params['otherAskCmdId']) && !is_null($params['otherAskCmdId'])) {
+      $eqLogic = eqLogic::byLogicalId($params['apiKey'], 'JeedomConnect');
+      $eqName = $eqLogic->getName();
+
+      foreach ($params['otherAskCmdId'] as $cmdId) {
+        $cmd = JeedomConnectCmd::byId($cmdId);
+        if (is_object($cmd)) {
+          $cmd->cancelAsk($params['notificationId'], $answer, $eqName, $params['dateAnswer']);
+        }
+      }
+    }
     break;
+
   case 'GET_FILES':
     $result = apiHelper::getFiles($params['folder'], $params['recursive']);
     log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
@@ -470,5 +484,11 @@ switch ($method) {
     $result = apiHelper::removeFile($params['file']);
     log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
     $jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_NOTIFS_CONFIG':
+    $jsonrpc->makeSuccess(array(
+      "type" => "SET_NOTIFS_CONFIG",
+      "payload" => $eqLogic->getNotifs()
+    ));
     break;
 }

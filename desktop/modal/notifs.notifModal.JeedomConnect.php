@@ -65,20 +65,22 @@ if (!isConnect('admin')) {
     <div class='col-xs-9'><div class='input-group'><input style="width:250px;" id="mod-notifName-input" value='${value}'></div></div></div></li>`;
     items.push(nameHtml);
 
-    //Channel
-    var channelValue = notif ? notif.channel : '';
-    var channelsHtml = `<li><div class='form-group'>
+
+    if (platformOs == 'android') {
+      //Channel
+      var channelValue = notif ? notif.channel : '';
+      var channelsHtml = `<li><div class='form-group'>
     <label class='col-xs-3 required'>Canal</label>
     <div class='col-xs-9'><div class='input-group'><select style="width:150px;" id="mod-channel-input" value=''>`;
-    notifData.channels.forEach(item => {
-      channelsHtml += `<option value="${item.id}">${item.name}</option>`;
-    });
-    channelsHtml += `</select></div></div></div></li>`;
-    items.push(channelsHtml);
+      notifData.channels.forEach(item => {
+        channelsHtml += `<option value="${item.id}">${item.name}</option>`;
+      });
+      channelsHtml += `</select></div></div></div></li>`;
+      items.push(channelsHtml);
 
-    //Update
-    var updateValue = notif ? notif.update ? "checked" : "" : "";
-    var updateHtml = `<li><div class='form-group'>
+      //Update
+      var updateValue = notif ? notif.update ? "checked" : "" : "";
+      var updateHtml = `<li><div class='form-group'>
     <label class='col-xs-3'>Mettre à jour l'existante</label>
     <div class='col-xs-9'>
       <div class="description">Si une autre notification de cette catégorie existe, son contenu sera mis à jour</div>
@@ -86,7 +88,20 @@ if (!isConnect('admin')) {
       <input type="checkbox" style="width:150px;" id="update-input" ${updateValue}>
     </div></div></div></li>`;
 
-    items.push(updateHtml);
+      items.push(updateHtml);
+    }
+
+    //Notif ALL
+    var notifAllValue = notif ? notif.notifall ? "checked" : "" : "";
+    var notifAllHtml = `<li><div class='form-group'>
+    <label class='col-xs-3'>Notifier tous les appareils JC</label>
+    <div class='col-xs-9'>
+      <div class="description">Si coché, cette notification sera pris en compte pour l'utilisation de la commande "Notifier les appareils JC"</div>
+    <div class='input-group'>
+      <input type="checkbox" style="width:150px;" id="notifall-checkbox" ${notifAllValue}>
+    </div></div></div></li>`;
+
+    items.push(notifAllHtml);
 
     //Color
     var colorValue = notif ? notif.color || '' : '';

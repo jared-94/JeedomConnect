@@ -91,7 +91,7 @@ while (true) {
     //sleep(1);
   }
 
-  $actions = JeedomConnectActions::getAllAction($apiKey);
+  $actions = JeedomConnectActions::getAllActions($apiKey);
   if (count($actions) > 0) {
     $result = array(
       'type' => 'ACTIONS',
@@ -102,7 +102,7 @@ while (true) {
     }
     log::add('JeedomConnect', 'debug', "send action to #{$id}  " . json_encode(array($result)));
     sse(json_encode(array($result)));
-    JeedomConnectActions::removeAllAction($actions);
+    JeedomConnectActions::removeActions($actions);
     sleep(1);
   }
 

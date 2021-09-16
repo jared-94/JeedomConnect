@@ -28,20 +28,28 @@ class JeedomConnectActions extends config {
 	}
 
 
-	public static function getAllAction($apiKey) {
+	public static function getAllActions($apiKey = null) {
 		$result = array();
 		foreach (config::searchKey('action::', self::$_plugin_id)  as $action) {
-			if ($action['value']['apiKey'] == $apiKey) {
+			if (is_null($apiKey) || $action['value']['apiKey'] == $apiKey) {
 				array_push($result, $action);
 			}
 		}
 		return $result;
 	}
 
-	public static function removeAllAction($actions) {
-		log::add(self::$_plugin_id, 'debug', 'removing actions');
+	public static function removeAllActions() {
+		log::add(self::$_plugin_id, 'debug', 'removing all actions');
+		return self::removeActions(self::getAllActions());
+	}
+
+
+	public static function removeActions($actions) {
 		foreach ($actions  as $action) {
+			log::add(self::$_plugin_id, 'debug', 'removing actions - ' . $action['key']);
 			self::remove($action['key'], self::$_plugin_id);
 		}
+
+		return;
 	}
 }

@@ -1198,7 +1198,7 @@ class apiHelper {
     $endFile = '-' . $configId . '.json';
     foreach ($files['payload']['files'] as $file) {
       if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
-        $config_file = file_get_contents(__DIR__ . '/../../../..'  . $file['path']);
+        $config_file = file_get_contents($file['path']);
         return array(
           'type' => 'SET_APP_CONFIG',
           'payload' => array('config' => json_decode($config_file))
@@ -1245,7 +1245,7 @@ class apiHelper {
   public static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command");
+      log::add('JeedomConnect', 'error', "Can't find command [id=" . $id . "]");
       return;
     }
     try {
@@ -1305,7 +1305,7 @@ class apiHelper {
           if (!$item->isDot() && substr($item, 0, 1) != '.') {
             if (!$item->isDir()) {
               array_push($result, array(
-                'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $item->getPathname())),
+                'path' =>  $item->getPathname(),
                 'timestamp' => $item->getMTime()
               ));
             } else if ($recursive) {
@@ -1330,9 +1330,9 @@ class apiHelper {
 
 
   public static function removeFile($file) {
-    $filePath =  __DIR__ . '/../../../..' . $file;
     $pathInfo = pathinfo($file);
-    unlink($filePath);
-    return self::getFiles($pathInfo['dirname']);
+    unlink($file);
+    return
+      self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
   }
 }

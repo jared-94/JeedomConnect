@@ -44,7 +44,10 @@ switch ($orderBy) {
 $allConfig = JeedomConnect::getWidgetParam();
 $widgetTypeArray = array();
 
+$widgetInError = JeedomConnectWidget::checkCmdSetupInWidgets();
+
 $listWidget = '';
+$hasError = '';
 foreach ($widgetArray as $widget) {
 
 	$img = $widget['img'];
@@ -57,12 +60,15 @@ foreach ($widgetArray as $widget) {
 
 	$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
+	$needSign = in_array($id, $widgetInError) ? '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="Commandes orphelines"></i>' : '';
+	$hasError = in_array($id, $widgetInError) ? 'hasError' : '';
+
 	//used later by the filter select item
 	if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
 
-	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . '</strong>';
+	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . ' ' .  $needSign . '</strong>';
 
-	$listWidget .= '<div class="widgetDisplayCard cursor ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+	$listWidget .= '<div class="widgetDisplayCard cursor  ' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 	$listWidget .= '<img src="' . $img . '"/>';
 	$listWidget .= '<br>';
 	$listWidget .= '<span class="name">' . $name . '</span>';
@@ -124,6 +130,13 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<br>
 				<span>{{Configuration}}</span>
 			</div>
+			<?php if ($hasError != '') { ?>
+				<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
+					<i class="fas fa-exclamation-circle"></i>
+					<br>
+					<span style="color:var(--txt-color)" id="spanWidgetErreur">{{Erreur}}</span>
+				</div>
+			<?php } ?>
 		</div>
 
 		<!--   PANEL DES EQUIPEMENTS  -->
@@ -151,7 +164,7 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 		<!--  FIN --- PANEL DES EQUIPEMENTS  -->
 
 		<!--   PANEL DES WIDGETS  -->
-		<legend><i class="fas fa-table"></i> {{Mes widgets}}
+		<legend><i class="fas fa-table"></i> {{Mes widgets}} <span id="coundWidget"></span>
 
 			<div class="pull-right">
 				<span style="margin-right:10px">{{Trie}}

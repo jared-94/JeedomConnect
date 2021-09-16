@@ -141,6 +141,38 @@ $('.eqLogicAction[data-action=addWidget]').off('click').on('click', function () 
   getWidgetModal({ title: "Configuration du widget", removeAction: false, exit: true });
 })
 
+$('.eqLogicAction[data-action=showError]').off('click').on('click', function () {
+
+  var hide = ($('#spanWidgetErreur').text() == 'Erreur') ? true : false;
+  if (hide) {
+    $('.widgetDisplayCard').not(".hasError").hide();
+  }
+  else {
+    $('.widgetDisplayCard').show();
+  }
+
+
+  var typeSelected = $('#widgetTypeSelect').val();
+
+  if (typeSelected != 'none') {
+    $('.widgetDisplayCard').not("[data-widget_type=" + typeSelected + "]").hide();
+  }
+
+
+  $('.eqLogicThumbnailContainer').packery();
+
+  if (hide) {
+    $('#spanWidgetErreur').text('Tous');
+    $('.eqLogicAction[data-action=showError]').css('color', 'grey');
+  }
+  else {
+    $('#spanWidgetErreur').text('Erreur');
+    $('.eqLogicAction[data-action=showError]').css('color', 'red');
+  }
+  updateWidgetCount()
+
+})
+
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
   $('#widgetSummaryModal').dialog({
@@ -359,7 +391,8 @@ $('#in_searchWidget').off('keyup').keyup(function () {
       })
     }
     $('.eqLogicThumbnailContainer').packery()
-    return
+    updateWidgetCount();
+    return;
   }
 
 
@@ -379,10 +412,12 @@ $('#in_searchWidget').off('keyup').keyup(function () {
     }
   })
   $('.eqLogicThumbnailContainer').packery()
+  updateWidgetCount();
 })
 
 $('#bt_resetSearchWidget').on('click', function () {
   $('#in_searchWidget').val('').keyup()
+  updateWidgetCount();
 })
 
 
@@ -432,7 +467,7 @@ function addCmdToTable(_cmd) {
     tr += '<a class="btn btn-default btn-xs cmdAction" data-action="configure"><i class="fas fa-cogs"></i></a> ';
     tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fas fa-rss"></i> Tester</a>';
   }
-  //  tr += '<i class="fas fa-minus-circle pull-right cmdAction cursor" data-action="remove"></i>';
+  tr += '<i class="fas fa-minus-circle pull-right cmdAction cursor" data-action="remove" style="display:none"></i>';
   tr += '</td>';
   tr += '</tr>';
   $('#table_cmd tbody').append(tr);
@@ -656,6 +691,9 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-input").val(options.widget[option.id]);
       } else if (option.category == "binary" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").prop('checked', options.widget[option.id] ? "checked" : "");
+      } else if (option.category == "color" & options.widget[option.id] !== undefined) {
+        $("#" + option.id + "-input").val(options.widget[option.id]);
+        $("#" + option.id + "-picker").val(options.widget[option.id]);
       } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
         getHumanName({
@@ -824,7 +862,7 @@ function refreshAddWidgets() {
       isDisabled = isJcExpert ? '' : 'disabled';
       curOption += `<table><tr class="cmd">
             <td>
-              <input class='input-sm form-control roundedLeft' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled}>
+              <input class='input-sm form-control roundedLeft needRefresh' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled} configtype='${option.type}' configsubtype='${option.subtype}' configlink='${option.value}'>
               <td>
                  <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}', '${option.value}');">
                     <i class='fas fa-list-alt'></i></a>
@@ -886,6 +924,11 @@ function refreshAddWidgets() {
       curOption += `</div></div></div></li>`;
     } else if (option.category == "binary") {
       curOption += `<div class='input-group'><input type="checkbox" style="width:150px;" id="${option.id}-input"></div>
+         </div></div></li>`;
+    } else if (option.category == "color") {
+      curOption += `<div class='input-group'><input style="width:200px;" id="${option.id}-input" >
+      <input type="color" id="${option.id}-picker"  onchange="colorDefined(this, '${option.id}')">
+      </div>
          </div></div></li>`;
     } else if (option.category == "stringList") {
       curOption += `<div class='input-group'><select style="width:340px;" id="${option.id}-input" onchange="subtitleSelected();">`;
@@ -1041,11 +1084,42 @@ function selectCmd(name, type, subtype, value) {
   })
 }
 
+$("#widgetOptions").on('change', '.needRefresh', function () {
+  var info = $(this).val();
+  var name = $(this).attr('id').replace('-input', '');
+  var configlink = $(this).attr('configlink') || 'undefined';
+  refreshCmdData(name, info, configlink);
+
+});
+
+
+
 function refreshCmdData(name, id, value) {
   getCmd({
     id: id,
-    error: function (error) { },
+    error: function (error) {
+      $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
+    },
     success: function (data) {
+      $('#widget-alert').hideAlert();
+
+      var configtype = $("#" + name + "-input").attr('configtype');
+      var configsubtype = $("#" + name + "-input").attr('configsubtype');
+
+      if (configtype != undefined && configtype != data.result.type) {
+        $('#widget-alert').showAlert({
+          message: "La commande " + id + " n'est pas de type '" + configtype + "'", level: 'danger'
+        });
+        return;
+      }
+      if (configsubtype != "undefined" && configsubtype != data.result.subType) {
+        $('#widget-alert').showAlert({
+          message: "La commande " + id + " n'a pas le sous-type '" + configsubtype + "'", level: 'danger'
+        });
+        return;
+      }
+
+
       $("#" + name + "-input").attr('cmdId', data.result.id);
       $("#" + name + "-input").val('#' + data.result.humanName + '#');
       $("#" + name + "-input").attr('title', '#' + data.result.humanName + '#');
@@ -1177,16 +1251,10 @@ function refreshCmdListOption(optionsJson) {
 
     curOption += `<div class="input-group input-group-sm" style="width: 100%">
                             <span class="input-group-addon roundedLeft" style="width: 100px">Commande</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="name-${item.id}" data-index="${item.index}" value='' ${isDisabled}>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions jcCmdListOptionsCommand' data-cmd-id="${item.id}" data-id="name-${item.id}" data-index="${item.index}" value='' ${isDisabled}>
                         </div>`;
-
 
     curOption += getCmdOptions(item);
-
-    curOption += `<div class="input-group input-group-sm" style="width: 100%">
-                            <span class="input-group-addon roundedLeft" style="width: 100px">Nom</span>
-                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="custom-name-${item.id}" data-index="${item.index}" value='' >
-                        </div>`;
 
     curOption += `</div>`;
     // --- END left part --
@@ -1275,6 +1343,59 @@ function refreshCmdListOption(optionsJson) {
 }
 
 
+$("#widgetOptions").on('focusin', '.jcCmdListOptionsCommand', function () {
+  $(this).attr('data-value-focusin', $(this).val());
+})
+
+$("#widgetOptions").on('focusout', '.jcCmdListOptionsCommand', function () {
+  var previousData = $(this).attr('data-value-focusin');
+  if (previousData != $(this).val()) {
+
+    var elt = $(this);
+    var currentId = elt.attr('data-cmd-id');
+    var currentIndex = elt.attr('data-index');
+
+    getCmd({
+      id: elt.val(),
+      error: function (error) {
+        $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
+      },
+      success: function (data) {
+        $('#widget-alert').hideAlert();
+
+        // remove options of the previous cmd
+        elt.parent().siblings().each(function () {
+          if ($(this).find('.jcCmdListOptions').length !== 0) {
+            $(this).remove();
+          }
+        });
+
+        // create options for the new cmd selected
+        newItem = { id: data.result.id, subtype: data.result.subType, index: currentIndex, name: data.result.name };
+        divListOption = getCmdOptions(newItem);
+        elt.parent().parent().append(divListOption);
+
+        // update cmdCat
+        cmdCat.forEach(item => {
+          console.log('item in CmdCat :', item);
+          if (item.id == currentId && item.index == currentIndex) {
+            console.log('found cmdCat !');
+            item.id = data.result.id;
+            item.name = data.result.humanName;
+            item.subtype = data.result.subType;
+          }
+        })
+        saveCmdList();
+
+      }
+    });
+
+  }
+
+  $(this).attr('data-value-focusin', '');
+})
+
+
 function getCmdOptions(item) {
 
   curOption = '';
@@ -1346,7 +1467,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
-        </div>
+        
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1354,7 +1475,8 @@ function getCmdOptions(item) {
               });
           });
 
-        </script>`;
+        </script>
+        </div>`;
   }
 
   if (item.subtype == 'slider') {
@@ -1367,14 +1489,15 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
             </span>
-        </div>
+        
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
                 $('.jcCmdListOptions[data-l1key=options][data-l2key=message][data-uid=${customUid}]').atCaret('insert', result.human);
               });
           });
-        </script>`;
+        </script>
+        </div>`;
   }
 
   if (item.subtype == 'color') {
@@ -1388,7 +1511,7 @@ function getCmdOptions(item) {
             <span class="input-group-btn">
               <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-index="${item.index}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
             </span>
-        </div>
+        
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
             var el = $(this);
@@ -1399,9 +1522,14 @@ function getCmdOptions(item) {
           $('.colorChooser[data-uid=${customUid}]').off('change').on('change', function () {
             $('.jcCmdListOptions[data-uid=${customUid}][data-l1key=options][data-l2key=color]').value($(this).value())
           });
-        </script>`;
+        </script>
+        </div>`;
   }
 
+  curOption += `<div class="input-group input-group-sm" style="width: 100%">
+                            <span class="input-group-addon roundedLeft" style="width: 100px">Nom</span>
+                            <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="custom-name-${item.id}" data-index="${item.index}" value='${item.name || ""}' >
+                        </div>`;
 
 
   return curOption;
@@ -1576,6 +1704,11 @@ function refreshInfoSelect() {
   $(".infos-select").html(infosOptionHtml);
 
   refreshStrings();
+}
+
+function colorDefined(c, id) {
+  console.log('id', id)
+  $("#" + id + "-input").val(c.value);
 }
 
 function infoSelected(value, el) {
@@ -2045,6 +2178,9 @@ function saveWidget() {
       }
       else if (option.category == "binary") {
         result[option.id] = $("#" + option.id + "-input").is(':checked');
+      }
+      else if (option.category == "color") {
+        result[option.id] = $("#" + option.id + "-input").val();
       }
       else if (option.category == "stringList") {
         if ($("#" + option.id + "-input").val() == 'none' & option.required) {
@@ -2535,6 +2671,8 @@ $('#widgetTypeSelect').on('change', function () {
 
   $('.eqLogicThumbnailContainer').packery();
 
+  updateWidgetCount();
+
 });
 
 
@@ -2614,7 +2752,23 @@ $(document).ready(function () {
   }
 
   $('.eqLogicThumbnailContainer').packery();
+
+  updateWidgetCount()
 });
+
+$('#widgetsList-div').on('change', function () {
+  updateWidgetCount()
+})
+
+function updateWidgetCount() {
+
+  var nbVisible = $('.widgetDisplayCard:visible').length;
+  var nbTotal = $('.widgetDisplayCard').length;
+
+  var text = (nbTotal != nbVisible) ? nbVisible + "/" + nbTotal : nbTotal;
+
+  $('#coundWidget').text("(" + text + ")");
+}
 
 
 $('#eraseFilterChoice').off('click').on('click', function () {
