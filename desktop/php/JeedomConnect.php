@@ -47,9 +47,11 @@ $widgetTypeArray = array();
 $widgetInError = JeedomConnectWidget::checkCmdSetupInWidgets();
 
 $listWidget = '';
-$hasError = '';
-foreach ($widgetArray as $widget) {
 
+$hasErrorPage = false;
+foreach ($widgetArray as $widget) {
+	$needSign = '';
+	$hasError = '';
 	$img = $widget['img'];
 
 	$opacity = $widget['enable'] ? '' : 'disableCard';
@@ -60,8 +62,11 @@ foreach ($widgetArray as $widget) {
 
 	$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
-	$needSign = in_array($id, $widgetInError) ? '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="Commandes orphelines"></i>' : '';
-	$hasError = in_array($id, $widgetInError) ? 'hasError' : '';
+	if (in_array($id, $widgetInError)) {
+		$hasError = 'hasError';
+		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="Commandes orphelines"></i>';
+		$hasErrorPage =  true;
+	}
 
 	//used later by the filter select item
 	if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
@@ -130,7 +135,7 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<br>
 				<span>{{Configuration}}</span>
 			</div>
-			<?php if ($hasError != '') { ?>
+			<?php if ($hasErrorPage) { ?>
 				<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
 					<i class="fas fa-exclamation-circle"></i>
 					<br>
