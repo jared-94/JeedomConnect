@@ -1634,6 +1634,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function getPluginsUpdate() {
+		update::checkAllUpdate();
 		$nbNeedUpdate = update::nbNeedUpdate();
 
 		$updateArr = array();
