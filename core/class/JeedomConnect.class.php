@@ -1833,7 +1833,7 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
-			case 'launchApp':
+			case 'unlink':
 				$eqLogic->setConfiguration('deviceId', '');
 				$eqLogic->setConfiguration('deviceName', '');
 				$eqLogic->save();
