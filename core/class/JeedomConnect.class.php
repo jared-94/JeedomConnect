@@ -1793,12 +1793,13 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'goToPage':
-				if (empty($_options['title']) && empty($_options['message'])) {
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "Id page" ... ');
 					return;
 				}
 				$payload = array(
 					'action' => 'goToPage',
-					'pageId' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+					'pageId' => $_options['message']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
@@ -1807,6 +1808,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'toaster':
 				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "Message" ... ');
 					return;
 				}
 				$payload = array(
@@ -1821,12 +1823,13 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'launchApp':
-				if (empty($_options['title']) && empty($_options['message'])) {
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "Nom de l\'application" ... ');
 					return;
 				}
 				$payload = array(
 					'action' => 'launchApp',
-					'packageName' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+					'packageName' => $_options['message']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
