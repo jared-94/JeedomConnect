@@ -873,6 +873,8 @@ class JeedomConnect extends eqLogic {
 			$goToPageCmd->setSubType('message');
 			$goToPageCmd->setIsVisible(1);
 		}
+		$goToPageCmd->setDisplay('title_disable', 1);
+		$goToPageCmd->setDisplay('message_placeholder', __('Id page', __FILE__));
 		$goToPageCmd->setName(__('Afficher page', __FILE__));
 		$goToPageCmd->save();
 
@@ -885,6 +887,8 @@ class JeedomConnect extends eqLogic {
 			$launchAppCmd->setSubType('message');
 			$launchAppCmd->setIsVisible(1);
 		}
+		$launchAppCmd->setDisplay('title_disable', 1);
+		$launchAppCmd->setDisplay('message_placeholder', __('Nom de l\'application', __FILE__));
 		$launchAppCmd->setName(__('Lancer App', __FILE__));
 		$launchAppCmd->save();
 
@@ -910,6 +914,7 @@ class JeedomConnect extends eqLogic {
 			$toaster->setIsVisible(1);
 		}
 		$toaster->setName(__('Pop-up', __FILE__));
+		$toaster->setDisplay('title_disable', 1);
 		$toaster->save();
 
 		$notifall = $this->getCmd(null, 'notifall');
