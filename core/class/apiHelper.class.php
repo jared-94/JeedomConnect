@@ -530,16 +530,10 @@ class apiHelper {
 
   public static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
-    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
     foreach ($customWidgetList as $customWidget) {
-      $widgetId = $customWidget['widgetId'];
-      if (empty($customData)) {
-        $customData = array('widgets' => array());
-      }
-      $customData['widgets'][$widgetId] = $customWidget;
+      log::add('JeedomConnect', 'debug', 'save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
+      config::save('customData::' . $apiKey . '::' . $customWidget['widgetId'], json_encode($customWidget), 'JeedomConnect');
     }
-    log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
-    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
     $eqLogic->generateNewConfigVersion();
   }
 

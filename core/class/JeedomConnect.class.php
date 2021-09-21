@@ -142,23 +142,16 @@ class JeedomConnect extends eqLogic {
 
 	public function cleanCustomData() {
 		$apiKey = $this->getConfiguration('apiKey');
-		$customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+		$customData = config::searchKey('customData::' . $apiKey . '::', 'JeedomConnect');
 
 		if (!empty($customData)) {
-			if (array_key_exists('widgets', $customData)) {
-				$saveData = false;
-				$config = $this->getConfig();
-				foreach ($customData['widgets'] as $widgetId => $customWidget) {
-					$search = array_search($widgetId, array_column($config['payload']['widgets'], 'widgetId'));
-					if ($search === false) {
-						$saveData = true;
-						unset($customData['widgets'][$widgetId]);
-					}
-				}
+			$config = $this->getConfig();
 
-				if ($saveData) {
-					log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
-					config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+			foreach ($customData as $item) {
+				$search = array_search($item['value']['widgetId'], array_column($config['payload']['widgets'], 'widgetId'));
+				if ($search === false) {
+					log::add('JeedomConnect', 'debug', 'removing custom data (not used anymore) : ' . $item['value']['widgetId']);
+					config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
 				}
 			}
 		}
@@ -247,7 +240,7 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		$customData = config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		$customData = $this->getCustomWidget();
 
 		// moreWidgets in customData
 		if (!empty($customData)) {
@@ -350,6 +343,23 @@ class JeedomConnect extends eqLogic {
 
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
+	}
+
+	public function getCustomWidget() {
+
+		$myKey = 'customData::' . $this->getConfiguration('apiKey') . '::';
+		// log::add('JeedomConnect', 'debug', 'looking for config key : ' .  myKey);
+
+		$allCustomData = config::searchKey($myKey, 'JeedomConnect');
+
+		$final = array();
+		foreach ($allCustomData as $item) {
+			$final[$item['value']['widgetId']] = $item['value'];
+		}
+
+		$result = array("widgets" => $final);
+		// log::add('JeedomConnect', 'debug', 'resultat : ' .  json_encode($result));
+		return $result;
 	}
 
 	public function getGeneratedConfigFile() {
@@ -921,7 +931,11 @@ class JeedomConnect extends eqLogic {
 		unlink(self::$_config_dir . $apiKey . ".json");
 		unlink(self::$_notif_dir . $apiKey . ".json");
 		rmdir(__DIR__ . '/../../data/backup/' . $apiKey);
-		config::remove('customData::' . $apiKey, 'JeedomConnect');
+
+		$allKey = config::searchKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		foreach ($allKey as $item) {
+			config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
+		}
 	}
 
 	public function postRemove() {
@@ -1293,6 +1307,28 @@ class JeedomConnect extends eqLogic {
 		}
 
 		return;
+	}
+
+	public static function migrateCustomData() {
+
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getConfiguration('apiKey');
+			// log::add('JeedomConnect_mig', 'debug', 'checking ' . $eqLogic->getName . ' [' . $apiKey . ']');
+
+			$customDataOriginal = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+			foreach ($customDataOriginal as $item) {
+
+				if (array_key_exists('widgets', $item['value'])) {
+					foreach ($item['value']['widgets'] as $key => $value) {
+						// log::add('JeedomConnect', 'debug', 'key : ' . $key . ' -- value :' . json_encode($value));
+						config::save('customData::' . $apiKey . '::' . $key, json_encode($value), 'JeedomConnect');
+					}
+				}
+			}
+			config::remove('customData::' . $apiKey, 'JeedomConnect');
+		}
+
+		config::save('migration::customData', 'done', 'JeedomConnect');
 	}
 
 	public static function migrateCondImg() {
