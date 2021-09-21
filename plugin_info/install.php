@@ -70,6 +70,11 @@ function JeedomConnect_update() {
   if (config::byKey('migration::customData',   'JeedomConnect') == '') {
     JeedomConnect::migrateCustomData();
   }
+
+  // FORCE save on all equipments to save new cmd
+  foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+    $eqLogic->save();
+  }
 }
 
 function JeedomConnect_remove() {
