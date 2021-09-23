@@ -402,6 +402,11 @@ switch ($method) {
     $result = apiHelper::getAppConfig($apiKey, $params['configId']);
     $jsonrpc->makeSuccess($result);
     break;
+  case 'SET_APPSTATE':
+    $eqLogic->setConfiguration('appState', $params['state']);
+    $eqLogic->save();
+    $jsonrpc->makeSuccess();
+    break;
   case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();

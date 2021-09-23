@@ -1415,7 +1415,7 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('useWs', 0) == 0 && (strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
 			return time() - $this->getConfiguration('lastSeen', 0) < 3;
 		} else {
-			return $this->getConfiguration('connected', 0) == 1;
+			return $this->getConfiguration('appState', 0) == 'active';
 		}
 	}
 
