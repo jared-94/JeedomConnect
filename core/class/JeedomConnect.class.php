@@ -329,6 +329,10 @@ class JeedomConnect extends eqLogic {
 				$newSummary['allowDisplayZero'] =  $objSummary[$summary['key']]['allowDisplayZero'];
 				$newSummary['ignoreIfCmdOlderThan'] =  $objSummary[$summary['key']]['ignoreIfCmdOlderThan'];
 
+				if (array_key_exists('image', $newSummary) && array_key_exists('name', $newSummary['image'])) {
+					$newSummary['image']['name'] =  trim($newSummary['image']['name']);
+				}
+
 				$jsonConfig['payload']['summaries'][$index] = $newSummary;
 			}
 		}
