@@ -1907,7 +1907,7 @@ class JeedomConnectCmd extends cmd {
 					'arg' => $finalValue
 				);
 
-				log::add('JeedomConnect', 'debug', 'payload sent ' . json_encode($payload));
+				// log::add('JeedomConnect', 'debug', 'payload sent ' . json_encode($payload));
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
@@ -1942,7 +1942,6 @@ class JeedomConnectCmd extends cmd {
 			}
 		}
 		return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
-		return parent::toHtml();
 	}
 
 	public function getListOption() {
