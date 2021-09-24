@@ -68,18 +68,20 @@ $eqLogic->save();
 
 while (true) {
   $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-  if ($logic->getConfiguration('appState') != 'active') {
-    continue;
-  }
+
   if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
     log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #" . $id);
-    $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
     if ($logic->getConfiguration('sessionId', 0) == $id) {
       $logic->setConfiguration('connected', 0);
       $eqLogic->setConfiguration('appState', 'background');
       $logic->save();
     }
     die();
+  }
+
+  if ($logic->getConfiguration('appState') != 'active') {
+    sleep(1);
+    continue;
   }
 
   $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
