@@ -917,6 +917,22 @@ class JeedomConnect extends eqLogic {
 		$toaster->setDisplay('title_disable', 1);
 		$toaster->save();
 
+		$action = $this->getCmd(
+			null,
+			'action'
+		);
+		if (!is_object($action)) {
+			$action = new JeedomConnectCmd();
+			$action->setLogicalId('action');
+			$action->setEqLogic_id($this->getId());
+			$action->setType('action');
+			$action->setSubType('message');
+			$action->setIsVisible(1);
+		}
+		$action->setName(__('Action JC', __FILE__));
+		$action->setDisplay('title_disable', 1);
+		$action->save();
+
 		$notifall = $this->getCmd(null, 'notifall');
 		if (!is_object($notifall)) {
 			$notifall = new JeedomConnectCmd();
@@ -1822,6 +1838,21 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
+			case 'action':
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "Message" ... ');
+					return;
+				}
+				$payload = array(
+					'action' => 'jcAction',
+					'arg' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
 			case 'launchApp':
 				if (empty($_options['message'])) {
 					log::add('JeedomConnect', 'error', 'Empty field "Nom de l\'application" ... ');
