@@ -917,22 +917,6 @@ class JeedomConnect extends eqLogic {
 		$toaster->setDisplay('title_disable', 1);
 		$toaster->save();
 
-		$action = $this->getCmd(
-			null,
-			'action'
-		);
-		if (!is_object($action)) {
-			$action = new JeedomConnectCmd();
-			$action->setLogicalId('action');
-			$action->setEqLogic_id($this->getId());
-			$action->setType('action');
-			$action->setSubType('message');
-			$action->setIsVisible(1);
-		}
-		$action->setName(__('Action JC', __FILE__));
-		$action->setDisplay('title_disable', 1);
-		$action->save();
-
 		$notifall = $this->getCmd(null, 'notifall');
 		if (!is_object($notifall)) {
 			$notifall = new JeedomConnectCmd();
@@ -944,6 +928,23 @@ class JeedomConnect extends eqLogic {
 		}
 		$notifall->setName(__('Notifier les appareils JC', __FILE__));
 		$notifall->save();
+
+		$update_conf = $this->getCmd(null, 'update_pref_app');
+		if (!is_object($update_conf)) {
+			$update_conf = new JeedomConnectCmd();
+			$update_conf->setLogicalId('update_pref_app');
+			$update_conf->setEqLogic_id($this->getId());
+			$update_conf->setType('action');
+			$update_conf->setSubType('message');
+			$update_conf->setIsVisible(1);
+		}
+		$update_conf->setDisplay('title_with_list', 1);
+		$update_conf->setConfiguration('listValue', 'tracking|Activer le tracking;updateData|Recharger les données');
+		$update_conf->setDisplay('title_placeholder', __('Choix du paramètre', __FILE__));
+		$update_conf->setDisplay('title_disable', 1);
+		$update_conf->setDisplay('message_placeholder', __('Valeur', __FILE__));
+		$update_conf->setName(__('Modifier Préférences Appli', __FILE__));
+		$update_conf->save();
 	}
 
 	public function preRemove() {
@@ -1734,6 +1735,10 @@ class JeedomConnect extends eqLogic {
 
 class JeedomConnectCmd extends cmd {
 
+	public static $_widgetPossibility = array(
+		'custom' => true
+	);
+
 	public function dontRemoveCmd() {
 		return true;
 	}
@@ -1810,7 +1815,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'goToPage':
 				if (empty($_options['message'])) {
-					log::add('JeedomConnect', 'error', 'Empty field "Id page" ... ');
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
 				$payload = array(
@@ -1824,7 +1829,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'toaster':
 				if (empty($_options['message'])) {
-					log::add('JeedomConnect', 'error', 'Empty field "Message" ... ');
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
 				$payload = array(
@@ -1838,24 +1843,9 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
-			case 'action':
-				if (empty($_options['message'])) {
-					log::add('JeedomConnect', 'error', 'Empty field "Message" ... ');
-					return;
-				}
-				$payload = array(
-					'action' => 'jcAction',
-					'arg' => $_options['message']
-				);
-				if ($eqLogic->isConnected()) {
-					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
-				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
-				}
-				break;
 			case 'launchApp':
 				if (empty($_options['message'])) {
-					log::add('JeedomConnect', 'error', 'Empty field "Nom de l\'application" ... ');
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
 				$payload = array(
@@ -1873,9 +1863,108 @@ class JeedomConnectCmd extends cmd {
 				$eqLogic->save();
 				break;
 
+
+			case 'update_pref_app':
+				if (empty($_options['title'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Title') . '" ... ');
+					return;
+				}
+				if ($_options['title'] == 'none') {
+					log::add('JeedomConnect', 'error', 'Please select an action for cmd "' . $this->getName() . '" ... ');
+					return;
+				}
+				if (empty($_options['message']) && $_options['message'] != '0') {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+
+				switch (strtoupper($_options['message'])) {
+					case 'RUN':
+					case 'MARCHE':
+					case 'ON':
+					case '1':
+						$finalValue = 'ON';
+						break;
+
+					case 'STOP':
+					case 'ARRET':
+					case 'OFF':
+					case '0':
+						$finalValue = 'OFF';
+						break;
+
+					default:
+						$finalValue = $_options['message'];
+						break;
+				}
+
+				$payload = array(
+					'action' => $_options['title'],
+					'arg' => $finalValue
+				);
+
+				log::add('JeedomConnect', 'debug', 'payload sent ' . json_encode($payload));
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+
 			default:
 				log::add('JeedomConnect', 'error', 'unknow action [' . $logicalId . '] - options :' . json_encode($_options));
 				break;
 		}
+	}
+
+	public function getWidgetTemplateCode($_version = 'dashboard', $_clean = true, $_widgetName = '') {
+
+		if ($_version != 'scenario') return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+
+		if ($this->getDisplay('title_with_list', '') != 1) return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+
+		$template = getTemplate('core', 'scenario', 'cmd.action.message_with_choice', 'JeedomConnect');
+
+		if (!empty($template)) {
+			if (version_compare(jeedom::version(), '4.2.0', '>=')) {
+				if (!is_array($template)) return array('template' => $template, 'isCoreWidget' => false);
+			} else {
+				$replace = array();
+				$replace['#listValue#'] = $this->getListOption();
+				$html = template_replace($replace, $template);
+
+				return $html;
+			}
+		}
+		return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+		return parent::toHtml();
+	}
+
+	public function getListOption() {
+		$listOption = '';
+		if ($this->getConfiguration('listValue', '') != '') {
+			$elements = explode(';', $this->getConfiguration('listValue', ''));
+			$foundSelect = false;
+			foreach ($elements as $element) {
+				$coupleArray = explode('|', $element);
+				$cmdValue = $this->getCmdValue();
+				if (is_object($cmdValue) && $cmdValue->getType() == 'info') {
+					if ($cmdValue->execCmd() == $coupleArray[0]) {
+						$listOption .= '<option value="' . $coupleArray[0] . '" selected>' . $coupleArray[1] . '</option>';
+						$foundSelect = true;
+					} else {
+						$listOption .= '<option value="' . $coupleArray[0] . '">' . $coupleArray[1] . '</option>';
+					}
+				} else {
+					$listOption .= '<option value="' . $coupleArray[0] . '">' . $coupleArray[1] . '</option>';
+				}
+			}
+			if (!$foundSelect) {
+				$listOption = '<option value="none" selected>-- A SELECTIONNER --</option>' . $listOption;
+			}
+		}
+
+		return $listOption;
 	}
 }
