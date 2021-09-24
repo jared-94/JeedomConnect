@@ -1883,6 +1883,7 @@ class JeedomConnectCmd extends cmd {
 				}
 
 				switch (strtoupper($_options['message'])) {
+					case 'START':
 					case 'RUN':
 					case 'MARCHE':
 					case 'ON':
