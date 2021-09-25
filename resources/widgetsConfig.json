@@ -5437,13 +5437,13 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Commande chaîne contenant l'URL de l'image"
+					"description": "Commande chaîne contenant l'URL ou le chemin de l'image"
 				},
 				{
 					"id": "imageUrl",
 					"name": "URL image",
 					"category": "string",
-					"description": "URL de l'image (si pas de commande)"
+					"description": "URL ou chemin de l'image (si pas de commande)"
 				},
 				{
 					"id": "refreshTime",
