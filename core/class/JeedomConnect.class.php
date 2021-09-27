@@ -1794,17 +1794,21 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'notif':
+
 				// log::add('JeedomConnect', 'debug', ' ----- running exec notif ! ---------');
+				$myData = self::getTitleAndArgs($_options);
+
 				$data = array(
 					'type' => 'DISPLAY_NOTIF',
 					'payload' => array(
 						'cmdId' => $_options['orignalCmdId'] ?: $this->getId(),
-						'title' => str_replace("'", "&#039;", $_options['title']),
+						'title' => str_replace("'", "&#039;", $myData['title']),
 						'message' => str_replace("'", "&#039;", $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
 						'notificationId' => $_options['notificationId'] ?? time(),
-						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null
+						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null,
+						'options' => $myData['args'] ?: null
 					)
 				);
 				if (isset($_options["files"])) {
@@ -1814,6 +1818,7 @@ class JeedomConnectCmd extends cmd {
 					}
 					$data['payload']['files'] = $files;
 				}
+				// log::add('JeedomConnect_test', 'debug', ' notif payload ==> ' . json_encode($data));
 				$eqLogic->sendNotif($this->getLogicalId(), $data);
 				break;
 
@@ -1921,6 +1926,45 @@ class JeedomConnectCmd extends cmd {
 				log::add('JeedomConnect', 'error', 'unknow action [' . $logicalId . '] - options :' . json_encode($_options));
 				break;
 		}
+	}
+
+
+	public static function getTitleAndArgs($_options) {
+
+		$optionsSupp = array();
+		$args = array();
+		if (isset($_options['title'])) {
+			$optionsSupp = self::arg2arrayCustom($_options['title']);
+			//if no use of '|', then will try to use the standard fx
+			// if (count($optionsSupp) == 0) $optionsSupp = arg2array($_options['title']);
+		}
+
+		if (empty($optionsSupp)) {
+			$titre = $_options['title'] ?: '';
+		} else {
+			foreach ($optionsSupp as $key => $value) {
+				$optionsSupp[$key] =  str_replace('"', '', $value);
+			}
+
+			$titre = isset($optionsSupp['title']) ? $optionsSupp['title'] : '';
+			$args = $optionsSupp;
+			if (isset($optionsSupp['title'])) unset($args['title']);
+		}
+		return array('title' => $titre, 'args' => $args);
+	}
+
+	public static function arg2arrayCustom($data) {
+		$dataArray = explode('|', $data);
+		$result = array();
+		foreach ($dataArray as $item) {
+			$arg = explode('=', trim($item), 2);
+			if (count($arg) == 2) {
+				$result[trim($arg[0])] = trim($arg[1]);
+			} else {
+				log::add('JeedomConnect', 'warning', 'Cannot find a pattern key=value in ' . json_encode($arg));
+			}
+		}
+		return $result;
 	}
 
 	public function getWidgetTemplateCode($_version = 'dashboard', $_clean = true, $_widgetName = '') {
