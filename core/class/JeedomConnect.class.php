@@ -941,8 +941,8 @@ class JeedomConnect extends eqLogic {
 			$update_conf->setEqLogic_id($this->getId());
 			$update_conf->setType('action');
 			$update_conf->setSubType('message');
-			$update_conf->setIsVisible(1);
 		}
+		$update_conf->setIsVisible(0);
 		$update_conf->setDisplay('title_with_list', 1);
 		$update_conf->setConfiguration('listValue', 'tracking|Activer le tracking;updateData|Recharger les données');
 		$update_conf->setDisplay('title_placeholder', __('Choix du paramètre', __FILE__));
