@@ -1890,7 +1890,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'update_pref_app':
 				if (empty($_options['title'])) {
-					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Title') . '" ... ');
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
 					return;
 				}
 				if ($_options['title'] == 'none') {
@@ -1938,7 +1938,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'send_sms':
 				if (empty($_options['title'])) {
-					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Title') . '" ... ');
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
 					return;
 				}
 				if (empty($_options['message'])) {
