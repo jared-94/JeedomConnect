@@ -564,6 +564,7 @@ class JeedomConnect extends eqLogic {
 		$cmdNotif->setType('action');
 		$cmdNotif->setSubType('message');
 		$cmdNotif->setIsVisible(1);
+		$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
 
 		$notifAll = $notif['notifall'] ?: false;
 		$cmdNotif->setConfiguration('notifAll', $notifAll);
@@ -1801,20 +1802,21 @@ class JeedomConnectCmd extends cmd {
 				$data = array(
 					'type' => 'DISPLAY_NOTIF',
 					'payload' => array(
-						'cmdId' => $_options['orignalCmdId'] ?: $this->getId(),
+						'cmdId' => $_options['orignalCmdId'] ?? $this->getId(),
 						'title' => str_replace("'", "&#039;", $myData['title']),
 						'message' => str_replace("'", "&#039;", $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
 						'notificationId' => $_options['notificationId'] ?? time(),
 						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null,
-						'options' => $myData['args'] ?: null
+						'options' => $myData['args'] ?? null
 					)
 				);
-				if (isset($_options["files"])) {
+				if (isset($_options["files"]) || isset($myData["files"])) {
 					$files = array();
-					foreach ($_options["files"] as $file) {
-						array_push($files, realpath($file));
+					$arrayMerge = array_merge($_options["files"] ?? array(), $myData["files"] ?? array());
+					foreach ($arrayMerge as $file) {
+						if (realpath($file)) array_push($files, realpath($file));
 					}
 					$data['payload']['files'] = $files;
 				}
@@ -1933,6 +1935,7 @@ class JeedomConnectCmd extends cmd {
 
 		$optionsSupp = array();
 		$args = array();
+		$files = array();
 		if (isset($_options['title'])) {
 			$optionsSupp = self::arg2arrayCustom($_options['title']);
 			//if no use of '|', then will try to use the standard fx
@@ -1949,8 +1952,13 @@ class JeedomConnectCmd extends cmd {
 			$titre = isset($optionsSupp['title']) ? $optionsSupp['title'] : '';
 			$args = $optionsSupp;
 			if (isset($optionsSupp['title'])) unset($args['title']);
+
+			if (isset($optionsSupp['files'])) {
+				$files = explode(',', $optionsSupp['files']);
+				unset($args['files']);
+			}
 		}
-		return array('title' => $titre, 'args' => $args);
+		return array('title' => $titre, 'args' => $args, 'files' => $files);
 	}
 
 	public static function arg2arrayCustom($data) {
