@@ -1950,19 +1950,32 @@ class JeedomConnectCmd extends cmd {
 				if (empty($args)) {
 					$num = $_options['title'];
 					$sim = null;
+					$files = null;
 				} elseif (!empty($args['numero'])) {
 					$num = $args['numero'];
 					$sim = $args['sim'] ?? null;
+					$files = isset($args['files']) ? explode(',', $args['files']) :  null;
 				} else {
 					log::add('JeedomConnect', 'error', 'No numero found');
 					return;
+				}
+
+				if (!is_null($files)) {
+					$filesTemp = array();
+					foreach ($files as $file) {
+						if (realpath($file)) {
+							array_push($filesTemp, realpath($file));
+						}
+					}
+					$files = !empty($filesTemp) ? $filesTemp :  null;
 				}
 
 				$payload = array(
 					'action' => 'send_sms',
 					'numero' => $num,
 					'message' => $_options['message'],
-					'simId' => $sim
+					'simId' => $sim,
+					'files' => $files
 				);
 
 				// log::add('JeedomConnect_test', 'debug', 'payload sent ' . json_encode($payload));
