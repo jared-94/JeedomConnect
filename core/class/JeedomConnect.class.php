@@ -950,6 +950,19 @@ class JeedomConnect extends eqLogic {
 		$update_conf->setDisplay('message_placeholder', __('Valeur', __FILE__));
 		$update_conf->setName(__('Modifier Préférences Appli', __FILE__));
 		$update_conf->save();
+
+		$send_sms = $this->getCmd(null, 'send_sms');
+		if (!is_object($send_sms)) {
+			$send_sms = new JeedomConnectCmd();
+			$send_sms->setLogicalId('send_sms');
+			$send_sms->setEqLogic_id($this->getId());
+			$send_sms->setType('action');
+			$send_sms->setSubType('message');
+		}
+		$send_sms->setIsVisible(1);
+		$send_sms->setDisplay('title_placeholder', __('Numéro/Options', __FILE__));
+		$send_sms->setName(__('Envoyer un SMS', __FILE__));
+		$send_sms->save();
 	}
 
 	public function preRemove() {
@@ -1923,6 +1936,42 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
+			case 'send_sms':
+				if (empty($_options['title'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Title') . '" ... ');
+					return;
+				}
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+
+				$args = self::arg2arrayCustom($_options['title']);
+				if (empty($args)) {
+					$num = $_options['title'];
+					$sim = null;
+				} elseif (!empty($args['numero'])) {
+					$num = $args['numero'];
+					$sim = $args['sim'] ?? null;
+				} else {
+					log::add('JeedomConnect', 'error', 'No numero found');
+					return;
+				}
+
+				$payload = array(
+					'action' => 'send_sms',
+					'numero' => $num,
+					'message' => $_options['message'],
+					'simId' => $sim
+				);
+
+				// log::add('JeedomConnect_test', 'debug', 'payload sent ' . json_encode($payload));
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
 
 			default:
 				log::add('JeedomConnect', 'error', 'unknow action [' . $logicalId . '] - options :' . json_encode($_options));
