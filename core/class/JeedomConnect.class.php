@@ -2017,8 +2017,6 @@ class JeedomConnectCmd extends cmd {
 			$arg = explode('=', trim($item), 2);
 			if (count($arg) == 2) {
 				$result[trim($arg[0])] = trim($arg[1]);
-			} else {
-				log::add('JeedomConnect', 'warning', 'Cannot find a pattern key=value in ' . json_encode($arg));
 			}
 		}
 		return $result;
