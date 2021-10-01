@@ -1356,13 +1356,14 @@ class JeedomConnect extends eqLogic {
 			// log::add('JeedomConnect_mig', 'debug', 'checking ' . $eqLogic->getName . ' [' . $apiKey . ']');
 
 			$customDataOriginal = config::byKey('customData::' . $apiKey, 'JeedomConnect');
-			foreach ($customDataOriginal as $item) {
 
-				if (array_key_exists('widgets', $item['value'])) {
-					foreach ($item['value']['widgets'] as $key => $value) {
-						// log::add('JeedomConnect', 'debug', 'key : ' . $key . ' -- value :' . json_encode($value));
-						config::save('customData::' . $apiKey . '::' . $key, json_encode($value), 'JeedomConnect');
-					}
+			// log::add('JeedomConnect_mig', 'debug', 'data  ' . json_encode($customDataOriginal));
+
+			if (array_key_exists('widgets', $customDataOriginal)) {
+				// log::add('JeedomConnect_mig', 'debug', 'widgets exist ! ');
+				foreach ($customDataOriginal['widgets'] as $key => $value) {
+					// log::add('JeedomConnect_mig', 'debug', 'key : ' . $key . ' -- value :' . json_encode($value));
+					config::save('customData::' . $apiKey . '::' . $key, json_encode($value), 'JeedomConnect');
 				}
 			}
 			config::remove('customData::' . $apiKey, 'JeedomConnect');
