@@ -1103,7 +1103,7 @@
 					"blackList": [
 						"widgets-summary",
 						"favorites",
-						"room-summary"
+						"room"
 					],
 					"description": "Liste des widgets à afficher"
 				},
@@ -1155,7 +1155,7 @@
 					"blackList": [
 						"widgets-summary",
 						"favorites",
-						"room-summary"
+						"room"
 					],
 					"description": "Liste des widgets à afficher"
 				},
@@ -3186,7 +3186,7 @@
 				{
 					"id": "statusInfo",
 					"name": "Statut",
-					"required": true,
+					"required": false,
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
@@ -3195,7 +3195,7 @@
 				{
 					"id": "onAction",
 					"name": "Action activer",
-					"required": true,
+					"required": false,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
@@ -3205,12 +3205,41 @@
 				{
 					"id": "offAction",
 					"name": "Action désactiver",
-					"required": true,
+					"required": false,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
 					"value": "enableInfo",
 					"description": "Commande pour désactiver l'alarme"
+				},
+				{
+					"id": "modeInfo",
+					"name": "Info mode",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Etat actuel du mode de l'alarme"
+				},
+				{
+					"id": "modes",
+					"name": "Modes",
+					"required": false,
+					"category": "cmdList",
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": false
+					}
+				},
+				{
+					"id": "lineMode",
+					"name": "Mode en ligne",
+					"required": false,
+					"category": "binary",
+					"description": "Affiche les modes sur une seule ligne défilante"
 				},
 				{
 					"id": "immediateInfo",
@@ -4091,6 +4120,13 @@
 					"description": "Etat du slider (numérique)"
 				},
 				{
+					"id": "hourFormat",
+					"name": "Heure au format Jeedom",
+					"required": false,
+					"category": "binary",
+					"description": "Sélecteur d'heure à l'aide d'un slider prenant des valeurs 0--2359"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -4196,8 +4232,22 @@
 						"subtype": "",
 						"hasIcon": true,
 						"hasImage": false,
-						"hasName": false
+						"hasName": true
 					}
+				},
+				{
+					"id": "contentCard",
+					"name": "Contenu dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Actions dans la carte plutôt qu'à droite"
+				},
+				{
+					"id": "lineMode",
+					"name": "Mode en ligne",
+					"required": false,
+					"category": "binary",
+					"description": "Affiche les actions sur une seule ligne défilante"
 				},
 				{
 					"id": "image",
