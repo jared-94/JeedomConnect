@@ -142,23 +142,16 @@ class JeedomConnect extends eqLogic {
 
 	public function cleanCustomData() {
 		$apiKey = $this->getConfiguration('apiKey');
-		$customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+		$customData = config::searchKey('customData::' . $apiKey . '::', 'JeedomConnect');
 
 		if (!empty($customData)) {
-			if (array_key_exists('widgets', $customData)) {
-				$saveData = false;
-				$config = $this->getConfig();
-				foreach ($customData['widgets'] as $widgetId => $customWidget) {
-					$search = array_search($widgetId, array_column($config['payload']['widgets'], 'widgetId'));
-					if ($search === false) {
-						$saveData = true;
-						unset($customData['widgets'][$widgetId]);
-					}
-				}
+			$config = $this->getConfig();
 
-				if ($saveData) {
-					log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
-					config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
+			foreach ($customData as $item) {
+				$search = array_search($item['value']['widgetId'], array_column($config['payload']['widgets'], 'widgetId'));
+				if ($search === false) {
+					log::add('JeedomConnect', 'debug', 'removing custom data (not used anymore) : ' . $item['value']['widgetId']);
+					config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
 				}
 			}
 		}
@@ -247,7 +240,7 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		$customData = config::byKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		$customData = $this->getCustomWidget();
 
 		// moreWidgets in customData
 		if (!empty($customData)) {
@@ -336,6 +329,10 @@ class JeedomConnect extends eqLogic {
 				$newSummary['allowDisplayZero'] =  $objSummary[$summary['key']]['allowDisplayZero'];
 				$newSummary['ignoreIfCmdOlderThan'] =  $objSummary[$summary['key']]['ignoreIfCmdOlderThan'];
 
+				if (array_key_exists('image', $newSummary) && array_key_exists('name', $newSummary['image'])) {
+					$newSummary['image']['name'] =  trim($newSummary['image']['name']);
+				}
+
 				$jsonConfig['payload']['summaries'][$index] = $newSummary;
 			}
 		}
@@ -350,6 +347,23 @@ class JeedomConnect extends eqLogic {
 
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
+	}
+
+	public function getCustomWidget() {
+
+		$myKey = 'customData::' . $this->getConfiguration('apiKey') . '::';
+		// log::add('JeedomConnect', 'debug', 'looking for config key : ' .  myKey);
+
+		$allCustomData = config::searchKey($myKey, 'JeedomConnect');
+
+		$final = array();
+		foreach ($allCustomData as $item) {
+			$final[$item['value']['widgetId']] = $item['value'];
+		}
+
+		$result = array("widgets" => $final);
+		// log::add('JeedomConnect', 'debug', 'resultat : ' .  json_encode($result));
+		return $result;
 	}
 
 	public function getGeneratedConfigFile() {
@@ -550,6 +564,7 @@ class JeedomConnect extends eqLogic {
 		$cmdNotif->setType('action');
 		$cmdNotif->setSubType('message');
 		$cmdNotif->setIsVisible(1);
+		$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
 
 		$notifAll = $notif['notifall'] ?: false;
 		$cmdNotif->setConfiguration('notifAll', $notifAll);
@@ -863,6 +878,8 @@ class JeedomConnect extends eqLogic {
 			$goToPageCmd->setSubType('message');
 			$goToPageCmd->setIsVisible(1);
 		}
+		$goToPageCmd->setDisplay('title_disable', 1);
+		$goToPageCmd->setDisplay('message_placeholder', __('Id page', __FILE__));
 		$goToPageCmd->setName(__('Afficher page', __FILE__));
 		$goToPageCmd->save();
 
@@ -875,6 +892,8 @@ class JeedomConnect extends eqLogic {
 			$launchAppCmd->setSubType('message');
 			$launchAppCmd->setIsVisible(1);
 		}
+		$launchAppCmd->setDisplay('title_disable', 1);
+		$launchAppCmd->setDisplay('message_placeholder', __('Nom de l\'application', __FILE__));
 		$launchAppCmd->setName(__('Lancer App', __FILE__));
 		$launchAppCmd->save();
 
@@ -900,6 +919,7 @@ class JeedomConnect extends eqLogic {
 			$toaster->setIsVisible(1);
 		}
 		$toaster->setName(__('Pop-up', __FILE__));
+		$toaster->setDisplay('title_disable', 1);
 		$toaster->save();
 
 		$notifall = $this->getCmd(null, 'notifall');
@@ -913,6 +933,36 @@ class JeedomConnect extends eqLogic {
 		}
 		$notifall->setName(__('Notifier les appareils JC', __FILE__));
 		$notifall->save();
+
+		$update_conf = $this->getCmd(null, 'update_pref_app');
+		if (!is_object($update_conf)) {
+			$update_conf = new JeedomConnectCmd();
+			$update_conf->setLogicalId('update_pref_app');
+			$update_conf->setEqLogic_id($this->getId());
+			$update_conf->setType('action');
+			$update_conf->setSubType('message');
+		}
+		$update_conf->setIsVisible(0);
+		$update_conf->setDisplay('title_with_list', 1);
+		$update_conf->setConfiguration('listValue', 'themeColor|Couleur thème;darkMode|Activer mode sombre;tracking|Activer le tracking;updateData|Recharger les données');
+		$update_conf->setDisplay('title_placeholder', __('Choix du paramètre', __FILE__));
+		$update_conf->setDisplay('title_disable', 1);
+		$update_conf->setDisplay('message_placeholder', __('Valeur', __FILE__));
+		$update_conf->setName(__('Modifier Préférences Appli', __FILE__));
+		$update_conf->save();
+
+		$send_sms = $this->getCmd(null, 'send_sms');
+		if (!is_object($send_sms)) {
+			$send_sms = new JeedomConnectCmd();
+			$send_sms->setLogicalId('send_sms');
+			$send_sms->setEqLogic_id($this->getId());
+			$send_sms->setType('action');
+			$send_sms->setSubType('message');
+		}
+		$send_sms->setIsVisible(1);
+		$send_sms->setDisplay('title_placeholder', __('Numéro/Options', __FILE__));
+		$send_sms->setName(__('Envoyer un SMS', __FILE__));
+		$send_sms->save();
 	}
 
 	public function preRemove() {
@@ -921,7 +971,11 @@ class JeedomConnect extends eqLogic {
 		unlink(self::$_config_dir . $apiKey . ".json");
 		unlink(self::$_notif_dir . $apiKey . ".json");
 		rmdir(__DIR__ . '/../../data/backup/' . $apiKey);
-		config::remove('customData::' . $apiKey, 'JeedomConnect');
+
+		$allKey = config::searchKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		foreach ($allKey as $item) {
+			config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
+		}
 	}
 
 	public function postRemove() {
@@ -1295,6 +1349,28 @@ class JeedomConnect extends eqLogic {
 		return;
 	}
 
+	public static function migrateCustomData() {
+
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getConfiguration('apiKey');
+			// log::add('JeedomConnect_mig', 'debug', 'checking ' . $eqLogic->getName . ' [' . $apiKey . ']');
+
+			$customDataOriginal = config::byKey('customData::' . $apiKey, 'JeedomConnect');
+			foreach ($customDataOriginal as $item) {
+
+				if (array_key_exists('widgets', $item['value'])) {
+					foreach ($item['value']['widgets'] as $key => $value) {
+						// log::add('JeedomConnect', 'debug', 'key : ' . $key . ' -- value :' . json_encode($value));
+						config::save('customData::' . $apiKey . '::' . $key, json_encode($value), 'JeedomConnect');
+					}
+				}
+			}
+			config::remove('customData::' . $apiKey, 'JeedomConnect');
+		}
+
+		config::save('migration::customData', 'done', 'JeedomConnect');
+	}
+
 	public static function migrateCondImg() {
 		try {
 			$hasChangesConf = false;
@@ -1374,7 +1450,7 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('useWs', 0) == 0 && (strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
 			return time() - $this->getConfiguration('lastSeen', 0) < 3;
 		} else {
-			return $this->getConfiguration('connected', 0) == 1;
+			return $this->getConfiguration('appState', 0) == 'active';
 		}
 	}
 
@@ -1465,169 +1541,164 @@ class JeedomConnect extends eqLogic {
 
 	public static function getHealthDetails($apiKey) {
 		$allPluginsData = array();
-
-		foreach (plugin::listPlugin(true) as $plugin) {
-
-			if ($plugin->getHasDependency() == 1 || $plugin->getHasOwnDeamon() == 1 || method_exists($plugin->getId(), 'health')) {
-				$plugin_id = $plugin->getId();
-
-				$asNok = 0;
-				$asPending = 0;
-
-				$daemonInfo = null;
-				if ($plugin->getHasOwnDeamon() == 1) {
-					if ($plugin->deamon_info()['auto'] == 1) {
-						$daemonInfo = "{{Démon en mode automatique}}";
-					} else {
-						$daemonInfo = "{{Démon en mode manuel}}";
-					}
-				}
-
-				$portInfo = null;
-				if (config::byKey('port', $plugin->getId()) != '') {
-					$portInfo = ucfirst(config::byKey('port', $plugin->getId()));
-				}
-
-				if (file_exists(dirname(plugin::getPathById($plugin_id)) . '/../desktop/modal/health.php')) {
-					$hasSpecificHealth = true;
-					$hasSpecificHealthIcon = '  <i data-pluginname="' . $plugin->getName() . '" data-pluginid="' . $plugin->getId() . '" class="fas fa-medkit bt_healthSpecific pull-right cursor" title="Santé spécifique"></i>';
-				}
-
-				$dependencyInfo = null;
-				if ($plugin->getHasDependency() == 1) {
-					try {
-						$dependancy_info = $plugin->dependancy_info();
-						switch ($dependancy_info['state']) {
-							case 'ok':
-								$dependencyInfo = 'OK';
-								break;
-							case 'in_progress':
-								$dependencyInfo = 'En cours';
-								$asPending += 1;
-								break;
-							default:
-								$dependencyInfo = 'KO';
-								$asNok += 1;
-								break;
-						}
-					} catch (Exception $e) {
-						log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting dependancy_info -- ' . $e->getMessage());
-					}
-				}
-
-				$daemonData = array();
-				if ($plugin->getHasOwnDeamon() == 1) {
-					try {
-
-						$daemonData['setup'] = array();
-						$daemon_info = $plugin->deamon_info();
-
-						$daemonData['setup']['mode'] = $daemon_info['auto'] ? 'auto' : 'manuel';
-
-						$daemonData['setup']['message'] = null;
-
-						switch ($daemon_info['launchable']) {
-							case 'ok':
-								$daemonData['setup']['status'] = 'OK';
-								break;
-							case 'nok':
-								if ($daemon_info['auto'] != 1) {
-									$daemonData['setup']['status'] = 'Désactivé';
-								} else {
-									$daemonData['setup']['status'] = 'KO';
-									$daemonData['setup']['message'] =  $daemon_info['launchable_message'];
-									$asNok += 1;
-								}
-								break;
-						}
-
-						$daemonData['last_launch'] = $daemon_info['last_launch'];
-						switch ($daemon_info['state']) {
-							case 'ok':
-								$daemonData['state'] = 'OK';
-								break;
-							case 'nok':
-								if ($daemon_info['auto'] != 1) {
-									$daemonData['state'] = 'Désactivé';
-								} else {
-									$daemonData['state'] = 'KO';
-									$asNok += 1;
-								}
-								break;
-						}
-					} catch (Exception $e) {
-						log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting daemon_info -- ' . $e->getMessage());
-					}
-				}
-
-				$healthData = array();
-				if (method_exists($plugin->getId(), 'health')) {
-
-					try {
-						foreach ($plugin_id::health() as $result) {
-							$item = array();
-							$item['test'] = $result['test'];
-							$item['advice'] = $result['advice'];
-
-							if (!$result['state']) {
-								$asNok += 1;
-							}
-							$item['result'] = $result['result'];
-
-							array_push($healthData, $item);
-						}
-					} catch (Exception $e) {
-						log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting health info -- ' . $e->getMessage());
-					}
-				}
-
-
-				$update = $plugin->getUpdate();
-				$versionType = $versionDate = null;
-				if (is_object($update)) {
-					$versionType = $update->getConfiguration('version');
-					$versionDate = $update->getLocalVersion();
-				}
-
-				$pluginData = array();
-
-				$pluginData['id'] = $plugin_id;
-				$pluginData['name'] = $plugin->getName();
-				$pluginData['img'] = $plugin->getPathImgIcon();
-				$pluginData['versionDate'] = $versionDate;
-				$pluginData['versionType'] = $versionType;
-				$pluginData['error'] = $asNok;
-				$pluginData['pending'] = $asPending;
-				$pluginData['portInfo'] = $portInfo;
-				$pluginData['dependencyInfo'] = $dependencyInfo;
-				$pluginData['daemonData'] = $daemonData;
-				$pluginData['healthData'] = $healthData;
-
-				array_push($allPluginsData, $pluginData);
-			}
-		}
-
 		$jeedomData = array();
-		foreach ((jeedom::health()) as $datas) {
-			$item = array();
-			$item['name'] = $datas['name'];
-			$item['comment'] = $datas['comment'];
-
-			if ($datas['state'] === 2) {
-				$item['state'] = 'warning';
-			} else if ($datas['state']) {
-				$item['state'] = 'OK';
-			} else {
-				$item['state'] = 'KO';
-			}
-
-			$item['result'] = $datas['result'];
-
-			array_push($jeedomData, $item);
-		}
 
 		// get the number of update availables
 		$nb = update::nbNeedUpdate();
+
+		// CUSTOM FX to disable health details -- not available now on screen -- personal use :) -- tomtom
+		$sendHealth = config::byKey('sendHealth', 'JeedomConnect', 'true');
+
+		if ($sendHealth == 'true') {
+
+			foreach (plugin::listPlugin(true) as $plugin) {
+
+				if ($plugin->getHasDependency() == 1 || $plugin->getHasOwnDeamon() == 1 || method_exists($plugin->getId(), 'health')) {
+					$plugin_id = $plugin->getId();
+
+					$asNok = 0;
+					$asPending = 0;
+
+					$portInfo = null;
+					if (config::byKey('port', $plugin->getId()) != '') {
+						$portInfo = ucfirst(config::byKey('port', $plugin->getId()));
+					}
+
+					$dependencyInfo = null;
+					if ($plugin->getHasDependency() == 1) {
+						try {
+							$dependancy_info = $plugin->dependancy_info();
+							switch ($dependancy_info['state']) {
+								case 'ok':
+									$dependencyInfo = 'OK';
+									break;
+								case 'in_progress':
+									$dependencyInfo = 'En cours';
+									$asPending += 1;
+									break;
+								default:
+									$dependencyInfo = 'KO';
+									$asNok += 1;
+									break;
+							}
+						} catch (Exception $e) {
+							log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting dependancy_info -- ' . $e->getMessage());
+						}
+					}
+
+					$daemonData = array();
+					if ($plugin->getHasOwnDeamon() == 1) {
+						try {
+
+							$daemonData['setup'] = array();
+							$daemon_info = $plugin->deamon_info();
+
+							$daemonData['setup']['mode'] = $daemon_info['auto'] ? 'auto' : 'manuel';
+
+							$daemonData['setup']['message'] = null;
+
+							switch ($daemon_info['launchable']) {
+								case 'ok':
+									$daemonData['setup']['status'] = 'OK';
+									break;
+								case 'nok':
+									if ($daemon_info['auto'] != 1) {
+										$daemonData['setup']['status'] = 'Désactivé';
+									} else {
+										$daemonData['setup']['status'] = 'KO';
+										$daemonData['setup']['message'] =  $daemon_info['launchable_message'];
+										$asNok += 1;
+									}
+									break;
+							}
+
+							$daemonData['last_launch'] = $daemon_info['last_launch'];
+							switch ($daemon_info['state']) {
+								case 'ok':
+									$daemonData['state'] = 'OK';
+									break;
+								case 'nok':
+									if ($daemon_info['auto'] != 1) {
+										$daemonData['state'] = 'Désactivé';
+									} else {
+										$daemonData['state'] = 'KO';
+										$asNok += 1;
+									}
+									break;
+							}
+						} catch (Exception $e) {
+							log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting daemon_info -- ' . $e->getMessage());
+						}
+					}
+
+					$healthData = array();
+					if (method_exists($plugin->getId(), 'health')) {
+
+						try {
+							foreach ($plugin_id::health() as $result) {
+								$item = array();
+								$item['test'] = $result['test'];
+								$item['advice'] = $result['advice'];
+
+								if (!$result['state']) {
+									$asNok += 1;
+								}
+								$item['result'] = $result['result'];
+
+								array_push($healthData, $item);
+							}
+						} catch (Exception $e) {
+							log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting health info -- ' . $e->getMessage());
+						}
+					}
+
+
+					$update = $plugin->getUpdate();
+					$versionType = $versionDate = null;
+					if (is_object($update)) {
+						$versionType = $update->getConfiguration('version');
+						$versionDate = $update->getLocalVersion();
+					}
+
+					$pluginData = array();
+
+					$pluginData['id'] = $plugin_id;
+					$pluginData['name'] = $plugin->getName();
+					$pluginData['img'] = $plugin->getPathImgIcon();
+					$pluginData['versionDate'] = $versionDate;
+					$pluginData['versionType'] = $versionType;
+					$pluginData['error'] = $asNok;
+					$pluginData['pending'] = $asPending;
+					$pluginData['portInfo'] = $portInfo;
+					$pluginData['dependencyInfo'] = $dependencyInfo;
+					$pluginData['daemonData'] = $daemonData;
+					$pluginData['healthData'] = $healthData;
+
+					array_push($allPluginsData, $pluginData);
+				}
+			}
+
+			// get jeedom health page
+			foreach ((jeedom::health()) as $datas) {
+				$item = array();
+				$item['name'] = $datas['name'];
+				$item['comment'] = $datas['comment'];
+
+				if ($datas['state'] === 2) {
+					$item['state'] = 'warning';
+				} else if ($datas['state']) {
+					$item['state'] = 'OK';
+				} else {
+					$item['state'] = 'KO';
+				}
+
+				$item['result'] = $datas['result'];
+
+				array_push($jeedomData, $item);
+			}
+		} else {
+			log::add('JeedomConnect', 'debug', 'HEALTH -- skip');
+		}
 
 		$result = array('plugins' => $allPluginsData, 'jeedom' => $jeedomData, 'nbUpdate' => $nb);
 		return $result;
@@ -1682,6 +1753,10 @@ class JeedomConnect extends eqLogic {
 
 class JeedomConnectCmd extends cmd {
 
+	public static $_widgetPossibility = array(
+		'custom' => true
+	);
+
 	public function dontRemoveCmd() {
 		return true;
 	}
@@ -1733,36 +1808,43 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'notif':
+
 				// log::add('JeedomConnect', 'debug', ' ----- running exec notif ! ---------');
+				$myData = self::getTitleAndArgs($_options);
+
 				$data = array(
 					'type' => 'DISPLAY_NOTIF',
 					'payload' => array(
-						'cmdId' => $_options['orignalCmdId'] ?: $this->getId(),
-						'title' => str_replace("'", "&#039;", $_options['title']),
+						'cmdId' => $_options['orignalCmdId'] ?? $this->getId(),
+						'title' => str_replace("'", "&#039;", $myData['title']),
 						'message' => str_replace("'", "&#039;", $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
 						'notificationId' => $_options['notificationId'] ?? time(),
-						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null
+						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null,
+						'options' => $myData['args'] ?? null
 					)
 				);
-				if (isset($_options["files"])) {
+				if (isset($_options["files"]) || isset($myData["files"])) {
 					$files = array();
-					foreach ($_options["files"] as $file) {
-						array_push($files, realpath($file));
+					$arrayMerge = array_merge($_options["files"] ?? array(), $myData["files"] ?? array());
+					foreach ($arrayMerge as $file) {
+						if (realpath($file)) array_push($files, realpath($file));
 					}
 					$data['payload']['files'] = $files;
 				}
+				// log::add('JeedomConnect_test', 'debug', ' notif payload ==> ' . json_encode($data));
 				$eqLogic->sendNotif($this->getLogicalId(), $data);
 				break;
 
 			case 'goToPage':
-				if (empty($_options['title']) && empty($_options['message'])) {
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
 				$payload = array(
 					'action' => 'goToPage',
-					'pageId' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+					'pageId' => $_options['message']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
@@ -1771,6 +1853,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'toaster':
 				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
 				$payload = array(
@@ -1785,27 +1868,219 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'launchApp':
-				if (empty($_options['title']) && empty($_options['message'])) {
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
 				$payload = array(
 					'action' => 'launchApp',
-					'packageName' => !empty($_options['message']) ?  $_options['message'] : $_options['title']
+					'packageName' => $_options['message']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				}
 				break;
 
-			case 'launchApp':
+			case 'unlink':
 				$eqLogic->setConfiguration('deviceId', '');
 				$eqLogic->setConfiguration('deviceName', '');
 				$eqLogic->save();
+				break;
+
+
+			case 'update_pref_app':
+				if (empty($_options['title'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
+					return;
+				}
+				if ($_options['title'] == 'none') {
+					log::add('JeedomConnect', 'error', 'Please select an action for cmd "' . $this->getName() . '" ... ');
+					return;
+				}
+				if (empty($_options['message']) && $_options['message'] != '0') {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+
+				switch (strtoupper($_options['message'])) {
+					case 'START':
+					case 'RUN':
+					case 'MARCHE':
+					case 'ON':
+					case '1':
+						$finalValue = 'ON';
+						break;
+
+					case 'STOP':
+					case 'ARRET':
+					case 'OFF':
+					case '0':
+						$finalValue = 'OFF';
+						break;
+
+					default:
+						$finalValue = $_options['message'];
+						break;
+				}
+
+				$payload = array(
+					'action' => $_options['title'],
+					'arg' => $finalValue
+				);
+
+				// log::add('JeedomConnect', 'debug', 'payload sent ' . json_encode($payload));
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'send_sms':
+				if (empty($_options['title'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
+					return;
+				}
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+
+				$args = self::arg2arrayCustom($_options['title']);
+				if (empty($args)) {
+					$num = $_options['title'];
+					$sim = null;
+					$files = null;
+				} elseif (!empty($args['numero'])) {
+					$num = $args['numero'];
+					$sim = $args['sim'] ?? null;
+					$files = isset($args['files']) ? explode(',', $args['files']) :  null;
+				} else {
+					log::add('JeedomConnect', 'error', 'No numero found');
+					return;
+				}
+
+				if (!is_null($files)) {
+					$filesTemp = array();
+					foreach ($files as $file) {
+						if (realpath($file)) {
+							array_push($filesTemp, realpath($file));
+						}
+					}
+					$files = !empty($filesTemp) ? $filesTemp :  null;
+				}
+
+				$payload = array(
+					'action' => 'send_sms',
+					'numero' => $num,
+					'message' => $_options['message'],
+					'simId' => $sim,
+					'files' => $files
+				);
+
+				// log::add('JeedomConnect_test', 'debug', 'payload sent ' . json_encode($payload));
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
 				break;
 
 			default:
 				log::add('JeedomConnect', 'error', 'unknow action [' . $logicalId . '] - options :' . json_encode($_options));
 				break;
 		}
+	}
+
+
+	public static function getTitleAndArgs($_options) {
+
+		$optionsSupp = array();
+		$args = array();
+		$files = array();
+		if (isset($_options['title'])) {
+			$optionsSupp = self::arg2arrayCustom($_options['title']);
+			//if no use of '|', then will try to use the standard fx
+			// if (count($optionsSupp) == 0) $optionsSupp = arg2array($_options['title']);
+		}
+
+		if (empty($optionsSupp)) {
+			$titre = $_options['title'] ?: '';
+		} else {
+			foreach ($optionsSupp as $key => $value) {
+				$optionsSupp[$key] =  str_replace('"', '', $value);
+			}
+
+			$titre = isset($optionsSupp['title']) ? $optionsSupp['title'] : '';
+			$args = $optionsSupp;
+			if (isset($optionsSupp['title'])) unset($args['title']);
+
+			if (isset($optionsSupp['files'])) {
+				$files = explode(',', $optionsSupp['files']);
+				unset($args['files']);
+			}
+		}
+		return array('title' => $titre, 'args' => $args, 'files' => $files);
+	}
+
+	public static function arg2arrayCustom($data) {
+		$dataArray = explode('|', $data);
+		$result = array();
+		foreach ($dataArray as $item) {
+			$arg = explode('=', trim($item), 2);
+			if (count($arg) == 2) {
+				$result[trim($arg[0])] = trim($arg[1]);
+			}
+		}
+		return $result;
+	}
+
+	public function getWidgetTemplateCode($_version = 'dashboard', $_clean = true, $_widgetName = '') {
+
+		if ($_version != 'scenario') return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+
+		if ($this->getDisplay('title_with_list', '') != 1) return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+
+		$template = getTemplate('core', 'scenario', 'cmd.action.message_with_choice', 'JeedomConnect');
+
+		if (!empty($template)) {
+			if (version_compare(jeedom::version(), '4.2.0', '>=')) {
+				if (!is_array($template)) return array('template' => $template, 'isCoreWidget' => false);
+			} else {
+				$replace = array();
+				$replace['#listValue#'] = $this->getListOption();
+				$html = template_replace($replace, $template);
+
+				return $html;
+			}
+		}
+		return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+	}
+
+	public function getListOption() {
+		$listOption = '';
+		if ($this->getConfiguration('listValue', '') != '') {
+			$elements = explode(';', $this->getConfiguration('listValue', ''));
+			$foundSelect = false;
+			foreach ($elements as $element) {
+				$coupleArray = explode('|', $element);
+				$cmdValue = $this->getCmdValue();
+				if (is_object($cmdValue) && $cmdValue->getType() == 'info') {
+					if ($cmdValue->execCmd() == $coupleArray[0]) {
+						$listOption .= '<option value="' . $coupleArray[0] . '" selected>' . $coupleArray[1] . '</option>';
+						$foundSelect = true;
+					} else {
+						$listOption .= '<option value="' . $coupleArray[0] . '">' . $coupleArray[1] . '</option>';
+					}
+				} else {
+					$listOption .= '<option value="' . $coupleArray[0] . '">' . $coupleArray[1] . '</option>';
+				}
+			}
+			if (!$foundSelect) {
+				$listOption = '<option value="none" selected>-- A SELECTIONNER --</option>' . $listOption;
+			}
+		}
+
+		return $listOption;
 	}
 }

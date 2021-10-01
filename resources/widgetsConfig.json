@@ -5404,6 +5404,111 @@
 					]
 				}
 			]
+		},
+		{
+			"type": "image",
+			"name": "Image",
+			"img": "image.png",
+			"description": "Permet d'afficher une image",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "imageInfo",
+					"name": "Commande image",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Commande chaîne contenant l'URL ou le chemin de l'image"
+				},
+				{
+					"id": "imageUrl",
+					"name": "URL image",
+					"category": "string",
+					"description": "URL ou chemin de l'image (si pas de commande)"
+				},
+				{
+					"id": "refreshTime",
+					"name": "Intervalle de rafraîchissement (s)",
+					"category": "string",
+					"description": "Si l'image n'est pas statique, temps entre deux chargements (laisser vide sinon)"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
 		}
 	],
 	"summaries": [

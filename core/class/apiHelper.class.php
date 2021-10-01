@@ -326,7 +326,7 @@ class apiHelper {
 
     foreach (config::byKey('object:summary') as $item) {
       $item['display'] = self::getIconAndColor($item['icon']);
-      $item['icon'] = preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']);
+      $item['icon'] = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']));
       array_push($result['payload']['summariesConfig'], $item);
     }
 
@@ -334,14 +334,14 @@ class apiHelper {
   }
 
   public static function getIconAndColor($iconClass) {
-    $newIconClass = preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass);
+    $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
     $matches = array();
     preg_match('/(.*)class=\"(.*)\"(.*)/', $iconClass, $matches);
 
     if (count($matches) > 3) {
       list($iconType, $iconImg) = explode(" ", $matches[2], 2);
       $iconType = ($iconType == 'icon') ? 'jeedom' : 'fa';
-      $iconImg = ($iconType == 'fa') ? str_replace('fa-', '', $iconImg) : $iconImg;
+      $iconImg = ($iconType == 'fa') ? trim(str_replace('fa-', '', $iconImg)) : trim($iconImg);
 
       preg_match('/(.*) icon_(.*)/', $iconImg, $matches);
       $color = '';
@@ -530,16 +530,10 @@ class apiHelper {
 
   public static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
-    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
     foreach ($customWidgetList as $customWidget) {
-      $widgetId = $customWidget['widgetId'];
-      if (empty($customData)) {
-        $customData = array('widgets' => array());
-      }
-      $customData['widgets'][$widgetId] = $customWidget;
+      log::add('JeedomConnect', 'debug', 'save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
+      config::save('customData::' . $apiKey . '::' . $customWidget['widgetId'], json_encode($customWidget), 'JeedomConnect');
     }
-    log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
-    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
     $eqLogic->generateNewConfigVersion();
   }
 
