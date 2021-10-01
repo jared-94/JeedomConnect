@@ -8,7 +8,6 @@ data/img/user_files/
 3rdparty/composer.json
 3rdparty/composer.lock
 
-.htaccess
 .bash*
 
-jeedomStub.php
+.vscode/settings.json
