@@ -209,16 +209,31 @@ foreach ($orderByArray as $key => $value) {
     </div>
 
     <div class="form-group">
-      <label class="col-sm-6 control-label">{{Configurations des Widgets}}
+      <label class="col-sm-6 control-label">{{Exporter}}
         <sup>
-          <i class="fas fa-question-circle floatright" title="Permet d'exporter vos widgets"></i>
+          <i class="fas fa-question-circle floatright" title="Permet d'exporter vos widgets ou les personnalisation de vos widgets"></i>
         </sup>
       </label>
       <div class="col-sm-6 input-group" style="display:inline-flex;">
         <span class="input-group-btn">
           <input type="file" accept=".json" id="importConfig-input" style="display:none;">
-          <a class="btn btn-warning" id="exportWidgetConf"><i class="fa fa-save"></i> {{Exporter}}</a>
-          <a class="btn btn-primary" id="importWidgetConf"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
+          <a class="btn btn-warning exportConf" id="exportWidgetConf" data-type="exportWidgets"><i class="fa fa-save"></i> {{Widgets}}</a>
+          <a class="btn btn-warning exportConf" id="exportCustomDataWidgetConf" data-type="exportCustomData"><i class="fa fa-save"></i> {{Personnalisation}}</a>
+        </span>
+
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-6 control-label">{{Importer}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Permet d'importer les configurations de vos wigets et/ou de vos personnalisations de widgets"></i>
+        </sup>
+      </label>
+      <div class="col-sm-6 input-group" style="display:inline-flex;">
+        <span class="input-group-btn">
+          <input type="file" accept=".json" id="importConfig-input" style="display:none;">
+          <a class="btn btn-primary importConf" id="importWidgetConf" data-type="exportWidgets"><i class="fa fa-cloud-upload-alt"></i> {{Importer}}</a>
         </span>
 
       </div>

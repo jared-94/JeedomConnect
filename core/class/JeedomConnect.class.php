@@ -105,6 +105,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
+		JeedomConnectWidget::exportWidgetCustomConf();
 	}
 
 	public static function copyConfig($from, $to) {
