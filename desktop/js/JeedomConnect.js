@@ -472,7 +472,7 @@ function addCmdToTable(_cmd) {
   tr += '</tr>';
   $('#table_cmd tbody').append(tr);
   var tr = $('#table_cmd tbody tr').last();
-  jeedom.eqLogic.builSelectCmd({
+  jeedom.eqLogic.buildSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),
     filter: { type: 'info' },
     error: function (error) {
@@ -570,7 +570,7 @@ if (init(_cmd.type) == 'action') {
   $('#table_cmd tbody').append(tr);
   //$('#table_cmd tbody tr:last').setValues(_cmd, '.cmdAttr');
   var tr = $('#table_cmd tbody tr:last');
-  jeedom.eqLogic.builSelectCmd({
+  jeedom.eqLogic.buildSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),
     filter: {type: 'info'},
     error: function (error) {
@@ -1052,7 +1052,6 @@ function refreshAddWidgets() {
   loadSortable('all');
 }
 
-
 function imagePicker(elm) {
   var newElt = $(elm).nextAll("a[data-id^='icon-']:first");
 
@@ -1061,12 +1060,9 @@ function imagePicker(elm) {
   });
 }
 
-
 function removeImage(elm) {
   $(elm).empty();
 }
-
-
 
 function removeCmd(id) {
   $("#" + id + "-input").attr('value', '');
@@ -1092,8 +1088,6 @@ $("#widgetOptions").on('change', '.needRefresh', function () {
 
 });
 
-
-
 function refreshCmdData(name, id, value) {
   getCmd({
     id: id,
@@ -1118,7 +1112,6 @@ function refreshCmdData(name, id, value) {
         });
         return;
       }
-
 
       $("#" + name + "-input").attr('cmdId', data.result.id);
       $("#" + name + "-input").val('#' + data.result.humanName + '#');
@@ -1170,10 +1163,6 @@ function refreshCmdData(name, id, value) {
     }
   });
 }
-
-
-
-
 
 function selectScenario(name) {
   jeedom.scenario.getSelectModal({}, function (result) {
@@ -1231,8 +1220,6 @@ function refreshWidgetOption() {
   });
   $("#widget-option").html(curOption);
 }
-
-
 
 function refreshCmdListOption(optionsJson) {
   var options = JSON.parse(optionsJson);
@@ -1300,9 +1287,8 @@ function refreshCmdListOption(optionsJson) {
     curOption += `</div>`;
     //// ---  END right part
     curOption += `</div>`;
-
-
   });
+
   $("#cmdList-option").html(curOption);
   cmdCat.forEach(item => {
     var confirm = item.confirm ? "checked" : "";
@@ -1341,7 +1327,6 @@ function refreshCmdListOption(optionsJson) {
 
   })
 }
-
 
 $("#widgetOptions").on('focusin', '.jcCmdListOptionsCommand', function () {
   $(this).attr('data-value-focusin', $(this).val());
@@ -1394,7 +1379,6 @@ $("#widgetOptions").on('focusout', '.jcCmdListOptionsCommand', function () {
 
   $(this).attr('data-value-focusin', '');
 })
-
 
 function getCmdOptions(item) {
 
@@ -1450,7 +1434,6 @@ function getCmdOptions(item) {
 
   }
 
-
   if (item.subtype == 'message') {
 
     var optionTitle = optionTitle || '';
@@ -1467,7 +1450,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1489,7 +1472,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1511,7 +1494,7 @@ function getCmdOptions(item) {
             <span class="input-group-btn">
               <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-index="${item.index}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
             var el = $(this);
@@ -1531,13 +1514,8 @@ function getCmdOptions(item) {
                             <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' data-id="custom-name-${item.id}" data-index="${item.index}" value='${item.name || ""}' >
                         </div>`;
 
-
   return curOption;
-
-
 }
-
-
 
 function saveCmdList() {
   cmdCat.forEach(item => {
@@ -1908,7 +1886,6 @@ function loadSortable(elt) {
     });
 
   }
-
 }
 
 function deleteImgOption(id) {
@@ -2386,7 +2363,6 @@ function saveWidget() {
     $('#widget-alert').showAlert({ message: error, level: 'danger' });
     console.error(error);
   }
-
 }
 
 function getCustomParamUrl(url, vars) {
@@ -2413,7 +2389,6 @@ function getCustomParamUrl(url, vars) {
   }
 
   return url;
-
 }
 
 function hideWidget() {
@@ -2522,7 +2497,6 @@ function removeWidget(itemId) {
       }
     }
   });
-
 }
 
 
@@ -2582,7 +2556,6 @@ function getMaxIndex(array) {
   return maxIndex;
 }
 
-
 function getMaxId(array, defaut = -1) {
   var maxId = defaut;
   array.forEach(item => {
@@ -2607,9 +2580,7 @@ function parseString(string, infos) {
   return result;
 }
 
-
 function updateOrderWidget() {
-
   var type = $("#widgetOrder").val();
 
   var vars = getUrlVars()
@@ -2618,9 +2589,7 @@ function updateOrderWidget() {
   url = getCustomParamUrl(url, vars);
 
   loadPage(url)
-
 }
-
 
 $('#widgetOrder_NOTWORKING').on('change', function () {
   var type = $("#widgetOrder").val();
@@ -2650,11 +2619,7 @@ $('#widgetOrder_NOTWORKING').on('change', function () {
       }
     }
   });
-
-
-
 });
-
 
 $('#widgetTypeSelect').on('change', function () {
   var typeSelected = this.value;
@@ -2675,7 +2640,6 @@ $('#widgetTypeSelect').on('change', function () {
 
 });
 
-
 $('body').off('click', '.toggle-password').on('click', '.toggle-password', function () {
   $(this).toggleClass("fa-eye fa-eye-slash");
   var input = $("#actionPwd");
@@ -2694,7 +2658,6 @@ $("#actionPwd").focusin(function () {
   }
 });
 
-
 function saveEqLogic(_eqLogic) {
   if (!isset(_eqLogic.configuration)) {
     _eqLogic.configuration = {};
@@ -2708,7 +2671,6 @@ function saveEqLogic(_eqLogic) {
   return _eqLogic;
 
 }
-
 
 function getCmdDetail(_params, _callback) {
   if (typeof _params.alert == 'undefined') {
@@ -2743,8 +2705,6 @@ function getCmdDetail(_params, _callback) {
   $.ajax(paramsAJAX);
 };
 
-
-
 $(document).ready(function () {
   var widgetSearch = $("#in_searchWidget").val().trim();
   if (widgetSearch != '') {
@@ -2761,7 +2721,6 @@ $('#widgetsList-div').on('change', function () {
 })
 
 function updateWidgetCount() {
-
   var nbVisible = $('.widgetDisplayCard:visible').length;
   var nbTotal = $('.widgetDisplayCard').length;
 
