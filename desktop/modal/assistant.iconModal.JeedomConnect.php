@@ -25,33 +25,23 @@ sendVarToJS('selectedIcon', [
   'shadow' => init('shadow', 0)
 ]);
 
-function get_all_files($dir) {
+function get_all_files($dir, $includeSubDir = false) {
   $result = array();
   $dh = new DirectoryIterator($dir);
+  $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp'); //match extentions in .htaccess files so adapt it as well
 
   foreach ($dh as $item) {
-    if (!$item->isDot() && substr($item, 0, 1) != '.') {
-      if ($item->isDir()) {
-        $tmp = get_all_files("$dir/$item");
-        $result = array_merge($result, $tmp);
-      } else {
-        array_push($result, array('path' =>  preg_replace('#/+#', '/', $item->getPathname()), 'name' => $item->getFilename()));
-      }
+    if ($item->isDot()) continue;
+    if ($item->isDir() && $includeSubDir) {
+      $tmp = get_all_files("$dir/$item", true);
+      $result = array_merge($result, $tmp);
+    } elseif ($item->isFile()) {
+      if (!in_array($item->getExtension(), $allowedExtensions)) continue;
+      array_push($result, array('path' =>  preg_replace('#/+#', '/', $item->getPathname()), 'name' => $item->getFilename()));
     }
   }
   return $result;
 }
-
-$customPath = config::byKey('userImgPath', 'JeedomConnect');
-
-$myFiles = get_all_files($customPath);
-
-$iconName = array_column($myFiles, 'name');
-// $iconName = array_column($myFiles, 'path');
-array_multisort($iconName, SORT_ASC, $myFiles);
-
-
-
 ?>
 
 <div style="display: none;" id="div_iconSelectorAlert"></div>
@@ -190,16 +180,14 @@ array_multisort($iconName, SORT_ASC, $myFiles);
       <div id="div_imageGallery">
         <?php
         $div = '';
-        $dir = __DIR__ . '/../../data/img';
-        $files = scandir($dir);
 
-        foreach ($files as $key => $name) {
-          if ($name == "." || $name == ".." || $name == "user_files") {
-            continue;
-          }
+        $jcFiles = get_all_files('plugins/JeedomConnect/data/img');
+        array_multisort($jcFiles, SORT_ASC);
+
+        foreach ($jcFiles as $img) {
           $div .= '<div class="divIconSel divImgSel">';
-          $div .= '<div class="cursor iconSel"><img source="jc" name="' . $name . '" class="img-responsive" src="plugins/JeedomConnect/data/img/' . $name . '"/></div>';
-          $div .= '<div class="iconDesc">' . $name . '</div>';
+          $div .= '<div class="cursor iconSel"><img source="jc" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
+          $div .= '<div class="iconDesc">' . $img['name'] . '</div>';
           $div .= '</div>';
         }
         echo $div;
@@ -215,9 +203,15 @@ array_multisort($iconName, SORT_ASC, $myFiles);
         <?php
         $div = '';
 
+        $customPath = config::byKey('userImgPath', 'JeedomConnect');
+        $myFiles = get_all_files($customPath, true);
+
+        $iconName = array_column($myFiles, 'name');
+        array_multisort($iconName, SORT_ASC, $myFiles);
+
         foreach ($myFiles as $img) {
           $div .= '<div class="divIconSel divImgSel">';
-          $div .= '<div class="cursor iconSel"><img source="user" name="' . str_replace($customPath, '', $img['path']) . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
+          $div .= '<div class="cursor iconSel"><img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
           $div .= '<div class="iconDesc">' . $img['name'] . '</div>';
           $div .= '</div>';
         }
