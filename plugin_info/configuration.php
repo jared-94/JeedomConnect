@@ -239,7 +239,7 @@ foreach ($orderByArray as $key => $value) {
       </div>
     </div>
 
-    <hr>
+    <!-- <hr>
     <div class="form-group" id="migrationDiv">
       <label class="col-sm-6 control-label">{{Migration des configurations}}
         <sup>
@@ -261,7 +261,7 @@ foreach ($orderByArray as $key => $value) {
         <label class="radio-inline"><input type="radio" name="migration" id="all" /> tous</label>
         <label class="radio-inline"><input type="radio" name="migration" id="enableOnly" checked />Uniquement les équipements actifs</label>
       </div>
-    </div>
+    </div> -->
 
 
     <!-- END DANGER ZONE -->
