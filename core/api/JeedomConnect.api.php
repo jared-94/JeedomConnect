@@ -48,6 +48,11 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AV
 log::add('JeedomConnect', 'info', "all params ===> " . json_encode($params));
 
 switch ($method) {
+  case 'PING':
+    $eqLogic->setConfiguration('appState', 'active');
+    $eqLogic->save();
+    $jsonrpc->makeSuccess();
+    break;
   case 'GET_AVAILABLE_EQUIPEMENT':
     $eqLogics = eqLogic::byType('JeedomConnect');
 
