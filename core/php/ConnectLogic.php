@@ -102,7 +102,7 @@ class ConnectLogic implements MessageComponentInterface {
 		$this->setUnauthenticatedClientsCount();
 		// Parse message
 		$objectMsg = json_decode($msg);
-		if ($objectMsg === null || !property_exists($objectMsg, 'apiKey') || !property_exists($objectMsg, 'deviceId') || !property_exists($objectMsg, 'token')) {
+		if ($objectMsg === null || !property_exists($objectMsg, 'apiKey') || !property_exists($objectMsg, 'userHash') || !property_exists($objectMsg, 'deviceId') || !property_exists($objectMsg, 'token')) {
 			\log::add('JeedomConnect', 'warning', "Authentication failed (invalid message) for client #{$conn->resourceId} from IP: {$conn->ip}");
 			$conn->close();
 			return;
@@ -168,6 +168,9 @@ class ConnectLogic implements MessageComponentInterface {
 				$eqLogic->save();
 			}
 
+			$userConnected = \user::byHash($objectMsg->userHash);
+			if (!is_object($userConnected)) $userConnected = $user;
+
 			//check config content
 			if (is_null($config)) {
 				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : empty config file");
@@ -204,10 +207,10 @@ class ConnectLogic implements MessageComponentInterface {
 				'payload' => array(
 					'pluginVersion' => $this->pluginVersion,
 					'useWs' => $eqLogic->getConfiguration('useWs', 0),
-					'userHash' => $user->getHash(),
-					'userId' => $user->getId(),
-					'userName' => $user->getName(),
-					'userProfil' => $user->getProfils(),
+					'userHash' => $userConnected->getHash(),
+					'userId' => $userConnected->getId(),
+					'userName' => $userConnected->getLogin(),
+					'userProfil' => $userConnected->getProfils(),
 					'configVersion' => $config['payload']['configVersion'],
 					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
 					'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',

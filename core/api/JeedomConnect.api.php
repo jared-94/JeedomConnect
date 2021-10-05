@@ -116,12 +116,16 @@ switch ($method) {
       $jsonrpc->makeSuccess(array('type' => 'PLUGIN_VERSION_ERROR'));
       return;
     }
+
     $user = user::byId($eqLogic->getConfiguration('userId'));
     if ($user == null) {
       $user = user::all()[0];
       $eqLogic->setConfiguration('userId', $user->getId());
       $eqLogic->save();
     }
+
+    $userConnected = user::byHash($params['userHash']);
+    if (!is_object($userConnected)) $userConnected = $user;
 
     $config = $eqLogic->getGeneratedConfigFile();
 
@@ -146,10 +150,10 @@ switch ($method) {
       'payload' => array(
         'pluginVersion' => $versionJson->version,
         'useWs' => $eqLogic->getConfiguration('useWs', 0),
-        'userHash' => $user->getHash(),
-        'userId' => $user->getId(),
-        'userName' => $user->getName(),
-        'userProfil' => $user->getProfils(),
+        'userHash' => $userConnected->getHash(),
+        'userId' => $userConnected->getId(),
+        'userName' => $userConnected->getLogin(),
+        'userProfil' => $userConnected->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
         'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
