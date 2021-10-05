@@ -1243,6 +1243,7 @@ class apiHelper {
       return;
     }
     try {
+      $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
       $cmd->execCmd($options);
     } catch (Exception $e) {
       log::add('JeedomConnect', 'error', $e->getMessage());
