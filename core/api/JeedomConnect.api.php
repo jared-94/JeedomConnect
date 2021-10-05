@@ -47,6 +47,7 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AV
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
 }
 
+log::add('JeedomConnect', 'info', "all params ===> " . json_encode($params));
 
 switch ($method) {
   case 'GET_AVAILABLE_EQUIPEMENT':
