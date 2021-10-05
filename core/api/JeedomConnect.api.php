@@ -40,8 +40,6 @@ if ($method == 'GEOLOC') {
   $apiKey = $params['apiKey'];
 }
 
-$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-
 if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT') {
   log::add('JeedomConnect', 'debug', "Can't find eqLogic");
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
