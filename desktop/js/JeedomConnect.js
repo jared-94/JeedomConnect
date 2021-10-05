@@ -941,7 +941,7 @@ function refreshAddWidgets() {
       if (option.id == "subtitle") {
         curOption += `<option value="custom">Personnalisé</option></select>`;
         curOption += `<div style="display:flex">
-  					<input style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'>`;
+  					<textarea style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'></textarea>`;
 
         curOption += `
             <div class="dropdown" id="subtitle-select" style=" display:none;">
