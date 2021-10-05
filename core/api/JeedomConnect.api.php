@@ -147,6 +147,7 @@ switch ($method) {
         'useWs' => $eqLogic->getConfiguration('useWs', 0),
         'userHash' => $user->getHash(),
         'userId' => $user->getId(),
+        'userName' => $user->getName(),
         'userProfil' => $user->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
