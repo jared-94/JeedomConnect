@@ -127,6 +127,12 @@ try {
 		ajax::success();
 	}
 
+	if (init('action') == 'exportCustomData') {
+		log::add('JeedomConnect', 'debug', 'ajax -- fx exportCustomData');
+		JeedomConnectWidget::exportWidgetCustomConf();
+		ajax::success();
+	}
+
 	if (init('action') == 'uploadWidgets') {
 		log::add('JeedomConnect', 'debug', 'ajax -- fx uploadWidgets');
 		try {

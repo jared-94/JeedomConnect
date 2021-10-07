@@ -47,8 +47,12 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AV
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
 }
 
-
 switch ($method) {
+  case 'PING':
+    $eqLogic->setConfiguration('appState', 'active');
+    $eqLogic->save();
+    $jsonrpc->makeSuccess();
+    break;
   case 'GET_AVAILABLE_EQUIPEMENT':
     $eqLogics = eqLogic::byType('JeedomConnect');
 
@@ -115,12 +119,16 @@ switch ($method) {
       $jsonrpc->makeSuccess(array('type' => 'PLUGIN_VERSION_ERROR'));
       return;
     }
+
     $user = user::byId($eqLogic->getConfiguration('userId'));
     if ($user == null) {
       $user = user::all()[0];
       $eqLogic->setConfiguration('userId', $user->getId());
       $eqLogic->save();
     }
+
+    $userConnected = user::byHash($params['userHash']);
+    if (!is_object($userConnected)) $userConnected = $user;
 
     $config = $eqLogic->getGeneratedConfigFile();
 
@@ -145,9 +153,10 @@ switch ($method) {
       'payload' => array(
         'pluginVersion' => $versionJson->version,
         'useWs' => $eqLogic->getConfiguration('useWs', 0),
-        'userHash' => $user->getHash(),
-        'userId' => $user->getId(),
-        'userProfil' => $user->getProfils(),
+        'userHash' => $userConnected->getHash(),
+        'userId' => $userConnected->getId(),
+        'userName' => $userConnected->getLogin(),
+        'userProfil' => $userConnected->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
         'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',

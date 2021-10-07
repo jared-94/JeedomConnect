@@ -354,6 +354,24 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
+	public static function exportWidgetCustomConf() {
+		$export_file = JeedomConnect::$_config_dir . "export_custom_data_Widgets.json";
+
+		$allCustomData = config::searchKey('customData::', 'JeedomConnect');
+
+		$result = array();
+		foreach ($allCustomData as $item) {
+			array_push($result, array('key' => $item['key'], 'value' => $item['value']));
+		}
+
+		try {
+			log::add('JeedomConnect', 'debug', 'Saving  custom widgets conf file : ' . $export_file);
+			file_put_contents($export_file, json_encode($result, JSON_PRETTY_PRINT));
+		} catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+		}
+	}
+
 	//***************  EXPERIMENTAL ZONE  =) ****************************/
 
 	public static function replaceTextConfig($widgetId, $searchAndReplace, $reload = true) {

@@ -219,8 +219,13 @@ $('.jeedomConnect').off('click', '#listWidget').on('click', '#listWidget', funct
 })
 
 
-$('.jeedomConnect').off('click', '#exportWidgetConf').on('click', '#exportWidgetConf', function () {
+$('.jeedomConnect').off('click', '.exportConf').on('click', '.exportConf', function () {
+
     $('.resultListWidget').hideAlert();
+
+    var typeExport = $(this).data('type');
+    var fileName = typeExport == 'exportWidgets' ? '' : 'custom_data_';
+
     var dt = new Date();
     var dd = String(dt.getDate()).padStart(2, '0');
     var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -232,7 +237,7 @@ $('.jeedomConnect').off('click', '#exportWidgetConf').on('click', '#exportWidget
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
-            'action': 'exportWidgets'
+            'action': typeExport
         },
         dataType: 'json',
         success: function (data) {
@@ -244,8 +249,8 @@ $('.jeedomConnect').off('click', '#exportWidgetConf').on('click', '#exportWidget
             }
             else {
                 var a = document.createElement("a");
-                a.href = 'plugins/JeedomConnect/data/configs/export_Widgets.json';
-                a.download = 'export_Widgets_' + today + '_' + time + '.json';
+                a.href = 'plugins/JeedomConnect/data/configs/export_' + fileName + 'Widgets.json';
+                a.download = 'export_' + fileName + 'Widgets_' + today + '_' + time + '.json';
                 a.click();
                 a.remove();
             }
