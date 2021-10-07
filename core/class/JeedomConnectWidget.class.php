@@ -354,6 +354,24 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
+	public static function exportWidgetCustomConf() {
+		$export_file = JeedomConnect::$_config_dir . "export_custom_data_Widgets.json";
+
+		$allCustomData = config::searchKey('customData::', 'JeedomConnect');
+
+		$result = array();
+		foreach ($allCustomData as $item) {
+			array_push($result, array('key' => $item['key'], 'value' => $item['value']));
+		}
+
+		try {
+			log::add('JeedomConnect', 'debug', 'Saving  custom widgets conf file : ' . $export_file);
+			file_put_contents($export_file, json_encode($result, JSON_PRETTY_PRINT));
+		} catch (Exception $e) {
+			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+		}
+	}
+
 	//***************  EXPERIMENTAL ZONE  =) ****************************/
 
 	public static function replaceTextConfig($widgetId, $searchAndReplace, $reload = true) {
@@ -398,5 +416,63 @@ class JeedomConnectWidget extends config {
 			$word = str_replace($word, $replaces[$word], $word);
 		}
 		return $word;
+	}
+
+
+
+	public static function checkCmdSetupInWidgets() {
+		//get all widgets saved in DB
+		$widgetsDb = self::getWidgets();
+
+		// get setup of every type of widget
+		$widgetParam = JeedomConnect::getWidgetParam(false);
+
+		$cmdArrayError = array();
+
+		foreach ($widgetsDb as $item) {
+			$widget = json_decode($item['widgetJC'], true);
+
+			$config = $widgetParam[$widget['type']];
+			foreach ($config['options'] as $option) {
+				// will check only the cmd data
+				if (!in_array($option['category'], array("cmd", "cmdList"))) {
+					continue;
+				}
+
+				// log::add('JeedomConnect', 'debug', ' cmd name ' . $option['name'] . '  - matching widget data : ' . json_encode($widget[$option['id']]));
+				if ($option['category'] == "cmd") {
+					if (array_key_exists($option['id'], $widget)) {
+						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
+						if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+							$cmdArrayError[] = $widget['id'];
+						}
+					}
+				} elseif ($option['category'] == "cmdList") {
+					if (array_key_exists('actions', $widget)) {
+						foreach ($widget['actions'] as $action) {
+							$cmdWidgetId = $action['id'] ?: null;
+							if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+								$cmdArrayError[] = $widget['id'];
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// log::add('JeedomConnect', 'debug', ' ## all errors :    ' . json_encode($cmdArrayError));
+		return $cmdArrayError;
+	}
+
+
+	public static function isCmd($id) {
+
+		if (!is_null($id)) {
+			$cmd = cmd::byId($id);
+			if (!is_object($cmd)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

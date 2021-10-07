@@ -127,6 +127,12 @@ try {
 		ajax::success();
 	}
 
+	if (init('action') == 'exportCustomData') {
+		log::add('JeedomConnect', 'debug', 'ajax -- fx exportCustomData');
+		JeedomConnectWidget::exportWidgetCustomConf();
+		ajax::success();
+	}
+
 	if (init('action') == 'uploadWidgets') {
 		log::add('JeedomConnect', 'debug', 'ajax -- fx uploadWidgets');
 		try {
@@ -577,15 +583,16 @@ try {
 	}
 
 	if (init('action') == 'getCmd') {
-		$cmd = cmd::byId(init('id'));
+		$cmd = (preg_match("/^\d+$/", init('id'))) ? cmd::byId(init('id')) : cmd::byString(init('id'));
 		if (!is_object($cmd)) {
 			throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
 		}
 		ajax::success(array(
-			'id' => init('id'),
+			'id' => $cmd->getId(),
 			'type' => $cmd->getType(),
 			'subType' => $cmd->getSubType(),
 			'humanName' => $cmd->getHumanName(),
+			'name' => $cmd->getName(),
 			'minValue' => $cmd->getConfiguration('minValue'),
 			'maxValue' => $cmd->getConfiguration('maxValue'),
 			'unit' => $cmd->getUnite(),

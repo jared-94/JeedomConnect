@@ -326,7 +326,7 @@ class apiHelper {
 
     foreach (config::byKey('object:summary') as $item) {
       $item['display'] = self::getIconAndColor($item['icon']);
-      $item['icon'] = preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']);
+      $item['icon'] = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']));
       array_push($result['payload']['summariesConfig'], $item);
     }
 
@@ -334,14 +334,14 @@ class apiHelper {
   }
 
   public static function getIconAndColor($iconClass) {
-    $newIconClass = preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass);
+    $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
     $matches = array();
     preg_match('/(.*)class=\"(.*)\"(.*)/', $iconClass, $matches);
 
     if (count($matches) > 3) {
       list($iconType, $iconImg) = explode(" ", $matches[2], 2);
       $iconType = ($iconType == 'icon') ? 'jeedom' : 'fa';
-      $iconImg = ($iconType == 'fa') ? str_replace('fa-', '', $iconImg) : $iconImg;
+      $iconImg = ($iconType == 'fa') ? trim(str_replace('fa-', '', $iconImg)) : trim($iconImg);
 
       preg_match('/(.*) icon_(.*)/', $iconImg, $matches);
       $color = '';
@@ -530,16 +530,10 @@ class apiHelper {
 
   public static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
-    $customData = config::byKey('customData::' . $apiKey, 'JeedomConnect');
     foreach ($customWidgetList as $customWidget) {
-      $widgetId = $customWidget['widgetId'];
-      if (empty($customData)) {
-        $customData = array('widgets' => array());
-      }
-      $customData['widgets'][$widgetId] = $customWidget;
+      log::add('JeedomConnect', 'debug', 'save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
+      config::save('customData::' . $apiKey . '::' . $customWidget['widgetId'], json_encode($customWidget), 'JeedomConnect');
     }
-    log::add('JeedomConnect', 'debug', 'save custom data' . json_encode($customData));
-    config::save('customData::' . $apiKey, json_encode($customData), 'JeedomConnect');
     $eqLogic->generateNewConfigVersion();
   }
 
@@ -1198,7 +1192,7 @@ class apiHelper {
     $endFile = '-' . $configId . '.json';
     foreach ($files['payload']['files'] as $file) {
       if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
-        $config_file = file_get_contents(__DIR__ . '/../../../..'  . $file['path']);
+        $config_file = file_get_contents($file['path']);
         return array(
           'type' => 'SET_APP_CONFIG',
           'payload' => array('config' => json_decode($config_file))
@@ -1245,10 +1239,11 @@ class apiHelper {
   public static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command");
+      log::add('JeedomConnect', 'error', "Can't find command [id=" . $id . "]");
       return;
     }
     try {
+      $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
       $cmd->execCmd($options);
     } catch (Exception $e) {
       log::add('JeedomConnect', 'error', $e->getMessage());
@@ -1305,7 +1300,7 @@ class apiHelper {
           if (!$item->isDot() && substr($item, 0, 1) != '.') {
             if (!$item->isDir()) {
               array_push($result, array(
-                'path' =>  str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $item->getPathname())),
+                'path' =>  $item->getPathname(),
                 'timestamp' => $item->getMTime()
               ));
             } else if ($recursive) {
@@ -1330,9 +1325,9 @@ class apiHelper {
 
 
   public static function removeFile($file) {
-    $filePath =  __DIR__ . '/../../../..' . $file;
     $pathInfo = pathinfo($file);
-    unlink($filePath);
-    return self::getFiles($pathInfo['dirname']);
+    unlink($file);
+    return
+      self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
   }
 }

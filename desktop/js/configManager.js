@@ -146,7 +146,7 @@ function refreshWidgetsContent() {
 			$("#selWidgetDetail option[data-widget-id=" + val.id + "]").attr('data-exist', true);
 			var img = widgetsList.widgets.find(w => w.type == val.type).img;
 			var enable = val.enable ? '' : hideSpan;
-			items.push(`<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}" onclick="editWidgetModal('${val.id}');">
+			items.push(`<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}\nwidgetId=${value.widgetId}" onclick="editWidgetModal('${val.id}');">
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}${enable}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>

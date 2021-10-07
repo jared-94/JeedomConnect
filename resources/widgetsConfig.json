@@ -2641,6 +2641,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Ouvert' ou 'Fermé'"
+				},
+				{
+					"name": "value",
+					"descr": "Pourcentage d'ouverture"
 				}
 			],
 			"options": [
@@ -4240,14 +4244,16 @@
 					"name": "Contenu dans la carte",
 					"required": false,
 					"category": "binary",
-					"description": "Actions dans la carte plutôt qu'à droite"
+					"description": "Actions dans la carte plutôt qu'à droite",
+					"customizable": true
 				},
 				{
 					"id": "lineMode",
 					"name": "Mode en ligne",
 					"required": false,
 					"category": "binary",
-					"description": "Affiche les actions sur une seule ligne défilante"
+					"description": "Affiche les actions sur une seule ligne défilante",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -5177,6 +5183,285 @@
 					"name": "Widgets supplémentaires",
 					"category": "widgets",
 					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "history",
+			"name": "Historique",
+			"img": "history.png",
+			"description": "Permet d'afficher un historique de commande",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Commandes infos",
+					"required": false,
+					"category": "cmd",
+					"type": "info"
+				},
+				{
+					"id": "intervalDays",
+					"name": "Intervalle historique",
+					"required": false,
+					"category": "string",
+					"description": "Nombre de jours d'affichage de l'historique",
+					"customizable": true
+				},
+				{
+					"id": "interpolation",
+					"name": "Interpolation",
+					"required": false,
+					"customizable": true,
+					"category": "stringList",
+					"description": "Voir <a target='blank' href='https://formidable.com/open-source/victory/gallery/interpolation'>une démo ici</a>",
+					"choices": [
+						{
+							"id": "basis",
+							"name": "basis"
+						},
+						{
+							"id": "cardinal",
+							"name": "cardinal"
+						},
+						{
+							"id": "linear",
+							"name": "linear"
+						},
+						{
+							"id": "natural",
+							"name": "natural"
+						},
+						{
+							"id": "step",
+							"name": "step"
+						},
+						{
+							"id": "stepAfter",
+							"name": "stepAfter"
+						},
+						{
+							"id": "stepBefore",
+							"name": "stepBefore"
+						}
+					]
+				},
+				{
+					"id": "displayZoom",
+					"name": "Afficher sélecteur de zoom",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "color",
+					"name": "Couleur du graphe",
+					"required": false,
+					"category": "color",
+					"description": "Laisser vide pour utiliser la couleur du thème",
+					"customizable": true
+				},
+				{
+					"id": "hideGrid",
+					"name": "Masquer la grille",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideTickY",
+					"name": "Masquer légende verticale",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideTickX",
+					"name": "Masquer légende horizontale",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "image",
+			"name": "Image",
+			"img": "image.png",
+			"description": "Permet d'afficher une image",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "imageInfo",
+					"name": "Commande image",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Commande chaîne contenant l'URL ou le chemin de l'image"
+				},
+				{
+					"id": "imageUrl",
+					"name": "URL image",
+					"category": "string",
+					"description": "URL ou chemin de l'image (si pas de commande)"
+				},
+				{
+					"id": "refreshTime",
+					"name": "Intervalle de rafraîchissement (s)",
+					"category": "string",
+					"description": "Si l'image n'est pas statique, temps entre deux chargements (laisser vide sinon)"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "display",

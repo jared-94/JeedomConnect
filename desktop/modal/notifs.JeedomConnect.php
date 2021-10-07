@@ -20,6 +20,7 @@ if (!isConnect('admin')) {
 
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
+sendVarToJS('platformOs', $eqLogic->getConfiguration('platformOs'));
 $customPath = config::byKey('userImgPath', 'JeedomConnect');
 sendVarToJS('userImgPath', $customPath);
 
@@ -43,8 +44,14 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
     <div id="detailMenu" class="col-sm-2 " style="margin-right: 20px;">
       <legend> {{Notifications Jeedom Connect}}</legend>
       <div class="tab fixed">
-        <button class="tablinks" onclick="openTab(event, 'channelsTab')" id="defaultOpen">Canaux</button>
-        <button class="tablinks" onclick="openTab(event, 'notifsTab')">Notifications</button>
+        <?php
+        if ($eqLogic->getConfiguration('platformOs') == 'android') {
+          echo "<button class=\"tablinks\" onclick=\"openTab(event, 'channelsTab')\" id=\"defaultOpen\">Canaux</button>";
+          echo "<button class= \"tablinks\" onclick=\"openTab(event, 'notifsTab')\">Notifications</button>";
+        } else {
+          echo "<button class= \"tablinks\" onclick=\"openTab(event, 'notifsTab')\" id=\"defaultOpen\">Notifications</button>";
+        }
+        ?>
       </div>
     </div>
 

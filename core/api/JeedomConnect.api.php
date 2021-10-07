@@ -47,8 +47,12 @@ if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AV
   throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
 }
 
-
 switch ($method) {
+  case 'PING':
+    $eqLogic->setConfiguration('appState', 'active');
+    $eqLogic->save();
+    $jsonrpc->makeSuccess();
+    break;
   case 'GET_AVAILABLE_EQUIPEMENT':
     $eqLogics = eqLogic::byType('JeedomConnect');
 
@@ -115,12 +119,16 @@ switch ($method) {
       $jsonrpc->makeSuccess(array('type' => 'PLUGIN_VERSION_ERROR'));
       return;
     }
+
     $user = user::byId($eqLogic->getConfiguration('userId'));
     if ($user == null) {
       $user = user::all()[0];
       $eqLogic->setConfiguration('userId', $user->getId());
       $eqLogic->save();
     }
+
+    $userConnected = user::byHash($params['userHash']);
+    if (!is_object($userConnected)) $userConnected = $user;
 
     $config = $eqLogic->getGeneratedConfigFile();
 
@@ -145,9 +153,10 @@ switch ($method) {
       'payload' => array(
         'pluginVersion' => $versionJson->version,
         'useWs' => $eqLogic->getConfiguration('useWs', 0),
-        'userHash' => $user->getHash(),
-        'userId' => $user->getId(),
-        'userProfil' => $user->getProfils(),
+        'userHash' => $userConnected->getHash(),
+        'userId' => $userConnected->getId(),
+        'userName' => $userConnected->getLogin(),
+        'userProfil' => $userConnected->getProfils(),
         'configVersion' => $eqLogic->getConfiguration('configVersion'),
         'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
         'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
@@ -172,7 +181,7 @@ switch ($method) {
       return;
     }
 
-    $actions = JeedomConnectActions::getAllAction($apiKey);
+    $actions = JeedomConnectActions::getAllActions($apiKey);
     if (count($actions) > 0) {
       $result = array(
         'type' => 'ACTIONS',
@@ -182,7 +191,7 @@ switch ($method) {
         array_push($result['payload'], $action['value']['payload']);
       }
       log::add('JeedomConnect', 'debug', "send action " . json_encode(array($result)));
-      JeedomConnectActions::removeAllAction($actions);
+      JeedomConnectActions::removeActions($actions);
       $jsonrpc->makeSuccess(array($result));
       return;
     }
@@ -402,6 +411,11 @@ switch ($method) {
     $result = apiHelper::getAppConfig($apiKey, $params['configId']);
     $jsonrpc->makeSuccess($result);
     break;
+  case 'SET_APPSTATE':
+    $eqLogic->setConfiguration('appState', $params['state']);
+    $eqLogic->save();
+    $jsonrpc->makeSuccess();
+    break;
   case 'ADD_GEOFENCE':
     $eqLogic->addGeofenceCmd($params['geofence']);
     $jsonrpc->makeSuccess();
@@ -454,13 +468,27 @@ switch ($method) {
     $answer = $params['answer'];
     $cmd = cmd::byId($params['cmdId']);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command");
+      log::add('JeedomConnect', 'error', "Can't find command [id=" . $params['cmdId'] . "]");
       return;
     }
     if ($cmd->askResponse($answer)) {
       log::add('JeedomConnect', 'debug', 'reply to ask OK');
     }
+
+    // if ASK was sent to other equipment, then we will let them know that an answer was already given
+    if (!empty($params['otherAskCmdId']) && !is_null($params['otherAskCmdId'])) {
+      $eqLogic = eqLogic::byLogicalId($params['apiKey'], 'JeedomConnect');
+      $eqName = $eqLogic->getName();
+
+      foreach ($params['otherAskCmdId'] as $cmdId) {
+        $cmd = JeedomConnectCmd::byId($cmdId);
+        if (is_object($cmd)) {
+          $cmd->cancelAsk($params['notificationId'], $answer, $eqName, $params['dateAnswer']);
+        }
+      }
+    }
     break;
+
   case 'GET_FILES':
     $result = apiHelper::getFiles($params['folder'], $params['recursive']);
     log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
@@ -470,5 +498,11 @@ switch ($method) {
     $result = apiHelper::removeFile($params['file']);
     log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
     $jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_NOTIFS_CONFIG':
+    $jsonrpc->makeSuccess(array(
+      "type" => "SET_NOTIFS_CONFIG",
+      "payload" => $eqLogic->getNotifs()
+    ));
     break;
 }

@@ -24,7 +24,6 @@ function JeedomConnect_install() {
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
     config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
-    $img_dir = __DIR__ . '/../data/img/user_files/';
   }
 
   if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
@@ -33,6 +32,10 @@ function JeedomConnect_install() {
 
   if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
     JeedomConnect::migrateCondImg();
+  }
+
+  if (config::byKey('migration::customData',   'JeedomConnect') == '') {
+    JeedomConnect::migrateCustomData();
   }
 }
 
@@ -54,7 +57,6 @@ function JeedomConnect_update() {
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
     config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
-    $img_dir = __DIR__ . '/../data/img/user_files/';
   }
 
   if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
@@ -63,6 +65,15 @@ function JeedomConnect_update() {
 
   if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
     JeedomConnect::migrateCondImg();
+  }
+
+  if (config::byKey('migration::customData',   'JeedomConnect') == '') {
+    JeedomConnect::migrateCustomData();
+  }
+
+  // FORCE save on all equipments to save new cmd
+  foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+    $eqLogic->save();
   }
 }
 

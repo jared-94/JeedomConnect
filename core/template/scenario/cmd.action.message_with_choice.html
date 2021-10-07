@@ -1,0 +1,72 @@
+<div class="input-group input-group-sm" style="width: 100%">
+    <span class="input-group-addon roundedLeft" style="width: 100px">#title_placeholder#</span>
+    <select class="form-control input-sm expressionAttr roundedRight" data-l1key="options" data-l2key="select"
+        data-cmd_id="#id#" data-uid="#uid#">#listValue#</select>
+</div>
+
+<div class="input-group input-group-sm" style="width: 100%">
+    <span class="input-group-addon roundedLeft" style="width: 100px">#title_placeholder#</span>
+    <input type="color" class="color form-control input-sm cursor colorChooser" data-uid="#uid#" value="#color#"
+        style="width: 20%; display: inline-block;" />
+    <input class="title expressionAttr form-control input-sm roundedRight" data-l1key="options" data-l2key="title"
+        value="#title#" data-cmd_id="#id#" data-uid="#uid#" />
+</div>
+
+<div class="input-group input-group-sm" style="width: 100%; padding-top: 1px">
+    <span class="input-group-addon roundedLeft" style="width: 100px">#message_placeholder#</span>
+    <textarea class="message expressionAttr form-control ta_autosize" data-l1key="options" data-l2key="message" rows="1"
+        style="resize:vertical;" data-cmd_id="#id#" data-uid="#uid#">#message#</textarea>
+    <span class="input-group-addon hasBtn roundedRight">
+        <button class="btn btn-default roundedRight listCmdMessage" type="button" tooltip="{{Sélectionner la commande}}"
+            data-cmd_id="#id#" data-uid="#uid#"><i class="fas fa-list-alt"></i></button>
+    </span>
+</div>
+
+<script>
+    var eltSelect = $('.expressionAttr[data-uid=#uid#][data-l1key=options][data-l2key=select]');
+    if ('#select#' == '#' + 'select' + '#') {
+        eltSelect.prop('selectedIndex', 0);
+        $('.expressionAttr[data-uid=#uid#][data-l1key=options][data-l2key=title]').value(eltSelect.value());
+    }
+    else {
+        eltSelect.value('#select#');
+    }
+    if ('#title_disable#' == '1') {
+        $('.expressionAttr[data-l1key=options][data-l2key=title][data-uid=#uid#]').parent().hide();
+    }
+    if ('#message_disable#' == '1') {
+        $('.expressionAttr[data-l1key=options][data-l2key=message][data-uid=#uid#]').parent().hide();
+    }
+    $('.expressionAttr[data-l1key=options][data-l2key=select][data-uid=#uid#]').on('change', function () {
+        $('.expressionAttr[data-l1key=options][data-l2key=title][data-uid=#uid#]').val(this.value);
+    });
+    $('.listCmdMessage[data-uid=#uid#]').on('click', function () {
+        if ('#message_cmd_subtype#' != '') {
+            jeedom.cmd.getSelectModal({ cmd: { type: '#message_cmd_type#', subType: '#message_cmd_subtype#' } }, function (result) {
+                $('.expressionAttr[data-l1key=options][data-l2key=message][data-uid=#uid#]').atCaret('insert', result.human);
+            });
+        } else {
+            jeedom.cmd.getSelectModal({ cmd: { type: '#message_cmd_type#' } }, function (result) {
+                $('.expressionAttr[data-l1key=options][data-l2key=message][data-uid=#uid#]').atCaret('insert', result.human);
+            });
+        }
+    });
+    if ('#title_possibility_list#' != '') {
+        $('.expressionAttr[data-l1key=options][data-l2key=title][data-uid=#uid#]').autocomplete({
+            source: json_decode('#title_possibility_list#'),
+            close: function (event, ui) {
+                $(this).trigger('focusout');
+            }
+        });
+    }
+    if ('#title_color#' == 1) {
+        $('.colorChooser[data-uid=#uid#]').css("display", "inline-block");
+        $('.title[data-uid=#uid#]').css("width", "80%");
+        $('.colorChooser[data-uid=#uid#]').val($('.expressionAttr[data-uid=#uid#][data-l1key=options][data-l2key=title]').value());
+    } else {
+        $('.colorChooser[data-uid=#uid#]').css("display", "none");
+    }
+    $('.colorChooser[data-uid=#uid#]').on('change', function () {
+        $('.expressionAttr[data-uid=#uid#][data-l1key=options][data-l2key=title]').value($(this).value());
+    });
+</script>
