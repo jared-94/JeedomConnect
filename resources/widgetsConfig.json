@@ -13,6 +13,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -157,6 +161,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -336,6 +344,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -697,6 +709,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1176,6 +1192,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1285,6 +1305,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1394,6 +1418,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1504,6 +1532,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2053,6 +2085,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2278,6 +2314,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2923,6 +2963,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3455,6 +3499,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3694,6 +3742,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3811,6 +3863,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3924,6 +3980,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4075,6 +4135,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4565,6 +4629,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
