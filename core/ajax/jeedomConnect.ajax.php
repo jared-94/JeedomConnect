@@ -560,6 +560,14 @@ try {
 		}
 	}
 
+	if (init('action') == 'saveNotifAll') {
+		$cmdList = init('cmdList');
+		if ($cmdList == "") $cmdList = array();
+		log::add('JeedomConnect', 'debug', 'saveNotifAll - info received : ' . json_encode($cmdList));
+		config::save('notifAll', json_encode($cmdList), 'JeedomConnect');
+		ajax::success();
+	}
+
 	if (init('action') == 'uploadImg') {
 		$filename = $_FILES['file']['name'];
 		$destination = __DIR__ . '/../../data/img/user_files/';

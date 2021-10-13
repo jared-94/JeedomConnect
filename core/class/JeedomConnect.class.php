@@ -567,9 +567,6 @@ class JeedomConnect extends eqLogic {
 		$cmdNotif->setIsVisible(1);
 		$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
 
-		$notifAll = $notif['notifall'] ?: false;
-		$cmdNotif->setConfiguration('notifAll', $notifAll);
-
 		$cmdNotif->save();
 	}
 
@@ -1350,6 +1347,27 @@ class JeedomConnect extends eqLogic {
 		return;
 	}
 
+	public static function migrationAllNotif() {
+		$result = array();
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach ($eqLogic->getCmd() as $cmd) {
+				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
+				if ($cmd->getLogicalId() != 'notifall' && strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
+					if ($cmd->getConfiguration('notifAll', false)) {
+						// log::add('JeedomConnect', 'debug', '    ++ adding cmd : ' . $cmd->getId());
+						$cmd->setConfiguration('notifAll', '');
+						$cmd->save();
+						$result[] = $cmd->getId();
+					}
+				}
+			}
+		}
+
+		config::save('notifAll', json_encode($result), 'JeedomConnect');
+		config::save('migration::notifAll', 'done', 'JeedomConnect');
+	}
+
+
 	public static function migrateCustomData() {
 
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
@@ -1511,26 +1529,6 @@ class JeedomConnect extends eqLogic {
 		$result['lastUpdate'] =  date("d/m/Y H:i:s", strtotime($eqLogic->getStatus('batteryDatetime', 'inconnue')));
 
 		$result['lastReplace'] = ($batteryTime != 'NA') ? $batterySince : '';
-
-		return $result;
-	}
-
-	public static function getCmdForAllNotif() {
-		$result = array();
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
-			// log::add('JeedomConnect', 'debug', '**** checking eqLogic : ' . $eqLogic->getName());
-			if (!$eqLogic->getIsEnable()) continue;
-
-			foreach ($eqLogic->getCmd() as $cmd) {
-				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
-				if ($cmd->getLogicalId() != 'notifall' && strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
-					if ($cmd->getConfiguration('notifAll', false)) {
-						// log::add('JeedomConnect', 'debug', '    ++ adding cmd : ' . $cmd->getId());
-						$result[] = $cmd->getId();
-					}
-				}
-			}
-		}
 
 		return $result;
 	}
@@ -1794,10 +1792,11 @@ class JeedomConnectCmd extends cmd {
 
 		switch ($logicalId) {
 			case 'notifall':
-				$cmdNotif = JeedomConnect::getCmdForAllNotif();
+				$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
 				$orignalCmdId = $this->getId();
 				$timestamp = time();
 				// log::add('JeedomConnect', 'debug', ' all cmd notif all : ' . json_encode($cmdNotif));
+
 				foreach ($cmdNotif as $cmdId) {
 					$cmd = cmd::byId($cmdId);
 					$_options['orignalCmdId'] = $orignalCmdId;

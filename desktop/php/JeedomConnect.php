@@ -130,6 +130,11 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<br>
 				<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
 			</div>
+			<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
+				<i class="fas fa-comment-dots"></i>
+				<br>
+				<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
+			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
 				<br>

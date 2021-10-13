@@ -189,6 +189,20 @@ $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function (
   $('#widgetSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
+$('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function () {
+  $('body').append('<div id="notifAllModal"></div>');
+  $('#notifAllModal').dialog({
+    title: "{{Configuration de la notification de \"tous\" les équipements}}",
+    autoOpen: false,
+    modal: true,
+    closeText: '',
+    width: 0.7 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    closeOnEscape: false
+  });
+  $('#notifAllModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.notifAll.JeedomConnect').dialog('open');
+})
+
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();

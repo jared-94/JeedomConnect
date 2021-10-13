@@ -37,6 +37,10 @@ function JeedomConnect_install() {
   if (config::byKey('migration::customData',   'JeedomConnect') == '') {
     JeedomConnect::migrateCustomData();
   }
+
+  if (config::byKey('migration::notifAll',   'JeedomConnect') == '') {
+    JeedomConnect::migrationAllNotif();
+  }
 }
 
 function JeedomConnect_update() {
@@ -53,7 +57,7 @@ function JeedomConnect_update() {
   //$docLink = htmlentities('<a href="https://jared-94.github.io/JeedomConnectDoc/fr_FR/" target="_blank">https://jared-94.github.io/JeedomConnectDoc/fr_FR/</a>');
   //message::add( 'JeedomConnect',  'Mise à jour terminée. Cette nouvelle version nécessite des actions de votre part pour fonctionner correctement -- pensez à lire la doc : ' . $docLink ) ;
 
-  JeedomConnect::displayMessageInfo();
+  // JeedomConnect::displayMessageInfo();
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
     config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
@@ -69,6 +73,10 @@ function JeedomConnect_update() {
 
   if (config::byKey('migration::customData',   'JeedomConnect') == '') {
     JeedomConnect::migrateCustomData();
+  }
+
+  if (config::byKey('migration::notifAll',   'JeedomConnect') == '') {
+    JeedomConnect::migrationAllNotif();
   }
 
   // FORCE save on all equipments to save new cmd
