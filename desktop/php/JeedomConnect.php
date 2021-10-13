@@ -145,6 +145,9 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 					<i class="fas fa-exclamation-circle"></i>
 					<br>
 					<span style="color:var(--txt-color)" id="spanWidgetErreur">{{Erreur}}</span>
+					<sup>
+						<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
+					</sup>
 				</div>
 			<?php } ?>
 		</div>
