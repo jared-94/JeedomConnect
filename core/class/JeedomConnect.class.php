@@ -230,10 +230,15 @@ class JeedomConnect extends eqLogic {
 					array_push($roomIdList, $widget['room']);
 				}
 
-
-				if ($widget['type'] == 'choices-list') {
-					$choices = self::getChoiceData($widget['listAction']['id']);
-					$widget['choices'] = $choices;
+				foreach ($widget as $item => $value) {
+					if (is_array($value)) {
+						if (array_key_exists('subType', $value)) {
+							if ($value['subType'] == 'select') {
+								$choices = self::getChoiceData($value['id']);
+								$widget[$item]['choices'] = $choices;
+							}
+						}
+					}
 				}
 
 				$jsonConfig['payload']['widgets'][$key] = $widget;

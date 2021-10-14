@@ -1995,13 +1995,20 @@
 					"subtype": "other"
 				},
 				{
+					"id": "autoAction",
+					"name": "Mode Auto",
+					"required": false,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
 					"id": "fanSpeedInfo",
 					"name": "Info Ventilation",
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric",
-					"description": "Info qui donne la vitesse de ventilation"
+					"description": "Info (numérique ou texte) qui donne la vitesse de ventilation"
 				},
 				{
 					"id": "fanSpeedAction",
@@ -2009,7 +2016,7 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "slider"
+					"description": "Action de type slider si info numérique ou texte si info select"
 				},
 				{
 					"id": "image",
