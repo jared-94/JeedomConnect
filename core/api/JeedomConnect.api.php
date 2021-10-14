@@ -303,7 +303,10 @@ switch ($method) {
     $jsonrpc->makeSuccess(array('result' => apiHelper::stopDaemon($params['userId'], $params['pluginId'])));
     break;
   case 'GET_PLUGINS_UPDATE':
-    $jsonrpc->makeSuccess(apiHelper::getPluginsUpdate());
+    $result = apiHelper::getPluginsUpdate();
+    if ($result !== false) {
+      $jsonrpc->makeSuccess($result);
+    }
     break;
   case 'DO_PLUGIN_UPDATE':
     $jsonrpc->makeSuccess(array('result' => apiHelper::doUpdate($params['pluginId'])));
