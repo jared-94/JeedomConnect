@@ -58,7 +58,7 @@ class JeedomConnect extends eqLogic {
 		)
 	);
 
-	public static $_resources_dir = __DIR__ . '/../config/';
+	public static $_plugin_config_dir = __DIR__ . '/../config/';
 	public static $_plugin_info_dir = __DIR__ . '/../../plugin_info/';
 	public static $_data_dir = __DIR__ . '/../../data/';
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
@@ -1036,7 +1036,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function getWidgetParam($only_name = true) {
-		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
+		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
@@ -1258,7 +1258,7 @@ class JeedomConnect extends eqLogic {
 				$newWidget['index'] = $widget['index'];
 
 				// retrieve the img to display for the widget based on the type
-				$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
+				$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
 				$imgPath = '';
 				foreach ($widgetsConfigJonFile['widgets'] as $config) {
 					if ($config['type'] == $widget['type']) {
