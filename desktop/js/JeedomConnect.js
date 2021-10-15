@@ -231,7 +231,8 @@ $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', funct
 
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
   var a = document.createElement("a");
-  a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
+  //a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
+  a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + key + '.json';
   a.download = key + '_' + today + '_' + time + '.json';
   a.click();
   a.remove();
@@ -266,7 +267,8 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
       }
       else {
         var a = document.createElement("a");
-        a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
+        //a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
+        a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
         a.download = apiKey + '_' + today + '_' + time + '_GENERATED.json';
         a.click();
         a.remove();
