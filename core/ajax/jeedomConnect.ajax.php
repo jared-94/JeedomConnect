@@ -158,7 +158,7 @@ try {
 		$ids = init('id') ?? 'all';
 		$allWidgets = JeedomConnectWidget::getWidgets($ids, true);
 
-		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../../resources/widgetsConfig.json'), true);
+		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../config/widgetsConfig.json'), true);
 		$widgetArrayConfig = array();
 		foreach ($jsonConfig['widgets'] as $config) {
 			$widgetArrayConfig[$config['type']] =  $config;

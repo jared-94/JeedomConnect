@@ -619,7 +619,7 @@ var widgetsList = (function () {
     'async': false,
     'global': false,
     'cache': false,
-    'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
+    'url': "plugins/JeedomConnect/core/config/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
       data.widgets.sort(function (a, b) {
