@@ -1968,39 +1968,20 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant (Froid, Chaud, Sechage)"
+					"description": "Info qui donne le mode courant (la valeur donne le nom de l'action)"
 				},
 				{
-					"id": "hotAction",
-					"name": "Mode Chaud",
+					"id": "modes",
+					"name": "Modes",
 					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "coldAction",
-					"name": "Mode Froid",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "dryAction",
-					"name": "Mode Séchage",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "autoAction",
-					"name": "Mode Auto",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
+					"category": "cmdList",
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": false
+					}
 				},
 				{
 					"id": "fanSpeedInfo",
