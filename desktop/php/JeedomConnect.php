@@ -13,6 +13,18 @@ sendVarToJS('eqType', $plugin->getId());
 $isExpert = config::byKey('isExpert', 'JeedomConnect') ? true : false;
 sendVarToJS('isJcExpert', $isExpert);
 
+$userHash = '';
+if (isConnect()) {
+	if (isset($_SESSION['user']) && is_object($_SESSION['user'])) {
+		$user = user::byId($_SESSION['user']->getId());
+		if (is_object($user)) {
+			log::add(__CLASS__, 'debug', 'user session:' . $user->getHash());
+			$userHash = $user->getHash();
+		}
+	}
+}
+sendVarToJS('userHash', $userHash);
+
 $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray = JeedomConnectWidget::getWidgets();

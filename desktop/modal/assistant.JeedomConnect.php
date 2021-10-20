@@ -32,7 +32,7 @@ $plugin = plugin::byId('JeedomConnect');
 $eqLogics = eqLogic::byType($plugin->getId());
 
 
-$widgetsConfigJsonFile = file_get_contents('plugins/JeedomConnect/resources/widgetsConfig.json');
+$widgetsConfigJsonFile = file_get_contents('plugins/JeedomConnect/core/config/widgetsConfig.json');
 
 $widgetsConfigFile = json_decode($widgetsConfigJsonFile, true);
 $widgetsConfigGlobal = [];
