@@ -1112,6 +1112,13 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -1122,6 +1129,18 @@
 						"room"
 					],
 					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "blocDisplay",
@@ -1144,6 +1163,25 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
@@ -1164,6 +1202,13 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -1174,6 +1219,18 @@
 						"room"
 					],
 					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "blocDisplay",
