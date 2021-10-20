@@ -231,13 +231,9 @@ class JeedomConnect extends eqLogic {
 				}
 
 				foreach ($widget as $item => $value) {
-					if (is_array($value)) {
-						if (array_key_exists('subType', $value)) {
-							if ($value['subType'] == 'select') {
-								$choices = self::getChoiceData($value['id']);
-								$widget[$item]['choices'] = $choices;
-							}
-						}
+					if (is_array($value) && array_key_exists('subType', $value) && $value['subType'] == 'select') {
+						$choices = self::getChoiceData($value['id']);
+						$widget[$item]['choices'] = $choices;
 					}
 				}
 
@@ -1799,7 +1795,7 @@ class JeedomConnectCmd extends cmd {
 			case 'notifall':
 				$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
 				$orignalCmdId = $this->getId();
-				$timestamp = time();
+				$timestamp = round(microtime(true) * 10000);
 				// log::add('JeedomConnect', 'debug', ' all cmd notif all : ' . json_encode($cmdNotif));
 
 				foreach ($cmdNotif as $cmdId) {
@@ -1826,7 +1822,7 @@ class JeedomConnectCmd extends cmd {
 						'message' => str_replace("'", "&#039;", $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
-						'notificationId' => $_options['notificationId'] ?? time(),
+						'notificationId' => $_options['notificationId'] ?? round(microtime(true) * 10000),
 						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null,
 						'options' => $myData['args'] ?? null
 					)
