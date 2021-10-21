@@ -185,9 +185,6 @@ function getIconModal(_options, _callback) {
 		if (_options.icon.shadow) {
 			params += `&shadow=${_options.icon.shadow}`;
 		}
-		if (_options.icon.src) {
-			params += `&src=${_options.icon.src}`;
-		}
 
 
 		$('#mod_selectIcon').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
@@ -226,7 +223,7 @@ function getIconModal(_options, _callback) {
 					if (result.source == 'user') {
 						result.shadow = $("#bw-input").is(':checked');
 						tmpSrc = $('.iconSelected .iconSel').children().first().attr("src");
-						result.src = tmpSrc.replace(userImgPath, '');
+						result.name = tmpSrc.replace(userImgPath, '');
 					}
 
 					if ($.trim(result) != '' && 'function' == typeof (_callback)) {
@@ -449,7 +446,7 @@ function iconToHtml(icon) {
 	} else if (icon.source == 'jc') {
 		return `<img iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="jc" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="plugins/JeedomConnect/data/img/${icon.name}">`;
 	} else if (icon.source == 'user') {
-		return `<img iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="user" name="${icon.name}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="${userImgPath}${icon.src || icon.name}">`;
+		return `<img iconParams="${JSON.stringify(icon).replace(/"/g, '&quot;')}" source="user" name="${icon.name.replace(userImgPath, '')}" style="width:25px;${icon.shadow ? 'filter:grayscale(100%)' : ''}" src="${userImgPath}${icon.name}">`;
 	}
 	return '';
 }

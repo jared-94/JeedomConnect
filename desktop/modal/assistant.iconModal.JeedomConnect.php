@@ -22,8 +22,7 @@ sendVarToJS('selectedIcon', [
   'source' => init('source', 0),
   'name' => init('name', 0),
   'color' => init('color', 0),
-  'shadow' => init('shadow', 0),
-  'src' => init('src', 0)
+  'shadow' => init('shadow', 0)
 ]);
 
 function get_all_files($dir, $includeSubDir = false) {
@@ -380,8 +379,8 @@ function get_all_files($dir, $includeSubDir = false) {
       $('#mod_selectIcon ul li a').first().click();
     } else {
       $(`#mod_selectIcon ul li a[href="#${selectedIcon.source}"]`).click();
-      if (selectedIcon.source == 'user' && selectedIcon.src != 'undefined' && selectedIcon.src != 0) {
-        tmpSrc = (userImgPath || '') + selectedIcon.src;
+      if (selectedIcon.source == 'user') {
+        tmpSrc = (userImgPath || '') + selectedIcon.name;
         $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[src="${decodeURI(tmpSrc)}"]`).closest('.divIconSel').addClass('iconSelected');
       } else {
         $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
