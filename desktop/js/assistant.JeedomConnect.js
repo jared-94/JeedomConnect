@@ -158,10 +158,10 @@ function openTab(evt, tabName) {
 }
 
 function getIconModal(_options, _callback) {
-	$("#iconModal").dialog('destroy').remove();
-	if ($("#iconModal").length == 0) {
-		$('body').append('<div id="iconModal"></div>');
-		$("#iconModal").dialog({
+	$("#mod_selectIcon").dialog('destroy').remove();
+	if ($("#mod_selectIcon").length == 0) {
+		$('body').append('<div id="mod_selectIcon"></div>');
+		$("#mod_selectIcon").dialog({
 			title: _options.title,
 			closeText: '',
 			autoOpen: false,
@@ -186,13 +186,13 @@ function getIconModal(_options, _callback) {
 			params += `&shadow=${_options.icon.shadow}`;
 		}
 
-		$('#iconModal').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
+		$('#mod_selectIcon').load(`index.php?v=d&plugin=JeedomConnect&modal=assistant.iconModal.JeedomConnect${params}`);
 		jQuery.ajaxSetup({
 			async: true
 		});
 	}
 
-	$("#iconModal").dialog({
+	$("#mod_selectIcon").dialog({
 		title: _options.title, buttons: {
 			"Annuler": function () {
 				$(this).dialog("close");
@@ -230,7 +230,7 @@ function getIconModal(_options, _callback) {
 		}
 	});
 
-	$('#iconModal').dialog('open');
+	$('#mod_selectIcon').dialog('open');
 
 }
 
