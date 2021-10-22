@@ -332,7 +332,9 @@ class ConnectLogic implements MessageComponentInterface {
 				break;
 			case 'DO_PLUGIN_UPDATE':
 				$result = \apiHelper::doUpdate($msg['payload']['pluginId']);
-				$from->send(json_encode(array('result' => $result)));
+				if ($result !== false) {
+					$from->send(json_encode(array('result' => $result)));
+				}
 				break;
 			case 'GET_JEEDOM_GLOBAL_HEALTH':
 				$health = \apiHelper::getJeedomHealthDetails($from->apiKey);

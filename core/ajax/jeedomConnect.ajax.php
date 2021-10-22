@@ -158,7 +158,7 @@ try {
 		$ids = init('id') ?? 'all';
 		$allWidgets = JeedomConnectWidget::getWidgets($ids, true);
 
-		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../../resources/widgetsConfig.json'), true);
+		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../config/widgetsConfig.json'), true);
 		$widgetArrayConfig = array();
 		foreach ($jsonConfig['widgets'] as $config) {
 			$widgetArrayConfig[$config['type']] =  $config;
@@ -558,6 +558,14 @@ try {
 			$eqLogic->saveNotifs($configJson);
 			ajax::success();
 		}
+	}
+
+	if (init('action') == 'saveNotifAll') {
+		$cmdList = init('cmdList');
+		if ($cmdList == "") $cmdList = array();
+		log::add('JeedomConnect', 'debug', 'saveNotifAll - info received : ' . json_encode($cmdList));
+		config::save('notifAll', json_encode($cmdList), 'JeedomConnect');
+		ajax::success();
 	}
 
 	if (init('action') == 'uploadImg') {

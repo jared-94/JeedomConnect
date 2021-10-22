@@ -25,33 +25,23 @@ sendVarToJS('selectedIcon', [
   'shadow' => init('shadow', 0)
 ]);
 
-function get_all_files($dir) {
+function get_all_files($dir, $includeSubDir = false) {
   $result = array();
   $dh = new DirectoryIterator($dir);
+  $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp'); //match extentions in .htaccess files so adapt it as well
 
   foreach ($dh as $item) {
-    if (!$item->isDot() && substr($item, 0, 1) != '.') {
-      if ($item->isDir()) {
-        $tmp = get_all_files("$dir/$item");
-        $result = array_merge($result, $tmp);
-      } else {
-        array_push($result, array('path' =>  preg_replace('#/+#', '/', $item->getPathname()), 'name' => $item->getFilename()));
-      }
+    if ($item->isDot()) continue;
+    if ($item->isDir() && $includeSubDir) {
+      $tmp = get_all_files("$dir/$item", true);
+      $result = array_merge($result, $tmp);
+    } elseif ($item->isFile()) {
+      if (!in_array($item->getExtension(), $allowedExtensions)) continue;
+      array_push($result, array('path' =>  preg_replace('#/+#', '/', $item->getPathname()), 'name' => $item->getFilename()));
     }
   }
   return $result;
 }
-
-$customPath = config::byKey('userImgPath', 'JeedomConnect');
-
-$myFiles = get_all_files($customPath);
-
-$iconName = array_column($myFiles, 'name');
-// $iconName = array_column($myFiles, 'path');
-array_multisort($iconName, SORT_ASC, $myFiles);
-
-
-
 ?>
 
 <div style="display: none;" id="div_iconSelectorAlert"></div>
@@ -98,9 +88,9 @@ array_multisort($iconName, SORT_ASC, $myFiles);
             if ($number == 1) {
               $div .= '<div class="row">';
             }
-            $div .= '<div class="col-lg-1 divIconSel">';
+            $div .= '<div class="col-lg-1 divIconSel text-center">';
             $icon = str_replace(array(':', '.'), '', $match[0]);
-            $div .= '<span class="iconSel"><i source="jeedom" name="' . $icon . '" class=\'icon ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
+            $div .= '<span class="iconSel"><i source="jeedom" name="' . $icon . '" class=\'icon ' . $icon . '\'></i></span><br/><span class="iconDesc">' . str_replace($research . '-', '', $icon) . '</span>';
             $div .= '</div>';
             $number++;
           }
@@ -132,9 +122,9 @@ array_multisort($iconName, SORT_ASC, $myFiles);
         if ($number == 1) {
           $div .= '<div class="row">';
         }
-        $div .= '<div class="col-lg-1 divIconSel">';
+        $div .= '<div class="col-lg-1 divIconSel text-center">';
         $icon = str_replace(array(':', '.', 'mdi-'), '', $match[0]);
-        $div .= '<span class="iconSel"><i source="md" name="' . $icon . '" class=\'mdi mdi-' . $icon . '\'></i></span><br/><span class="iconDesc">' . 'mdi-' . $icon . '</span>';
+        $div .= '<span class="iconSel"><i source="md" name="' . $icon . '" class=\'mdi mdi-' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
         $div .= '</div>';
         $number++;
       }
@@ -171,8 +161,8 @@ array_multisort($iconName, SORT_ASC, $myFiles);
       if ($number == 1) {
         $div .= '<div class="row">';
       }
-      $div .= '<div class="col-lg-1 divIconSel">';
-      $div .= '<span class="iconSel"><i source="fa" name="' . $name . '" prefix="' . $data . '" class=\'' . $data . ' fa-' . $name . '\'></i></span><br/><span class="iconDesc">fa-' . $name . '</span>';
+      $div .= '<div class="col-lg-1 divIconSel text-center">';
+      $div .= '<span class="iconSel"><i source="fa" name="' . $name . '" prefix="' . $data . '" class=\'' . $data . ' fa-' . $name . '\'></i></span><br/><span class="iconDesc">' . $name . '</span>';
       $div .= '</div>';
       $number++;
     }
@@ -187,19 +177,17 @@ array_multisort($iconName, SORT_ASC, $myFiles);
   <!-- JC -->
   <div role="tabpanel" class="tab-pane jcpanel active" id="tabimg" source="jc" style="width:calc(100% - 20px); display:none">
     <div class="imgContainer">
-      <div id="div_imageGallery">
+      <div id="div_imageGallery" class="div_imageGallery">
         <?php
         $div = '';
-        $dir = __DIR__ . '/../../data/img';
-        $files = scandir($dir);
 
-        foreach ($files as $key => $name) {
-          if ($name == "." || $name == ".." || $name == "user_files") {
-            continue;
-          }
+        $jcFiles = get_all_files('plugins/JeedomConnect/data/img');
+        array_multisort($jcFiles, SORT_ASC);
+
+        foreach ($jcFiles as $img) {
           $div .= '<div class="divIconSel divImgSel">';
-          $div .= '<div class="cursor iconSel"><img source="jc" name="' . $name . '" class="img-responsive" src="plugins/JeedomConnect/data/img/' . $name . '"/></div>';
-          $div .= '<div class="iconDesc">' . $name . '</div>';
+          $div .= '<div class="cursor iconSel"><img source="jc" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
+          $div .= '<div class="iconDesc">' . $img['name'] . '</div>';
           $div .= '</div>';
         }
         echo $div;
@@ -211,13 +199,19 @@ array_multisort($iconName, SORT_ASC, $myFiles);
   <!-- USER -->
   <div role="tabpanel" class="tab-pane jcpanel active" id="tabimg" source="user" style="width:calc(100% - 20px); display:none">
     <div class="imgContainer">
-      <div id="div_imageGallery" source="user">
+      <div id="div_imageGallery" class="div_imageGallery" source="user">
         <?php
         $div = '';
 
+        $customPath = config::byKey('userImgPath', 'JeedomConnect');
+        $myFiles = get_all_files($customPath, true);
+
+        $iconName = array_column($myFiles, 'name');
+        array_multisort($iconName, SORT_ASC, $myFiles);
+
         foreach ($myFiles as $img) {
           $div .= '<div class="divIconSel divImgSel">';
-          $div .= '<div class="cursor iconSel"><img source="user" name="' . str_replace($customPath, '', $img['path']) . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
+          $div .= '<div class="cursor iconSel"><img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
           $div .= '<div class="iconDesc">' . $img['name'] . '</div>';
           $div .= '</div>';
         }
@@ -255,9 +249,6 @@ array_multisort($iconName, SORT_ASC, $myFiles);
 
 </div>
 
-</div>
-
-
 <script>
   $('#bt_uploadImg').fileupload({
     add: function(e, data) {
@@ -287,7 +278,7 @@ array_multisort($iconName, SORT_ASC, $myFiles);
     }
   });
 
-  $('#iconModal').off('click', '.divIconSel').on('click', '.divIconSel', function() {
+  $('#mod_selectIcon').off('click', '.divIconSel').on('click', '.divIconSel', function() {
     $('.divIconSel').removeClass('iconSelected');
     $(this).closest('.divIconSel').addClass('iconSelected');
   });
@@ -356,7 +347,7 @@ array_multisort($iconName, SORT_ASC, $myFiles);
   })
 
 
-  $('#iconModal ul li a').click(function() {
+  $('#mod_selectIcon ul li a').click(function() {
     $('.jcpanel.tab-pane').css('display', 'none');
 
     var type = $(this).attr('href').replace('#', '');
@@ -380,19 +371,24 @@ array_multisort($iconName, SORT_ASC, $myFiles);
 
 
   $(function() {
-    var buttonSet = $('.ui-dialog[aria-describedby="iconModal"]').find('.ui-dialog-buttonpane')
+    var buttonSet = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('.ui-dialog-buttonpane')
     buttonSet.find('#mySearch').remove()
-    var mySearch = $('.ui-dialog[aria-describedby="iconModal"]').find('#mySearch')
+    var mySearch = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('#mySearch')
     buttonSet.append(mySearch)
     if (selectedIcon.source == 0) {
-      $('#iconModal ul li a').first().click();
+      $('#mod_selectIcon ul li a').first().click();
     } else {
-      $(`#iconModal ul li a[href="#${selectedIcon.source}"]`).click();
-      $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
+      $(`#mod_selectIcon ul li a[href="#${selectedIcon.source}"]`).click();
+      if (selectedIcon.source == 'user') {
+        tmpSrc = (userImgPath || '') + selectedIcon.name;
+        $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[src="${decodeURI(tmpSrc)}"]`).closest('.divIconSel').addClass('iconSelected');
+      } else {
+        $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
+      }
       setTimeout(function() {
         elem = $('div.divIconSel.iconSelected')
         if (elem.position()) {
-          container = $('#iconModal > .tab-content')
+          container = $('#mod_selectIcon > .tab-content')
           pos = elem.position().top + container.scrollTop() - container.position().top
           container.animate({
             scrollTop: pos - 20

@@ -13,6 +13,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -157,6 +161,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -336,6 +344,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -697,6 +709,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1096,6 +1112,13 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -1106,6 +1129,18 @@
 						"room"
 					],
 					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "blocDisplay",
@@ -1128,6 +1163,25 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
@@ -1148,6 +1202,13 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -1158,6 +1219,18 @@
 						"room"
 					],
 					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "blocDisplay",
@@ -1176,6 +1249,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1285,6 +1362,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1394,6 +1475,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1504,6 +1589,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1936,31 +2025,20 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant (Froid, Chaud, Sechage)"
+					"description": "Info qui donne le mode courant (la valeur donne le nom de l'action)"
 				},
 				{
-					"id": "hotAction",
-					"name": "Mode Chaud",
+					"id": "modes",
+					"name": "Modes",
 					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "coldAction",
-					"name": "Mode Froid",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "dryAction",
-					"name": "Mode Séchage",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
+					"category": "cmdList",
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": false
+					}
 				},
 				{
 					"id": "fanSpeedInfo",
@@ -1968,8 +2046,7 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric",
-					"description": "Info qui donne la vitesse de ventilation"
+					"description": "Info (numérique ou texte) qui donne la vitesse de ventilation"
 				},
 				{
 					"id": "fanSpeedAction",
@@ -1977,7 +2054,7 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "slider"
+					"description": "Action de type slider si info numérique ou texte si info select"
 				},
 				{
 					"id": "image",
@@ -2053,6 +2130,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2278,6 +2359,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2923,6 +3008,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3455,6 +3544,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3694,6 +3787,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3811,6 +3908,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3924,6 +4025,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4075,6 +4180,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4565,6 +4674,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [

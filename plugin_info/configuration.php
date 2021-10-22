@@ -49,6 +49,20 @@ foreach ($orderByArray as $key => $value) {
   $optionsOrderBy .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
 }
 
+
+$userHash = '';
+if (isConnect()) {
+  if (isset($_SESSION['user']) && is_object($_SESSION['user'])) {
+    $user = user::byId($_SESSION['user']->getId());
+    if (is_object($user)) {
+      log::add('JeedomConnect', 'debug', 'user session:' . $user->getHash());
+      $userHash = $user->getHash();
+    }
+  }
+}
+sendVarToJS('userHash', $userHash);
+
+
 ?>
 <form class="form-horizontal jeedomConnect">
 

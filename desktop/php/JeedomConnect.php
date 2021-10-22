@@ -13,6 +13,18 @@ sendVarToJS('eqType', $plugin->getId());
 $isExpert = config::byKey('isExpert', 'JeedomConnect') ? true : false;
 sendVarToJS('isJcExpert', $isExpert);
 
+$userHash = '';
+if (isConnect()) {
+	if (isset($_SESSION['user']) && is_object($_SESSION['user'])) {
+		$user = user::byId($_SESSION['user']->getId());
+		if (is_object($user)) {
+			log::add('JeedomConnect', 'debug', 'user session:' . $user->getHash());
+			$userHash = $user->getHash();
+		}
+	}
+}
+sendVarToJS('userHash', $userHash);
+
 $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray = JeedomConnectWidget::getWidgets();
@@ -130,6 +142,11 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<br>
 				<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
 			</div>
+			<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
+				<i class="fas fa-comment-dots"></i>
+				<br>
+				<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
+			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
 				<br>
@@ -140,6 +157,9 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 					<i class="fas fa-exclamation-circle"></i>
 					<br>
 					<span style="color:var(--txt-color)" id="spanWidgetErreur">{{Erreur}}</span>
+					<sup>
+						<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
+					</sup>
 				</div>
 			<?php } ?>
 		</div>

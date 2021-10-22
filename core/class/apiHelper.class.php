@@ -678,7 +678,7 @@ class apiHelper {
 
   public static function addGlobalWidget($widget) {
     $newConfWidget = array();
-    $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_resources_dir . 'widgetsConfig.json'), true);
+    $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
     $imgPath = '';
     foreach ($widgetsConfigJonFile['widgets'] as $config) {
       if ($config['type'] == $widget['type']) {
@@ -1150,13 +1150,17 @@ class apiHelper {
   }
 
   public static function getPluginsUpdate() {
-
-    $result = array(
-      'type' => 'SET_PLUGINS_UPDATE',
-      'payload' => JeedomConnect::getPluginsUpdate()
-    );
-    log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result));
-    return $result;
+    try {
+      $result = array(
+        'type' => 'SET_PLUGINS_UPDATE',
+        'payload' => JeedomConnect::getPluginsUpdate()
+      );
+      log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result));
+      return $result;
+    } catch (Exception $e) {
+      log::add('JeedomConnect', 'error', 'getUpdates -- ' . $e->getMessage());
+      return false;
+    }
   }
 
   // BACKUPS

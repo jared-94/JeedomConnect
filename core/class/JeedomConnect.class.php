@@ -58,7 +58,7 @@ class JeedomConnect extends eqLogic {
 		)
 	);
 
-	public static $_resources_dir = __DIR__ . '/../../resources/';
+	public static $_plugin_config_dir = __DIR__ . '/../config/';
 	public static $_plugin_info_dir = __DIR__ . '/../../plugin_info/';
 	public static $_data_dir = __DIR__ . '/../../data/';
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
@@ -230,10 +230,11 @@ class JeedomConnect extends eqLogic {
 					array_push($roomIdList, $widget['room']);
 				}
 
-
-				if ($widget['type'] == 'choices-list') {
-					$choices = self::getChoiceData($widget['listAction']['id']);
-					$widget['choices'] = $choices;
+				foreach ($widget as $item => $value) {
+					if (is_array($value) && array_key_exists('subType', $value) && $value['subType'] == 'select') {
+						$choices = self::getChoiceData($value['id']);
+						$widget[$item]['choices'] = $choices;
+					}
 				}
 
 				$jsonConfig['payload']['widgets'][$key] = $widget;
@@ -566,9 +567,6 @@ class JeedomConnect extends eqLogic {
 		$cmdNotif->setSubType('message');
 		$cmdNotif->setIsVisible(1);
 		$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
-
-		$notifAll = $notif['notifall'] ?: false;
-		$cmdNotif->setConfiguration('notifAll', $notifAll);
 
 		$cmdNotif->save();
 	}
@@ -1034,7 +1032,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function getWidgetParam($only_name = true) {
-		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
+		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
@@ -1256,7 +1254,7 @@ class JeedomConnect extends eqLogic {
 				$newWidget['index'] = $widget['index'];
 
 				// retrieve the img to display for the widget based on the type
-				$widgetsConfigJonFile = json_decode(file_get_contents(self::$_resources_dir . 'widgetsConfig.json'), true);
+				$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
 				$imgPath = '';
 				foreach ($widgetsConfigJonFile['widgets'] as $config) {
 					if ($config['type'] == $widget['type']) {
@@ -1349,6 +1347,27 @@ class JeedomConnect extends eqLogic {
 
 		return;
 	}
+
+	public static function migrationAllNotif() {
+		$result = array();
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach ($eqLogic->getCmd() as $cmd) {
+				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
+				if ($cmd->getLogicalId() != 'notifall' && strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
+					if ($cmd->getConfiguration('notifAll', false)) {
+						// log::add('JeedomConnect', 'debug', '    ++ adding cmd : ' . $cmd->getId());
+						$cmd->setConfiguration('notifAll', '');
+						$cmd->save();
+						$result[] = $cmd->getId();
+					}
+				}
+			}
+		}
+
+		config::save('notifAll', json_encode($result), 'JeedomConnect');
+		config::save('migration::notifAll', 'done', 'JeedomConnect');
+	}
+
 
 	public static function migrateCustomData() {
 
@@ -1511,26 +1530,6 @@ class JeedomConnect extends eqLogic {
 		$result['lastUpdate'] =  date("d/m/Y H:i:s", strtotime($eqLogic->getStatus('batteryDatetime', 'inconnue')));
 
 		$result['lastReplace'] = ($batteryTime != 'NA') ? $batterySince : '';
-
-		return $result;
-	}
-
-	public static function getCmdForAllNotif() {
-		$result = array();
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
-			// log::add('JeedomConnect', 'debug', '**** checking eqLogic : ' . $eqLogic->getName());
-			if (!$eqLogic->getIsEnable()) continue;
-
-			foreach ($eqLogic->getCmd() as $cmd) {
-				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
-				if ($cmd->getLogicalId() != 'notifall' && strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
-					if ($cmd->getConfiguration('notifAll', false)) {
-						// log::add('JeedomConnect', 'debug', '    ++ adding cmd : ' . $cmd->getId());
-						$result[] = $cmd->getId();
-					}
-				}
-			}
-		}
 
 		return $result;
 	}
@@ -1794,10 +1793,11 @@ class JeedomConnectCmd extends cmd {
 
 		switch ($logicalId) {
 			case 'notifall':
-				$cmdNotif = JeedomConnect::getCmdForAllNotif();
+				$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
 				$orignalCmdId = $this->getId();
-				$timestamp = time();
+				$timestamp = round(microtime(true) * 10000);
 				// log::add('JeedomConnect', 'debug', ' all cmd notif all : ' . json_encode($cmdNotif));
+
 				foreach ($cmdNotif as $cmdId) {
 					$cmd = cmd::byId($cmdId);
 					$_options['orignalCmdId'] = $orignalCmdId;
@@ -1822,7 +1822,7 @@ class JeedomConnectCmd extends cmd {
 						'message' => str_replace("'", "&#039;", $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
-						'notificationId' => $_options['notificationId'] ?? time(),
+						'notificationId' => $_options['notificationId'] ?? round(microtime(true) * 10000),
 						'otherAskCmdId' => $_options['otherAskCmdId'] ?? null,
 						'options' => $myData['args'] ?? null
 					)

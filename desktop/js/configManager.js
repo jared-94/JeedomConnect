@@ -14,7 +14,7 @@ $.post({
 		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
-			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
+			url: "plugins/JeedomConnect/core/config/widgetsConfig.json",
 			cache: false,
 			success: function (data) {
 				data.widgets.sort(function (a, b) {
@@ -177,7 +177,7 @@ function refreshWidgetsContent() {
 					$("#selWidgetDetail option[data-widget-id=" + w.id + "]").attr('data-exist', true);
 					var enableSub = w.enable ? '' : hideSpan;
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
-					items.push(`<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}${enableSub}</a>
+					items.push(`<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}\nwidgetId=${wid.widgetId}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}${enableSub}</a>
 					<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 					
 					<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
