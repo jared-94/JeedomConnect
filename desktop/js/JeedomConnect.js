@@ -231,7 +231,8 @@ $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', funct
 
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
   var a = document.createElement("a");
-  a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
+  //a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
+  a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + key + '.json';
   a.download = key + '_' + today + '_' + time + '.json';
   a.click();
   a.remove();
@@ -266,7 +267,8 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
       }
       else {
         var a = document.createElement("a");
-        a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
+        //a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
+        a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
         a.download = apiKey + '_' + today + '_' + time + '_GENERATED.json';
         a.click();
         a.remove();
@@ -619,7 +621,7 @@ var widgetsList = (function () {
     'async': false,
     'global': false,
     'cache': false,
-    'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
+    'url': "plugins/JeedomConnect/core/config/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
       data.widgets.sort(function (a, b) {
@@ -2546,14 +2548,14 @@ function getWidgetPath(id) {
   var widget = allWidgetsDetail.find(w => w.id == id);
   var name = (' ' + widget.name).slice(1);
 
-  if (widget.parentId === undefined | widget.parentId == null) {
+  if (widget.parentId === undefined || widget.parentId == null || typeof configData === 'undefined') {
     return name;
   }
   var id = (' ' + widget.parentId.toString()).slice(1);
   parent = configData.payload.groups.find(i => i.id == id);
   if (parent) {
     name = parent.name + " / " + name;
-    if (parent.parentId === undefined | parent.parentId == null) {
+    if (parent.parentId === undefined || parent.parentId == null) {
       return name;
     }
     id = (' ' + parent.parentId.toString()).slice(1);
@@ -2561,7 +2563,7 @@ function getWidgetPath(id) {
   parent2 = configData.payload.sections.find(i => i.id == id);
   if (parent2) {
     name = parent2.name + " / " + name;
-    if (parent2.parentId === undefined | parent2.parentId == null) {
+    if (parent2.parentId === undefined || parent2.parentId == null) {
       return name;
     }
     id = (' ' + parent2.parentId.toString()).slice(1);

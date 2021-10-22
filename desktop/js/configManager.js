@@ -14,7 +14,7 @@ $.post({
 		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
-			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
+			url: "plugins/JeedomConnect/core/config/widgetsConfig.json",
 			cache: false,
 			success: function (data) {
 				data.widgets.sort(function (a, b) {

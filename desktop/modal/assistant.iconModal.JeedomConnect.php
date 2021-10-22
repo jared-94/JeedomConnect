@@ -88,9 +88,9 @@ function get_all_files($dir, $includeSubDir = false) {
             if ($number == 1) {
               $div .= '<div class="row">';
             }
-            $div .= '<div class="col-lg-1 divIconSel">';
+            $div .= '<div class="col-lg-1 divIconSel text-center">';
             $icon = str_replace(array(':', '.'), '', $match[0]);
-            $div .= '<span class="iconSel"><i source="jeedom" name="' . $icon . '" class=\'icon ' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
+            $div .= '<span class="iconSel"><i source="jeedom" name="' . $icon . '" class=\'icon ' . $icon . '\'></i></span><br/><span class="iconDesc">' . str_replace($research . '-', '', $icon) . '</span>';
             $div .= '</div>';
             $number++;
           }
@@ -122,9 +122,9 @@ function get_all_files($dir, $includeSubDir = false) {
         if ($number == 1) {
           $div .= '<div class="row">';
         }
-        $div .= '<div class="col-lg-1 divIconSel">';
+        $div .= '<div class="col-lg-1 divIconSel text-center">';
         $icon = str_replace(array(':', '.', 'mdi-'), '', $match[0]);
-        $div .= '<span class="iconSel"><i source="md" name="' . $icon . '" class=\'mdi mdi-' . $icon . '\'></i></span><br/><span class="iconDesc">' . 'mdi-' . $icon . '</span>';
+        $div .= '<span class="iconSel"><i source="md" name="' . $icon . '" class=\'mdi mdi-' . $icon . '\'></i></span><br/><span class="iconDesc">' . $icon . '</span>';
         $div .= '</div>';
         $number++;
       }
@@ -161,8 +161,8 @@ function get_all_files($dir, $includeSubDir = false) {
       if ($number == 1) {
         $div .= '<div class="row">';
       }
-      $div .= '<div class="col-lg-1 divIconSel">';
-      $div .= '<span class="iconSel"><i source="fa" name="' . $name . '" prefix="' . $data . '" class=\'' . $data . ' fa-' . $name . '\'></i></span><br/><span class="iconDesc">fa-' . $name . '</span>';
+      $div .= '<div class="col-lg-1 divIconSel text-center">';
+      $div .= '<span class="iconSel"><i source="fa" name="' . $name . '" prefix="' . $data . '" class=\'' . $data . ' fa-' . $name . '\'></i></span><br/><span class="iconDesc">' . $name . '</span>';
       $div .= '</div>';
       $number++;
     }
@@ -177,7 +177,7 @@ function get_all_files($dir, $includeSubDir = false) {
   <!-- JC -->
   <div role="tabpanel" class="tab-pane jcpanel active" id="tabimg" source="jc" style="width:calc(100% - 20px); display:none">
     <div class="imgContainer">
-      <div id="div_imageGallery">
+      <div id="div_imageGallery" class="div_imageGallery">
         <?php
         $div = '';
 
@@ -199,7 +199,7 @@ function get_all_files($dir, $includeSubDir = false) {
   <!-- USER -->
   <div role="tabpanel" class="tab-pane jcpanel active" id="tabimg" source="user" style="width:calc(100% - 20px); display:none">
     <div class="imgContainer">
-      <div id="div_imageGallery" source="user">
+      <div id="div_imageGallery" class="div_imageGallery" source="user">
         <?php
         $div = '';
 
@@ -249,9 +249,6 @@ function get_all_files($dir, $includeSubDir = false) {
 
 </div>
 
-</div>
-
-
 <script>
   $('#bt_uploadImg').fileupload({
     add: function(e, data) {
@@ -281,7 +278,7 @@ function get_all_files($dir, $includeSubDir = false) {
     }
   });
 
-  $('#iconModal').off('click', '.divIconSel').on('click', '.divIconSel', function() {
+  $('#mod_selectIcon').off('click', '.divIconSel').on('click', '.divIconSel', function() {
     $('.divIconSel').removeClass('iconSelected');
     $(this).closest('.divIconSel').addClass('iconSelected');
   });
@@ -350,7 +347,7 @@ function get_all_files($dir, $includeSubDir = false) {
   })
 
 
-  $('#iconModal ul li a').click(function() {
+  $('#mod_selectIcon ul li a').click(function() {
     $('.jcpanel.tab-pane').css('display', 'none');
 
     var type = $(this).attr('href').replace('#', '');
@@ -374,19 +371,24 @@ function get_all_files($dir, $includeSubDir = false) {
 
 
   $(function() {
-    var buttonSet = $('.ui-dialog[aria-describedby="iconModal"]').find('.ui-dialog-buttonpane')
+    var buttonSet = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('.ui-dialog-buttonpane')
     buttonSet.find('#mySearch').remove()
-    var mySearch = $('.ui-dialog[aria-describedby="iconModal"]').find('#mySearch')
+    var mySearch = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('#mySearch')
     buttonSet.append(mySearch)
     if (selectedIcon.source == 0) {
-      $('#iconModal ul li a').first().click();
+      $('#mod_selectIcon ul li a').first().click();
     } else {
-      $(`#iconModal ul li a[href="#${selectedIcon.source}"]`).click();
-      $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
+      $(`#mod_selectIcon ul li a[href="#${selectedIcon.source}"]`).click();
+      if (selectedIcon.source == 'user') {
+        tmpSrc = (userImgPath || '') + selectedIcon.name;
+        $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[src="${decodeURI(tmpSrc)}"]`).closest('.divIconSel').addClass('iconSelected');
+      } else {
+        $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
+      }
       setTimeout(function() {
         elem = $('div.divIconSel.iconSelected')
         if (elem.position()) {
-          container = $('#iconModal > .tab-content')
+          container = $('#mod_selectIcon > .tab-content')
           pos = elem.position().top + container.scrollTop() - container.position().top
           container.animate({
             scrollTop: pos - 20
