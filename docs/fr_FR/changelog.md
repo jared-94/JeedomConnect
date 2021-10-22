@@ -1,11 +1,11 @@
 # Changelog JeedomConnect
 ## Version 0.16.0 Beta (22/02/2021)
 - Notifications : Possibilité d'envoyer des images
-- Geolocalisation : mode Tracking pour le suivi constant de l'appareil (nouvelle commande `Position` dans les équipements)
+- Géolocalisation : mode Tracking pour le suivi constant de l'appareil (nouvelle commande `Position` dans les équipements)
 - Fix widgets non supprimés
 
 ## Version 0.15.4 (11/02/2021)
-- Notification : comptibilité avec l'architecture X32
+- Notification : compatibilité avec l'architecture X32
 - Option pour afficher la barre du haut
 
 ## Version 0.15.3 Beta (10/02/2021)
@@ -30,7 +30,7 @@
 - Historique : Axe horizontal en bas (même avec valeurs négatives)
 - Historique : Option pour ne pas afficher dans la vue détails
 - Historique : Option pour choisir le zoom par défaut
-- Thermostat : slider désactivé lorsque vérouillé
+- Thermostat : slider désactivé lorsque verrouillé
 - Optimisation de la connexion http
 - Résolution de divers bugs et améliorations mineures
 
@@ -72,11 +72,11 @@
 
 ## Version 0.11.0
 - Notifications : possibilité de mettre à jour le contenu d'une notification existante
-- Possibilité d'ajouter des conditions sur status pour le choix de l'image sur les widgets (gérérique numérique - Température - Humidité - Puissance)
+- Possibilité d'ajouter des conditions sur status pour le choix de l'image sur les widgets (générique numérique - Température - Humidité - Puissance)
 - Scénarios : Ajout d'une page dédiée récupérant tous les scénarios. Un appui sur l'icône lance le scénario (si actif). Icône grisée si désactivé
 - Les lumières d'un groupe sont affichées dans la vue détails
 - Changement de l'icône de notification
-- Amélioration de la géolocalisation. La localisation est récupérée même si l'appareil a été éteind ou en mode avion.
+- Amélioration de la géolocalisation. La localisation est récupérée même si l'appareil a été éteint ou en mode avion.
 - Widget volets : Possibilité de mettre un binaire pour l'état. Stop et slider facultatifs
 - Corrections de bugs
 
