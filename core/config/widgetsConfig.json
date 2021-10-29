@@ -4,7 +4,7 @@
 			"type": "single-light-switch",
 			"name": "Lumière On/Off",
 			"img": "light100.png",
-			"description": "Gère une lumière simple à deux états allumé/éteind",
+			"description": "Gère une lumière simple à deux états allumé/éteint",
 			"variables": [
 				{
 					"name": "room",
@@ -55,7 +55,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "LIGHT_ON"
 				},
 				{
 					"id": "offAction",
@@ -65,7 +66,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "LIGHT_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -73,7 +75,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat de la lumière (binaire ou numérique)"
+					"description": "Etat de la lumière (binaire ou numérique)",
+					"generic_type": "LIGHT_STATE"
 				},
 				{
 					"id": "powerInfo",
@@ -82,7 +85,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -203,7 +207,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "LIGHT_ON"
 				},
 				{
 					"id": "offAction",
@@ -213,7 +218,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "LIGHT_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -222,7 +228,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"generic_type": "LIGHT_STATE"
 				},
 				{
 					"id": "brightAction",
@@ -231,7 +238,8 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "brightInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "LIGHT_SLIDER"
 				},
 				{
 					"id": "brightInfo",
@@ -240,7 +248,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Intensité de la lumière"
+					"description": "Intensité de la lumière",
+					"generic_type": "LIGHT_BRIGHTNESS"
 				},
 				{
 					"id": "whiteTempAction",
@@ -248,14 +257,16 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "whiteTempInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "LIGHT_SET_COLOR_TEMP"
 				},
 				{
 					"id": "whiteTempInfo",
 					"name": "Info Temp. blanc",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "LIGHT_COLOR_TEMP"
 				},
 				{
 					"id": "powerInfo",
@@ -264,7 +275,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -385,7 +397,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "color",
-					"value": "colorInfo"
+					"value": "colorInfo",
+					"generic_type": "LIGHT_SET_COLOR"
 				},
 				{
 					"id": "colorInfo",
@@ -394,7 +407,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Couleur de la lumière"
+					"description": "Couleur de la lumière",
+					"generic_type": "LIGHT_COLOR"
 				},
 				{
 					"id": "onAction",
@@ -404,7 +418,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "LIGHT_ON"
 				},
 				{
 					"id": "offAction",
@@ -414,7 +429,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "LIGHT_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -423,7 +439,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"generic_type": "LIGHT_STATE"
 				},
 				{
 					"id": "brightAction",
@@ -432,7 +449,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "slider",
-					"value": "brightInfo"
+					"value": "brightInfo",
+					"generic_type": "LIGHT_SLIDER"
 				},
 				{
 					"id": "brightInfo",
@@ -441,7 +459,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Intensité de la lumière"
+					"description": "Intensité de la lumière",
+					"generic_type": "LIGHT_BRIGHTNESS"
 				},
 				{
 					"id": "whiteTempAction",
@@ -449,14 +468,16 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "whiteTempInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "LIGHT_SET_COLOR_TEMP"
 				},
 				{
 					"id": "whiteTempInfo",
 					"name": "Info Temp. blanc",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "LIGHT_COLOR_TEMP"
 				},
 				{
 					"id": "powerInfo",
@@ -465,7 +486,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "grabberAction",
@@ -758,7 +780,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"value": "statusInfo"
+					"value": "statusInfo",
+					"generic_type": "ENERGY_ON"
 				},
 				{
 					"id": "offAction",
@@ -767,7 +790,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"value": "statusInfo"
+					"value": "statusInfo",
+					"generic_type": "ENERGY_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -776,7 +800,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat (Allumé/Eteint) de la prise"
+					"description": "Etat (Allumé/Eteint) de la prise",
+					"generic_type": "ENERGY_STATE"
 				},
 				{
 					"id": "powerInfo",
@@ -785,7 +810,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -1286,7 +1312,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de la luminosité en Lux"
+					"description": "Etat de la luminosité en Lux",
+					"generic_type": "BRIGHTNESS"
 				},
 				{
 					"id": "image",
@@ -1399,7 +1426,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de l'humidité en %"
+					"description": "Etat de l'humidité en %",
+					"generic_type": "HUMIDITY"
 				},
 				{
 					"id": "image",
@@ -1512,7 +1540,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de la température en °C"
+					"description": "Etat de la température en °C",
+					"generic_type": "TEMPERATURE"
 				},
 				{
 					"id": "image",
@@ -2167,7 +2196,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la porte"
+					"description": "Etat de la porte",
+					"generic_type": "OPENING"
 				},
 				{
 					"id": "image",
@@ -2395,7 +2425,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat de la fenêtre"
+					"description": "Etat de la fenêtre",
+					"generic_type": "OPENING_WINDOW"
 				},
 				{
 					"id": "image",
@@ -2766,7 +2797,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du volet (numérique ou binaire)"
+					"description": "Etat du volet (numérique ou binaire)",
+					"generic_type": "FLAP_STATE"
 				},
 				{
 					"id": "upAction",
@@ -2775,7 +2807,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande pour monter le volet"
+					"description": "Commande pour monter le volet",
+					"generic_type": "FLAP_UP"
 				},
 				{
 					"id": "downAction",
@@ -2784,7 +2817,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande pour déscendre le volet"
+					"description": "Commande pour déscendre le volet",
+					"generic_type": "FLAP_DOWN"
 				},
 				{
 					"id": "stopAction",
@@ -2793,7 +2827,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Commande pour arrêter le volet"
+					"description": "Commande pour arrêter le volet",
+					"generic_type": "FLAP_STOP"
 				},
 				{
 					"id": "positionAction",
@@ -2803,7 +2838,8 @@
 					"type": "action",
 					"subtype": "slider",
 					"value": "statusInfo",
-					"description": "Commande de positionnement du volet"
+					"description": "Commande de positionnement du volet",
+					"generic_type": "FLAP_SLIDER"
 				},
 				{
 					"id": "powerInfo",
@@ -2812,7 +2848,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -5076,7 +5113,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Commande info contenant l'URL du snapshot"
+					"description": "Commande info contenant l'URL du snapshot",
+					"generic_type": "CAMERA_URL"
 				},
 				{
 					"id": "refreshInterval",
@@ -5112,7 +5150,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour démarrer un enregistrement"
+					"description": "Commande action pour démarrer un enregistrement",
+					"generic_type": "CAMERA_RECORD"
 				},
 				{
 					"id": "stopRecordAction",
@@ -5120,7 +5159,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour arrêter un enregistrement"
+					"description": "Commande action pour arrêter un enregistrement",
+					"generic_type": "CAMERA_STOP"
 				},
 				{
 					"id": "recordInfo",
@@ -5129,7 +5169,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Commande info d'enregistrement"
+					"description": "Commande info d'enregistrement",
+					"generic_type": "CAMERA_RECORD_STATE"
 				},
 				{
 					"id": "snapshotAction",
@@ -5137,7 +5178,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour enregistrer un instantané"
+					"description": "Commande action pour enregistrer un instantané",
+					"generic_type": "CAMERA_TAKE"
 				},
 				{
 					"id": "recordFolder",

@@ -117,8 +117,6 @@ foreach ($widgetTypeArray as $key => $value) {
 }
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
-
-
 ?>
 
 <div class="row row-overflow">
@@ -136,6 +134,11 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<i class="fas fa-plus-circle"></i>
 				<br>
 				<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
+			</div>
+			<div class="cursor eqLogicAction " data-action="addWidgetBulk" style="color:rgb(27,161,242);">
+				<i class="fas fa-plus-circle"></i>
+				<br>
+				<span style="color:var(--txt-color)">{{Ajouter des widgets en masse}}</span>
 			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
 				<i class="fas fa-tasks"></i>

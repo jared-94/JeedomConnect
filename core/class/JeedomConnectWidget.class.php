@@ -3,26 +3,32 @@
 /* * ***************************Includes********************************* */
 // require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
+require_once __DIR__  . '/JeedomConnectLock.class.php';
 
 class JeedomConnectWidget extends config {
 
 	public static $_plugin_id = 'JeedomConnect';
 
 	public static function getMaxIndex() {
-
 		return config::byKey('index::max', self::$_plugin_id) ?: '0';
 	}
 
 	public static function incrementIndex() {
-
 		log::add(self::$_plugin_id, 'debug', 'increment widget index ');
-		$current = config::byKey('index::max', self::$_plugin_id) ?: '0';
-		log::add(self::$_plugin_id, 'debug', 'current index : ' . $current);
+		$lock = new JeedomConnectLock('Widget_incrementIndex');
+		try {
+			if ($lock->Lock()) {
+				$current = config::byKey('index::max', self::$_plugin_id) ?: '0';
+				log::add(self::$_plugin_id, 'debug', 'current index : ' . $current);
 
-		$next = intval($current) + 1;
-		config::save('index::max', strval($next), self::$_plugin_id);
-		log::add(self::$_plugin_id, 'debug', 'incrementIndex done');
-		return $next;
+				$next = intval($current) + 1;
+				config::save('index::max', strval($next), self::$_plugin_id);
+				log::add(self::$_plugin_id, 'debug', 'incrementIndex done');
+				return $next;
+			}
+		} finally {
+			unset($lock);
+		}
 	}
 
 	public static function setConfiguration($_widgetId, $_key, $_value) {
