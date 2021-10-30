@@ -5117,8 +5117,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Commande info contenant l'URL du flux",
-					"generic_type": ""
+					"description": "Commande info contenant l'URL du flux"
 				},
 				{
 					"id": "onlyOnLan",

@@ -67,7 +67,7 @@ function refreshAddWidgetBulk() {
                                 cmd.maxValue = option.maxValue || ''
                                 cmd.unit = option.unit || ''
                             }
-                            eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} >`
+                            eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} >`
                             eqLogicInfo += '<span class="input-group-btn">'
                             eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                             eqLogicInfo += '</span>'
