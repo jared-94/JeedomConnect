@@ -83,12 +83,11 @@ try {
 	}
 
 	if (init('action') == 'getCmdsForWidgetType') {
-		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . init('widget_type'));
-		$widgetParam = JeedomConnect::getWidgetParam(false);
-		$widgetConfig = $widgetParam[init('widget_type')] ?? null;
-		if ($widgetConfig == null) {
-			ajax::error('Type de widget inconnu.');
-		}
+		$widget_type = init('widget_type');
+		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type);
+		$widgetConfigParam = JeedomConnect::getWidgetParam(false, array($widget_type));
+		$widgetConfig = $widgetConfigParam[$widget_type] ?? null;
+		if ($widgetConfig == null) ajax::error('Type de widget inconnu.');
 
 		$genericTypes = array();
 		foreach ($widgetConfig['options'] as $option) {
@@ -97,7 +96,10 @@ try {
 				$genericTypes[] = $option['generic_type'];
 			}
 		}
+
 		$genericTypes = array_unique($genericTypes);
+		if ($genericTypes == null) ajax::error('Pas de cmd générique pour ce type de widget.');
+
 		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));
 		$cmds = cmd::byGenericType($genericTypes);
 		log::add('JeedomConnect', 'debug', "found:" . count($cmds));
