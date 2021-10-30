@@ -109,10 +109,15 @@ try {
 			$results[$eqLogic->getName()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : '';
 			$results[$eqLogic->getName()]['cmds'][] = array(
 				'cmdid' => $cmd->getId(),
-				'value' => '#' . $cmd->getHumanName() . '#',
+				'humanName' => '#' . $cmd->getHumanName() . '#',
 				'cmdtype' => $cmd->getType(),
 				'cmdsubtype' => $cmd->getSubType(),
 				'generic_type' => $cmd->getGeneric_type(),
+				'minValue' => $cmd->getConfiguration('minValue'),
+				'maxValue' => $cmd->getConfiguration('maxValue'),
+				'unit' => $cmd->getUnite(),
+				'value' => $cmd->getValue(),
+				'icon' => $cmd->getDisplay('icon')
 			);
 			log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()})");
 		}

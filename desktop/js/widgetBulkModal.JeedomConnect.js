@@ -60,11 +60,14 @@ function refreshAddWidgetBulk() {
                             if (cmd == undefined) {
                                 cmd = {}
                                 cmd.cmdid = ''
-                                cmd.value = ''
+                                cmd.humanName = ''
                                 cmd.cmdtype = option.type
-                                cmd.cmdsubtype = option.subtype != undefined ? option.subtype : ''
+                                cmd.cmdsubtype = option.subtype || ''
+                                cmd.minValue = option.minValue || ''
+                                cmd.maxValue = option.maxValue || ''
+                                cmd.unit = option.unit || ''
                             }
-                            eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' value='${cmd.value}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' ${isDisabled}>`
+                            eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} >`
                             eqLogicInfo += '<span class="input-group-btn">'
                             eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                             eqLogicInfo += '</span>'
@@ -98,11 +101,6 @@ function refreshAddWidgetBulk() {
                     tbody += '<td>'
                     tbody += '<i class="fas fa-minus-circle pull-right removeWidgetAction cursor"></i>'
                     tbody += '</td>'
-                    // eqLogic[1].cmds.forEach(cmd => {
-                    //     tbody += '<td>'
-                    //     tbody += cmd.value
-                    //     tbody += '</td>'
-                    // });
                     tbody += '</tr>'
 
                 });
@@ -338,19 +336,19 @@ function saveWidgetBulk() {
             let infoCmd = [];
             widgetConfig.options.forEach(option => {
                 if (option.category == "cmd") {
-                    if ($(this).find("#" + option.id + "-input").attr('cmdId') == '' & option.required) {
+                    var cmdElement = $(this).find("#" + option.id + "-input");
+                    if (cmdElement.attr('cmdId') == '' & option.required) {
                         throw 'La commande ' + option.name + ' est obligatoire';
                     }
 
-                    if ($(this).find("#" + option.id + "-input").attr('cmdId') != undefined & $(this).find("#" + option.id + "-input").attr('cmdId') != '') {
+                    if (cmdElement.attr('cmdId') != undefined & cmdElement.attr('cmdId') != '') {
                         result[option.id] = {};
-                        result[option.id].id = $(this).find("#" + option.id + "-input").attr('cmdId');
-                        result[option.id].type = $(this).find("#" + option.id + "-input").attr('cmdType');
-                        result[option.id].subType = $(this).find("#" + option.id + "-input").attr('cmdSubType');
-                        // result[option.id].minValue = $("#" + option.id + "-minInput").val() != '' ? $("#" + option.id + "-minInput").val() : undefined;
-                        // result[option.id].maxValue = $("#" + option.id + "-maxInput").val() != '' ? $("#" + option.id + "-maxInput").val() : undefined;
-                        // result[option.id].step = $("#" + option.id + "-stepInput").val() != '' ? $("#" + option.id + "-stepInput").val() : undefined;
-                        // result[option.id].unit = $("#" + option.id + "-unitInput").val() != '' ? $("#" + option.id + "-unitInput").val() : undefined;
+                        result[option.id].id = cmdElement.attr('cmdId');
+                        result[option.id].type = cmdElement.attr('cmdType');
+                        result[option.id].subType = cmdElement.attr('cmdSubType');
+                        result[option.id].minValue = cmdElement.attr('minValue') != '' ? cmdElement.attr('minValue') : undefined;
+                        result[option.id].maxValue = cmdElement.attr('maxValue') != '' ? cmdElement.attr('maxValue') : undefined;
+                        result[option.id].unit = cmdElement.attr('unit') != '' ? cmdElement.attr('unit') : undefined;
                         // result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
                         // result[option.id].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
                         // result[option.id].secure = $("#secure-" + option.id).is(':checked') || undefined;
