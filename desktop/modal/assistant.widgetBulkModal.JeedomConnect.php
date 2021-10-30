@@ -34,50 +34,50 @@ if (!isConnect('admin')) {
 		margin-bottom: 25px;
 		margin-top: 15px;
 	}
-
-	.description {
-		color: var(--al-info-color);
-		font-size: 11px;
-	}
-
-	.borderLef {
-		border-left: 1px solid #ccc;
-	}
-
-	.btn-supp {
-		background-color: var(--al-danger-color) !important;
-	}
 </style>
 
 <link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
 
 <div>
 	<div style="display:none;" id="widget-alert"></div>
-	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
-		<span class="input-group-btn">
-			<a class="btn btn-sm btn-success saveWidget" onclick="saveWidgetBulk()" exit-attr="true"><i class="fas fa-check-circle"></i> {{Créer}}
-			</a><a class="btn btn-sm btn-warning" onclick="refreshAddWidgetBulk()"><i class="fas fa-times"></i> {{Réinitialiser}}
-			</a>
-		</span>
+	<div class="row">
+		<div class="pull-right widgetMenu" style="display:inline-flex;">
+			<span class="input-group-btn">
+				<a class="btn btn-sm btn-success saveWidget" onclick="saveWidgetBulk()" exit-attr="true"><i class="fas fa-check-circle"></i> {{Créer}}
+				</a><a class="btn btn-sm btn-warning" onclick="refreshAddWidgetBulk()"><i class="fas fa-times"></i> {{Réinitialiser}}
+				</a>
+			</span>
+		</div>
+		<div class="pull-left col-sm-10">
+			<div class="col-sm-2">
+				<img id="widgetImg" />
+			</div>
+			<div class="col-sm-10">
+				<div class="row">
+					<h3>Choix du widget</h3>
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgetBulk();">
+						</select>
+					</div>
+					<div class="col-sm-8">
+						<div class="alert alert-info" id="widgetDescription"></div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="col-sm-12">
-		<div class="col-sm-2">
-			<h3>Choix du widget</h3>
-			<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgetBulk();">
-			</select>
-			<img id="widgetImg" />
-			<div class="alert alert-info" id="widgetDescription"></div>
-			<div class="alert alert-info" id="widgetVariables"></div>
+		<div style="display:inline-flex;">
+			<h4 style="margin-left:25px;">Options du widget</h4>
+			<!-- <br> -->
+			<div style="font-style: italic;margin-left:25px;margin-top:15px;font-size: 0.8em;"><span class="required"></span> Les options marquées d'une étoile sont obligatoires.</div>
 		</div>
-
-		<div class="col-sm-10 borderLef">
-			<h3 style="margin-left:25px;">Options du widget</h3><br>
-			<div style="margin-left:25px; font-size:12px; margin-top:-20px; margin-bottom:15px;">Les options marquées d'une étoile sont obligatoires.</div>
-			<form class="form-horizontal widgetForm" style="overflow: hidden;">
-				<table class="table table-bordered table-condensed" id="table_widgets">
-				</table>
-			</form>
-		</div>
+		<form class="form-horizontal widgetForm" style="overflow: hidden;">
+			<table class="table table-bordered table-condensed" id="table_widgets">
+			</table>
+		</form>
 	</div>
 
 </div>

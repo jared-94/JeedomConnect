@@ -174,9 +174,16 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
 })
 
 $('.eqLogicAction[data-action=addWidgetBulk]').off('click').on('click', function () {
-  $('#md_modal').dialog({ title: "{{Ajout de widgets}}" });
-  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetBulkModal.JeedomConnect').dialog('open');
+  $('body').append('<div id="widgetBulkModal"></div>');
+  $('#widgetBulkModal').dialog({
+    title: "{{Ajout de widgets en masse}}",
+    width: 0.95 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    closeOnEscape: false
+  });
+  $('#widgetBulkModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetBulkModal.JeedomConnect').dialog('open');
 })
+
 
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
