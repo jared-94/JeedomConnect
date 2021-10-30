@@ -84,16 +84,12 @@ try {
 
 	if (init('action') == 'getCmdsForWidgetType') {
 		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . init('widget_type'));
-		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../../resources/widgetsConfig.json'), true);
-		$widgetConfig = null;
-		foreach ($jsonConfig['widgets'] as $config) {
-			if ($config['type'] == init('widget_type')) {
-				$widgetConfig = $config;
-			}
-		}
+		$widgetParam = JeedomConnect::getWidgetParam(false);
+		$widgetConfig = $widgetParam[init('widget_type')] ?? null;
 		if ($widgetConfig == null) {
 			ajax::error('Type de widget inconnu.');
 		}
+
 		$genericTypes = array();
 		foreach ($widgetConfig['options'] as $option) {
 			log::add('JeedomConnect', 'debug', "check option {$option['name']}");
