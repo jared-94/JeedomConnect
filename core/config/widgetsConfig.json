@@ -3339,7 +3339,7 @@
 					"type": "info",
 					"subtype": "binary",
 					"description": "Statut de l'alarme (alarme en cours)",
-					"generic_type": "ALARM_ENABLE_STATE"
+					"generic_type": "SIREN_STATE"
 				},
 				{
 					"id": "onAction",
