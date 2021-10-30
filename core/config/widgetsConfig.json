@@ -1655,7 +1655,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de la puissance en W"
+					"description": "Etat de la puissance en W",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -1792,7 +1793,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du thermostat (chaîne ou binaire)."
+					"description": "Etat du thermostat (chaîne ou binaire).",
+					"generic_type": "THERMOSTAT_STATE"
 				},
 				{
 					"id": "setpointAction",
@@ -1802,7 +1804,8 @@
 					"type": "action",
 					"subtype": "slider",
 					"value": "setpointInfo",
-					"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)"
+					"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)",
+					"generic_type": "THERMOSTAT_SET_SETPOINT"
 				},
 				{
 					"id": "setpointInfo",
@@ -1810,7 +1813,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "THERMOSTAT_SETPOINT"
 				},
 				{
 					"id": "tempInfo",
@@ -1818,7 +1822,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "THERMOSTAT_TEMPERATURE"
 				},
 				{
 					"id": "tempExtInfo",
@@ -1826,7 +1831,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "THERMOSTAT_TEMPERATURE_OUTDOOR"
 				},
 				{
 					"id": "modeInfo",
@@ -1835,7 +1841,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant"
+					"description": "Info qui donne le mode courant",
+					"generic_type": "THERMOSTAT_MODE"
 				},
 				{
 					"id": "modes",
@@ -1848,7 +1855,8 @@
 						"hasIcon": true,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "THERMOSTAT_MODE"
 				},
 				{
 					"id": "powerInfo",
@@ -1857,7 +1865,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Info qui donne la puissance en %"
+					"description": "Info qui donne la puissance en %",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "lockInfo",
@@ -1865,7 +1874,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "binary"
+					"subtype": "binary",
+					"generic_type": "THERMOSTAT_LOCK"
 				},
 				{
 					"id": "lockAction",
@@ -1873,14 +1883,16 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "THERMOSTAT_SET_LOCK"
 				},
 				{
 					"id": "unlockAction",
 					"name": "Déverrouillage",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "THERMOSTAT_SET_UNLOCK"
 				},
 				{
 					"id": "image",
@@ -2650,7 +2662,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])"
+					"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])",
+					"generic_type": "BARRIER_STATE"
 				},
 				{
 					"id": "openAction",
@@ -2659,7 +2672,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Ouverture totale du portail"
+					"description": "Ouverture totale du portail",
+					"generic_type": "GB_OPEN"
 				},
 				{
 					"id": "closeAction",
@@ -2668,7 +2682,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Fermeture du portail"
+					"description": "Fermeture du portail",
+					"generic_type": "GB_CLOSE"
 				},
 				{
 					"id": "partialAction",
@@ -2677,7 +2692,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Fermeture partielle (piéton) du portail"
+					"description": "Fermeture partielle (piéton) du portail",
+					"generic_type": ""
 				},
 				{
 					"id": "image",
@@ -3082,7 +3098,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat du capteur"
+					"description": "Etat du capteur",
+					"generic_type": "PRESENCE"
 				},
 				{
 					"id": "image",
@@ -3311,7 +3328,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de l'alarme (armée/désarmée)"
+					"description": "Etat de l'alarme (armée/désarmée)",
+					"generic_type": "ALARM_STATE"
 				},
 				{
 					"id": "statusInfo",
@@ -3320,7 +3338,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Statut de l'alarme (alarme en cours)"
+					"description": "Statut de l'alarme (alarme en cours)",
+					"generic_type": "ALARM_ENABLE_STATE"
 				},
 				{
 					"id": "onAction",
@@ -3330,7 +3349,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "enableInfo",
-					"description": "Commande pour activer l'alarme"
+					"description": "Commande pour activer l'alarme",
+					"generic_type": "ALARM_ARMED"
 				},
 				{
 					"id": "offAction",
@@ -3340,7 +3360,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "enableInfo",
-					"description": "Commande pour désactiver l'alarme"
+					"description": "Commande pour désactiver l'alarme",
+					"generic_type": "ALARM_RELEASED"
 				},
 				{
 					"id": "modeInfo",
@@ -3349,7 +3370,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Etat actuel du mode de l'alarme"
+					"description": "Etat actuel du mode de l'alarme",
+					"generic_type": "ALARM_MODE"
 				},
 				{
 					"id": "modes",
@@ -3362,7 +3384,8 @@
 						"hasIcon": false,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "ALARM_SET_MODE"
 				},
 				{
 					"id": "lineMode",
@@ -4752,7 +4775,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Etat actuel du mode"
+					"description": "Etat actuel du mode",
+					"generic_type": "MODE_STATE"
 				},
 				{
 					"id": "modes",
@@ -4765,7 +4789,8 @@
 						"hasIcon": false,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "MODE_SET_STATE"
 				},
 				{
 					"id": "image",
@@ -5092,7 +5117,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Commande info contenant l'URL du flux"
+					"description": "Commande info contenant l'URL du flux",
+					"generic_type": ""
 				},
 				{
 					"id": "onlyOnLan",
@@ -5194,7 +5220,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_UP"
 				},
 				{
 					"id": "downAction",
@@ -5202,7 +5229,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_DOWN"
 				},
 				{
 					"id": "leftAction",
@@ -5210,7 +5238,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_LEFT"
 				},
 				{
 					"id": "rightAction",
@@ -5218,7 +5247,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_RIGHT"
 				},
 				{
 					"id": "image",
