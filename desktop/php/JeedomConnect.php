@@ -126,7 +126,7 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 		<!-- Boutons de gestion du plugin -->
 		<div class="eqLogicThumbnailContainer">
 			<div class="cursor eqLogicAction " data-action="add" style="color:rgb(27,161,242);">
-				<i class="fas fa-plus-circle"></i>
+				<i class="fas fa-mobile-alt"></i>
 				<br>
 				<span>{{Ajouter un Appareil}}</span>
 			</div>
@@ -136,9 +136,9 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
 			</div>
 			<div class="cursor eqLogicAction " data-action="addWidgetBulk" style="color:rgb(27,161,242);">
-				<i class="fas fa-plus-circle"></i>
+				<i class="fas fa-magic"></i>
 				<br>
-				<span style="color:var(--txt-color)">{{Ajouter des widgets en masse}}</span>
+				<span style="color:var(--txt-color)">{{Création de widgets en masse}}</span>
 			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
 				<i class="fas fa-tasks"></i>
