@@ -1033,10 +1033,11 @@ class JeedomConnect extends eqLogic {
 
 	public static function getWidgetParam($only_name = true, $widget_types = array()) {
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
+		$count_widget_types = count($widget_types);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
-			if (count($widget_types) > 0 && !in_array($config['type'], $widget_types)) continue;
+			if ($count_widget_types > 0 && !in_array($config['type'], $widget_types)) continue;
 
 			$result[$config['type']] = $only_name ? $config['name'] : $config;
 		}
