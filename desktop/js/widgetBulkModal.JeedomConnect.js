@@ -118,12 +118,17 @@ function refreshAddWidgetBulk() {
 
                 });
 
+                var actionSecureHtml = `<select style="max-width: 120px;">
+                    <option value="none">Aucun</option><option value="confirm">Confirmation</option>
+                    <option value="secure">Empreinte</option><option value="pwd">Mot de passe</option>
+                    </select><br/>`;
                 var thead = '<thead><tr>'
                 thead += '<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" checked/></th>'
                 thead += '<th>Pièce</th>'
                 widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
-                    var required = (option.required) ? "required" : "";
-                    thead += `<th class='${required}'>` + option.name + '</th > '
+                    var required = (option.required) ? " required" : "";
+                    var actionSecure = (option.type == 'action') ? actionSecureHtml : "";
+                    thead += `<th class='${option.id}${required}'>` + actionSecure + option.name + '</th > '
                 });
                 thead += '</tr></thead>'
                 $("#table_widgets").html(thead + tbody);
@@ -361,6 +366,8 @@ function saveWidgetBulk() {
                         }
 
                         if (cmdElement.attr('cmdId') != undefined & cmdElement.attr('cmdId') != '') {
+                            var secureOpt = $(this).closest('table').find("thead ." + cmdElement.attr('data-l1key') + " option:selected").val();
+
                             result[option.id] = {};
                             result[option.id].id = cmdElement.attr('cmdId');
                             result[option.id].type = cmdElement.attr('cmdType');
@@ -369,9 +376,11 @@ function saveWidgetBulk() {
                             result[option.id].maxValue = cmdElement.attr('maxValue') != '' ? cmdElement.attr('maxValue') : undefined;
                             result[option.id].unit = cmdElement.attr('unit') != '' ? cmdElement.attr('unit') : undefined;
                             // result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
-                            // result[option.id].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
-                            // result[option.id].secure = $("#secure-" + option.id).is(':checked') || undefined;
-                            // result[option.id].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
+                            if (cmdElement.attr('cmdType') == 'action') {
+                                result[option.id].confirm = (secureOpt == 'confirm') || undefined;
+                                result[option.id].secure = (secureOpt == 'secure') || undefined;
+                                result[option.id].pwd = (secureOpt == 'pwd') || undefined;
+                            }
                             Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
                         }
                         else {
