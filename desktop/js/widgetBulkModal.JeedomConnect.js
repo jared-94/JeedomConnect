@@ -2,7 +2,7 @@ function refreshAddWidgetBulk() {
     widgetsCat = [];
     cmdCat = [];
     imgCat = [];
-    var type = $("#widgetsList-select").val();
+    var type = $("#widgetBulkList-select").val();
     var widget = widgetsList.widgets.find(i => i.type == type);
     if (widget == undefined) return;
     $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
@@ -329,7 +329,7 @@ function saveWidgetBulk() {
     $('#widget-alert').hideAlert();
 
     try {
-        var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+        var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetBulkList-select").val());
         var calls = [];
         $('#table_widgets tbody .widgetLine').each(function () {
             var result = {};
@@ -481,8 +481,8 @@ function saveWidgetBulk() {
 
             // ----- END forEach ----
 
-            result.type = $("#widgetsList-select").val();
-            widgetType = $("#widgetsList-select").val();
+            result.type = $("#widgetBulkList-select").val();
+            widgetType = $("#widgetBulkList-select").val();
             // result.blockDetail = $("#blockDetail-input").is(':checked');
 
             // widgetEnable = $('#enable-input').is(":checked");
@@ -559,7 +559,7 @@ function fillWidgetsList() {
             items.push('<option value="' + item.type + '">' + item.name + '</option>');
         }
     });
-    $("#widgetsList-select").html(items.join(""));
+    $("#widgetBulkList-select").html(items.join(""));
 }
 
 

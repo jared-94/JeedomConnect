@@ -58,7 +58,7 @@ if (!isConnect('admin')) {
 				</div>
 				<div class="row">
 					<div class="col-sm-4">
-						<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgetBulk();">
+						<select name="widgetsList" id="widgetBulkList-select" onchange="refreshAddWidgetBulk();">
 						</select>
 					</div>
 					<div class="col-sm-8">
