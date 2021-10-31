@@ -1856,7 +1856,7 @@
 						"hasImage": true,
 						"hasName": false
 					},
-					"generic_type": "THERMOSTAT_MODE"
+					"generic_type": "THERMOSTAT_SET_MODE"
 				},
 				{
 					"id": "powerInfo",
@@ -1865,8 +1865,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Info qui donne la puissance en %",
-					"generic_type": "POWER"
+					"description": "Info qui donne la puissance en %"
 				},
 				{
 					"id": "lockInfo",
