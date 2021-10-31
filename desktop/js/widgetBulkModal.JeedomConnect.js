@@ -29,6 +29,7 @@ function refreshAddWidgetBulk() {
                 if (Object.entries(data.result).length == 0) {
                     $('.optionWidgetBulk').hide();
                     $('.noGenType').show();
+                    $('#table_widgets').empty();
                 }
                 else {
 
@@ -346,230 +347,239 @@ function saveWidgetBulk() {
         var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetBulkList-select").val());
         var calls = [];
         // $('#table_widgets tbody .widgetLine').each(function () {
-        $('#table_widgets tbody .widgetLine')
+        var rowToSave = $('#table_widgets tbody .widgetLine')
             .filter(function () {
                 return ($(this).find('.checkboxBulk').is(':checked')) // dealing only with checked rows !
-            })
-            .each(function () {
-                var result = {};
-                let infoCmd = [];
-                widgetConfig.options.forEach(option => {
-                    if (option.category == "cmd") {
-                        var cmdElement = $(this).find("#" + option.id + "-input");
-                        if (cmdElement.attr('cmdId') == '' & option.required) {
-                            throw 'La commande ' + option.name + ' est obligatoire';
-                        }
+            });
 
-                        if (cmdElement.attr('cmdId') != undefined & cmdElement.attr('cmdId') != '') {
-                            var secureOpt = $(this).closest('table').find("thead ." + cmdElement.attr('data-l1key') + " option:selected").val();
+        if (rowToSave.length == 0) {
+            $('#widget-alert').showAlert({ message: 'Aucune ligne sélectionnée !', level: 'warning' });
+            return;
+        }
 
-                            result[option.id] = {};
-                            result[option.id].id = cmdElement.attr('cmdId');
-                            result[option.id].type = cmdElement.attr('cmdType');
-                            result[option.id].subType = cmdElement.attr('cmdSubType');
-                            result[option.id].minValue = cmdElement.attr('minValue') != '' ? cmdElement.attr('minValue') : undefined;
-                            result[option.id].maxValue = cmdElement.attr('maxValue') != '' ? cmdElement.attr('maxValue') : undefined;
-                            result[option.id].unit = cmdElement.attr('unit') != '' ? cmdElement.attr('unit') : undefined;
-                            // result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
-                            if (cmdElement.attr('cmdType') == 'action') {
-                                result[option.id].confirm = (secureOpt == 'confirm') || undefined;
-                                result[option.id].secure = (secureOpt == 'secure') || undefined;
-                                result[option.id].pwd = (secureOpt == 'pwd') || undefined;
-                            }
-                            Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
-                        }
-                        else {
-                            result[option.id] = undefined;
-                        }
+        rowToSave.each(function () {
+            var result = {};
+            let infoCmd = [];
+            widgetConfig.options.forEach(option => {
+                if (option.category == "cmd") {
+                    var cmdElement = $(this).find("#" + option.id + "-input");
+                    if (cmdElement.attr('cmdId') == '' & option.required) {
+                        throw 'La commande ' + option.name + ' est obligatoire';
                     }
-                    // else if (option.category == "scenario") {
 
-                    //     if ($("#" + option.id + "-input").attr('scId') == '' & option.required) {
-                    //         throw 'La commande ' + option.name + ' est obligatoire';
-                    //     }
+                    if (cmdElement.attr('cmdId') != undefined & cmdElement.attr('cmdId') != '') {
+                        var secureOpt = $(this).closest('table').find("thead ." + cmdElement.attr('data-l1key') + " option:selected").val();
 
-                    //     if ($("#" + option.id + "-input").attr('scId') != '') {
-                    //         result[option.id] = $("#" + option.id + "-input").attr('scId');
-
-                    //         result['options'] = {};
-                    //         result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
-                    //         result['options']['action'] = 'start';
-                    //         if ($('#tags-scenario-input').val() != '') {
-                    //             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
-                    //                 result['options']['tags'] = data;
-                    //             });
-                    //         }
-                    //     }
-                    // }
-                    else if (option.category == "string") {
-                        if ($(this).find("#" + option.id + "-input").val() == '' & option.required) {
-                            throw 'La commande ' + option.name + ' est obligatoire';
+                        result[option.id] = {};
+                        result[option.id].id = cmdElement.attr('cmdId');
+                        result[option.id].type = cmdElement.attr('cmdType');
+                        result[option.id].subType = cmdElement.attr('cmdSubType');
+                        result[option.id].minValue = cmdElement.attr('minValue') != '' ? cmdElement.attr('minValue') : undefined;
+                        result[option.id].maxValue = cmdElement.attr('maxValue') != '' ? cmdElement.attr('maxValue') : undefined;
+                        result[option.id].unit = cmdElement.attr('unit') != '' ? cmdElement.attr('unit') : undefined;
+                        // result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
+                        if (cmdElement.attr('cmdType') == 'action') {
+                            result[option.id].confirm = (secureOpt == 'confirm') || undefined;
+                            result[option.id].secure = (secureOpt == 'secure') || undefined;
+                            result[option.id].pwd = (secureOpt == 'pwd') || undefined;
                         }
-                        result[option.id] = parseString($(this).find("#" + option.id + "-input").val(), infoCmd);
-                    }
-                    // else if (option.category == "binary") {
-                    //     result[option.id] = $("#" + option.id + "-input").is(':checked');
-                    // }
-                    // else if (option.category == "color") {
-                    //     result[option.id] = $("#" + option.id + "-input").val();
-                    // }
-                    // else if (option.category == "stringList") {
-                    //     if ($("#" + option.id + "-input").val() == 'none' & option.required) {
-                    //         throw 'La commande ' + option.name + ' est obligatoire';
-                    //     }
-
-                    //     if ($("#" + option.id + "-input").val() != 'none') {
-                    //         result[option.id] = $("#" + option.id + "-input").val();
-                    //     }
-                    //     else {
-                    //         result[option.id] = undefined;
-                    //     }
-                    // }
-                    else if (option.category == "cmdList") {
-                        var cmdList = [];
-                        var index = 0;
-
-                        $(this).find('.jcCmdList .cmdListAttr').each(function () {
-                            cmdList.push({ id: $(this).attr('cmdId'), name: $(this).attr('cmdName'), index: index });
-                            index++;
-                        });
-                        result[option.id] = cmdList;
-                    }
-                    //     if (cmdCat.length == 0 & option.required) {
-                    //         throw 'La commande ' + option.name + ' est obligatoire';
-                    //     }
-
-                    //     // ---- Start cmdCat.forEach
-                    //     cmdCat.forEach(item => {
-                    //         if (option.options.hasImage | option.options.hasIcon) {
-                    //             item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-' + item.id + '"][data-index="' + item.index + '"]').children().first());
-                    //             if (item.image == {}) { delete item.image; }
-                    //         }
-                    //         if (option.options.type == 'action') {
-                    //             item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
-                    //             item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
-                    //             item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
-                    //             item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
-
-                    //             if (item.subtype != undefined && item.subtype != 'other') {
-                    //                 var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
-
-                    //                 item['options'] = {};
-
-                    //                 if (item.subtype == 'select') {
-                    //                     item['options']['select'] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
-                    //                 }
-                    //                 else {
-
-                    //                     var currentArray = optionsForSubtype[item.subtype];
-                    //                     currentArray.forEach(key => {
-                    //                         var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
-                    //                         if (tmpData != '') {
-                    //                             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
-                    //                                 item['options'][_params.subtype] = result;
-                    //                             });
-                    //                         }
-                    //                         else {
-                    //                             item['options'][key] = '';
-                    //                         }
-                    //                     });
-
-                    //                 }
-
-                    //             }
-                    //         }
-                    //     });
-                    //     // ---- END cmdCat.forEach
-                    //     result[option.id] = cmdCat;
-
-                    // }
-                    // else if (option.category == "ifImgs") {
-                    //     if (imgCat.length == 0 & option.required) {
-                    //         throw 'La commande ' + option.name + ' est obligatoire';
-                    //     }
-
-                    //     imgCat.forEach(item => {
-                    //         item.image = htmlToIcon($("#icon-div-" + item.index).children().first());
-                    //         getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $("#imglist-cond-" + item.index).val() }, function (result, _params) {
-                    //             item.condition = result;
-                    //         });
-                    //     });
-
-                    //     result[option.id] = imgCat;
-                    // }
-                    // else if (option.category == "img") {
-                    //     let icon = htmlToIcon($("#icon-div-" + option.id).children().first());
-                    //     if (icon.source == undefined & option.required) {
-                    //         throw "L'image est obligatoire";
-                    //     }
-                    //     result[option.id] = icon.source != undefined ? icon : undefined;
-                    // }
-                    // else if (option.category == "choicesList") {
-                    //     option.choices.forEach(v => {
-                    //         result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
-                    //     });
-                    // }
-                });
-
-                // ----- END forEach ----
-
-                result.type = $("#widgetBulkList-select").val();
-                widgetType = $("#widgetBulkList-select").val();
-                // result.blockDetail = $("#blockDetail-input").is(':checked');
-
-                // widgetEnable = $('#enable-input').is(":checked");
-                result.enable = true;
-
-                widgetRoom = $(this).find('#room-input :selected').val();
-                widgetRoomName = $(this).find('#room-input :selected').text();
-                if (widgetRoom != 'none') {
-                    if (widgetRoom == 'global') {
-                        result.room = 'global';
+                        Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
                     }
                     else {
-                        result.room = parseInt(widgetRoom);
+                        result[option.id] = undefined;
                     }
                 }
+                // else if (option.category == "scenario") {
 
-                toSave = JSON.stringify(result)
+                //     if ($("#" + option.id + "-input").attr('scId') == '' & option.required) {
+                //         throw 'La commande ' + option.name + ' est obligatoire';
+                //     }
 
-                widgetImg = $("#widgetImg").attr("src");
-                widgetName = $(this).find("#name-input").val();
+                //     if ($("#" + option.id + "-input").attr('scId') != '') {
+                //         result[option.id] = $("#" + option.id + "-input").attr('scId');
 
-                if (toSave !== null) {
-                    calls.push($.ajax({
-                        type: "POST",
-                        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-                        data: {
-                            action: "saveWidgetConfig",
-                            widgetJC: toSave,
-                            imgPath: widgetImg
-                        },
-                        dataType: 'json',
-                        error: function (error) {
-                            $('#div_alert').showAlert({ message: error.message, level: 'danger' });
-                        },
-                        success: function (data) {
-                            if (data.state != 'ok') {
-                                $('#div_alert').showAlert({
-                                    message: data.result,
-                                    level: 'danger'
-                                });
-                            }
-                        }
-                    }));
+                //         result['options'] = {};
+                //         result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
+                //         result['options']['action'] = 'start';
+                //         if ($('#tags-scenario-input').val() != '') {
+                //             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
+                //                 result['options']['tags'] = data;
+                //             });
+                //         }
+                //     }
+                // }
+                else if (option.category == "string") {
+                    if ($(this).find("#" + option.id + "-input").val() == '' & option.required) {
+                        throw 'La commande ' + option.name + ' est obligatoire';
+                    }
+                    result[option.id] = parseString($(this).find("#" + option.id + "-input").val(), infoCmd);
                 }
+                // else if (option.category == "binary") {
+                //     result[option.id] = $("#" + option.id + "-input").is(':checked');
+                // }
+                // else if (option.category == "color") {
+                //     result[option.id] = $("#" + option.id + "-input").val();
+                // }
+                // else if (option.category == "stringList") {
+                //     if ($("#" + option.id + "-input").val() == 'none' & option.required) {
+                //         throw 'La commande ' + option.name + ' est obligatoire';
+                //     }
+
+                //     if ($("#" + option.id + "-input").val() != 'none') {
+                //         result[option.id] = $("#" + option.id + "-input").val();
+                //     }
+                //     else {
+                //         result[option.id] = undefined;
+                //     }
+                // }
+                else if (option.category == "cmdList") {
+                    var cmdList = [];
+                    var index = 0;
+
+                    $(this).find('.jcCmdList .cmdListAttr').each(function () {
+                        cmdList.push({ id: $(this).attr('cmdId'), name: $(this).attr('cmdName'), index: index });
+                        index++;
+                    });
+                    result[option.id] = cmdList;
+                }
+                //     if (cmdCat.length == 0 & option.required) {
+                //         throw 'La commande ' + option.name + ' est obligatoire';
+                //     }
+
+                //     // ---- Start cmdCat.forEach
+                //     cmdCat.forEach(item => {
+                //         if (option.options.hasImage | option.options.hasIcon) {
+                //             item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-' + item.id + '"][data-index="' + item.index + '"]').children().first());
+                //             if (item.image == {}) { delete item.image; }
+                //         }
+                //         if (option.options.type == 'action') {
+                //             item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                //             item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                //             item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                //             item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
+
+                //             if (item.subtype != undefined && item.subtype != 'other') {
+                //                 var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
+
+                //                 item['options'] = {};
+
+                //                 if (item.subtype == 'select') {
+                //                     item['options']['select'] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
+                //                 }
+                //                 else {
+
+                //                     var currentArray = optionsForSubtype[item.subtype];
+                //                     currentArray.forEach(key => {
+                //                         var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
+                //                         if (tmpData != '') {
+                //                             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
+                //                                 item['options'][_params.subtype] = result;
+                //                             });
+                //                         }
+                //                         else {
+                //                             item['options'][key] = '';
+                //                         }
+                //                     });
+
+                //                 }
+
+                //             }
+                //         }
+                //     });
+                //     // ---- END cmdCat.forEach
+                //     result[option.id] = cmdCat;
+
+                // }
+                // else if (option.category == "ifImgs") {
+                //     if (imgCat.length == 0 & option.required) {
+                //         throw 'La commande ' + option.name + ' est obligatoire';
+                //     }
+
+                //     imgCat.forEach(item => {
+                //         item.image = htmlToIcon($("#icon-div-" + item.index).children().first());
+                //         getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $("#imglist-cond-" + item.index).val() }, function (result, _params) {
+                //             item.condition = result;
+                //         });
+                //     });
+
+                //     result[option.id] = imgCat;
+                // }
+                // else if (option.category == "img") {
+                //     let icon = htmlToIcon($("#icon-div-" + option.id).children().first());
+                //     if (icon.source == undefined & option.required) {
+                //         throw "L'image est obligatoire";
+                //     }
+                //     result[option.id] = icon.source != undefined ? icon : undefined;
+                // }
+                // else if (option.category == "choicesList") {
+                //     option.choices.forEach(v => {
+                //         result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
+                //     });
+                // }
             });
-        $.when.apply(null, calls).done(function () {
-            var vars = getUrlVars()
-            var url = 'index.php?'
-            delete vars['id']
-            delete vars['saveSuccessFull']
-            delete vars['removeSuccessFull']
-            vars['saveSuccessFull'] = "1";
-            url = getCustomParamUrl(url, vars);
-            modifyWithoutSave = false
-            loadPage(url)
+
+            // ----- END forEach ----
+
+            result.type = $("#widgetBulkList-select").val();
+            widgetType = $("#widgetBulkList-select").val();
+            // result.blockDetail = $("#blockDetail-input").is(':checked');
+
+            // widgetEnable = $('#enable-input').is(":checked");
+            result.enable = true;
+
+            widgetRoom = $(this).find('#room-input :selected').val();
+            widgetRoomName = $(this).find('#room-input :selected').text();
+            if (widgetRoom != 'none') {
+                if (widgetRoom == 'global') {
+                    result.room = 'global';
+                }
+                else {
+                    result.room = parseInt(widgetRoom);
+                }
+            }
+
+            toSave = JSON.stringify(result)
+
+            widgetImg = $("#widgetImg").attr("src");
+            widgetName = $(this).find("#name-input").val();
+
+            if (toSave !== null) {
+                calls.push($.ajax({
+                    type: "POST",
+                    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                    data: {
+                        action: "saveWidgetConfig",
+                        widgetJC: toSave,
+                        imgPath: widgetImg
+                    },
+                    dataType: 'json',
+                    error: function (error) {
+                        $('#widget-alert').showAlert({ message: error.message, level: 'danger' });
+                    },
+                    success: function (data) {
+                        if (data.state != 'ok') {
+                            $('#widget-alert').showAlert({
+                                message: data.result,
+                                level: 'danger'
+                            });
+                        }
+                        else {
+                            var vars = getUrlVars()
+                            var url = 'index.php?'
+                            delete vars['id']
+                            delete vars['saveSuccessFull']
+                            delete vars['removeSuccessFull']
+                            vars['saveSuccessFull'] = "1";
+                            url = getCustomParamUrl(url, vars);
+                            modifyWithoutSave = false
+                            loadPage(url)
+                        }
+                    }
+                }));
+            }
+            else {
+                $('#widget-alert').showAlert({ message: 'Rien à sauvergarder', level: 'warning' });
+            }
         });
     } catch (error) {
         $('#widget-alert').showAlert({ message: error, level: 'danger' });

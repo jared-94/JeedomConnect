@@ -69,7 +69,7 @@ if (!isConnect('admin')) {
 		</div>
 	</div>
 	<div class="col-sm-12 text-center noGenType">
-		Désolé ... <br />aucune commande disponible avec un type générique correspond à ce widget ! <i class="far fa-frown"></i>
+		{{Désolé ...}} <br />{{aucune commande disponible avec un type générique correspond à ce widget !}} <i class="far fa-frown"></i>
 	</div>
 	<div class="col-sm-12 optionWidgetBulk">
 		<div style="display:inline-flex;">
