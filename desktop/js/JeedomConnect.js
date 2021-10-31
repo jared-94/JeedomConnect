@@ -1407,9 +1407,7 @@ $("#widgetOptions").on('focusout', '.jcCmdListOptionsCommand', function () {
 
         // update cmdCat
         cmdCat.forEach(item => {
-          console.log('item in CmdCat :', item);
           if (item.id == currentId && item.index == currentIndex) {
-            console.log('found cmdCat !');
             item.id = data.result.id;
             item.name = data.result.humanName;
             item.subtype = data.result.subType;
@@ -2899,3 +2897,7 @@ function setCondToHuman(confArr) {
     input.val(value);
   });
 }
+
+$('body').off('click', '.removeParent').on('click', '.removeParent', function () {
+  $(this).parent().remove();
+});

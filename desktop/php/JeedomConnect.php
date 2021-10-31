@@ -131,7 +131,7 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 				<span>{{Ajouter un Appareil}}</span>
 			</div>
 			<div class="cursor eqLogicAction " data-action="addWidget" style="color:rgb(27,161,242);">
-				<i class="fas fa-plus-circle"></i>
+				<i class="fas fa-icons"></i>
 				<br>
 				<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
 			</div>

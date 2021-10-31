@@ -43,6 +43,9 @@ function refreshAddWidgetBulk() {
                 var tbody = '<tbody>'
                 Object.entries(data.result).forEach(eqLogic => {
                     tbody += '<tr class="widgetLine"><td>'
+                    tbody += '<input type="checkbox" class="checkbox-inline checkboxBulk" checked/>';
+                    tbody += '</td>'
+                    tbody += '<td>'
                     tbody += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
                     tbody += '<option value="none">Sélection  d\'une pièce</option>'
                     tbody += roomListOptions
@@ -94,18 +97,29 @@ function refreshAddWidgetBulk() {
                                 eqLogicInfo += `</ul></div></div>`
                             }
                             eqLogicInfo += `</div></div></div></li>`;
+                        } else if (option.category == "cmdList") {
+                            eqLogicInfo += '<div class="jcCmdList">';
+                            eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
+                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubtype}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
+                                eqLogicInfo += '<span class="input-group-btn">'
+                                eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
+                                eqLogicInfo += '</span>'
+                                eqLogicInfo += '<i class="fas fa-minus-circle pull-right cursor removeParent"></i>'
+                                eqLogicInfo += '</div>'
+                            });
+                            eqLogicInfo += '</div>';
+
+
                         }
                         tbody += eqLogicInfo
                         tbody += '</td>'
                     });
-                    tbody += '<td>'
-                    tbody += '<i class="fas fa-minus-circle pull-right removeWidgetAction cursor"></i>'
-                    tbody += '</td>'
                     tbody += '</tr>'
 
                 });
 
                 var thead = '<thead><tr>'
+                thead += '<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" checked/></th>'
                 thead += '<th>Pièce</th>'
                 widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
                     var required = (option.required) ? "required" : "";
@@ -331,203 +345,218 @@ function saveWidgetBulk() {
     try {
         var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetBulkList-select").val());
         var calls = [];
-        $('#table_widgets tbody .widgetLine').each(function () {
-            var result = {};
-            let infoCmd = [];
-            widgetConfig.options.forEach(option => {
-                if (option.category == "cmd") {
-                    var cmdElement = $(this).find("#" + option.id + "-input");
-                    if (cmdElement.attr('cmdId') == '' & option.required) {
-                        throw 'La commande ' + option.name + ' est obligatoire';
-                    }
+        // $('#table_widgets tbody .widgetLine').each(function () {
+        $('#table_widgets tbody .widgetLine')
+            .filter(function () {
+                return ($(this).find('.checkboxBulk').is(':checked')) // dealing only with checked rows !
+            })
+            .each(function () {
+                var result = {};
+                let infoCmd = [];
+                widgetConfig.options.forEach(option => {
+                    if (option.category == "cmd") {
+                        var cmdElement = $(this).find("#" + option.id + "-input");
+                        if (cmdElement.attr('cmdId') == '' & option.required) {
+                            throw 'La commande ' + option.name + ' est obligatoire';
+                        }
 
-                    if (cmdElement.attr('cmdId') != undefined & cmdElement.attr('cmdId') != '') {
-                        result[option.id] = {};
-                        result[option.id].id = cmdElement.attr('cmdId');
-                        result[option.id].type = cmdElement.attr('cmdType');
-                        result[option.id].subType = cmdElement.attr('cmdSubType');
-                        result[option.id].minValue = cmdElement.attr('minValue') != '' ? cmdElement.attr('minValue') : undefined;
-                        result[option.id].maxValue = cmdElement.attr('maxValue') != '' ? cmdElement.attr('maxValue') : undefined;
-                        result[option.id].unit = cmdElement.attr('unit') != '' ? cmdElement.attr('unit') : undefined;
-                        // result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
-                        // result[option.id].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
-                        // result[option.id].secure = $("#secure-" + option.id).is(':checked') || undefined;
-                        // result[option.id].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
-                        Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
-                    }
-                    else {
-                        result[option.id] = undefined;
-                    }
-                }
-                // else if (option.category == "scenario") {
-
-                //     if ($("#" + option.id + "-input").attr('scId') == '' & option.required) {
-                //         throw 'La commande ' + option.name + ' est obligatoire';
-                //     }
-
-                //     if ($("#" + option.id + "-input").attr('scId') != '') {
-                //         result[option.id] = $("#" + option.id + "-input").attr('scId');
-
-                //         result['options'] = {};
-                //         result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
-                //         result['options']['action'] = 'start';
-                //         if ($('#tags-scenario-input').val() != '') {
-                //             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
-                //                 result['options']['tags'] = data;
-                //             });
-                //         }
-                //     }
-                // }
-                else if (option.category == "string") {
-                    if ($(this).find("#" + option.id + "-input").val() == '' & option.required) {
-                        throw 'La commande ' + option.name + ' est obligatoire';
-                    }
-                    result[option.id] = parseString($(this).find("#" + option.id + "-input").val(), infoCmd);
-                }
-                // else if (option.category == "binary") {
-                //     result[option.id] = $("#" + option.id + "-input").is(':checked');
-                // }
-                // else if (option.category == "color") {
-                //     result[option.id] = $("#" + option.id + "-input").val();
-                // }
-                // else if (option.category == "stringList") {
-                //     if ($("#" + option.id + "-input").val() == 'none' & option.required) {
-                //         throw 'La commande ' + option.name + ' est obligatoire';
-                //     }
-
-                //     if ($("#" + option.id + "-input").val() != 'none') {
-                //         result[option.id] = $("#" + option.id + "-input").val();
-                //     }
-                //     else {
-                //         result[option.id] = undefined;
-                //     }
-                // }
-                // else if (option.category == "cmdList") {
-                //     if (cmdCat.length == 0 & option.required) {
-                //         throw 'La commande ' + option.name + ' est obligatoire';
-                //     }
-
-                //     // ---- Start cmdCat.forEach
-                //     cmdCat.forEach(item => {
-                //         if (option.options.hasImage | option.options.hasIcon) {
-                //             item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-' + item.id + '"][data-index="' + item.index + '"]').children().first());
-                //             if (item.image == {}) { delete item.image; }
-                //         }
-                //         if (option.options.type == 'action') {
-                //             item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
-                //             item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
-                //             item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
-                //             item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
-
-                //             if (item.subtype != undefined && item.subtype != 'other') {
-                //                 var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
-
-                //                 item['options'] = {};
-
-                //                 if (item.subtype == 'select') {
-                //                     item['options']['select'] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
-                //                 }
-                //                 else {
-
-                //                     var currentArray = optionsForSubtype[item.subtype];
-                //                     currentArray.forEach(key => {
-                //                         var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
-                //                         if (tmpData != '') {
-                //                             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
-                //                                 item['options'][_params.subtype] = result;
-                //                             });
-                //                         }
-                //                         else {
-                //                             item['options'][key] = '';
-                //                         }
-                //                     });
-
-                //                 }
-
-                //             }
-                //         }
-                //     });
-                //     // ---- END cmdCat.forEach
-                //     result[option.id] = cmdCat;
-
-                // }
-                // else if (option.category == "ifImgs") {
-                //     if (imgCat.length == 0 & option.required) {
-                //         throw 'La commande ' + option.name + ' est obligatoire';
-                //     }
-
-                //     imgCat.forEach(item => {
-                //         item.image = htmlToIcon($("#icon-div-" + item.index).children().first());
-                //         getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $("#imglist-cond-" + item.index).val() }, function (result, _params) {
-                //             item.condition = result;
-                //         });
-                //     });
-
-                //     result[option.id] = imgCat;
-                // }
-                // else if (option.category == "img") {
-                //     let icon = htmlToIcon($("#icon-div-" + option.id).children().first());
-                //     if (icon.source == undefined & option.required) {
-                //         throw "L'image est obligatoire";
-                //     }
-                //     result[option.id] = icon.source != undefined ? icon : undefined;
-                // }
-                // else if (option.category == "choicesList") {
-                //     option.choices.forEach(v => {
-                //         result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
-                //     });
-                // }
-            });
-
-            // ----- END forEach ----
-
-            result.type = $("#widgetBulkList-select").val();
-            widgetType = $("#widgetBulkList-select").val();
-            // result.blockDetail = $("#blockDetail-input").is(':checked');
-
-            // widgetEnable = $('#enable-input').is(":checked");
-            result.enable = true;
-
-            widgetRoom = $(this).find('#room-input :selected').val();
-            widgetRoomName = $(this).find('#room-input :selected').text();
-            if (widgetRoom != 'none') {
-                if (widgetRoom == 'global') {
-                    result.room = 'global';
-                }
-                else {
-                    result.room = parseInt(widgetRoom);
-                }
-            }
-
-            toSave = JSON.stringify(result)
-
-            widgetImg = $("#widgetImg").attr("src");
-            widgetName = $(this).find("#name-input").val();
-
-            if (toSave !== null) {
-                calls.push($.ajax({
-                    type: "POST",
-                    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-                    data: {
-                        action: "saveWidgetConfig",
-                        widgetJC: toSave,
-                        imgPath: widgetImg
-                    },
-                    dataType: 'json',
-                    error: function (error) {
-                        $('#div_alert').showAlert({ message: error.message, level: 'danger' });
-                    },
-                    success: function (data) {
-                        if (data.state != 'ok') {
-                            $('#div_alert').showAlert({
-                                message: data.result,
-                                level: 'danger'
-                            });
+                        if (cmdElement.attr('cmdId') != undefined & cmdElement.attr('cmdId') != '') {
+                            result[option.id] = {};
+                            result[option.id].id = cmdElement.attr('cmdId');
+                            result[option.id].type = cmdElement.attr('cmdType');
+                            result[option.id].subType = cmdElement.attr('cmdSubType');
+                            result[option.id].minValue = cmdElement.attr('minValue') != '' ? cmdElement.attr('minValue') : undefined;
+                            result[option.id].maxValue = cmdElement.attr('maxValue') != '' ? cmdElement.attr('maxValue') : undefined;
+                            result[option.id].unit = cmdElement.attr('unit') != '' ? cmdElement.attr('unit') : undefined;
+                            // result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
+                            // result[option.id].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
+                            // result[option.id].secure = $("#secure-" + option.id).is(':checked') || undefined;
+                            // result[option.id].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
+                            Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
+                        }
+                        else {
+                            result[option.id] = undefined;
                         }
                     }
-                }));
-            }
-        });
+                    // else if (option.category == "scenario") {
+
+                    //     if ($("#" + option.id + "-input").attr('scId') == '' & option.required) {
+                    //         throw 'La commande ' + option.name + ' est obligatoire';
+                    //     }
+
+                    //     if ($("#" + option.id + "-input").attr('scId') != '') {
+                    //         result[option.id] = $("#" + option.id + "-input").attr('scId');
+
+                    //         result['options'] = {};
+                    //         result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
+                    //         result['options']['action'] = 'start';
+                    //         if ($('#tags-scenario-input').val() != '') {
+                    //             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
+                    //                 result['options']['tags'] = data;
+                    //             });
+                    //         }
+                    //     }
+                    // }
+                    else if (option.category == "string") {
+                        if ($(this).find("#" + option.id + "-input").val() == '' & option.required) {
+                            throw 'La commande ' + option.name + ' est obligatoire';
+                        }
+                        result[option.id] = parseString($(this).find("#" + option.id + "-input").val(), infoCmd);
+                    }
+                    // else if (option.category == "binary") {
+                    //     result[option.id] = $("#" + option.id + "-input").is(':checked');
+                    // }
+                    // else if (option.category == "color") {
+                    //     result[option.id] = $("#" + option.id + "-input").val();
+                    // }
+                    // else if (option.category == "stringList") {
+                    //     if ($("#" + option.id + "-input").val() == 'none' & option.required) {
+                    //         throw 'La commande ' + option.name + ' est obligatoire';
+                    //     }
+
+                    //     if ($("#" + option.id + "-input").val() != 'none') {
+                    //         result[option.id] = $("#" + option.id + "-input").val();
+                    //     }
+                    //     else {
+                    //         result[option.id] = undefined;
+                    //     }
+                    // }
+                    else if (option.category == "cmdList") {
+                        var cmdList = [];
+                        var index = 0;
+
+                        $(this).find('.jcCmdList .cmdListAttr').each(function () {
+                            cmdList.push({ id: $(this).attr('cmdId'), name: $(this).attr('cmdName'), index: index });
+                            index++;
+                        });
+                        result[option.id] = cmdList;
+                    }
+                    //     if (cmdCat.length == 0 & option.required) {
+                    //         throw 'La commande ' + option.name + ' est obligatoire';
+                    //     }
+
+                    //     // ---- Start cmdCat.forEach
+                    //     cmdCat.forEach(item => {
+                    //         if (option.options.hasImage | option.options.hasIcon) {
+                    //             item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-' + item.id + '"][data-index="' + item.index + '"]').children().first());
+                    //             if (item.image == {}) { delete item.image; }
+                    //         }
+                    //         if (option.options.type == 'action') {
+                    //             item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                    //             item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                    //             item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                    //             item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
+
+                    //             if (item.subtype != undefined && item.subtype != 'other') {
+                    //                 var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
+
+                    //                 item['options'] = {};
+
+                    //                 if (item.subtype == 'select') {
+                    //                     item['options']['select'] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
+                    //                 }
+                    //                 else {
+
+                    //                     var currentArray = optionsForSubtype[item.subtype];
+                    //                     currentArray.forEach(key => {
+                    //                         var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
+                    //                         if (tmpData != '') {
+                    //                             getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
+                    //                                 item['options'][_params.subtype] = result;
+                    //                             });
+                    //                         }
+                    //                         else {
+                    //                             item['options'][key] = '';
+                    //                         }
+                    //                     });
+
+                    //                 }
+
+                    //             }
+                    //         }
+                    //     });
+                    //     // ---- END cmdCat.forEach
+                    //     result[option.id] = cmdCat;
+
+                    // }
+                    // else if (option.category == "ifImgs") {
+                    //     if (imgCat.length == 0 & option.required) {
+                    //         throw 'La commande ' + option.name + ' est obligatoire';
+                    //     }
+
+                    //     imgCat.forEach(item => {
+                    //         item.image = htmlToIcon($("#icon-div-" + item.index).children().first());
+                    //         getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $("#imglist-cond-" + item.index).val() }, function (result, _params) {
+                    //             item.condition = result;
+                    //         });
+                    //     });
+
+                    //     result[option.id] = imgCat;
+                    // }
+                    // else if (option.category == "img") {
+                    //     let icon = htmlToIcon($("#icon-div-" + option.id).children().first());
+                    //     if (icon.source == undefined & option.required) {
+                    //         throw "L'image est obligatoire";
+                    //     }
+                    //     result[option.id] = icon.source != undefined ? icon : undefined;
+                    // }
+                    // else if (option.category == "choicesList") {
+                    //     option.choices.forEach(v => {
+                    //         result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
+                    //     });
+                    // }
+                });
+
+                // ----- END forEach ----
+                return;
+
+                result.type = $("#widgetBulkList-select").val();
+                widgetType = $("#widgetBulkList-select").val();
+                // result.blockDetail = $("#blockDetail-input").is(':checked');
+
+                // widgetEnable = $('#enable-input').is(":checked");
+                result.enable = true;
+
+                widgetRoom = $(this).find('#room-input :selected').val();
+                widgetRoomName = $(this).find('#room-input :selected').text();
+                if (widgetRoom != 'none') {
+                    if (widgetRoom == 'global') {
+                        result.room = 'global';
+                    }
+                    else {
+                        result.room = parseInt(widgetRoom);
+                    }
+                }
+
+                toSave = JSON.stringify(result)
+
+                widgetImg = $("#widgetImg").attr("src");
+                widgetName = $(this).find("#name-input").val();
+
+                if (toSave !== null) {
+                    calls.push($.ajax({
+                        type: "POST",
+                        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                        data: {
+                            action: "saveWidgetConfig",
+                            widgetJC: toSave,
+                            imgPath: widgetImg
+                        },
+                        dataType: 'json',
+                        error: function (error) {
+                            $('#div_alert').showAlert({ message: error.message, level: 'danger' });
+                        },
+                        success: function (data) {
+                            if (data.state != 'ok') {
+                                $('#div_alert').showAlert({
+                                    message: data.result,
+                                    level: 'danger'
+                                });
+                            }
+                        }
+                    }));
+                }
+            });
         $.when.apply(null, calls).done(function () {
             var vars = getUrlVars()
             var url = 'index.php?'
@@ -579,3 +608,11 @@ $("#table_widgets").delegate('.listCmdInfo', 'click', function () {
 
 fillWidgetsList();
 refreshAddWidgetBulk();
+
+$('body').off('click', '#checkAll').on('click', '#checkAll', function () {
+    $('input:checkbox.checkboxBulk').not(this).prop('checked', this.checked);
+});
+
+$('body').off('click', '.checkboxBulk').on('click', '.checkboxBulk', function () {
+    $('#checkAll').not(this).prop('checked', false);
+});

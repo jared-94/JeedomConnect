@@ -110,6 +110,7 @@ try {
 			$results[$eqLogic->getName()]['cmds'][] = array(
 				'cmdid' => $cmd->getId(),
 				'humanName' => '#' . $cmd->getHumanName() . '#',
+				'name' => $cmd->getName(),
 				'cmdtype' => $cmd->getType(),
 				'cmdsubtype' => $cmd->getSubType(),
 				'generic_type' => $cmd->getGeneric_type(),
