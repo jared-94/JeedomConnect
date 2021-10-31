@@ -41,10 +41,10 @@ if (!isConnect('admin')) {
 <div>
 	<div style="display:none;" id="widget-alert"></div>
 	<div class="row">
-		<div class="pull-right widgetMenu" style="display:inline-flex;">
+		<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
 			<span class="input-group-btn">
-				<a class="btn btn-sm btn-success saveWidget" onclick="saveWidgetBulk()" exit-attr="true"><i class="fas fa-check-circle"></i> {{Créer}}
-				</a><a class="btn btn-sm btn-warning" onclick="refreshAddWidgetBulk()"><i class="fas fa-times"></i> {{Réinitialiser}}
+				<a class="btn btn-sm btn-success roundedLeft saveWidget" onclick="saveWidgetBulk()" exit-attr="true"><i class="fas fa-check-circle"></i> {{Créer}}
+				</a><a class="btn btn-sm btn-warning roundedRight" onclick="refreshAddWidgetBulk()"><i class="fas fa-times"></i> {{Réinitialiser}}
 				</a>
 			</span>
 		</div>
