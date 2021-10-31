@@ -508,7 +508,6 @@ function saveWidgetBulk() {
                 });
 
                 // ----- END forEach ----
-                return;
 
                 result.type = $("#widgetBulkList-select").val();
                 widgetType = $("#widgetBulkList-select").val();
