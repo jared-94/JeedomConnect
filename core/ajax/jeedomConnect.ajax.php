@@ -106,6 +106,8 @@ try {
 		$results = array();
 		foreach ($cmds as $cmd) {
 			$eqLogic = $cmd->getEqLogic();
+			if ($eqLogic->getIsEnable() == 0) continue;
+
 			$results[$eqLogic->getName()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : '';
 			$results[$eqLogic->getName()]['cmds'][] = array(
 				'cmdid' => $cmd->getId(),
