@@ -9,20 +9,6 @@ function refreshAddWidgetBulk() {
 
     $("#widgetDescription").html(widget.description);
 
-    if (widget.variables) {
-        let varDescr = `Variables disponibles : <ul style="padding-left: 15px;">`;
-        widget.variables.forEach(v => {
-            varDescr += `<li>#${v.name}# : ${v.descr}</li>`;
-        });
-        varDescr += '</ul>';
-        $("#widgetVariables").html(varDescr);
-        $("#widgetVariables").show();
-    } else {
-        $("#widgetVariables").hide();
-    }
-
-    var items = [];
-
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
@@ -40,105 +26,114 @@ function refreshAddWidgetBulk() {
                 });
             }
             else {
-                var tbody = '<tbody>'
-                Object.entries(data.result).forEach(eqLogic => {
-                    tbody += '<tr class="widgetLine"><td>'
-                    tbody += '<input type="checkbox" class="checkbox-inline checkboxBulk" checked/>';
-                    tbody += '</td>'
-                    tbody += '<td>'
-                    tbody += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
-                    tbody += '<option value="none">Sélection  d\'une pièce</option>'
-                    tbody += roomListOptions
-                    tbody += '</select>'
-                    tbody += '</td>'
-                    isDisabled = isJcExpert ? '' : 'disabled';
-                    widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
-                        var eqLogicInfo = ''
+                if (Object.entries(data.result).length == 0) {
+                    $('.optionWidgetBulk').hide();
+                    $('.noGenType').show();
+                }
+                else {
+
+                    $('.optionWidgetBulk').show();
+                    $('.noGenType').hide();
+                    var tbody = '<tbody>'
+                    Object.entries(data.result).forEach(eqLogic => {
+                        tbody += '<tr class="widgetLine"><td>'
+                        tbody += '<input type="checkbox" class="checkbox-inline checkboxBulk" checked/>';
+                        tbody += '</td>'
                         tbody += '<td>'
-                        if (option.category == "cmd") {
-                            var cmd = undefined
-                            if (option.hasOwnProperty('generic_type')) {
-                                var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
-                            }
-                            if (cmd == undefined) {
-                                cmd = {}
-                                cmd.cmdid = ''
-                                cmd.humanName = ''
-                                cmd.cmdtype = option.type
-                                cmd.cmdsubtype = option.subtype || ''
-                                cmd.minValue = option.minValue || ''
-                                cmd.maxValue = option.maxValue || ''
-                                cmd.unit = option.unit || ''
-                            }
-                            eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} >`
-                            eqLogicInfo += '<span class="input-group-btn">'
-                            eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
-                            eqLogicInfo += '</span>'
-                            eqLogicInfo += '</div>'
-                        } else if (option.category == "string") {
-                            var value = ''
-                            if (option.id == 'name') {
-                                var value = eqLogic[0]
-                            }
-                            type = (option.subtype != undefined) ? option.subtype : 'text';
-                            eqLogicInfo += `<div class='input-group'><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" type="${type}" id="${option.id}-input" value='${value}'>`;
-                            if (option.id == 'name') {
+                        tbody += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
+                        tbody += '<option value="none">Sélection  d\'une pièce</option>'
+                        tbody += roomListOptions
+                        tbody += '</select>'
+                        tbody += '</td>'
+                        isDisabled = isJcExpert ? '' : 'disabled';
+                        widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
+                            var eqLogicInfo = ''
+                            tbody += '<td>'
+                            if (option.category == "cmd") {
+                                var cmd = undefined
+                                if (option.hasOwnProperty('generic_type')) {
+                                    var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
+                                }
+                                if (cmd == undefined) {
+                                    cmd = {}
+                                    cmd.cmdid = ''
+                                    cmd.humanName = ''
+                                    cmd.cmdtype = option.type
+                                    cmd.cmdsubtype = option.subtype || ''
+                                    cmd.minValue = option.minValue || ''
+                                    cmd.maxValue = option.maxValue || ''
+                                    cmd.unit = option.unit || ''
+                                }
+                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} >`
                                 eqLogicInfo += '<span class="input-group-btn">'
-                                eqLogicInfo += `
+                                eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
+                                eqLogicInfo += '</span>'
+                                eqLogicInfo += '</div>'
+                            } else if (option.category == "string") {
+                                var value = ''
+                                if (option.id == 'name') {
+                                    var value = eqLogic[0]
+                                }
+                                type = (option.subtype != undefined) ? option.subtype : 'text';
+                                eqLogicInfo += `<div class='input-group'><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" type="${type}" id="${option.id}-input" value='${value}'>`;
+                                if (option.id == 'name') {
+                                    eqLogicInfo += '<span class="input-group-btn">'
+                                    eqLogicInfo += `
                                     <div class="dropdown" id="name-select">
                                     <a class="btn btn-default btn-sm roundedRight dropdown-toggle" data-toggle="dropdown" style="height" >
                                     <i class="fas fa-plus-square"></i> </a>
                                     <ul class="dropdown-menu infos-select" input="${option.id}-input">`;
-                                if (widget.variables) {
-                                    widget.variables.forEach(v => {
-                                        eqLogicInfo += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-                                    });
+                                    if (widget.variables) {
+                                        widget.variables.forEach(v => {
+                                            eqLogicInfo += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+                                        });
+                                    }
+                                    eqLogicInfo += `</ul></div></div>`
                                 }
-                                eqLogicInfo += `</ul></div></div>`
+                                eqLogicInfo += `</div></div></div></li>`;
+                            } else if (option.category == "cmdList") {
+                                eqLogicInfo += '<div class="jcCmdList">';
+                                eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
+                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubtype}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
+                                    eqLogicInfo += '<span class="input-group-btn">'
+                                    eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
+                                    eqLogicInfo += '</span>'
+                                    eqLogicInfo += '<i class="fas fa-minus-circle pull-right cursor removeParent"></i>'
+                                    eqLogicInfo += '</div>'
+                                });
+                                eqLogicInfo += '</div>';
+
+
                             }
-                            eqLogicInfo += `</div></div></div></li>`;
-                        } else if (option.category == "cmdList") {
-                            eqLogicInfo += '<div class="jcCmdList">';
-                            eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
-                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubtype}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
-                                eqLogicInfo += '<span class="input-group-btn">'
-                                eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
-                                eqLogicInfo += '</span>'
-                                eqLogicInfo += '<i class="fas fa-minus-circle pull-right cursor removeParent"></i>'
-                                eqLogicInfo += '</div>'
-                            });
-                            eqLogicInfo += '</div>';
+                            tbody += eqLogicInfo
+                            tbody += '</td>'
+                        });
+                        tbody += '</tr>'
 
-
-                        }
-                        tbody += eqLogicInfo
-                        tbody += '</td>'
                     });
-                    tbody += '</tr>'
 
-                });
-
-                var actionSecureHtml = `<select style="max-width: 120px;">
+                    var actionSecureHtml = `<select style="max-width: 120px;">
                     <option value="none">Aucun</option><option value="confirm">Confirmation</option>
                     <option value="secure">Empreinte</option><option value="pwd">Mot de passe</option>
                     </select><br/>`;
-                var thead = '<thead><tr>'
-                thead += '<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" checked/></th>'
-                thead += '<th>Pièce</th>'
-                widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
-                    var required = (option.required) ? " required" : "";
-                    var actionSecure = (option.type == 'action') ? actionSecureHtml : "";
-                    thead += `<th class='${option.id}${required}'>` + actionSecure + option.name + '</th > '
-                });
-                thead += '</tr></thead>'
-                $("#table_widgets").html(thead + tbody);
+                    var thead = '<thead><tr>'
+                    thead += '<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" checked/></th>'
+                    thead += '<th>Pièce</th>'
+                    widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
+                        var required = (option.required) ? " required" : "";
+                        var actionSecure = (option.type == 'action') ? actionSecureHtml : "";
+                        thead += `<th class='${option.id}${required}'>` + actionSecure + option.name + '</th > '
+                    });
+                    thead += '</tr></thead>'
+                    $("#table_widgets").html(thead + tbody);
 
-                $("#room-input > option").each(function () {
-                    if ($(this).text().includes($(this).parent().attr('room'))) {
-                        $(this).prop('selected', true);
-                        return;
-                    }
-                });
+                    $("#room-input > option").each(function () {
+                        if ($(this).text().includes($(this).parent().attr('room'))) {
+                            $(this).prop('selected', true);
+                            return;
+                        }
+                    });
+                }
             }
         }
     });

@@ -68,7 +68,10 @@ if (!isConnect('admin')) {
 			</div>
 		</div>
 	</div>
-	<div class="col-sm-12">
+	<div class="col-sm-12 text-center noGenType">
+		Désolé ... <br />aucune commande disponible avec un type générique correspond à ce widget ! <i class="far fa-frown"></i>
+	</div>
+	<div class="col-sm-12 optionWidgetBulk">
 		<div style="display:inline-flex;">
 			<h4 style="margin-left:25px;">Options du widget</h4>
 			<!-- <br> -->
