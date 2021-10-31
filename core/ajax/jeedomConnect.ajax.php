@@ -120,7 +120,7 @@ try {
 				'value' => $cmd->getValue(),
 				'icon' => $cmd->getDisplay('icon')
 			);
-			log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()})");
+			log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
 		}
 		log::add('JeedomConnect', 'debug', 'temp results:' . json_encode($results));
 		foreach ($results as $eqLogicName => $eqLogicConfig) {
