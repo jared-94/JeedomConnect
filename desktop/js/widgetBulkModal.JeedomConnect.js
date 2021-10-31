@@ -590,11 +590,6 @@ function fillWidgetsList() {
     $("#widgetBulkList-select").html(items.join(""));
 }
 
-
-$("#table_widgets").delegate('.removeWidgetAction', 'click', function () {
-    $(this).closest('.widgetLine').remove();
-});
-
 $("#table_widgets").delegate('.listCmdInfo', 'click', function () {
     var el = $(this).closest('div').find('.cmdAttrib');
     var type = el.attr('cmdType');
