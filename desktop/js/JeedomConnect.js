@@ -118,6 +118,7 @@ function getWidgetModal(_options, _callback) {
   else {
     $('.widgetMenu .duplicateWidget').show();
     $('.widgetMenu .saveWidget').removeClass('roundedLeft');
+    $('.autoFillWidgetCmds').hide();
   }
 
   if (_options.exit == true) {
