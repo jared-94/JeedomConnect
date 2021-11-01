@@ -98,17 +98,21 @@ try {
 		}
 
 		$genericTypes = array_unique($genericTypes);
-		if ($genericTypes == null) ajax::error('Pas de cmd générique pour ce type de widget.');
+		if ($genericTypes == null) ajax::error('Pas de type générique trouvé pour ce type de widget.');
 
 		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));
-		$cmds = cmd::byGenericType($genericTypes);
+
+		$eqLogicId = init('eqLogic_Id');
+		if (!is_numeric($eqLogicId)) $eqLogicId = null;
+
+		$cmds = cmd::byGenericType($genericTypes, $eqLogicId);
 		log::add('JeedomConnect', 'debug', "found:" . count($cmds));
 		$results = array();
 		foreach ($cmds as $cmd) {
 			$eqLogic = $cmd->getEqLogic();
 			if ($eqLogic->getIsEnable() == 0) continue;
 
-			$results[$eqLogic->getName()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : '';
+			$results[$eqLogic->getName()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : 'none';
 			$results[$eqLogic->getName()]['cmds'][] = array(
 				'cmdid' => $cmd->getId(),
 				'humanName' => '#' . $cmd->getHumanName() . '#',
@@ -138,7 +142,7 @@ try {
 						}
 					}
 					if (!$isGenericTypeSet) {
-						log::add('JeedomConnect', 'debug', "Could not find a cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicName}, removing it from results");
+						log::add('JeedomConnect', 'debug', "Could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicName}, removing it from results");
 						unset($results[$eqLogicName]);
 						break;
 					}

@@ -843,6 +843,7 @@ function refreshAddWidgets() {
   moreInfos = [];
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
+  showAutoFillWidgetCmds();
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
 
   $("#widgetDescription").html(widget.description);
@@ -2455,6 +2456,7 @@ function duplicateWidget() {
 
   $('.widgetMenu .duplicateWidget').hide()
   $('.widgetMenu .removeWidget').hide()
+  showAutoFillWidgetCmds();
   $('#widget-alert').showAlert({ message: 'Vous êtes sur le widget dupliqué, réalisez (ou non) vos modifications. Dans tous les cas, pensez à sauvegarder !', level: 'success' });
   // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 

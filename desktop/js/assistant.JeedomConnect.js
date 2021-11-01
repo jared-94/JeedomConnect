@@ -365,11 +365,90 @@ function getSimpleModal(_options, _callback) {
 	})
 };
 
+function showAutoFillWidgetCmds() {
+	$('.autoFillWidgetCmds').hide();
+	var type = $("#widgetsList-select").val();
+	var widget = widgetsList.widgets.find(i => i.type == type);
+	if (widget == undefined) return;
+
+	if (widget.options.filter(o => o.hasOwnProperty('generic_type')).length > 0) {
+		$('.autoFillWidgetCmds').show();
+	}
+}
+
+$('.btnAutoFillWidgetCmds').off('click').on('click', function () {
+	var type = $("#widgetsList-select").val();
+	var widget = widgetsList.widgets.find(i => i.type == type);
+	if (widget == undefined) return;
+	console.log(widget)
+	jeedom.eqLogic.getSelectModal({}, function (result) {
+		$.post({
+			url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+			data: {
+				action: 'getCmdsForWidgetType',
+				widget_type: widget.type,
+				eqLogic_Id: result.id
+			},
+			cache: false,
+			dataType: 'json',
+			async: false,
+			success: function (data) {
+				if (data.state != 'ok') {
+					$('#widget-alert').showAlert({
+						message: data.result,
+						level: 'danger'
+					});
+				}
+				else {
+					if (Object.entries(data.result).length == 0) {
+						$('#widget-alert').showAlert({
+							message: "Aucun type générique correspondant au widget définit sur les commandes de l'équipement",
+							level: 'warning'
+						});
+					}
+					else {
+
+						Object.entries(data.result).forEach(eqLogic => {
+
+							//room
+							$("#room-input > option").each(function () {
+								if ($(this).text().includes(eqLogic[1].room)) {
+									$(this).prop('selected', true);
+									return;
+								}
+							});
+
+							//name
+							$("#name-input").val(eqLogic[0]);
+
+							widget.options.filter(o => o.hasOwnProperty('generic_type')).forEach(option => {
+								if (option.category == "cmd") {
+									var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
+									if (cmd != undefined) {
+										refreshCmdData(option.id, cmd.cmdid, 'undefined');
+									}
+								} else if (option.category == "cmdList") {
+									cmdCat = [];
+									var maxIndex = 0;
+									eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
+										cmdCat.push({ id: c.cmdid, name: c.name, index: ++maxIndex, subtype: c.cmdsubtype });
+									});
+									refreshCmdListOption(JSON.stringify(option.options));
+								}
+							});
+
+						});
+					}
+				}
+			}
+		});
+	});
+});
+
 
 $('#hideExist').on('change', function () {
-
 	hideWidgetSelect();
-})
+});
 
 $('#selWidgetRoom').on('change', function () {
 	hideWidgetSelect();

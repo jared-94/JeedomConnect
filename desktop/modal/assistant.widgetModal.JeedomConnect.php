@@ -68,6 +68,10 @@ if (!isConnect('admin')) {
 			<h3>Choix du widget</h3>
 			<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgets();">
 			</select>
+			<div class="autoFillWidgetCmds" style="display: none;">
+				<h4>Création automatique</h4>
+				<a class="btn btn-sm btn-success btnAutoFillWidgetCmds"><i class="fas fa-magic"></i> {{Sélectionner un équipement}}</a>
+			</div>
 			<img id="widgetImg" />
 			<div class="alert alert-info" id="widgetDescription"></div>
 			<div class="alert alert-info" id="widgetVariables"></div>
