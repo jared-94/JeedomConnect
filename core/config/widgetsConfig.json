@@ -229,7 +229,7 @@
 					"type": "info",
 					"subtype": "binary",
 					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
-					"generic_type": "LIGHT_STATE"
+					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
 					"id": "brightAction",
@@ -440,7 +440,7 @@
 					"type": "info",
 					"subtype": "binary",
 					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
-					"generic_type": "LIGHT_STATE"
+					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
 					"id": "brightAction",
