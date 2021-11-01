@@ -2818,6 +2818,7 @@
 				{
 					"id": "upAction",
 					"name": "Monter",
+					"required": true,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
@@ -2828,6 +2829,7 @@
 				{
 					"id": "downAction",
 					"name": "Descendre",
+					"required": true,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
