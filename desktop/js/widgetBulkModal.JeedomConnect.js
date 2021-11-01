@@ -35,9 +35,10 @@ function refreshAddWidgetBulk() {
 
                     $('.optionWidgetBulk').show();
                     $('.noGenType').hide();
-                    var tbody = '<tbody>'
+                    var tbody = '<tbody>';
+                    var indexRow = 0;
                     Object.entries(data.result).forEach(eqLogic => {
-                        tbody += '<tr class="widgetLine"><td>'
+                        tbody += `<tr class="widgetLine" data-index="${indexRow}"><td>`
                         tbody += '<input type="checkbox" class="checkbox-inline checkboxBulk" checked/>';
                         tbody += '</td>'
                         tbody += '<td>'
@@ -65,7 +66,7 @@ function refreshAddWidgetBulk() {
                                     cmd.maxValue = option.maxValue || ''
                                     cmd.unit = option.unit || ''
                                 }
-                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} >`
+                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} '>`
                                 eqLogicInfo += '<span class="input-group-btn">'
                                 eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                                 eqLogicInfo += '</span>'
@@ -110,7 +111,7 @@ function refreshAddWidgetBulk() {
                             tbody += '</td>'
                         });
                         tbody += '</tr>'
-
+                        indexRow++;
                     });
 
                     var actionSecureHtml = `<select style="max-width: 120px;">
@@ -623,4 +624,52 @@ $('body').off('click', '#checkAll').on('click', '#checkAll', function () {
 
 $('body').off('click', '.checkboxBulk').on('click', '.checkboxBulk', function () {
     $('#checkAll').not(this).prop('checked', false);
+});
+
+$("body").on('change', '.needRefresh', function () {
+    var id = $(this).attr('id');
+    var row = $(this).closest('.widgetLine').attr('data-index');
+    var cmd = $(this).val();
+
+    getCmd({
+        id: cmd,
+        error: function (error) {
+            $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
+        },
+        success: function (data) {
+            $('#widget-alert').hideAlert();
+
+            var configtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType');
+            var configsubtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType');
+
+            console.log('configtype', configtype);
+            console.log('configsubtype', configsubtype);
+            console.log('item', $('.widgetLine[data-index=' + row + ']').find('#' + id));
+
+            if (configtype != undefined && configtype != data.result.type) {
+                $('#widget-alert').showAlert({
+                    message: "La commande " + cmd + " n'est pas de type '" + configtype + "'", level: 'danger'
+                });
+                return;
+            }
+            if (configsubtype != "undefined" && configsubtype != data.result.subType) {
+                $('#widget-alert').showAlert({
+                    message: "La commande " + cmd + " n'a pas le sous-type '" + configsubtype + "'", level: 'danger'
+                });
+                return;
+            }
+
+
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('value', '#' + data.result.humanName + '#');
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdId', data.result.id);
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('title', `#${data.result.humanName}# -- id : ${data.result.id}`);
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType', data.result.type);
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType', data.result.subType);
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('minValue', data.result.minValue);
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('maxValue', data.result.maxValue);
+            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('unit', data.result.unit);
+
+
+        }
+    });
 });
