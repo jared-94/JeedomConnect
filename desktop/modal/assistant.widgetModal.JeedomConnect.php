@@ -64,20 +64,23 @@ if (!isConnect('admin')) {
 		</span>
 	</div>
 	<div class="col-sm-12">
-		<div class="col-sm-2">
-			<h3>Choix du widget</h3>
-			<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgets();">
-			</select>
-			<div class="autoFillWidgetCmds" style="display: none;">
-				<h4>Création automatique</h4>
-				<a class="btn btn-sm btn-success btnAutoFillWidgetCmds"><i class="fas fa-magic"></i> {{Sélectionner un équipement}}</a>
+		<div class="col-xs-2">
+			<div class="form-group">
+				<h3>Choix du widget</h3>
+				<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgets();">
+				</select>
 			</div>
-			<img id="widgetImg" />
-			<div class="alert alert-info" id="widgetDescription"></div>
-			<div class="alert alert-info" id="widgetVariables"></div>
+			<div class="form-group autoFillWidgetCmds" style="display: none;">
+				<a class="btn btn-sm btn-success btnAutoFillWidgetCmds"><i class="fas fa-magic"></i> {{Création automatique}}</a>
+			</div>
+			<div class="form-group">
+				<img id="widgetImg" />
+				<div class="alert alert-info" id="widgetDescription"></div>
+				<div class="alert alert-info" id="widgetVariables"></div>
+			</div>
 		</div>
 
-		<div class="col-sm-10 borderLef">
+		<div class="col-xs-10 borderLef">
 			<h3 style="margin-left:25px;">Options du widget</h3><br>
 			<div style="margin-left:25px; font-size:12px; margin-top:-20px; margin-bottom:15px;">Les options marquées d'une étoile sont obligatoires.</div>
 			<form class="form-horizontal widgetForm" style="overflow: hidden;">
