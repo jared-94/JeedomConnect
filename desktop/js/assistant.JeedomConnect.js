@@ -380,7 +380,7 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 	var type = $("#widgetsList-select").val();
 	var widget = widgetsList.widgets.find(i => i.type == type);
 	if (widget == undefined) return;
-	console.log(widget)
+
 	jeedom.eqLogic.getSelectModal({}, function (result) {
 		$.post({
 			url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -409,7 +409,6 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 					else {
 
 						Object.entries(data.result).forEach(eqLogic => {
-
 							//room
 							$("#room-input > option").each(function () {
 								if ($(this).text().includes(eqLogic[1].room)) {
@@ -419,7 +418,7 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 							});
 
 							//name
-							$("#name-input").val(eqLogic[0]);
+							$("#name-input").val(eqLogic[1].name);
 
 							widget.options.filter(o => o.hasOwnProperty('generic_type')).forEach(option => {
 								if (option.category == "cmd") {

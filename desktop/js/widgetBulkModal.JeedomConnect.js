@@ -74,7 +74,7 @@ function refreshAddWidgetBulk() {
                             } else if (option.category == "string") {
                                 var value = ''
                                 if (option.id == 'name') {
-                                    var value = eqLogic[0]
+                                    var value = eqLogic[1].name
                                 }
                                 type = (option.subtype != undefined) ? option.subtype : 'text';
                                 eqLogicInfo += `<div class='input-group'><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" type="${type}" id="${option.id}-input" value='${value}'>`;

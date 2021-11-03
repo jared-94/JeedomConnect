@@ -111,9 +111,9 @@ try {
 		foreach ($cmds as $cmd) {
 			$eqLogic = $cmd->getEqLogic();
 			if ($eqLogic->getIsEnable() == 0) continue;
-
-			$results[$eqLogic->getName()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : 'none';
-			$results[$eqLogic->getName()]['cmds'][] = array(
+			$results[$eqLogic->getId()]['name'] = $eqLogic->getName();
+			$results[$eqLogic->getId()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : 'none';
+			$results[$eqLogic->getId()]['cmds'][] = array(
 				'cmdid' => $cmd->getId(),
 				'humanName' => '#' . $cmd->getHumanName() . '#',
 				'name' => $cmd->getName(),
@@ -129,8 +129,8 @@ try {
 			log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
 		}
 		log::add('JeedomConnect', 'debug', 'temp results:' . json_encode($results));
-		foreach ($results as $eqLogicName => $eqLogicConfig) {
-			log::add('JeedomConnect', 'debug', "checking {$eqLogicName}");
+		foreach ($results as $eqLogicId => $eqLogicConfig) {
+			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}");
 			foreach ($widgetConfig['options'] as $option) {
 				if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
 					log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
@@ -142,8 +142,8 @@ try {
 						}
 					}
 					if (!$isGenericTypeSet) {
-						log::add('JeedomConnect', 'debug', "Could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicName}, removing it from results");
-						unset($results[$eqLogicName]);
+						log::add('JeedomConnect', 'debug', "Could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}, removing it from results");
+						unset($results[$eqLogicId]);
 						break;
 					}
 				}
