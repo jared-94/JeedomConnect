@@ -380,7 +380,7 @@ class apiHelper {
     $result = array(
       'type' => 'SET_WIDGET_DATA',
       'payload' => array(
-        'widgets' => JeedomConnectWidget::getWidgetsList()
+        'widgets' => JeedomConnectWidget::getWidgets()
       )
     );
 
