@@ -66,7 +66,7 @@ function refreshAddWidgetBulk() {
                                     cmd.maxValue = option.maxValue || ''
                                     cmd.unit = option.unit || ''
                                 }
-                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled} '>`
+                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled}>`
                                 eqLogicInfo += '<span class="input-group-btn">'
                                 eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                                 eqLogicInfo += '</span>'
@@ -611,8 +611,8 @@ $("#table_widgets").delegate('.listCmdInfo', 'click', function () {
     var subtype = el.attr('cmdSubType') != '' ? el.attr('cmdSubType') : null;
 
     jeedom.cmd.getSelectModal({ cmd: { type: type, subType: subtype } }, function (result) {
-        el.atCaret('insert', result.human);
-        el.attr('cmdId', result.cmd.id);
+        el.val(result.human);
+        el.change()
     });
 });
 
@@ -653,14 +653,12 @@ $("body").on('change', '.needRefresh', function () {
                 });
                 return;
             }
-            if (configsubtype != "undefined" && configsubtype != data.result.subType) {
+            if (configsubtype != "" && configsubtype != data.result.subType) {
                 $('#widget-alert').showAlert({
                     message: "La commande " + cmd + " n'a pas le sous-type '" + configsubtype + "'", level: 'danger'
                 });
                 return;
             }
-
-
             $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('value', '#' + data.result.humanName + '#');
             $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdId', data.result.id);
             $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('title', `#${data.result.humanName}# -- id : ${data.result.id}`);
@@ -669,8 +667,6 @@ $("body").on('change', '.needRefresh', function () {
             $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('minValue', data.result.minValue);
             $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('maxValue', data.result.maxValue);
             $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('unit', data.result.unit);
-
-
         }
     });
 });
