@@ -670,10 +670,6 @@ $("body").on('change', '.needRefresh', function () {
                 var configtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType');
                 var configsubtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType');
 
-                console.log('configtype', configtype);
-                console.log('configsubtype', configsubtype);
-                console.log('item', $('.widgetLine[data-index=' + row + ']').find('#' + id));
-
                 if (configtype != undefined && configtype != data.result.type) {
                     $('#widget-alert').showAlert({
                         message: "La commande " + cmd + " n'est pas de type '" + configtype + "'", level: 'danger'
