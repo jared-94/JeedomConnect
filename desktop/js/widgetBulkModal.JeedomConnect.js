@@ -4,7 +4,12 @@ function refreshLine() {
         var room = $(el).find('select[data-l1key=room] option:selected').val();
         var name = $(el).find('input[data-l1key=name]').val();
 
-        if (allWidgetsDetail.some(e => e.type == type && e.room == room && e.name == name)) {
+        var exist = allWidgetsDetail.some(e => {
+            if (e.room === undefined) e.room = 'none';
+            return e.type == type && e.name == name && e.room == room
+        });
+
+        if (exist) {
             $(el).attr('style', 'background-color: #D75951 !important');
             $(el).find('.checkboxBulk').prop("checked", false);
             $('#checkAll').prop("checked", false);
