@@ -89,6 +89,27 @@ if (!isConnect('admin')) {
     </div></div></div></li>`;
 
       items.push(updateHtml);
+    } else {
+      //Critical alert
+      var criticalValue = notif ? notif.critical ? "checked" : "" : "";
+      var criticalHtml = `<li><div class='form-group'>
+    <label class='col-xs-3'>Alerte critique</label>
+    <div class='col-xs-9'>
+      <div class="description">Surpasse les paramètres de son et le mode Ne pas déranger</div>
+    <div class='input-group'>
+      <input type="checkbox" style="width:150px;" id="critical-input" ${criticalValue}>
+    </div></div></div></li>`;
+
+      items.push(criticalHtml);
+
+      //Volume
+      var criticalVolumeValue = notif?.criticalVolume || '';
+      var criticalVolumeHtml = `<li><div class='form-group'>
+    <label class='col-xs-3' >Volume alerte</label>
+    <div class='col-xs-9'>
+    <div class="description">Volume pour les alertes critiques, entre 0 et 1 (par défaut 0.9 = 90%)</div>
+    <div class='input-group'><input style="width:250px;" id="criticalVolume-input" value='${criticalVolumeValue}'></div></div></div></li>`;
+      items.push(criticalVolumeHtml);
     }
 
 

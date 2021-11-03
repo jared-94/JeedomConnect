@@ -226,6 +226,8 @@ function getNotifModal(_options, _callback) {
 					result.name = $("#mod-notifName-input").val();
 					result.channel = $("#mod-channel-input").val();
 					result.update = $("#update-input").is(':checked')
+					result.critical = $("#critical-input").is(':checked');
+					result.criticalVolume = parseFloat($("#criticalVolume-input").val());
 					if ($("#mod-color-input").val() != '') {
 						result.color = $("#mod-color-input").val();
 					}
