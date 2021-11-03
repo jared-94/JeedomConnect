@@ -10,15 +10,17 @@ function refreshLine() {
         });
 
         if (exist) {
-            $(el).attr('style', 'background-color: #D75951 !important');
+            $(el).attr('style', 'background-color: #c6d7ff !important');
             $(el).find('.checkboxBulk').prop("checked", false);
             $('#checkAll').prop("checked", false);
+            $('.alreadyExist').show();
         }
 
     });
 }
 
 function refreshAddWidgetBulk() {
+    $('.alreadyExist').hide();
     widgetsCat = [];
     cmdCat = [];
     imgCat = [];
