@@ -131,19 +131,21 @@ try {
 		log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
 		foreach ($results as $eqLogicId => $eqLogicConfig) {
 			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
-			$isGenericTypeSet = false;
+			$requiredCmdWithGenericTypeInConfig = false;
+			$requiredCmdWithGenericTypeFound = false;
 			foreach ($widgetConfig['options'] as $option) {
 				if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
+					$requiredCmdWithGenericTypeInConfig = true;
 					log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
 					foreach ($eqLogicConfig['cmds'] as $cmds) {
 						if ($cmds['generic_type'] == $option['generic_type']) {
-							$isGenericTypeSet = true;
+							$requiredCmdWithGenericTypeFound = true;
 							break 2;
 						}
 					}
 				}
 			}
-			if (!$isGenericTypeSet) {
+			if ($requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
 				log::add('JeedomConnect', 'debug', "Could not find any required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
 				unset($results[$eqLogicId]);
 			}
