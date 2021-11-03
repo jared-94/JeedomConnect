@@ -1,3 +1,18 @@
+function refreshLine() {
+    $('.widgetLine').each((i, el) => {
+        var type = $('#widgetBulkList-select option:selected').val();
+        var room = $(el).find('select[data-l1key=room] option:selected').val();
+        var name = $(el).find('input[data-l1key=name]').val();
+
+        if (allWidgetsDetail.some(e => e.type == type && e.room == room && e.name == name)) {
+            $(el).attr('style', 'background-color: #D75951 !important');
+            $(el).find('.checkboxBulk').prop("checked", false);
+            $('#checkAll').prop("checked", false);
+        }
+
+    });
+}
+
 function refreshAddWidgetBulk() {
     widgetsCat = [];
     cmdCat = [];
@@ -135,6 +150,8 @@ function refreshAddWidgetBulk() {
                             return;
                         }
                     });
+
+                    refreshLine();
                 }
             }
         }
