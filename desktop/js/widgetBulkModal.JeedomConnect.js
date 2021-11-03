@@ -48,7 +48,7 @@ function refreshAddWidgetBulk() {
                         tbody += '</select>'
                         tbody += '</td>'
                         isDisabled = isJcExpert ? '' : 'disabled';
-                        widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
+                        widget.options.filter(o => o.required === true || (o.hasOwnProperty('generic_type') && o.generic_type != '')).forEach(option => {
                             var eqLogicInfo = ''
                             tbody += '<td>'
                             if (option.category == "cmd") {
@@ -121,7 +121,7 @@ function refreshAddWidgetBulk() {
                     var thead = '<thead><tr>'
                     thead += '<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" checked/></th>'
                     thead += '<th>Pièce</th>'
-                    widget.options.filter(o => o.required === true || o.hasOwnProperty('generic_type')).forEach(option => {
+                    widget.options.filter(o => o.required === true || (o.hasOwnProperty('generic_type') && o.generic_type != '')).forEach(option => {
                         var required = (option.required) ? " required" : "";
                         var actionSecure = (option.type == 'action') ? actionSecureHtml : "";
                         thead += `<th class='${option.id}${required}'>` + actionSecure + option.name + '</th > '
