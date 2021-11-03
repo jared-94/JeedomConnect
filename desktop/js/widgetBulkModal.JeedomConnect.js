@@ -59,7 +59,7 @@ function refreshAddWidgetBulk() {
                     var indexRow = 0;
                     Object.entries(data.result).forEach(eqLogic => {
                         tbody += `<tr class="widgetLine" data-index="${indexRow}"><td>`
-                        tbody += '<input type="checkbox" class="checkbox-inline checkboxBulk" checked/>';
+                        tbody += '<input type="checkbox" class="checkboxBulk" checked/>';
                         tbody += '</td>'
                         tbody += '<td>'
                         tbody += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
