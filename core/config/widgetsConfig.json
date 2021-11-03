@@ -2691,8 +2691,7 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Fermeture partielle (piéton) du portail",
-					"generic_type": ""
+					"description": "Fermeture partielle (piéton) du portail"
 				},
 				{
 					"id": "image",
