@@ -608,7 +608,8 @@ function fillWidgetsList() {
 $("#table_widgets").delegate('.listCmdInfo', 'click', function () {
     var el = $(this).closest('div').find('.cmdAttrib');
     var type = el.attr('cmdType');
-    var subtype = el.attr('cmdSubType');
+    var subtype = el.attr('cmdSubType') != '' ? el.attr('cmdSubType') : null;
+
     jeedom.cmd.getSelectModal({ cmd: { type: type, subType: subtype } }, function (result) {
         el.atCaret('insert', result.human);
         el.attr('cmdId', result.cmd.id);
