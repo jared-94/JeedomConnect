@@ -632,41 +632,52 @@ $("body").on('change', '.needRefresh', function () {
     var row = $(this).closest('.widgetLine').attr('data-index');
     var cmd = $(this).val();
 
-    getCmd({
-        id: cmd,
-        error: function (error) {
-            $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
-        },
-        success: function (data) {
-            $('#widget-alert').hideAlert();
+    if (cmd == '') {
 
-            var configtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType');
-            var configsubtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType');
+        $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('value', '');
+        $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdId', '');
+        $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('title', '');
+        $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('minValue', '');
+        $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('maxValue', '');
+        $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('unit', '');
+    }
+    else {
+        getCmd({
+            id: cmd,
+            error: function (error) {
+                $('#widget-alert').showAlert({ message: error.result, level: 'danger' });
+            },
+            success: function (data) {
+                $('#widget-alert').hideAlert();
 
-            console.log('configtype', configtype);
-            console.log('configsubtype', configsubtype);
-            console.log('item', $('.widgetLine[data-index=' + row + ']').find('#' + id));
+                var configtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType');
+                var configsubtype = $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType');
 
-            if (configtype != undefined && configtype != data.result.type) {
-                $('#widget-alert').showAlert({
-                    message: "La commande " + cmd + " n'est pas de type '" + configtype + "'", level: 'danger'
-                });
-                return;
+                console.log('configtype', configtype);
+                console.log('configsubtype', configsubtype);
+                console.log('item', $('.widgetLine[data-index=' + row + ']').find('#' + id));
+
+                if (configtype != undefined && configtype != data.result.type) {
+                    $('#widget-alert').showAlert({
+                        message: "La commande " + cmd + " n'est pas de type '" + configtype + "'", level: 'danger'
+                    });
+                    return;
+                }
+                if (configsubtype != "" && configsubtype != data.result.subType) {
+                    $('#widget-alert').showAlert({
+                        message: "La commande " + cmd + " n'a pas le sous-type '" + configsubtype + "'", level: 'danger'
+                    });
+                    return;
+                }
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('value', '#' + data.result.humanName + '#');
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdId', data.result.id);
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('title', `#${data.result.humanName}# -- id : ${data.result.id}`);
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType', data.result.type);
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType', data.result.subType);
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('minValue', data.result.minValue);
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('maxValue', data.result.maxValue);
+                $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('unit', data.result.unit);
             }
-            if (configsubtype != "" && configsubtype != data.result.subType) {
-                $('#widget-alert').showAlert({
-                    message: "La commande " + cmd + " n'a pas le sous-type '" + configsubtype + "'", level: 'danger'
-                });
-                return;
-            }
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('value', '#' + data.result.humanName + '#');
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdId', data.result.id);
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('title', `#${data.result.humanName}# -- id : ${data.result.id}`);
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdType', data.result.type);
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('cmdSubType', data.result.subType);
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('minValue', data.result.minValue);
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('maxValue', data.result.maxValue);
-            $('.widgetLine[data-index=' + row + ']').find(' #' + id).attr('unit', data.result.unit);
-        }
-    });
+        });
+    }
 });
