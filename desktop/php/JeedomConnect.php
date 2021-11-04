@@ -138,17 +138,17 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 			<div class="cursor eqLogicAction " data-action="addWidgetBulk" style="color:rgb(27,161,242);">
 				<i class="fas fa-magic"></i>
 				<br>
-				<span style="color:var(--txt-color)">{{Création de widgets en masse}}</span>
+				<span style="color:var(--txt-color)">{{Ajouter des widgets en masse}}</span>
+			</div>
+			<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
+				<i class="fas fa-comment-dots"></i>
+				<br>
+				<span style="color:var(--txt-color)">{{Configurer<br/>"Notifier Tous"}}</span>
 			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
 				<i class="fas fa-tasks"></i>
 				<br>
 				<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
-			</div>
-			<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
-				<i class="fas fa-comment-dots"></i>
-				<br>
-				<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
 			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
