@@ -168,6 +168,17 @@ sendVarToJS('userHash', $userHash);
       </div>
     </div>
 
+    <div class="form-group">
+      <label class="col-lg-6 control-label">{{Création en masse en mode strict}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Permet de laisser l'utilisateur modifier les commandes manuellement"></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="isStrict" checked />
+      </div>
+    </div>
+
 
 
     <br />
