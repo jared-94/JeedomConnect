@@ -1114,7 +1114,15 @@ function selectCmd(name, type, subtype, value) {
   if (subtype != 'undefined') {
     cmd = { type: type, subType: subtype }
   }
-  jeedom.cmd.getSelectModal({ cmd: cmd }, function (result) {
+  var obj = $('#room-input option:selected').val();
+  obj = (obj == 'none') ? '' : obj;
+
+  jeedom.cmd.getSelectModal({
+    object: {
+      id: obj
+    },
+    cmd: cmd
+  }, function (result) {
     refreshCmdData(name, result.cmd.id, value);
   })
 }
