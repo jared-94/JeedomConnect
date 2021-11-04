@@ -68,7 +68,6 @@ $eqLogic->save();
 
 while (true) {
   $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
-
   if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
     log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #" . $id);
     if ($logic->getConfiguration('sessionId', 0) == $id) {
@@ -79,61 +78,61 @@ while (true) {
     die();
   }
 
-  if ($logic->getConfiguration('appState') != 'active') {
-    sleep(1);
-    continue;
-  }
-
-  $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
-  if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
-    log::add('JeedomConnect', 'debug', "eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
-    $config = $newConfig;
-    sse(
-      json_encode(array('infos' => array(
-        'cmdInfo' => apiHelper::getCmdInfoData($config),
-        'scInfo' => apiHelper::getScenarioData($config),
-        'objInfo' => apiHelper::getObjectData($config)
-      )))
-    );
-    sse(json_encode(array($newConfig)));
-    //sleep(1);
-  }
-
-  $actions = JeedomConnectActions::getAllActions($apiKey);
-  if (count($actions) > 0) {
-    $result = array(
-      'type' => 'ACTIONS',
-      'payload' => array()
-    );
-    foreach ($actions as $action) {
-      array_push($result['payload'], $action['value']['payload']);
-    }
-    log::add('JeedomConnect', 'debug', "send action to #{$id}  " . json_encode(array($result)));
-    sse(json_encode(array($result)));
-    JeedomConnectActions::removeActions($actions);
-    sleep(1);
-  }
-
-  $events = event::changes($lastReadTimestamp);
-  $lastReadTimestamp = time();
-  $data = apiHelper::getEvents($events, $config, eqLogic::byLogicalId($apiKey, 'JeedomConnect')->getConfiguration('scAll', 0) == 1);
-
   $sendInfo = false;
-  foreach ($data as $res) {
-    if (count($res['payload']) > 0) {
-      $sendInfo = true;
+
+  if ($logic->getConfiguration('appState') == 'active') {
+
+    $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
+    if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
+      log::add('JeedomConnect', 'debug', "eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
+      $config = $newConfig;
+      sse(
+        json_encode(array('infos' => array(
+          'cmdInfo' => apiHelper::getCmdInfoData($config),
+          'scInfo' => apiHelper::getScenarioData($config),
+          'objInfo' => apiHelper::getObjectData($config)
+        )))
+      );
+      sse(json_encode(array($newConfig)));
+      //sleep(1);
+    }
+
+    $actions = JeedomConnectActions::getAllActions($apiKey);
+    if (count($actions) > 0) {
+      $result = array(
+        'type' => 'ACTIONS',
+        'payload' => array()
+      );
+      foreach ($actions as $action) {
+        array_push($result['payload'], $action['value']['payload']);
+      }
+      log::add('JeedomConnect', 'debug', "send action to #{$id}  " . json_encode(array($result)));
+      sse(json_encode(array($result)));
+      JeedomConnectActions::removeActions($actions);
+      sleep(1);
+    }
+
+    $events = event::changes($lastReadTimestamp);
+    $lastReadTimestamp = time();
+    $data = apiHelper::getEvents($events, $config, eqLogic::byLogicalId($apiKey, 'JeedomConnect')->getConfiguration('scAll', 0) == 1);
+
+    foreach ($data as $res) {
+      if (count($res['payload']) > 0) {
+        $sendInfo = true;
+      }
+    }
+
+    if ($sendInfo) {
+      //log::add('JeedomConnect', 'debug', "eventServer send ".json_encode($data));
+      sse(json_encode($data));
+      $step = 0;
+      $lastReadTimestamp = time();
     }
   }
-
-  if ($sendInfo) {
-    //log::add('JeedomConnect', 'debug', "eventServer send ".json_encode($data));
-    sse(json_encode($data));
-    $step = 0;
-    $lastReadTimestamp = time();
-  } else {
+  if (!$sendInfo) {
     $step += 1;
     if ($step == 5) {
-      //log::add('JeedomConnect', 'debug', "eventServer heartbeat to #".$id);
+      //log::add('JeedomConnect', 'debug', "eventServer heartbeat to #" . $id);
       sse(json_encode(array('event' => 'heartbeat')));
       $step = 0;
     }
