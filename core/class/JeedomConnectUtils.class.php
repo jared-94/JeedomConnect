@@ -35,4 +35,42 @@ class JeedomConnectUtils {
         log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
         return $results;
     }
+
+    public static function getGenericType($widgetConfig) {
+        $genericTypes = array();
+        foreach ($widgetConfig['options'] as $option) {
+            log::add('JeedomConnect', 'debug', "check option {$option['name']}");
+            if (isset($option['generic_type']) && $option['generic_type'] != '') {
+                $genericTypes[] = $option['generic_type'];
+            }
+        }
+        return $genericTypes;
+    }
+
+    public static function createAutoWidget($_widget_Type, $_widgetConf, $_cmd_GenType) {
+
+        $result = array();
+        foreach ($_cmd_GenType as $eqLogicId => $eqLogicConfig) {
+            $current = array();
+            $current['enable'] = true;
+            $current['type'] = $_widget_Type;
+            $current['room'] = intval($eqLogicConfig['roomId']);
+            $current['name'] = $eqLogicConfig['name'];
+
+            foreach ($_widgetConf['options'] as $option) {
+                if (isset($option['category']) && $option['category'] == 'cmd' && isset($option['generic_type'])) {
+                    foreach ($eqLogicConfig['cmds'] as $cmds) {
+                        if ($cmds['generic_type'] != $option['generic_type']) continue;
+
+                        $current[$option['id']] = $cmds;
+                        break;
+                    }
+                }
+            }
+
+            array_push($result, $current);
+        }
+        log::add('JeedomConnect', 'debug', 'temp createAutoWidget:' .  json_encode($result));
+        return $result;
+    }
 }
