@@ -254,6 +254,10 @@ switch ($method) {
     $result = apiHelper::getWidgetData();
     $jsonrpc->makeSuccess($result);
     break;
+  case 'GET_WIDGET_WITH_GEN_TYPE':
+    $result = \apiHelper::generateWidgetWithGenType($params['widget_type'], $params['eqId'] ?? null);
+    $jsonrpc->makeSuccess($result);
+    break;
   case 'UNSUBSCRIBE_SC':
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->save();
