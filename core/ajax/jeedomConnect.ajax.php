@@ -105,30 +105,8 @@ try {
 		$eqLogicId = init('eqLogic_Id');
 		if (!is_numeric($eqLogicId)) $eqLogicId = null;
 
-		$cmds = cmd::byGenericType($genericTypes, $eqLogicId);
-		log::add('JeedomConnect', 'debug', "found:" . count($cmds));
-		$results = array();
-		foreach ($cmds as $cmd) {
-			$eqLogic = $cmd->getEqLogic();
-			if ($eqLogic->getIsEnable() == 0) continue;
-			$results[$eqLogic->getId()]['name'] = $eqLogic->getName();
-			$results[$eqLogic->getId()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : 'none';
-			$results[$eqLogic->getId()]['cmds'][] = array(
-				'cmdid' => $cmd->getId(),
-				'humanName' => '#' . $cmd->getHumanName() . '#',
-				'name' => $cmd->getName(),
-				'cmdtype' => $cmd->getType(),
-				'cmdsubtype' => $cmd->getSubType(),
-				'generic_type' => $cmd->getGeneric_type(),
-				'minValue' => $cmd->getConfiguration('minValue'),
-				'maxValue' => $cmd->getConfiguration('maxValue'),
-				'unit' => $cmd->getUnite(),
-				'value' => $cmd->getValue(),
-				'icon' => $cmd->getDisplay('icon')
-			);
-			log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
-		}
-		log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
+		$results = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
+
 		$isStrict = config::byKey('isStrict', 'JeedomConnect', true);
 		foreach ($results as $eqLogicId => $eqLogicConfig) {
 			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
@@ -153,7 +131,7 @@ try {
 				}
 			}
 		}
-		log::add('JeedomConnect', 'debug', 'result:' . count($results) . '-' . json_encode($results));
+		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
 
 		ajax::success($results);
 	}

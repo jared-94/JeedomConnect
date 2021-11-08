@@ -80,15 +80,15 @@ function refreshAddWidgetBulk() {
                                 }
                                 if (cmd == undefined) {
                                     cmd = {}
-                                    cmd.cmdid = ''
+                                    cmd.id = ''
                                     cmd.humanName = ''
-                                    cmd.cmdtype = option.type
-                                    cmd.cmdsubtype = option.subtype || ''
+                                    cmd.type = option.type
+                                    cmd.subType = option.subtype || ''
                                     cmd.minValue = option.minValue || ''
                                     cmd.maxValue = option.maxValue || ''
                                     cmd.unit = option.unit || ''
                                 }
-                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.cmdid}' value='${cmd.humanName}' cmdId='${cmd.cmdid}' cmdType='${cmd.cmdtype}' cmdSubType='${cmd.cmdsubtype}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled}>`
+                                eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.id}' value='${cmd.humanName}' cmdId='${cmd.id}' cmdType='${cmd.type}' cmdSubType='${cmd.subType}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled}>`
                                 eqLogicInfo += '<span class="input-group-btn">'
                                 eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                                 eqLogicInfo += '</span>'
@@ -98,7 +98,7 @@ function refreshAddWidgetBulk() {
                                 if (option.id == 'name') {
                                     var value = eqLogic[1].name
                                 }
-                                type = (option.subtype != undefined) ? option.subtype : 'text';
+                                type = (option.subType != undefined) ? option.subType : 'text';
                                 eqLogicInfo += `<div class='input-group'><input class='input-sm form-control roundedLeft cmdAttrib' data-l1key="${option.id}" type="${type}" id="${option.id}-input" value='${value}'>`;
                                 if (option.id == 'name') {
                                     eqLogicInfo += '<span class="input-group-btn">'
@@ -118,7 +118,7 @@ function refreshAddWidgetBulk() {
                             } else if (option.category == "cmdList") {
                                 eqLogicInfo += '<div class="jcCmdList">';
                                 eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
-                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubtype}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
+                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubType}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
                                     eqLogicInfo += '<span class="input-group-btn">'
                                     eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                                     eqLogicInfo += '</span>'
