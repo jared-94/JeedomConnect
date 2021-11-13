@@ -20,6 +20,7 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectUtils.class.php';
 
 class JeedomConnect extends eqLogic {
 

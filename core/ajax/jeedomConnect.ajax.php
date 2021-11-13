@@ -89,15 +89,7 @@ try {
 		$widgetConfig = $widgetConfigParam[$widget_type] ?? null;
 		if ($widgetConfig == null) ajax::error('Type de widget inconnu.');
 
-		$genericTypes = array();
-		foreach ($widgetConfig['options'] as $option) {
-			log::add('JeedomConnect', 'debug', "check option {$option['name']}");
-			if (isset($option['generic_type']) && $option['generic_type'] != '') {
-				$genericTypes[] = $option['generic_type'];
-			}
-		}
-
-		$genericTypes = array_unique($genericTypes);
+		$genericTypes = array_unique(JeedomConnectUtils::getGenericType($widgetConfig));
 		if ($genericTypes == null) ajax::error('Pas de type générique trouvé pour ce type de widget.');
 
 		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));
@@ -105,30 +97,9 @@ try {
 		$eqLogicId = init('eqLogic_Id');
 		if (!is_numeric($eqLogicId)) $eqLogicId = null;
 
-		$cmds = cmd::byGenericType($genericTypes, $eqLogicId);
-		log::add('JeedomConnect', 'debug', "found:" . count($cmds));
-		$results = array();
-		foreach ($cmds as $cmd) {
-			$eqLogic = $cmd->getEqLogic();
-			if ($eqLogic->getIsEnable() == 0) continue;
-			$results[$eqLogic->getId()]['name'] = $eqLogic->getName();
-			$results[$eqLogic->getId()]['room'] = $eqLogic->getObject() ? $eqLogic->getObject()->getName() : 'none';
-			$results[$eqLogic->getId()]['cmds'][] = array(
-				'cmdid' => $cmd->getId(),
-				'humanName' => '#' . $cmd->getHumanName() . '#',
-				'name' => $cmd->getName(),
-				'cmdtype' => $cmd->getType(),
-				'cmdsubtype' => $cmd->getSubType(),
-				'generic_type' => $cmd->getGeneric_type(),
-				'minValue' => $cmd->getConfiguration('minValue'),
-				'maxValue' => $cmd->getConfiguration('maxValue'),
-				'unit' => $cmd->getUnite(),
-				'value' => $cmd->getValue(),
-				'icon' => $cmd->getDisplay('icon')
-			);
-			log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
-		}
-		log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
+		$results = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
+
+		$isStrict = config::byKey('isStrict', 'JeedomConnect', true);
 		foreach ($results as $eqLogicId => $eqLogicConfig) {
 			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
 			$requiredCmdWithGenericTypeInConfig = false;
@@ -137,20 +108,26 @@ try {
 				if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
 					$requiredCmdWithGenericTypeInConfig = true;
 					log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
+					$requiredCmdWithGenericTypeFound = false;
 					foreach ($eqLogicConfig['cmds'] as $cmds) {
 						if ($cmds['generic_type'] == $option['generic_type']) {
 							$requiredCmdWithGenericTypeFound = true;
-							break 2;
+							break;
 						}
+					}
+					if ($isStrict && !$requiredCmdWithGenericTypeFound) {
+						log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+						unset($results[$eqLogicId]);
+						break;
 					}
 				}
 			}
-			if ($requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
-				log::add('JeedomConnect', 'debug', "Could not find any required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+			if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
+				log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
 				unset($results[$eqLogicId]);
 			}
 		}
-		log::add('JeedomConnect', 'debug', 'result:' . count($results) . '-' . json_encode($results));
+		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
 
 		ajax::success($results);
 	}

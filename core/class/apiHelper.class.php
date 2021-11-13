@@ -1017,6 +1017,32 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+
+
+  public static function generateWidgetWithGenType($_widget_type, $_eqLogicId) {
+    $result = array(
+      'type' => 'SET_WIDGET_WITH_GEN_TYPE',
+      'payload' => null
+    );
+
+    if ($_widget_type == null) return $result;
+
+    $widgetConfigParam = JeedomConnect::getWidgetParam(false, array($_widget_type));
+    $widgetConfig = $widgetConfigParam[$_widget_type] ?? null;
+
+    if ($widgetConfig == null) return $result;
+
+    $genericTypes = array_unique(JeedomConnectUtils::getGenericType($widgetConfig));
+    if ($genericTypes == null) return $result;
+
+    $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
+
+    $result['payload'] = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $cmdGeneric);
+    return $result;
+  }
+
+
+
   // EVENTS FUNCTION
   public static function getEvents($events, $config, $scAll = false) {
     $result_cmd = array(
