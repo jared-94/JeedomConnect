@@ -115,12 +115,16 @@ try {
 							break;
 						}
 					}
-					if ($isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
-						log::add('JeedomConnect', 'debug', "Could not find any required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+					if ($isStrict && !$requiredCmdWithGenericTypeFound) {
+						log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
 						unset($results[$eqLogicId]);
 						break;
 					}
 				}
+			}
+			if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
+				log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+				unset($results[$eqLogicId]);
 			}
 		}
 		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
