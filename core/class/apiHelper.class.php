@@ -485,11 +485,11 @@ class apiHelper {
       $moved = true;
     } else {
       $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-      if ($destinationParentIndex !== false) { //destination is a top tab  
+      if ($destinationParentIndex !== false) { //destination is a top tab
         $moved = true;
       } else {
         $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
-        if ($destinationParentIndex !== false) { //destination is a group  
+        if ($destinationParentIndex !== false) { //destination is a group
           $moved = true;
         }
       }
@@ -635,7 +635,7 @@ class apiHelper {
       $moved = true;
     } else {
       $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-      if ($destinationParentIndex !== false) { //destination is a top tab  
+      if ($destinationParentIndex !== false) { //destination is a top tab
         $moved = true;
       }
     }
@@ -1032,7 +1032,7 @@ class apiHelper {
 
     if ($widgetConfig == null) return $result;
 
-    $genericTypes = array_unique(JeedomConnectUtils::getGenericType($widgetConfig));
+    $genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
     if ($genericTypes == null) return $result;
 
     $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
@@ -1148,7 +1148,7 @@ class apiHelper {
       if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
         $eqLogic->setStatus("battery", $level);
         $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page '); 
+        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
       }
     } else {
       log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | not able to retrieve an equipment for apiKey ' . $apiKey);

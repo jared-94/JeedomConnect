@@ -89,7 +89,7 @@ try {
 		$widgetConfig = $widgetConfigParam[$widget_type] ?? null;
 		if ($widgetConfig == null) ajax::error('Type de widget inconnu.');
 
-		$genericTypes = array_unique(JeedomConnectUtils::getGenericType($widgetConfig));
+		$genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
 		if ($genericTypes == null) ajax::error('Pas de type générique trouvé pour ce type de widget.');
 
 		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));

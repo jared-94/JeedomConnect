@@ -43,7 +43,7 @@ class JeedomConnectUtils {
                 $genericTypes[] = $option['generic_type'];
             }
         }
-        return $genericTypes;
+        return array_unique($genericTypes);
     }
 
     public static function createAutoWidget($_widget_Type, $_widgetConf, $_cmd_GenType) {
