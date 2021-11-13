@@ -39,7 +39,6 @@ class JeedomConnectUtils {
     public static function getGenericType($widgetConfig) {
         $genericTypes = array();
         foreach ($widgetConfig['options'] as $option) {
-            log::add('JeedomConnect', 'debug', "check option {$option['name']}");
             if (isset($option['generic_type']) && $option['generic_type'] != '') {
                 $genericTypes[] = $option['generic_type'];
             }
