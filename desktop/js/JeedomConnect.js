@@ -203,7 +203,7 @@ $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function
     {
       type: "string",
       id: "infoPluginModal",
-      value: $('#infoPlugin').html()
+      value: $('.infoPlugin').html()
     }],
     buttons: {
       "Fermer": function () {
