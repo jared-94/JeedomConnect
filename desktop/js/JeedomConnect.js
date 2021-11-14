@@ -191,6 +191,30 @@ $('.eqLogicAction[data-action=addWidgetBulk]').off('click').on('click', function
 })
 
 
+$('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function () {
+  // $('.pluginInfo').toggle("slide", { direction: "right" }, 1000);
+  getSimpleModal({
+    title: "Forum",
+    width: 0.5 * $(window).width(),
+    fields: [{
+      type: "string",
+      value: $('.txtInfoPlugin').html()
+    },
+    {
+      type: "string",
+      value: $('.infoPlugin').html()
+    }],
+    buttons: {
+      "Fermer": function () {
+        $('#simpleModalAlert').hide();
+        $(this).dialog("close");
+      }
+    }
+  }, function (result) { });
+
+
+});
+
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
   $('#widgetSummaryModal').dialog({

@@ -117,54 +117,108 @@ foreach ($widgetTypeArray as $key => $value) {
 }
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
+
+$infoPlugin = '<br/>';
+$infoPlugin .= '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
+
+$beta_version = false;
+$update = $plugin->getUpdate();
+if (is_object($update)) {
+	$version = $update->getConfiguration('version');
+	if ($version && $version != 'stable') $beta_version = true;
+}
+
+
+$infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta]' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+$infoPlugin .= '<b>Equipements</b> : <br/>';
+foreach ($eqLogics as $eqLogic) {
+	$platformOs = $eqLogic->getConfiguration('platformOs');
+	$platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
+
+	$versionAppConfig = $eqLogic->getConfiguration('appVersion');
+	$versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
+
+	if ($platform == '' && $versionApp == '') {
+		$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName() . ' : non enregistré<br/>';
+	} else {
+		$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName() . ' : ' . $versionApp . ' ' . $platform . '<br/>';
+	}
+}
+
 ?>
 
 <div class="row row-overflow">
 	<!-- Page d'accueil du plugin -->
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
-		<legend><i class="fas fa-cog"></i> {{Gestion}}</legend>
-		<!-- Boutons de gestion du plugin -->
-		<div class="eqLogicThumbnailContainer">
-			<div class="cursor eqLogicAction " data-action="add" style="color:rgb(27,161,242);">
-				<i class="fas fa-mobile-alt"></i>
-				<br>
-				<span>{{Ajouter un Appareil}}</span>
-			</div>
-			<div class="cursor eqLogicAction " data-action="addWidget" style="color:rgb(27,161,242);">
-				<i class="fas fa-icons"></i>
-				<br>
-				<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
-			</div>
-			<div class="cursor eqLogicAction " data-action="addWidgetBulk" style="color:rgb(27,161,242);">
-				<i class="fas fa-magic"></i>
-				<br>
-				<span style="color:var(--txt-color)">{{Ajouter des widgets en masse}}</span>
-			</div>
-			<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
-				<i class="fas fa-comment-dots"></i>
-				<br>
-				<span style="color:var(--txt-color)">{{Configurer<br/>"Notifier Tous"}}</span>
-			</div>
-			<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
-				<i class="fas fa-tasks"></i>
-				<br>
-				<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
-			</div>
-			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
-				<i class="fas fa-wrench"></i>
-				<br>
-				<span>{{Configuration}}</span>
-			</div>
-			<?php if ($hasErrorPage) { ?>
-				<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
-					<i class="fas fa-exclamation-circle"></i>
-					<br>
-					<span style="color:var(--txt-color)" id="spanWidgetErreur">{{Erreur}}</span>
-					<sup>
-						<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
-					</sup>
+
+		<div class="row">
+			<div class="col-sm-10">
+				<legend><i class="fas fa-cog"></i> {{Gestion}}</legend>
+				<!-- Boutons de gestion du plugin -->
+				<div class="eqLogicThumbnailContainer">
+					<div class="cursor eqLogicAction " data-action="add" style="color:rgb(27,161,242);">
+						<i class="fas fa-mobile-alt"></i>
+						<br>
+						<span>{{Ajouter un Appareil}}</span>
+					</div>
+					<div class="cursor eqLogicAction " data-action="addWidget" style="color:rgb(27,161,242);">
+						<i class="fas fa-icons"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
+					</div>
+					<div class="cursor eqLogicAction " data-action="addWidgetBulk" style="color:rgb(27,161,242);">
+						<i class="fas fa-magic"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Création de widgets en masse}}</span>
+					</div>
+					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
+						<i class="fas fa-tasks"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
+					</div>
+					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
+						<i class="fas fa-comment-dots"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
+					</div>
+					<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
+						<i class="fas fa-wrench"></i>
+						<br>
+						<span>{{Configuration}}</span>
+					</div>
+					<?php if ($hasErrorPage) { ?>
+						<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
+							<i class="fas fa-exclamation-circle"></i>
+							<br>
+							<span style="color:var(--txt-color)" id="spanWidgetErreur">{{Erreur}}</span>
+							<sup>
+								<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
+							</sup>
+						</div>
+					<?php } ?>
 				</div>
-			<?php } ?>
+			</div>
+			<div class="col-sm-2">
+				<legend><i class="fas fa-comments"></i> {{Community}}</legend>
+				<!-- Boutons de gestion du plugin -->
+				<div class="eqLogicThumbnailContainer">
+					<div class="cursor eqLogicAction logoSecondary" data-action="showCommunity" style="color:rgb(27,161,242);">
+						<i class="fas fa-exclamation-circle"></i>
+						<br>
+						<span>{{Infos}}</span>
+						<div style="display:none">
+							<span class="txtInfoPlugin">
+								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span></a>
+								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
+								<br /><br />Merci de copier/coller les informations suivantes à chaque nouveau post !<br />
+							</span>
+							<span class="infoPlugin">
+								<?= $infoPlugin; ?>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<!--   PANEL DES EQUIPEMENTS  -->

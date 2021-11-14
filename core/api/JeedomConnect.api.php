@@ -146,6 +146,7 @@ switch ($method) {
     }
 
     $eqLogic->setConfiguration('platformOs', $params['platformOs']);
+    $eqLogic->setConfiguration('appVersion', $params['appVersion'] ?? '#NA#');
     $eqLogic->save();
 
     $result = array(
