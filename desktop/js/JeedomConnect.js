@@ -1166,6 +1166,7 @@ $("#widgetOptions").on('change', '.needRefresh', function () {
 
 
 function refreshCmdData(name, id, value) {
+  if (name == '' || id == '') return;
   getCmd({
     id: id,
     error: function (error) {

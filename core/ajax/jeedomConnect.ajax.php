@@ -641,9 +641,12 @@ try {
 	}
 
 	if (init('action') == 'getCmd') {
-		$cmd = (preg_match("/^\d+$/", init('id'))) ? cmd::byId(init('id')) : cmd::byString(init('id'));
+		$id = init('id');
+		if ($id == '') throw new Exception("id est obligatoire");
+
+		$cmd = (preg_match("/^\d+$/", $id)) ? cmd::byId($id) : cmd::byString($id);
 		if (!is_object($cmd)) {
-			throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+			throw new Exception(__('Commande inconnue : ', __FILE__) . $id);
 		}
 		ajax::success(array(
 			'id' => $cmd->getId(),

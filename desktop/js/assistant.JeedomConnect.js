@@ -428,7 +428,7 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 								if (option.category == "cmd") {
 									var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
 									if (cmd != undefined) {
-										refreshCmdData(option.id, cmd.cmdid, 'undefined');
+										refreshCmdData(option.id, cmd.id, 'undefined');
 									}
 								} else if (option.category == "cmdList") {
 									cmdCat = [];
