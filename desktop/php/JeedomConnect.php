@@ -209,7 +209,7 @@ foreach ($eqLogics as $eqLogic) {
 							<span class="txtInfoPlugin">
 								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span></a>
 								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
-								<br /><br />Merci de copier/coller les informations suivantes à chaque nouveau post !
+								<br /><br />Appuyez sur le bouton 'copier' en bas de la fenêtre pour récupérer l'ensemble des informations affichées, et partagez/collez-les à chaque nouveau post sur le forum !
 								<br /><br />
 							</span>
 							<span class="infoPlugin">
