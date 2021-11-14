@@ -202,12 +202,16 @@ $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function
     },
     {
       type: "string",
-      value: $('.infoPlugin').html()
+      id: "infoPluginModal",
+      value: $('#infoPlugin').html()
     }],
     buttons: {
       "Fermer": function () {
         $('#simpleModalAlert').hide();
         $(this).dialog("close");
+      },
+      "Copier": function () {
+        copyDivToClipboard('#infoPluginModal', true)
       }
     }
   }, function (result) { });
@@ -2939,3 +2943,23 @@ function setCondToHuman(confArr) {
 $('body').off('click', '.removeParent').on('click', '.removeParent', function () {
   $(this).parent().remove();
 });
+
+function copyDivToClipboard(myInput, addBacktick = false) {
+  var initialText = $(myInput).html();
+  if (addBacktick) {
+    $(myInput).html('```<br/>' + initialText + '```');
+  }
+  var range = document.createRange();
+  range.selectNode($(myInput).get(0));
+  window.getSelection().removeAllRanges(); // clear current selection
+  window.getSelection().addRange(range); // to select text
+  document.execCommand("copy");
+  window.getSelection().removeAllRanges();// to deselect
+  $('#div_simpleModalAlert').showAlert({
+    message: 'Infos copiées',
+    level: 'success'
+  });
+  if (addBacktick) {
+    $(myInput).html(initialText);
+  }
+}
