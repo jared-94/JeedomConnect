@@ -1,23 +1,24 @@
-function refreshLine() {
-    $('.widgetLine').each((i, el) => {
-        var type = $('#widgetBulkList-select option:selected').val();
-        var room = $(el).find('select[data-l1key=room] option:selected').val();
-        var name = $(el).find('input[data-l1key=name]').val();
+// function refreshLine() {
+//     var type = $('#widgetBulkList-select option:selected').val();
+//     $('.widgetLine').each((i, el) => {
 
-        var exist = allWidgetsDetail.some(e => {
-            if (e.room === undefined) e.room = 'none';
-            return e.type == type && e.name == name && e.room == room
-        });
+//         var room = $(el).find('select[data-l1key=room] option:selected').val();
+//         var name = $(el).find('input[data-l1key=name]').val();
 
-        if (exist) {
-            $(el).attr('style', 'background-color: #c6d7ff !important');
-            $(el).find('.checkboxBulk').prop("checked", false);
-            $('#checkAll').prop("checked", false);
-            $('.alreadyExist').show();
-        }
+//         var exist = allWidgetsDetail.some(e => {
+//             if (e.room === undefined) e.room = 'none';
+//             return e.type == type && e.name == name && e.room == room
+//         });
 
-    });
-}
+//         if (exist) {
+//             $(el).attr('style', 'background-color: #c6d7ff !important');
+//             $(el).find('.checkboxBulk').prop("checked", false);
+//             $('#checkAll').prop("checked", false);
+//             $('.alreadyExist').show();
+//         }
+
+//     });
+// }
 
 function refreshAddWidgetBulk() {
     $('.alreadyExist').hide();
@@ -59,20 +60,19 @@ function refreshAddWidgetBulk() {
                     $('.noGenType').hide();
                     var tbody = '<tbody>';
                     var indexRow = 0;
+                    var checkAll = 'checked';
                     Object.entries(data.result).forEach(eqLogic => {
-                        tbody += `<tr class="widgetLine" data-index="${indexRow}"><td>`
-                        tbody += '<input type="checkbox" class="checkboxBulk" checked/>';
-                        tbody += '</td>'
-                        tbody += '<td>'
-                        tbody += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
-                        tbody += '<option value="none">Sélection  d\'une pièce</option>'
-                        tbody += roomListOptions
-                        tbody += '</select>'
-                        tbody += '</td>'
+                        var requiredCmds = [];
+                        tr = '<td>'
+                        tr += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
+                        tr += '<option value="none">Sélection  d\'une pièce</option>'
+                        tr += roomListOptions
+                        tr += '</select>'
+                        tr += '</td>'
                         isDisabled = isJcExpert ? '' : 'disabled';
                         widget.options.filter(o => o.required === true || (o.hasOwnProperty('generic_type') && o.generic_type != '')).forEach(option => {
                             var eqLogicInfo = ''
-                            tbody += '<td>'
+                            tr += '<td>'
                             if (option.category == "cmd") {
                                 var cmd = undefined
                                 if (option.hasOwnProperty('generic_type')) {
@@ -87,6 +87,12 @@ function refreshAddWidgetBulk() {
                                     cmd.minValue = option.minValue || ''
                                     cmd.maxValue = option.maxValue || ''
                                     cmd.unit = option.unit || ''
+                                } else if (option.required) {
+                                    var rc = {
+                                        optionId: option.id,
+                                        cmdId: cmd.id
+                                    }
+                                    requiredCmds.push(rc);
                                 }
                                 eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.id}' value='${cmd.humanName}' cmdId='${cmd.id}' cmdType='${cmd.type}' cmdSubType='${cmd.subType}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled}>`
                                 eqLogicInfo += '<span class="input-group-btn">'
@@ -126,13 +132,35 @@ function refreshAddWidgetBulk() {
                                     eqLogicInfo += '</div>'
                                 });
                                 eqLogicInfo += '</div>';
-
-
                             }
-                            tbody += eqLogicInfo
-                            tbody += '</td>'
+                            tr += eqLogicInfo
+                            tr += '</td>'
                         });
+
+                        var exist = allWidgetsDetail.some(e => {
+                            var allCmdAlreadyUsed = true;
+                            requiredCmds.forEach((rc) => {
+                                if (!(e.hasOwnProperty(rc.optionId) && e[rc.optionId].id == rc.cmdId)) {
+                                    allCmdAlreadyUsed = false;
+                                    return;
+                                }
+                            });
+                            return allCmdAlreadyUsed;
+                        });
+                        if (exist) {
+                            style = 'background-color: #c6d7ff !important';
+                            cbChecked = '';
+                            checkAll = '';
+                            $('.alreadyExist').show();
+                        } else {
+                            style = '';
+                            cbChecked = 'checked';
+                        }
+                        tbody += `<tr class="widgetLine" data-index="${indexRow}" style='${style}'>`
+                        tbody += `<td><input type="checkbox" class="checkboxBulk" ${cbChecked}/></td>`
+                        tbody += tr
                         tbody += '</tr>'
+
                         indexRow++;
                     });
 
@@ -141,7 +169,7 @@ function refreshAddWidgetBulk() {
                     <option value="secure">Empreinte</option><option value="pwd">Mot de passe</option>
                     </select><br/>`;
                     var thead = '<thead><tr>'
-                    thead += '<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" checked/></th>'
+                    thead += `<th><input type="checkbox" class="checkbox-inline" name="checkboxBulk" id="checkAll" ${checkAll}/></th>`
                     thead += '<th>Pièce</th>'
                     widget.options.filter(o => o.required === true || (o.hasOwnProperty('generic_type') && o.generic_type != '')).forEach(option => {
                         var required = (option.required) ? " required" : "";
@@ -157,8 +185,6 @@ function refreshAddWidgetBulk() {
                             return;
                         }
                     });
-
-                    refreshLine();
                 }
             }
         }
