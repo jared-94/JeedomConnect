@@ -1146,7 +1146,8 @@
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
-					"description": "Affichage du résumé sur plusieurs lignes"
+					"description": "Affichage du résumé sur plusieurs lignes",
+					"customizable": true
 				}
 			]
 		},
