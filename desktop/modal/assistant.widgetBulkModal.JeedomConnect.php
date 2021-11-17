@@ -81,7 +81,7 @@ if (!isConnect('admin')) {
 			<h4 style="margin-left:25px;">Options du widget</h4>
 			<!-- <br> -->
 			<div style="font-style: italic;margin-left:25px;margin-top:15px;font-size: 0.8em;"><span class="required"></span> Les options marquées d'une étoile sont obligatoires.</div>
-			<div class="alreadyExist" style="font-style: italic;margin-left:25px;margin-top:15px;font-size: 0.8em;background-color: #c6d7ff !important;display:hide">Certains des équipements/commandes ci-dessous ont déjà été utilisés sur d'autres widgets de votre système. Les lignes ont été mises en couleur et décochées !</div>
+			<div class="alreadyExist" style="font-style: italic;margin-left:25px;margin-top:15px;font-size: 0.8em;display:hide">Certains des équipements/commandes ci-dessous ont déjà été utilisés sur d'autres widgets de votre système. Les lignes ont été mises en couleur et décochées !</div>
 		</div>
 		<form class="form-horizontal widgetForm" style="overflow: hidden;">
 			<table class="table table-bordered table-condensed" id="table_widgets">

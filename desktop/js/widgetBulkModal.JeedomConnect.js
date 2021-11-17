@@ -20,6 +20,24 @@
 //     });
 // }
 
+function isDarkTheme() {
+    if ($('body')[0].hasAttribute('data-theme')) {
+        if ($('body').attr('data-theme').endsWith('Dark')) return true;
+    }
+
+    return false;
+}
+
+function getBackgroundColor() {
+    if (isDarkTheme()) return '#626262';
+
+    return '#c6d7ff';
+}
+
+$('.alreadyExist').attr('style', function (i, s) {
+    return (s || '') + ';background-color: ' + getBackgroundColor() + ' !important';
+});
+
 function refreshAddWidgetBulk() {
     $('.alreadyExist').hide();
     widgetsCat = [];
@@ -147,8 +165,9 @@ function refreshAddWidgetBulk() {
                             });
                             return allCmdAlreadyUsed;
                         });
+
                         if (exist) {
-                            style = 'background-color: #c6d7ff !important';
+                            style = 'background-color: ' + getBackgroundColor() + ' !important';
                             cbChecked = '';
                             checkAll = '';
                             $('.alreadyExist').show();
