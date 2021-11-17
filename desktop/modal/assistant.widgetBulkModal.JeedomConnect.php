@@ -70,6 +70,10 @@ if (!isConnect('admin')) {
 	</div>
 	<div class="col-sm-12 text-center noGenType">
 		{{Désolé ...}} <br />{{aucune commande disponible avec un type générique correspond à ce widget !}} <i class="far fa-frown"></i>
+		<!--
+			HACK remove link to genType config when not needed anymore
+		 -->
+		<br /><br /><a onclick="gotoGenTypeConfig()" class="btn btn-sm" style="margin-top:5px;"><i class="fas fa-external-link-alt"></i> {{Configurer vos types génériques}}</a>
 	</div>
 	<div class="col-sm-12 optionWidgetBulk">
 		<div style="display:inline-flex;">

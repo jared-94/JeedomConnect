@@ -180,6 +180,16 @@ foreach ($eqLogics as $eqLogic) {
 						<br>
 						<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
 					</div>
+					<!--
+						Start Generic Types
+						HACK Remove when gentype config in plugin is not needed anymore
+					-->
+					<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
+						<i class="fas fa-building"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Config types génériques}}</span>
+					</div>
+					<!-- End Generic Types -->
 					<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 						<i class="fas fa-wrench"></i>
 						<br>

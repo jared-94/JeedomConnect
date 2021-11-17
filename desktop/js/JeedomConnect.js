@@ -249,6 +249,17 @@ $('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function 
   $('#notifAllModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.notifAll.JeedomConnect').dialog('open');
 })
 
+// Start Generic Types
+// HACK Remove when gentype config in plugin is not needed anymore
+function gotoGenTypeConfig() {
+  $('#md_modal').dialog({ title: "{{Objets / Pièces}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=gentype.objects').dialog('open');
+}
+
+$('.eqLogicAction[data-action=gotoGenTypeConfig]').off('click').on('click', function () {
+  gotoGenTypeConfig();
+})
+// End Generic Types
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();

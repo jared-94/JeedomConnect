@@ -405,8 +405,9 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 				}
 				else {
 					if (Object.entries(data.result).length == 0) {
+						// HACK remove link to genType config when not needed anymore
 						$('#widget-alert').showAlert({
-							message: "Aucun type générique correspondant au widget définit sur les commandes de l'équipement",
+							message: "Aucun type générique correspondant au widget définit sur les commandes de l'équipement choisi. <a onclick='gotoGenTypeConfig()'><i class='fas fa-external-link-alt'></i> {{Configurer vos types génériques}}</a>",
 							level: 'warning'
 						});
 					}
