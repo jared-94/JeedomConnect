@@ -52,7 +52,7 @@ foreach ($eqLogics as $eqLogic) {
 
 	echo '<div class="panel-heading">';
 	echo '<h3 class="panel-title">';
-	echo '<a class="accordion-toggle" data-toggle="collapse" aria-expanded="false" data-parent="" href="#eqLogic_' . $eqLogic->getId() . '"><span class="eqLogicAttr hidden" data-l1key="id">' . $eqLogic->getId() . '</span>' . $eqLogic->getHumanName(true) . '</a>';
+	echo '<a class="accordion-toggle" data-toggle="collapse" aria-expanded="false" data-parent="" href="#eqLogic_' . $eqLogic->getId() . '"><span class="eqLogicAttr hidden" data-l1key="id">' . $eqLogic->getId() . '</span>' . $eqLogic->getName() . '</a>';
 	echo '</h3>';
 	echo '</div>';
 
@@ -102,9 +102,9 @@ foreach ($eqLogics as $eqLogic) {
 					}
 					if ($info['key'] == 'DONT') continue;
 					if ($info['key'] == $cmd->getGeneric_type()) {
-						echo '<option value="' . $info['key'] . '" selected>' . $info['type'] . ' / ' . $info['name'] . '</option>';
+						echo '<option value="' . $info['key'] . '" selected>' .  $info['name'] . '</option>';
 					} else {
-						echo '<option value="' . $info['key'] . '">' . $info['type'] . ' / ' . $info['name'] . '</option>';
+						echo '<option value="' . $info['key'] . '">'  . $info['name'] . '</option>';
 					}
 				}
 				echo '</optgroup>';
