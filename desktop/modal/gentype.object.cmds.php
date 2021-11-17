@@ -92,6 +92,7 @@ foreach ($eqLogics as $eqLogic) {
 					if ($key == 0) {
 						echo '<optgroup label="{{' . $info['family'] . '}}">';
 					}
+					if ($info['key'] == 'DONT') continue;
 					if ($info['key'] == $cmd->getGeneric_type()) {
 						echo '<option value="' . $info['key'] . '" selected>' . $info['type'] . ' / ' . $info['name'] . '</option>';
 					} else {
