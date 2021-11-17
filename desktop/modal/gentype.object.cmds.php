@@ -20,7 +20,11 @@ $object = jeeObject::byId($objectId);
 	<li><a class="cursor" id="bt_return" style="width:32px;"><i class="fas fa-arrow-circle-left"></i></a></li>
 	<li class="active">
 		<?php
-		echo '<a>' . $object->getDisplay('icon', '<i class="far blank"></i>') . ' ' . $object->getName() . '</a>';
+		if (is_object($object)) {
+			echo '<a>' . $object->getDisplay('icon', '<i class="far blank"></i>') . ' ' . $object->getName() . '</a>';
+		} else {
+			echo '<a><i class="far blank"></i> Aucun</a>';
+		}
 		?>
 	</li>
 </ul>
@@ -36,7 +40,11 @@ $object = jeeObject::byId($objectId);
 </div>
 
 <?php
-$eqLogics = $object->getEqLogic();
+if (is_object($object)) {
+	$eqLogics = $object->getEqLogic();
+} else {
+	$eqLogics = eqLogic::byObjectId(null);
+}
 echo '<div class="panel-group" id="accordionObjects">';
 
 foreach ($eqLogics as $eqLogic) {

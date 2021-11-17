@@ -20,6 +20,14 @@ $allObjects = jeeObject::buildTree(null, false);
 		<div class="objectListContainer">
 			<?php
 			$echo = '';
+
+			$eqLogicsWithNoObject = eqLogic::byObjectId(null);
+			if (count($eqLogicsWithNoObject) > 0) {
+				$echo .= '<div style="display:none" class="objectDisplayCard cursor" data-object_id="none" data-object_name="Aucun" data-object_icon=\'<i class="far blank"></i>\'>';
+				$echo .= '<i class="far blank"></i><br/>';
+				$echo .= '<span class="name" style="background:#696969;color:#ebebeb">Aucun</span><br/>';
+				$echo .= '</div>';
+			}
 			foreach ($allObjects as $object) {
 				$echo .= '<div style="display:none" class="objectDisplayCard cursor" data-object_id="' . $object->getId() . '" data-object_name="' . $object->getName() . '" data-object_icon=\'' . $object->getDisplay('icon', '<i class="far blank"></i>') . '\'>';
 				$echo .= $object->getDisplay('icon', '<i class="far blank"></i>');
