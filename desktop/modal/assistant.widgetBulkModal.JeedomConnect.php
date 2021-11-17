@@ -43,7 +43,8 @@ if (!isConnect('admin')) {
 	<div class="row">
 		<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
 			<span class="input-group-btn">
-				<a class="btn btn-sm btn-success roundedLeft saveWidget" onclick="saveWidgetBulk()" exit-attr="true"><i class="fas fa-check-circle"></i> {{Créer}}
+				<a class="btn btn-sm btn-default roundedLeft" onclick="gotoGenTypeConfig()"><i class="fas fa-external-link-alt"></i> {{Configurer vos types génériques}}
+				</a><a class="btn btn-sm btn-success saveWidget" onclick="saveWidgetBulk()" exit-attr="true"><i class="fas fa-check-circle"></i> {{Créer}}
 				</a><a class="btn btn-sm btn-warning roundedRight" onclick="refreshAddWidgetBulk()"><i class="fas fa-times"></i> {{Réinitialiser}}
 				</a>
 			</span>
