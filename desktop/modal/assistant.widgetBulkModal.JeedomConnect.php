@@ -74,7 +74,7 @@ if (!isConnect('admin')) {
 		<!--
 			HACK remove link to genType config when not needed anymore
 		 -->
-		<br /><br /><a onclick="gotoGenTypeConfig()" class="btn btn-sm" style="margin-top:5px;"><i class="fas fa-external-link-alt"></i> {{Configurer vos types génériques}}</a>
+		<br /><br /><a onclick="gotoGenTypeConfig()" style="margin-top:5px;"> {{Veuillez configurer vos types génériques}} <i class="fas fa-external-link-alt"></i></a>
 	</div>
 	<div class="col-sm-12 optionWidgetBulk">
 		<div style="display:inline-flex;">
