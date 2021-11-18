@@ -2010,7 +2010,7 @@ class JeedomConnectCmd extends cmd {
 			$titre = $_options['title'] ?: '';
 		} else {
 			foreach ($optionsSupp as $key => $value) {
-				$optionsSupp[$key] =  str_replace('"', '', $value);
+				$optionsSupp[$key] =  trim($value, '"');
 			}
 
 			$titre = isset($optionsSupp['title']) ? $optionsSupp['title'] : '';
