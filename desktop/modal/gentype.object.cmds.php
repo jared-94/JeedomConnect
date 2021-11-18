@@ -55,6 +55,9 @@ echo '<div class="panel-group" id="accordionObjects">';
 foreach ($eqLogics as $eqLogic) {
 	$cmds = cmd::byEqLogicId($eqLogic->getId());
 	if (count($cmds) > 0) {
+		usort($cmds, function ($a, $b) {
+			return strcasecmp($a->getName(), $b->getName());
+		});
 		echo '<div class="panel panel-default">';
 
 		echo '<div class="panel-heading">';
