@@ -45,6 +45,11 @@ if (is_object($object)) {
 } else {
 	$eqLogics = eqLogic::byObjectId(null);
 }
+
+usort($eqLogics, function ($a, $b) {
+	return strcasecmp($a->getName(), $b->getName());
+});
+
 echo '<div class="panel-group" id="accordionObjects">';
 
 foreach ($eqLogics as $eqLogic) {
