@@ -433,9 +433,9 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 									}
 								} else if (option.category == "cmdList") {
 									cmdCat = [];
-									var maxIndex = 0;
+									var maxIndex = -1;
 									eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
-										cmdCat.push({ id: c.cmdid, name: c.name, index: ++maxIndex, subtype: c.cmdsubtype });
+										cmdCat.push({ id: c.id, name: c.name, index: ++maxIndex, subtype: c.subType });
 									});
 									refreshCmdListOption(JSON.stringify(option.options));
 								}
