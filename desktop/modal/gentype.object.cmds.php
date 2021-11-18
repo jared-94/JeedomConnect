@@ -13,6 +13,12 @@ if (init('objectId') == '') {
 $objectId = init('objectId');
 $object = jeeObject::byId($objectId);
 ?>
+<style>
+	.mini {
+		font-size: 0.8em;
+		font-style: italic;
+	}
+</style>
 
 <div class="displayMessage"></div>
 <a onclick="saveCmds()" class="btn btn-sm btn-success pull-right" style="margin-top:5px;"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
@@ -54,7 +60,7 @@ foreach ($eqLogics as $eqLogic) {
 
 	echo '<div class="panel-heading">';
 	echo '<h3 class="panel-title">';
-	echo '<a class="accordion-toggle" data-toggle="collapse" aria-expanded="false" data-parent="" href="#eqLogic_' . $eqLogic->getId() . '"><span class="eqLogicAttr hidden" data-l1key="id">' . $eqLogic->getId() . '</span>' . $eqLogic->getName() . '</a>';
+	echo '<a class="accordion-toggle" data-toggle="collapse" aria-expanded="false" data-parent="" href="#eqLogic_' . $eqLogic->getId() . '"><span class="eqLogicAttr hidden" data-l1key="id">' . $eqLogic->getId() . '</span>' . $eqLogic->getName()  . ' <span class="mini">(' . $eqLogic->getEqType_name() . ')</span> </a>';
 	echo '</h3>';
 	echo '</div>';
 
