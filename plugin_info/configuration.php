@@ -168,6 +168,17 @@ sendVarToJS('userHash', $userHash);
       </div>
     </div>
 
+    <div class="form-group">
+      <label class="col-lg-6 control-label">{{Création en masse en mode strict}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Impose que tous les types génériques nécessaires soient correctement configurés pour la création de widget en masse mais réduit le nombre d'erreur de l'assistant"></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="isStrict" checked />
+      </div>
+    </div>
+
 
 
     <br />

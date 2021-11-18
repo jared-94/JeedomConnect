@@ -146,6 +146,7 @@ switch ($method) {
     }
 
     $eqLogic->setConfiguration('platformOs', $params['platformOs']);
+    $eqLogic->setConfiguration('appVersion', $params['appVersion'] ?? '#NA#');
     $eqLogic->save();
 
     $result = array(
@@ -252,6 +253,10 @@ switch ($method) {
     break;
   case 'GET_WIDGET_DATA':
     $result = apiHelper::getWidgetData();
+    $jsonrpc->makeSuccess($result);
+    break;
+  case 'GET_WIDGET_WITH_GEN_TYPE':
+    $result = \apiHelper::generateWidgetWithGenType($params['widget_type'], $params['eqId'] ?? null);
     $jsonrpc->makeSuccess($result);
     break;
   case 'UNSUBSCRIBE_SC':

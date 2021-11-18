@@ -196,6 +196,7 @@ class ConnectLogic implements MessageComponentInterface {
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
 			$eqLogic->setConfiguration('platformOs', $objectMsg->platformOs);
+			$eqLogic->setConfiguration('appVersion', $objectMsg->appVersion ?? '#NA#');
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
 			$eqLogic->setConfiguration('connected', 1);
 			$eqLogic->setConfiguration('scAll', 0);
@@ -324,6 +325,10 @@ class ConnectLogic implements MessageComponentInterface {
 				break;
 			case 'GET_WIDGET_DATA':
 				$result = \apiHelper::getWidgetData();
+				$from->send(json_encode($result));
+				break;
+			case 'GET_WIDGET_WITH_GEN_TYPE':
+				$result = \apiHelper::generateWidgetWithGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
 				$from->send(json_encode($result));
 				break;
 			case 'GET_PLUGINS_UPDATE':

@@ -82,6 +82,56 @@ try {
 		ajax::success(array('details' => $list, 'options' => $options));
 	}
 
+	if (init('action') == 'getCmdsForWidgetType') {
+		$widget_type = init('widget_type');
+		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type);
+		$widgetConfigParam = JeedomConnect::getWidgetParam(false, array($widget_type));
+		$widgetConfig = $widgetConfigParam[$widget_type] ?? null;
+		if ($widgetConfig == null) ajax::error('Type de widget inconnu.');
+
+		$genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
+		if ($genericTypes == null) ajax::error('Pas de type générique trouvé pour ce type de widget.');
+
+		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));
+
+		$eqLogicId = init('eqLogic_Id');
+		if (!is_numeric($eqLogicId)) $eqLogicId = null;
+
+		$results = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
+
+		$isStrict = config::byKey('isStrict', 'JeedomConnect', true);
+		foreach ($results as $eqLogicId => $eqLogicConfig) {
+			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
+			$requiredCmdWithGenericTypeInConfig = false;
+			$requiredCmdWithGenericTypeFound = false;
+			foreach ($widgetConfig['options'] as $option) {
+				if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
+					$requiredCmdWithGenericTypeInConfig = true;
+					log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
+					$requiredCmdWithGenericTypeFound = false;
+					foreach ($eqLogicConfig['cmds'] as $cmds) {
+						if ($cmds['generic_type'] == $option['generic_type']) {
+							$requiredCmdWithGenericTypeFound = true;
+							break;
+						}
+					}
+					if ($isStrict && !$requiredCmdWithGenericTypeFound) {
+						log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+						unset($results[$eqLogicId]);
+						break;
+					}
+				}
+			}
+			if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
+				log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+				unset($results[$eqLogicId]);
+			}
+		}
+		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
+
+		ajax::success($results);
+	}
+
 	if (init('action') == 'saveWidgetConfig') {
 		log::add('JeedomConnect', 'debug', '-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
 
@@ -210,7 +260,7 @@ try {
 			$hasSubTitle = false;
 			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
 			{
-				if ($opt['id'] != 'subtitle') continue;	
+				if ($opt['id'] != 'subtitle') continue;
 				$hasSubTitle = true;
 				break;
 			}
@@ -591,9 +641,12 @@ try {
 	}
 
 	if (init('action') == 'getCmd') {
-		$cmd = (preg_match("/^\d+$/", init('id'))) ? cmd::byId(init('id')) : cmd::byString(init('id'));
+		$id = init('id');
+		if ($id == '') throw new Exception("id est obligatoire");
+
+		$cmd = (preg_match("/^\d+$/", $id)) ? cmd::byId($id) : cmd::byString($id);
 		if (!is_object($cmd)) {
-			throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+			throw new Exception(__('Commande inconnue : ', __FILE__) . $id);
 		}
 		ajax::success(array(
 			'id' => $cmd->getId(),

@@ -20,6 +20,7 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectUtils.class.php';
 
 class JeedomConnect extends eqLogic {
 
@@ -1031,11 +1032,14 @@ class JeedomConnect extends eqLogic {
 		return true;
 	}
 
-	public static function getWidgetParam($only_name = true) {
+	public static function getWidgetParam($only_name = true, $widget_types = array()) {
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
+		$count_widget_types = count($widget_types);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+			if ($count_widget_types > 0 && !in_array($config['type'], $widget_types)) continue;
+
 			$result[$config['type']] = $only_name ? $config['name'] : $config;
 		}
 		return $result;
