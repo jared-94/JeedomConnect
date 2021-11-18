@@ -32,8 +32,7 @@ $allObjects = jeeObject::buildTree(null, false);
 				$echo .= '<div style="display:none" class="objectDisplayCard cursor" data-object_id="' . $object->getId() . '" data-object_name="' . $object->getName() . '" data-object_icon=\'' . $object->getDisplay('icon', '<i class="far blank"></i>') . '\'>';
 				$echo .= $object->getDisplay('icon', '<i class="far blank"></i>');
 				$echo .= "<br/>";
-				$echo .= '<span class="name" style="background:' . $object->getDisplay('tagColor') . ';color:' . $object->getDisplay('tagTextColor') . '">' . $object->getName() . '</span><br/>';
-				$echo .= $object->getHtmlSummary();
+				$echo .= '<span class="name" style="background:' . $object->getDisplay('tagColor') . ';color:' . $object->getDisplay('tagTextColor') . '">' . $object->getName() . '</span>';
 				$echo .= '</div>';
 			}
 			echo $echo;
