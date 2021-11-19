@@ -128,7 +128,7 @@ if (is_object($update)) {
 }
 
 
-$infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta]' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+$infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
 $infoPlugin .= '<b>Equipements</b> : <br/>';
 foreach ($eqLogics as $eqLogic) {
 	$platformOs = $eqLogic->getConfiguration('platformOs');
