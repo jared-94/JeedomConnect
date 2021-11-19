@@ -1,6 +1,7 @@
 <?php
 
 /* * ***************************Includes********************************* */
+require_once dirname(__FILE__) . '/apiHelper.class.php';
 
 class JeedomConnectUtils {
 
@@ -27,7 +28,7 @@ class JeedomConnectUtils {
                 'maxValue' => $cmd->getConfiguration('maxValue'),
                 'unit' => $cmd->getUnite(),
                 'value' => $cmd->getValue(),
-                'icon' => $cmd->getDisplay('icon')
+                'icon' => apiHelper::getIconAndColor($cmd->getDisplay('icon'))
             );
             log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
         }
@@ -57,12 +58,24 @@ class JeedomConnectUtils {
             $current['name'] = $eqLogicConfig['name'];
 
             foreach ($_widgetConf['options'] as $option) {
-                if (isset($option['category']) && $option['category'] == 'cmd' && isset($option['generic_type'])) {
-                    foreach ($eqLogicConfig['cmds'] as $cmds) {
-                        if ($cmds['generic_type'] != $option['generic_type']) continue;
+                if (isset($option['category']) && isset($option['generic_type'])) {
+                    if ($option['category'] == 'cmd') {
+                        foreach ($eqLogicConfig['cmds'] as $cmds) {
+                            if ($cmds['generic_type'] != $option['generic_type']) continue;
 
-                        $current[$option['id']] = $cmds;
-                        break;
+                            $current[$option['id']] = $cmds;
+                            break;
+                        }
+                    }
+                    if ($option['category'] == 'cmdList') {
+                        $cmdList = [];
+                        foreach ($eqLogicConfig['cmds'] as $cmds) {
+                            if ($cmds['generic_type'] != $option['generic_type']) continue;
+                            array_push($cmdList, $cmds);
+                        }
+                        if (count($cmdList) > 0) {
+                            $current[$option['id']] = $cmdList;
+                        }
                     }
                 }
             }
