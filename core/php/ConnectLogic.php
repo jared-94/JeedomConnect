@@ -329,6 +329,8 @@ class ConnectLogic implements MessageComponentInterface {
 				break;
 			case 'GET_WIDGET_WITH_GEN_TYPE':
 				$result = \apiHelper::generateWidgetWithGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
+				$result['messageId'] = $msg['messageId'];
+				\log::add('JeedomConnect', 'debug', "Send : " . json_encode($result));
 				$from->send(json_encode($result));
 				break;
 			case 'GET_PLUGINS_UPDATE':
