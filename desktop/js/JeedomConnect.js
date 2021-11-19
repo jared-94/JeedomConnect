@@ -120,6 +120,10 @@ function getWidgetModal(_options, _callback) {
     $('.widgetMenu .saveWidget').removeClass('roundedLeft');
   }
 
+  if ($('#widgetOptions').attr('widget-id') != undefined && $('#widgetOptions').attr('widget-id') != '') {
+    $('.autoFillWidgetCmds').hide();
+  }
+
   if (_options.exit == true) {
     $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
   }
@@ -173,6 +177,48 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
 
 })
 
+$('.eqLogicAction[data-action=addWidgetBulk]').off('click').on('click', function () {
+  $("#widgetModal").dialog('destroy').remove();
+  $('body').append('<div id="widgetModal"></div>');
+  $('#widgetModal').dialog({
+    title: "{{Ajout de widgets en masse}}",
+    width: 0.95 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    modal: true,
+    closeText: ''
+  });
+  $('#widgetModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetBulkModal.JeedomConnect').dialog('open');
+})
+
+
+$('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function () {
+  // $('.pluginInfo').toggle("slide", { direction: "right" }, 1000);
+  getSimpleModal({
+    title: "Forum",
+    width: 0.5 * $(window).width(),
+    fields: [{
+      type: "string",
+      value: $('.txtInfoPlugin').html()
+    },
+    {
+      type: "string",
+      id: "infoPluginModal",
+      value: $('.infoPlugin').html()
+    }],
+    buttons: {
+      "Fermer": function () {
+        $('#simpleModalAlert').hide();
+        $(this).dialog("close");
+      },
+      "Copier": function () {
+        copyDivToClipboard('#infoPluginModal', true)
+      }
+    }
+  }, function (result) { });
+
+
+});
+
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
   $('#widgetSummaryModal').dialog({
@@ -203,6 +249,17 @@ $('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function 
   $('#notifAllModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.notifAll.JeedomConnect').dialog('open');
 })
 
+// Start Generic Types
+// HACK Remove when gentype config in plugin is not needed anymore
+function gotoGenTypeConfig() {
+  $('#md_modal').dialog({ title: "{{Objets / Pièces}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=gentype.objects').dialog('open');
+}
+
+$('.eqLogicAction[data-action=gotoGenTypeConfig]').off('click').on('click', function () {
+  gotoGenTypeConfig();
+})
+// End Generic Types
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
@@ -829,6 +886,7 @@ function refreshAddWidgets() {
   moreInfos = [];
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
+  showAutoFillWidgetCmds();
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
 
   $("#widgetDescription").html(widget.description);
@@ -1095,7 +1153,15 @@ function selectCmd(name, type, subtype, value) {
   if (subtype != 'undefined') {
     cmd = { type: type, subType: subtype }
   }
-  jeedom.cmd.getSelectModal({ cmd: cmd }, function (result) {
+  var obj = $('#room-input option:selected').val();
+  obj = (obj == 'none') ? '' : obj;
+
+  jeedom.cmd.getSelectModal({
+    object: {
+      id: obj
+    },
+    cmd: cmd
+  }, function (result) {
     refreshCmdData(name, result.cmd.id, value);
   })
 }
@@ -1111,6 +1177,7 @@ $("#widgetOptions").on('change', '.needRefresh', function () {
 
 
 function refreshCmdData(name, id, value) {
+  if (name == '' || id == '') return;
   getCmd({
     id: id,
     error: function (error) {
@@ -1393,9 +1460,7 @@ $("#widgetOptions").on('focusout', '.jcCmdListOptionsCommand', function () {
 
         // update cmdCat
         cmdCat.forEach(item => {
-          console.log('item in CmdCat :', item);
           if (item.id == currentId && item.index == currentIndex) {
-            console.log('found cmdCat !');
             item.id = data.result.id;
             item.name = data.result.humanName;
             item.subtype = data.result.subType;
@@ -1483,7 +1548,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1505,7 +1570,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1527,7 +1592,7 @@ function getCmdOptions(item) {
             <span class="input-group-btn">
               <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-index="${item.index}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
             var el = $(this);
@@ -2443,6 +2508,7 @@ function duplicateWidget() {
 
   $('.widgetMenu .duplicateWidget').hide()
   $('.widgetMenu .removeWidget').hide()
+  showAutoFillWidgetCmds();
   $('#widget-alert').showAlert({ message: 'Vous êtes sur le widget dupliqué, réalisez (ou non) vos modifications. Dans tous les cas, pensez à sauvegarder !', level: 'success' });
   // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 
@@ -2884,4 +2950,28 @@ function setCondToHuman(confArr) {
     }
     input.val(value);
   });
+}
+
+$('body').off('click', '.removeParent').on('click', '.removeParent', function () {
+  $(this).parent().remove();
+});
+
+function copyDivToClipboard(myInput, addBacktick = false) {
+  var initialText = $(myInput).html();
+  if (addBacktick) {
+    $(myInput).html('```<br/>' + initialText.replaceAll('<b>','').replaceAll('</b>','') + '```');
+  }
+  var range = document.createRange();
+  range.selectNode($(myInput).get(0));
+  window.getSelection().removeAllRanges(); // clear current selection
+  window.getSelection().addRange(range); // to select text
+  document.execCommand("copy");
+  window.getSelection().removeAllRanges();// to deselect
+  $('#div_simpleModalAlert').showAlert({
+    message: 'Infos copiées',
+    level: 'success'
+  });
+  if (addBacktick) {
+    $(myInput).html(initialText);
+  }
 }

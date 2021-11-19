@@ -380,7 +380,7 @@ class apiHelper {
     $result = array(
       'type' => 'SET_WIDGET_DATA',
       'payload' => array(
-        'widgets' => JeedomConnectWidget::getWidgetsList()
+        'widgets' => JeedomConnectWidget::getWidgets()
       )
     );
 
@@ -485,11 +485,11 @@ class apiHelper {
       $moved = true;
     } else {
       $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-      if ($destinationParentIndex !== false) { //destination is a top tab  
+      if ($destinationParentIndex !== false) { //destination is a top tab
         $moved = true;
       } else {
         $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['groups'], 'id'));
-        if ($destinationParentIndex !== false) { //destination is a group  
+        if ($destinationParentIndex !== false) { //destination is a group
           $moved = true;
         }
       }
@@ -635,7 +635,7 @@ class apiHelper {
       $moved = true;
     } else {
       $destinationParentIndex = array_search($destinationId, array_column($curConfig['payload']['sections'], 'id'));
-      if ($destinationParentIndex !== false) { //destination is a top tab  
+      if ($destinationParentIndex !== false) { //destination is a top tab
         $moved = true;
       }
     }
@@ -676,27 +676,30 @@ class apiHelper {
     JeedomConnectWidget::removeWidget($id);
   }
 
-  public static function addGlobalWidget($widget) {
+  public static function addGlobalWidgets($widgets) {
     $newConfWidget = array();
     $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
-    $imgPath = '';
-    foreach ($widgetsConfigJonFile['widgets'] as $config) {
-      if ($config['type'] == $widget['type']) {
-        $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-        break;
+
+    foreach ($widgets as $i => $widget) {
+      $imgPath = '';
+      foreach ($widgetsConfigJonFile['widgets'] as $config) {
+        if ($config['type'] == $widget['type']) {
+          $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
+          break;
+        }
       }
+      $widgetId = JeedomConnectWidget::incrementIndex();
+      $widgets[$i]['id'] = $widgetId;
+
+      $newConfWidget['imgPath'] = $imgPath;
+      $newConfWidget['widgetJC'] = json_encode($widget);
+
+      config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
     }
-    $widgetId = JeedomConnectWidget::incrementIndex();
-    $widget['id'] = $widgetId;
-
-    $newConfWidget['imgPath'] = $imgPath;
-    $newConfWidget['widgetJC'] = json_encode($widget);
-
-    config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
 
     return array(
-      'type' => 'SET_SINGLE_WIDGET_DATA',
-      'payload' => $widget
+      'type' => 'SET_MULTIPLE_WIDGET_DATA',
+      'payload' => array_values($widgets)
     );
   }
 
@@ -1017,6 +1020,32 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+
+
+  public static function generateWidgetWithGenType($_widget_type, $_eqLogicId) {
+    $result = array(
+      'type' => 'SET_WIDGET_WITH_GEN_TYPE',
+      'payload' => null
+    );
+
+    if ($_widget_type == null) return $result;
+
+    $widgetConfigParam = JeedomConnect::getWidgetParam(false, array($_widget_type));
+    $widgetConfig = $widgetConfigParam[$_widget_type] ?? null;
+
+    if ($widgetConfig == null) return $result;
+
+    $genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
+    if ($genericTypes == null) return $result;
+
+    $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
+
+    $result['payload'] = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $cmdGeneric);
+    return $result;
+  }
+
+
+
   // EVENTS FUNCTION
   public static function getEvents($events, $config, $scAll = false) {
     $result_cmd = array(
@@ -1122,7 +1151,7 @@ class apiHelper {
       if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
         $eqLogic->setStatus("battery", $level);
         $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page '); 
+        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
       }
     } else {
       log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | not able to retrieve an equipment for apiKey ' . $apiKey);

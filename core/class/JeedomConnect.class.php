@@ -20,6 +20,7 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectUtils.class.php';
 
 class JeedomConnect extends eqLogic {
 
@@ -605,7 +606,32 @@ class JeedomConnect extends eqLogic {
 
 		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
 		try {
-			QRcode::png(json_encode($connectData), self::$_qr_dir . $this->getConfiguration('apiKey') . '.png');
+			$filepath = self::$_qr_dir . $this->getConfiguration('apiKey') . '.png';
+			QRcode::png(json_encode($connectData), $filepath);
+
+			if (config::byKey('withQrCode', 'JeedomConnect', true)) {
+				// Start DRAWING LOGO IN QRCODE
+				$QR = imagecreatefrompng($filepath);
+
+				// START TO DRAW THE IMAGE ON THE QR CODE
+				$logopath = dirname(__FILE__) . '/../../data/img/JeedomConnect_icon2.png';
+				$logo = imagecreatefromstring(file_get_contents($logopath));
+				$QR_width = imagesx($QR);
+				$QR_height = imagesy($QR);
+
+				$logo_width = imagesx($logo);
+				$logo_height = imagesy($logo);
+
+				// Scale logo to fit in the QR Code
+				$logo_qr_width = $QR_width / 5;
+				$scale = $logo_width / $logo_qr_width;
+				$logo_qr_height = $logo_height / $scale;
+
+				imagecopyresampled($QR, $logo, $QR_width / 2.5, $QR_height / 2.5, 0, 0, $logo_qr_width, $logo_qr_height, $logo_width, $logo_height);
+
+				// Save QR code again, but with logo on it
+				imagepng($QR, $filepath);
+			}
 		} catch (Exception $e) {
 			log::add('JeedomConnect', 'error', 'Unable to generate a QR code : ' . $e->getMessage());
 		}
@@ -1031,11 +1057,14 @@ class JeedomConnect extends eqLogic {
 		return true;
 	}
 
-	public static function getWidgetParam($only_name = true) {
+	public static function getWidgetParam($only_name = true, $widget_types = array()) {
 		$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
+		$count_widget_types = count($widget_types);
 
 		$result = array();
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+			if ($count_widget_types > 0 && !in_array($config['type'], $widget_types)) continue;
+
 			$result[$config['type']] = $only_name ? $config['name'] : $config;
 		}
 		return $result;
@@ -2010,7 +2039,7 @@ class JeedomConnectCmd extends cmd {
 			$titre = $_options['title'] ?: '';
 		} else {
 			foreach ($optionsSupp as $key => $value) {
-				$optionsSupp[$key] =  str_replace('"', '', $value);
+				$optionsSupp[$key] =  trim($value, '"');
 			}
 
 			$titre = isset($optionsSupp['title']) ? $optionsSupp['title'] : '';

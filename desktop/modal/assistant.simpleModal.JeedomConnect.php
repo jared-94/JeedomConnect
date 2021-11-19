@@ -95,7 +95,8 @@ if (!isConnect('admin')) {
         move += `</select></div></div></div></li>`;
         items.push(move);
       } else if (option.type == "string") {
-        items.push(`<li>${option.value}</li>`);
+        var id = (option.id !== undefined) ? `id="${option.id}"` : '';
+        items.push(`<li ${id}>${option.value}</li>`);
       } else if (option.type == "expanded") {
         var value = option.value ? 'checked' : '';
         expanded = `<li><div class='form-group'>

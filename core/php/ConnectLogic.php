@@ -196,6 +196,7 @@ class ConnectLogic implements MessageComponentInterface {
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
 			$eqLogic->setConfiguration('platformOs', $objectMsg->platformOs);
+			$eqLogic->setConfiguration('appVersion', $objectMsg->appVersion ?? '#NA#');
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
 			$eqLogic->setConfiguration('connected', 1);
 			$eqLogic->setConfiguration('scAll', 0);
@@ -326,6 +327,11 @@ class ConnectLogic implements MessageComponentInterface {
 				$result = \apiHelper::getWidgetData();
 				$from->send(json_encode($result));
 				break;
+			case 'GET_WIDGET_WITH_GEN_TYPE':
+				$result = \apiHelper::generateWidgetWithGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
+				$result['messageId'] = $msg['messageId'];
+				$from->send(json_encode($result));
+				break;
 			case 'GET_PLUGINS_UPDATE':
 				$pluginUpdate = \apiHelper::getPluginsUpdate();
 				$from->send(json_encode($pluginUpdate));
@@ -403,8 +409,10 @@ class ConnectLogic implements MessageComponentInterface {
 			case 'REMOVE_GLOBAL_WIDGET':
 				\apiHelper::removeGlobalWidget($msg['payload']['id']);
 				break;
-			case 'ADD_GLOBAL_WIDGET':
-				$from->send(json_encode(\apiHelper::addGlobalWidget($msg['payload']['widget'])));
+			case 'ADD_GLOBAL_WIDGETS':
+				$result = \apiHelper::addGlobalWidgets($msg['payload']['widgets']);
+				$result['messageId'] = $msg['messageId'];
+				$from->send(json_encode($result));
 				break;
 			case 'SET_BOTTOM_TABS':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
