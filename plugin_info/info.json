@@ -1,7 +1,8 @@
 {
 	"id": "JeedomConnect",
 	"name": "Jeedom Connect",
-	"description": "Plugin d'échange avec l'application Jeedom Connect",
+	"description": "Plugin permettant la connexion avec l'application mobile Jeedom Connect (disponnible sur le play store pour les appareils Android et l'Apple store pour les appareils IOS).",
+	"utilization": "Vous pourrez contrôler toutes les fonctions de votre Jeedom (y compris scénario, mise à jour des plugins...), vos notifications (y compris la fonction ask), la géolocalisation et la gestion de présence associée. Il est possible d'y intégrer tous les plugins et tous les équipements de votre Jeedom, l'interface de Jeedom Connect est entièrement personnalisable: menu, widget... voir documentation pour plus d'information.",
 	"licence": "AGPL",
 	"author": "JARED-94 et TOMITOMAS",
 	"require": "4.0",
