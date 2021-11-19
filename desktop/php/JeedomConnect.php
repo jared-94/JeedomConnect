@@ -217,7 +217,7 @@ foreach ($eqLogics as $eqLogic) {
 						<span>{{Infos}}</span>
 						<div style="display:none">
 							<span class="txtInfoPlugin">
-								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span></a>
+								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
 								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
 								<br /><br />Appuyez sur le bouton 'copier' en bas de la fenêtre pour récupérer l'ensemble des informations affichées, et partagez/collez-les à chaque nouveau post sur le forum !
 								<br /><br />
