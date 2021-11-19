@@ -409,8 +409,8 @@ class ConnectLogic implements MessageComponentInterface {
 			case 'REMOVE_GLOBAL_WIDGET':
 				\apiHelper::removeGlobalWidget($msg['payload']['id']);
 				break;
-			case 'ADD_GLOBAL_WIDGET':
-				$result = \apiHelper::addGlobalWidget($msg['payload']['widget']);
+			case 'ADD_GLOBAL_WIDGETS':
+				$result = \apiHelper::addGlobalWidgets($msg['payload']['widgets']);
 				$result['messageId'] = $msg['messageId'];
 				$from->send(json_encode($result));
 				break;

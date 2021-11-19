@@ -676,27 +676,30 @@ class apiHelper {
     JeedomConnectWidget::removeWidget($id);
   }
 
-  public static function addGlobalWidget($widget) {
+  public static function addGlobalWidgets($widgets) {
     $newConfWidget = array();
     $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
-    $imgPath = '';
-    foreach ($widgetsConfigJonFile['widgets'] as $config) {
-      if ($config['type'] == $widget['type']) {
-        $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-        break;
+
+    foreach ($widgets as $i => $widget) {
+      $imgPath = '';
+      foreach ($widgetsConfigJonFile['widgets'] as $config) {
+        if ($config['type'] == $widget['type']) {
+          $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
+          break;
+        }
       }
+      $widgetId = JeedomConnectWidget::incrementIndex();
+      $widgets[$i]['id'] = $widgetId;
+
+      $newConfWidget['imgPath'] = $imgPath;
+      $newConfWidget['widgetJC'] = json_encode($widget);
+
+      config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
     }
-    $widgetId = JeedomConnectWidget::incrementIndex();
-    $widget['id'] = $widgetId;
-
-    $newConfWidget['imgPath'] = $imgPath;
-    $newConfWidget['widgetJC'] = json_encode($widget);
-
-    config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
 
     return array(
-      'type' => 'SET_SINGLE_WIDGET_DATA',
-      'payload' => $widget
+      'type' => 'SET_MULTIPLE_WIDGET_DATA',
+      'payload' => array_values($widgets)
     );
   }
 

@@ -381,7 +381,7 @@ switch ($method) {
     $jsonrpc->makeSuccess();
     break;
   case 'ADD_GLOBAL_WIDGET':
-    $jsonrpc->makeSuccess(apiHelper::addGlobalWidget($params['widget']));
+    $jsonrpc->makeSuccess(apiHelper::addGlobalWidgets($params['widgets']));
     break;
   case 'SET_BOTTOM_TABS':
     apiHelper::setBottomTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
