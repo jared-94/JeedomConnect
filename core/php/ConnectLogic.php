@@ -330,7 +330,6 @@ class ConnectLogic implements MessageComponentInterface {
 			case 'GET_WIDGET_WITH_GEN_TYPE':
 				$result = \apiHelper::generateWidgetWithGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
 				$result['messageId'] = $msg['messageId'];
-				\log::add('JeedomConnect', 'debug', "Send : " . json_encode($result));
 				$from->send(json_encode($result));
 				break;
 			case 'GET_PLUGINS_UPDATE':
@@ -411,7 +410,9 @@ class ConnectLogic implements MessageComponentInterface {
 				\apiHelper::removeGlobalWidget($msg['payload']['id']);
 				break;
 			case 'ADD_GLOBAL_WIDGET':
-				$from->send(json_encode(\apiHelper::addGlobalWidget($msg['payload']['widget'])));
+				$result = \apiHelper::addGlobalWidget($msg['payload']['widget']);
+				$result['messageId'] = $msg['messageId'];
+				$from->send(json_encode($result));
 				break;
 			case 'SET_BOTTOM_TABS':
 				$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
