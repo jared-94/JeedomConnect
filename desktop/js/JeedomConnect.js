@@ -2959,7 +2959,7 @@ $('body').off('click', '.removeParent').on('click', '.removeParent', function ()
 function copyDivToClipboard(myInput, addBacktick = false) {
   var initialText = $(myInput).html();
   if (addBacktick) {
-    $(myInput).html('```<br/>' + initialText + '```');
+    $(myInput).html('```<br/>' + initialText.replaceAll('<b>','').replaceAll('</b>','') + '```');
   }
   var range = document.createRange();
   range.selectNode($(myInput).get(0));
