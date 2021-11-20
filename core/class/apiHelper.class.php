@@ -1040,7 +1040,9 @@ class apiHelper {
 
     $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
 
-    $result['payload'] = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $cmdGeneric);
+    $widgetsAvailable = JeedomConnectUtils::filterWidgetsWithStrictMode($cmdGeneric, $_eqLogicId, $widgetConfig);
+
+    $result['payload'] = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $widgetsAvailable);
     return $result;
   }
 

@@ -97,36 +97,10 @@ try {
 		$eqLogicId = init('eqLogic_Id');
 		if (!is_numeric($eqLogicId)) $eqLogicId = null;
 
-		$results = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
+		$widgetsAvailable = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
 
-		$isStrict = config::byKey('isStrict', 'JeedomConnect', true);
-		foreach ($results as $eqLogicId => $eqLogicConfig) {
-			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
-			$requiredCmdWithGenericTypeInConfig = false;
-			$requiredCmdWithGenericTypeFound = false;
-			foreach ($widgetConfig['options'] as $option) {
-				if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
-					$requiredCmdWithGenericTypeInConfig = true;
-					log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
-					$requiredCmdWithGenericTypeFound = false;
-					foreach ($eqLogicConfig['cmds'] as $cmds) {
-						if ($cmds['generic_type'] == $option['generic_type']) {
-							$requiredCmdWithGenericTypeFound = true;
-							break;
-						}
-					}
-					if ($isStrict && !$requiredCmdWithGenericTypeFound) {
-						log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
-						unset($results[$eqLogicId]);
-						break;
-					}
-				}
-			}
-			if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
-				log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
-				unset($results[$eqLogicId]);
-			}
-		}
+		$results = JeedomConnectUtils::filterWidgetsWithStrictMode($widgetsAvailable, $eqLogicId, $widgetConfig);
+
 		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
 
 		ajax::success($results);
