@@ -309,7 +309,7 @@ class apiHelper {
       $jeeObject = array(
         'id' => $array['id'],
         'name' => $array['name'],
-        'display' => self::getIconAndColor($array['display']['icon'])
+        'display' => JeedomConnectUtils::getIconAndColor($array['display']['icon'])
       );
       array_push($result['payload']['objects'], $jeeObject);
     }
@@ -325,7 +325,7 @@ class apiHelper {
     }
 
     foreach (config::byKey('object:summary') as $item) {
-      $item['display'] = self::getIconAndColor($item['icon']);
+      $item['display'] = JeedomConnectUtils::getIconAndColor($item['icon']);
       $item['icon'] = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']));
       array_push($result['payload']['summariesConfig'], $item);
     }
@@ -333,47 +333,6 @@ class apiHelper {
     return $result;
   }
 
-  public static function getIconAndColor($iconClass) {
-    $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
-    $matches = array();
-    preg_match('/(.*)class=\"(.*)\"(.*)/', $iconClass, $matches);
-
-    if (count($matches) > 3) {
-      list($iconType, $iconImg) = explode(" ", $matches[2], 2);
-      $iconType = ($iconType == 'icon') ? 'jeedom' : 'fa';
-      $iconImg = ($iconType == 'fa') ? trim(str_replace('fa-', '', $iconImg)) : trim($iconImg);
-
-      preg_match('/(.*) icon_(.*)/', $iconImg, $matches);
-      $color = '';
-      if (count($matches) > 2) {
-        switch ($matches[2]) {
-          case 'blue':
-            $color = '#0000FF';
-            break;
-          case 'yellow':
-            $color = '#FFFF00';
-            break;
-          case 'orange':
-            $color = '#FFA500';
-            break;
-          case 'red':
-            $color = '#FF0000';
-            break;
-          case 'green':
-            $color = '#008000';
-            break;
-          default:
-            $color = '';
-            break;
-        }
-        $iconImg = trim(str_replace('icon_' . $matches[2], '', $iconImg));
-      }
-
-      return array('icon' => $newIconClass, 'source' => $iconType, 'name' => $iconImg, 'color' => $color);
-    }
-
-    return array('icon' => $newIconClass, 'source' => '', 'name' => '', 'color' => '');
-  }
 
   //WIDGET DATA
   public static function getWidgetData() {

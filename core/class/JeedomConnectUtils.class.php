@@ -1,7 +1,6 @@
 <?php
 
 /* * ***************************Includes********************************* */
-require_once dirname(__FILE__) . '/apiHelper.class.php';
 
 class JeedomConnectUtils {
 
@@ -28,7 +27,7 @@ class JeedomConnectUtils {
                 'maxValue' => $cmd->getConfiguration('maxValue'),
                 'unit' => $cmd->getUnite(),
                 'value' => $cmd->getValue(),
-                'icon' => apiHelper::getIconAndColor($cmd->getDisplay('icon'))
+                'icon' => self::getIconAndColor($cmd->getDisplay('icon'))
             );
             log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
         }
@@ -118,5 +117,47 @@ class JeedomConnectUtils {
         }
 
         return $results;
+    }
+
+    public static function getIconAndColor($iconClass) {
+        $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
+        $matches = array();
+        preg_match('/(.*)class=\"(.*)\"(.*)/', $iconClass, $matches);
+
+        if (count($matches) > 3) {
+            list($iconType, $iconImg) = explode(" ", $matches[2], 2);
+            $iconType = ($iconType == 'icon') ? 'jeedom' : 'fa';
+            $iconImg = ($iconType == 'fa') ? trim(str_replace('fa-', '', $iconImg)) : trim($iconImg);
+
+            preg_match('/(.*) icon_(.*)/', $iconImg, $matches);
+            $color = '';
+            if (count($matches) > 2) {
+                switch ($matches[2]) {
+                    case 'blue':
+                        $color = '#0000FF';
+                        break;
+                    case 'yellow':
+                        $color = '#FFFF00';
+                        break;
+                    case 'orange':
+                        $color = '#FFA500';
+                        break;
+                    case 'red':
+                        $color = '#FF0000';
+                        break;
+                    case 'green':
+                        $color = '#008000';
+                        break;
+                    default:
+                        $color = '';
+                        break;
+                }
+                $iconImg = trim(str_replace('icon_' . $matches[2], '', $iconImg));
+            }
+
+            return array('icon' => $newIconClass, 'source' => $iconType, 'name' => $iconImg, 'color' => $color);
+        }
+
+        return array('icon' => $newIconClass, 'source' => '', 'name' => '', 'color' => '');
     }
 }
