@@ -70,7 +70,7 @@ foreach ($eqLogics as $eqLogic) {
 	echo '<tr>';
 	echo '<th>{{Nom}}</th>';
 	echo '<th>{{Sous-type}}</th>';
-	echo '<th>{{Type Générique}}</th>';
+	echo '<th>{{Type Générique}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mini reinitCmd cursor">réinitialiser toutes les commandes</span></th>';
 	echo '</tr>';
 
 	$cmds = cmd::byEqLogicId($eqLogic->getId());
