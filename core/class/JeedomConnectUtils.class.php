@@ -119,6 +119,46 @@ class JeedomConnectUtils {
         return $results;
     }
 
+
+    public static function widgetAlreadyExistWithRequiredCmd($allGeneratedWidgets, $widgetConfig) {
+        $allExistingWidgets = JeedomConnectWidget::getWidgets('all', false, true);
+        // log::add('JeedomConnect', 'debug', "All existing widgets currently : " . json_encode($allExistingWidgets));
+
+        $requiredCmds = array();
+        foreach ($widgetConfig['options'] as $config) {
+            if (key_exists('required', $config) && $config['required'] && in_array($config['category'], array('cmd'))) {
+                array_push($requiredCmds, $config['id']);
+            }
+        }
+        // log::add('JeedomConnect', 'debug', "All required Cmds id : " . json_encode($requiredCmds));
+
+        foreach ($allGeneratedWidgets as $key => $generatedWidget) {
+            // log::add('JeedomConnect', 'debug', "will check for generatedWidget " . json_encode($generatedWidget));
+            foreach ($allExistingWidgets as $widget) {
+                $allCmdAlreadyUsed = true;
+                foreach ($requiredCmds as $rc) {
+                    // log::add('JeedomConnect', 'debug', "will check for {$rc}");
+                    if (key_exists($rc, $widget) && key_exists('id', $widget[$rc]) && $generatedWidget[$rc]['id'] != $widget[$rc]['id']) {
+                        $allCmdAlreadyUsed = false;
+                        // log::add('JeedomConnect', 'debug', " -- return false !");
+                        break;
+                    }
+                }
+                if ($allCmdAlreadyUsed) {
+                    // log::add('JeedomConnect', 'debug', " -- same id found !!");
+                    // log::add('JeedomConnect', 'debug', " ** generatedWidget already exist with widget id " . $widget['id']);
+                    $generatedWidget['alreadyExist'] = true;
+                    break;
+                }
+                $generatedWidget['alreadyExist'] = false;
+            }
+            $allGeneratedWidgets[$key] = $generatedWidget;
+        }
+        // log::add('JeedomConnect', 'debug', "all generated final ==> " . json_encode($allGeneratedWidgets));
+        return $allGeneratedWidgets;
+    }
+
+
     public static function getIconAndColor($iconClass) {
         $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
         $matches = array();

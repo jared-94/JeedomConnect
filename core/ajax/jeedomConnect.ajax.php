@@ -180,7 +180,7 @@ try {
 
 	if (init('action') == 'getWidgetMass') {
 		$ids = init('id') ?? 'all';
-		$allWidgets = JeedomConnectWidget::getWidgets($ids, true);
+		$allWidgets = JeedomConnectWidget::getWidgets($ids);
 
 		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../config/widgetsConfig.json'), true);
 		$widgetArrayConfig = array();
@@ -451,17 +451,13 @@ try {
 
 	if (init('action') == 'getWidgetConfigAll') {
 		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
-		$widgets = JeedomConnectWidget::getWidgets();
+		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
 
 		if ($widgets == '') {
 			log::add('JeedomConnect', 'debug', 'no widgets found');
 			ajax::error('Erreur - pas d\'équipement trouvé');
 		} else {
-			$result = array();
-			foreach ($widgets as $widget) {
-				$monWidget = json_decode($widget['widgetJC'], true);
-				array_push($result, $monWidget);
-			}
+			$result = $widgets;
 			log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($result));
 			ajax::success($result);
 		}
