@@ -138,7 +138,7 @@ class JeedomConnectUtils {
                 $allCmdAlreadyUsed = true;
                 foreach ($requiredCmds as $rc) {
                     // log::add('JeedomConnect', 'debug', "will check for {$rc}");
-                    if (key_exists($rc, $widget) && key_exists('id', $widget[$rc]) && $generatedWidget[$rc]['id'] != $widget[$rc]['id']) {
+                    if (($generatedWidget[$rc]['id'] ?? 'none') != ($widget[$rc]['id'] ?? 'none')) {
                         $allCmdAlreadyUsed = false;
                         // log::add('JeedomConnect', 'debug', " -- return false !");
                         break;
