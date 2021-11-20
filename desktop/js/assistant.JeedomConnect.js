@@ -385,7 +385,14 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 	var widget = widgetsList.widgets.find(i => i.type == type);
 	if (widget == undefined) return;
 
-	jeedom.eqLogic.getSelectModal({}, function (result) {
+	var obj = $('#room-input option:selected').val();
+	obj = (obj == 'none') ? '' : obj;
+
+	jeedom.eqLogic.getSelectModal({
+		object: {
+			id: obj
+		}
+	}, function (result) {
 		$.post({
 			url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
 			data: {
