@@ -133,24 +133,29 @@ class JeedomConnectUtils {
         // log::add('JeedomConnect', 'debug', "All required Cmds id : " . json_encode($requiredCmds));
 
         foreach ($allGeneratedWidgets as $key => $generatedWidget) {
-            // log::add('JeedomConnect', 'debug', "will check for generatedWidget " . json_encode($generatedWidget));
-            foreach ($allExistingWidgets as $widget) {
-                $allCmdAlreadyUsed = true;
-                foreach ($requiredCmds as $rc) {
-                    // log::add('JeedomConnect', 'debug', "will check for {$rc} : generated=>" . ($generatedWidget[$rc]['id'] ?? 'none') . ' // widget=>' . ($widget[$rc]['id'] ?? 'none'));
-                    if (($generatedWidget[$rc]['id'] ?? 'none') != ($widget[$rc]['id'] ?? 'none')) {
-                        $allCmdAlreadyUsed = false;
-                        // log::add('JeedomConnect', 'debug', " -- return false !");
+            if (count($requiredCmds) == 0) {
+                // log::add('JeedomConnect', 'debug', "no required cmds found -- skipped control");
+                $generatedWidget['alreadyExist'] = false;
+            } else {
+                // log::add('JeedomConnect', 'debug', "will check for generatedWidget " . json_encode($generatedWidget));
+                foreach ($allExistingWidgets as $widget) {
+                    $allCmdAlreadyUsed = true;
+                    foreach ($requiredCmds as $rc) {
+                        // log::add('JeedomConnect', 'debug', "will check for {$rc} : generated=>" . ($generatedWidget[$rc]['id'] ?? 'none') . ' // widget=>' . ($widget[$rc]['id'] ?? 'none'));
+                        if (($generatedWidget[$rc]['id'] ?? 'none') != ($widget[$rc]['id'] ?? 'none')) {
+                            $allCmdAlreadyUsed = false;
+                            // log::add('JeedomConnect', 'debug', " -- return false !");
+                            break;
+                        }
+                    }
+                    if ($allCmdAlreadyUsed) {
+                        // log::add('JeedomConnect', 'debug', " -- same id found !!");
+                        // log::add('JeedomConnect', 'debug', " ** generatedWidget already exist with widget id " . $widget['id']);
+                        $generatedWidget['alreadyExist'] = true;
                         break;
                     }
+                    $generatedWidget['alreadyExist'] = false;
                 }
-                if ($allCmdAlreadyUsed) {
-                    // log::add('JeedomConnect', 'debug', " -- same id found !!");
-                    // log::add('JeedomConnect', 'debug', " ** generatedWidget already exist with widget id " . $widget['id']);
-                    $generatedWidget['alreadyExist'] = true;
-                    break;
-                }
-                $generatedWidget['alreadyExist'] = false;
             }
             $allGeneratedWidgets[$key] = $generatedWidget;
         }
