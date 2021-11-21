@@ -456,11 +456,9 @@ try {
 		if ($widgets == '') {
 			log::add('JeedomConnect', 'debug', 'no widgets found');
 			ajax::error('Erreur - pas d\'équipement trouvé');
-		} else {
-			$result = $widgets;
-			log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($result));
-			ajax::success($result);
 		}
+		log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($widgets));
+		ajax::success($widgets);
 	}
 
 	if (init('action') == 'getWidgetExistance') {
