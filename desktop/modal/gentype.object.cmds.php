@@ -88,7 +88,10 @@ foreach ($eqLogics as $eqLogic) {
 			<option value="">{{Aucun}}</option>
 			<?php
 			$groups = array();
-			foreach (jeedom::getConfiguration('cmd::generic_type') as $key => $info) {
+			$generic_type_config = jeedom::getConfiguration('cmd::generic_type');
+			$genericsJC = JeedomConnect::pluginGenericTypes();
+			$allGeneric = array_merge($generic_type_config, $genericsJC);
+			foreach ($allGeneric as $key => $info) {
 				if ($cmd->getType() == 'info' && $info['type'] == 'Action') {
 					continue;
 				} elseif ($cmd->getType() == 'action' && $info['type'] == 'Info') {

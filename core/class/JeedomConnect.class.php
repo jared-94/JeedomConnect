@@ -59,6 +59,97 @@ class JeedomConnect extends eqLogic {
 		)
 	);
 
+
+	public static function pluginGenericTypes() {
+		$generics = array(
+			'GEOLOCALISATION' => array(
+				'name' => __('Géolocalisation', __FILE__),
+				'familyid' => 'tracking',
+				'family' => __('Géolocalisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('other')
+			),
+			'AC_ON' => array(
+				'name' => __('Climatiseur ON', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Action',
+				'subtype' => array('other')
+			),
+			'AC_OFF' => array(
+				'name' => __('Climatiseur OFF', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Action',
+				'subtype' => array('other')
+			),
+			'AC_STATE' => array(
+				'name' => __('Climatiseur Etat', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('binary')
+			),
+			'AC_TEMPERATURE' => array(
+				'name' => __('Climatiseur Température', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('numeric')
+			),
+			'AC_SET_TEMPERATURE' => array(
+				'name' => __('Climatiseur Consigne Température', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Action',
+				'subtype' => array('slider')
+			),
+			'AC_SET_MODE' => array(
+				'name' => __('Climatiseur Mode', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Action',
+				'subtype' => array('select')
+			),
+			'AC_MODE' => array(
+				'name' => __('Climatiseur Mode', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('other')
+			),
+			'AC_SET_FAN_MODE' => array(
+				'name' => __('Climatiseur Ventillation Mode', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Action',
+				'subtype' => array('select')
+			),
+			'AC_FAN_MODE' => array(
+				'name' => __('Climatiseur Ventillation Mode', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('other')
+			),
+			'AC_INDOOR_TEMPERATURE' => array(
+				'name' => __('Climatiseur Température Intérieur', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('numeric')
+			),
+			'AC_OUTDOOR_TEMPERATURE' => array(
+				'name' => __('Climatiseur Température Extérieur', __FILE__),
+				'familyid' => 'ac',
+				'family' => __('Climatisation', __FILE__),
+				'type' => 'Info',
+				'subtype' => array('numeric')
+			),
+		);
+		return $generics;
+	}
+
 	public static $_plugin_config_dir = __DIR__ . '/../config/';
 	public static $_plugin_info_dir = __DIR__ . '/../../plugin_info/';
 	public static $_data_dir = __DIR__ . '/../../data/';
@@ -865,6 +956,7 @@ class JeedomConnect extends eqLogic {
 			$positionCmd->setType('info');
 			$positionCmd->setSubType('string');
 			$positionCmd->setIsVisible(1);
+			$positionCmd->setGeneric_type('GEOLOCALISATION');
 		}
 		$positionCmd->setName(__('Position', __FILE__));
 		$positionCmd->save();
