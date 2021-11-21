@@ -120,7 +120,7 @@ function refreshAddWidgetBulk() {
                             } else if (option.category == "cmdList") {
                                 eqLogicInfo += '<div class="jcCmdList">';
                                 eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
-                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubType}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
+                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.id}' value='${c.humanName}' cmdId='${c.id}' cmdName='${c.name}' cmdType='${c.type}' cmdSubType='${c.subType}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
                                     eqLogicInfo += '<span class="input-group-btn">'
                                     eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                                     eqLogicInfo += '</span>'
