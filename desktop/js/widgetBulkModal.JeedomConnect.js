@@ -58,7 +58,7 @@ function refreshAddWidgetBulk() {
                     var indexRow = 0;
                     var checkAll = 'checked';
                     Object.entries(data.result).forEach(eqLogic => {
-                        var requiredCmds = [];
+                        var cmdsWithGenType = [];
                         tr = '<td>'
                         tr += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
                         tr += '<option value="none">Sélection  d\'une pièce</option>'
@@ -83,12 +83,12 @@ function refreshAddWidgetBulk() {
                                     cmd.minValue = option.minValue || ''
                                     cmd.maxValue = option.maxValue || ''
                                     cmd.unit = option.unit || ''
-                                } else if (option.required) {
+                                } else {
                                     var rc = {
                                         optionId: option.id,
                                         cmdId: cmd.id
                                     }
-                                    requiredCmds.push(rc);
+                                    cmdsWithGenType.push(rc);
                                 }
                                 eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.id}' value='${cmd.humanName}' cmdId='${cmd.id}' cmdType='${cmd.type}' cmdSubType='${cmd.subType}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled}>`
                                 eqLogicInfo += '<span class="input-group-btn">'
@@ -135,8 +135,8 @@ function refreshAddWidgetBulk() {
 
                         var exist = allWidgetsDetail.some(e => {
                             var allCmdAlreadyUsed = true;
-                            requiredCmds.forEach((rc) => {
-                                if (!(e.hasOwnProperty(rc.optionId) && e[rc.optionId].id == rc.cmdId)) {
+                            cmdsWithGenType.forEach((cmd) => {
+                                if (!(e.hasOwnProperty(cmd.optionId) && e[cmd.optionId].id == cmd.cmdId)) {
                                     allCmdAlreadyUsed = false;
                                     return;
                                 }
