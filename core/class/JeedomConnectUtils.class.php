@@ -124,25 +124,25 @@ class JeedomConnectUtils {
         $allExistingWidgets = JeedomConnectWidget::getWidgets('all', false, true);
         // log::add('JeedomConnect', 'debug', "All existing widgets currently : " . json_encode($allExistingWidgets));
 
-        $requiredCmds = array();
+        $cmdsWithGenType = array();
         foreach ($widgetConfig['options'] as $config) {
-            if (key_exists('required', $config) && $config['required'] && in_array($config['category'], array('cmd'))) {
-                array_push($requiredCmds, $config['id']);
+            if (key_exists('generic_type', $config) && in_array($config['category'], array('cmd', 'cmdList'))) {
+                array_push($cmdsWithGenType, $config['id']);
             }
         }
-        // log::add('JeedomConnect', 'debug', "All required Cmds id : " . json_encode($requiredCmds));
+        // log::add('JeedomConnect', 'debug', "All required Cmds id : " . json_encode($cmdsWithGenType));
 
         foreach ($allGeneratedWidgets as $key => $generatedWidget) {
-            if (count($requiredCmds) == 0) {
+            if (count($cmdsWithGenType) == 0) {
                 // log::add('JeedomConnect', 'debug', "no required cmds found -- skipped control");
                 $generatedWidget['alreadyExist'] = false;
             } else {
                 // log::add('JeedomConnect', 'debug', "will check for generatedWidget " . json_encode($generatedWidget));
                 foreach ($allExistingWidgets as $widget) {
                     $allCmdAlreadyUsed = true;
-                    foreach ($requiredCmds as $rc) {
-                        // log::add('JeedomConnect', 'debug', "will check for {$rc} : generated=>" . ($generatedWidget[$rc]['id'] ?? 'none') . ' // widget=>' . ($widget[$rc]['id'] ?? 'none'));
-                        if (($generatedWidget[$rc]['id'] ?? 'none') != ($widget[$rc]['id'] ?? 'none')) {
+                    foreach ($cmdsWithGenType as $cmd) {
+                        // log::add('JeedomConnect', 'debug', "will check for {$cmd} : generated=>" . ($generatedWidget[$cmd]['id'] ?? 'none') . ' // widget=>' . ($widget[$cmd]['id'] ?? 'none'));
+                        if (($generatedWidget[$cmd]['id'] ?? 'none') != ($widget[$cmd]['id'] ?? 'none')) {
                             $allCmdAlreadyUsed = false;
                             // log::add('JeedomConnect', 'debug', " -- return false !");
                             break;
