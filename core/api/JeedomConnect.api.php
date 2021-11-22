@@ -380,7 +380,7 @@ switch ($method) {
     apiHelper::removeGlobalWidget($params['id']);
     $jsonrpc->makeSuccess();
     break;
-  case 'ADD_GLOBAL_WIDGET':
+  case 'ADD_GLOBAL_WIDGETS':
     $jsonrpc->makeSuccess(apiHelper::addGlobalWidgets($params['widgets']));
     break;
   case 'SET_BOTTOM_TABS':
