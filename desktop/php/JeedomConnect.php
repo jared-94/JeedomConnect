@@ -137,10 +137,13 @@ foreach ($eqLogics as $eqLogic) {
 	$versionAppConfig = $eqLogic->getConfiguration('appVersion');
 	$versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
 
+	$connexionType = $eqLogic->getConfiguration('useWs') == '1' ? ' (ws)'  : '';
+
+	$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
 	if ($platform == '' && $versionApp == '') {
-		$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName() . ' : non enregistré<br/>';
+		$infoPlugin .= ' : non enregistré<br/>';
 	} else {
-		$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName() . ' : ' . $versionApp . ' ' . $platform . '<br/>';
+		$infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $connexionType . '<br/>';
 	}
 }
 
