@@ -62,7 +62,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function pluginGenericTypes() {
 		$generics = array(
-			'GEOLOCALISATION' => array(
+			'GEOLOCATION' => array(
 				'name' => __('Géolocalisation', __FILE__),
 				'familyid' => 'tracking',
 				'family' => __('Géolocalisation', __FILE__),
@@ -956,7 +956,7 @@ class JeedomConnect extends eqLogic {
 			$positionCmd->setType('info');
 			$positionCmd->setSubType('string');
 			$positionCmd->setIsVisible(1);
-			$positionCmd->setGeneric_type('GEOLOCALISATION');
+			$positionCmd->setGeneric_type('GEOLOCATION');
 		}
 		$positionCmd->setName(__('Position', __FILE__));
 		$positionCmd->save();

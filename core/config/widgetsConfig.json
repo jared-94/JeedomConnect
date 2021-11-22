@@ -5154,7 +5154,7 @@
 					"type": "info",
 					"subtype": "string",
 					"description": "Commande chaîne sous la forme latitude,longitude",
-					"generic_type": "GEOLOCALISATION"
+					"generic_type": "GEOLOCATION"
 				},
 				{
 					"id": "image",
