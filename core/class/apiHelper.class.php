@@ -1330,12 +1330,12 @@ class apiHelper {
       self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
   }
 
-  public static function raiseException($type) {
+  public static function raiseException($type, $errMsg = '') {
     $result = array(
       "type" => "EXCEPTION",
-      "payload" => "Sorry " . $type . " is not a recognized function"
+      "payload" => "Error with '" . $type . "' method " . $errMsg
     );
-    log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+    log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
 
     return $result;
   }
