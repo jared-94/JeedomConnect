@@ -328,7 +328,7 @@ class ConnectLogic implements MessageComponentInterface {
 					$from->send(json_encode($result));
 					break;
 				case 'GET_WIDGET_WITH_GEN_TYPE':
-					$result = \apiHelper::generateWidgetWithGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
+					$result = \apiHelper::getWidgetFromGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
 					$result['messageId'] = $msg['messageId'];
 					$from->send(json_encode($result));
 					break;

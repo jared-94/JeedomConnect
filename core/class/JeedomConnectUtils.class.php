@@ -163,7 +163,29 @@ class JeedomConnectUtils {
         return $allGeneratedWidgets;
     }
 
+    public static function generateWidgetWithGenType($_widget_type, $_eqLogicId) {
 
+        if ($_widget_type == null) return null;
+
+        $widgetConfigParam = JeedomConnect::getWidgetParam(false, array($_widget_type));
+        $widgetConfig = $widgetConfigParam[$_widget_type] ?? null;
+
+        if ($widgetConfig == null) return null;
+
+        $genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
+        if ($genericTypes == null) return null;
+
+        $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
+
+        $widgetsAvailable = JeedomConnectUtils::filterWidgetsWithStrictMode($cmdGeneric, $_eqLogicId, $widgetConfig);
+
+        $generatedWidgets = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $widgetsAvailable);
+
+        $result = JeedomConnectUtils::widgetAlreadyExistWithRequiredCmd($generatedWidgets, $widgetConfig);
+        // log::add('JeedomConnect', 'debug', 'generateWidgetWithGenType => ' . count($result) . '-' . json_encode($result));
+
+        return $result;
+    }
     public static function getIconAndColor($iconClass) {
         $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
         $matches = array();

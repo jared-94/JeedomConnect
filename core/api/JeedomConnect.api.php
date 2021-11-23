@@ -257,7 +257,7 @@ try {
       $jsonrpc->makeSuccess($result);
       break;
     case 'GET_WIDGET_WITH_GEN_TYPE':
-      $result = \apiHelper::generateWidgetWithGenType($params['widget_type'], $params['eqId'] ?? null);
+      $result = \apiHelper::getWidgetFromGenType($params['widget_type'], $params['eqId'] ?? null);
       log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;

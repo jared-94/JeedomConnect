@@ -983,29 +983,11 @@ class apiHelper {
 
 
 
-  public static function generateWidgetWithGenType($_widget_type, $_eqLogicId) {
+  public static function getWidgetFromGenType($_widget_type, $_eqLogicId) {
     $result = array(
       'type' => 'SET_WIDGET_WITH_GEN_TYPE',
-      'payload' => null
+      'payload' => JeedomConnectUtils::generateWidgetWithGenType($_widget_type, $_eqLogicId)
     );
-
-    if ($_widget_type == null) return $result;
-
-    $widgetConfigParam = JeedomConnect::getWidgetParam(false, array($_widget_type));
-    $widgetConfig = $widgetConfigParam[$_widget_type] ?? null;
-
-    if ($widgetConfig == null) return $result;
-
-    $genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
-    if ($genericTypes == null) return $result;
-
-    $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
-
-    $widgetsAvailable = JeedomConnectUtils::filterWidgetsWithStrictMode($cmdGeneric, $_eqLogicId, $widgetConfig);
-
-    $generatedWidgets = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $widgetsAvailable);
-
-    $result['payload'] = JeedomConnectUtils::widgetAlreadyExistWithRequiredCmd($generatedWidgets, $widgetConfig);
 
     return $result;
   }

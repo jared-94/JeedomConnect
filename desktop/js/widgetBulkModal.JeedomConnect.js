@@ -72,7 +72,7 @@ function refreshAddWidgetBulk() {
                             if (option.category == "cmd") {
                                 var cmd = undefined
                                 if (option.hasOwnProperty('generic_type')) {
-                                    var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
+                                    var cmd = eqLogic[1][option.id] || undefined;
                                 }
                                 if (cmd == undefined) {
                                     cmd = {}
@@ -119,7 +119,7 @@ function refreshAddWidgetBulk() {
                                 eqLogicInfo += `</div></div></div></li>`;
                             } else if (option.category == "cmdList") {
                                 eqLogicInfo += '<div class="jcCmdList">';
-                                eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
+                                eqLogic[1].modes.filter(c => c.generic_type == option.generic_type).forEach(c => {
                                     eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.id}' value='${c.humanName}' cmdId='${c.id}' cmdName='${c.name}' cmdType='${c.type}' cmdSubType='${c.subType}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
                                     eqLogicInfo += '<span class="input-group-btn">'
                                     eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
@@ -133,18 +133,7 @@ function refreshAddWidgetBulk() {
                             tr += '</td>'
                         });
 
-                        var exist = allWidgetsDetail.some(e => {
-                            var allCmdAlreadyUsed = true;
-                            requiredCmds.forEach((rc) => {
-                                if (!(e.hasOwnProperty(rc.optionId) && e[rc.optionId].id == rc.cmdId)) {
-                                    allCmdAlreadyUsed = false;
-                                    return;
-                                }
-                            });
-                            return allCmdAlreadyUsed;
-                        });
-
-                        if (exist) {
+                        if (eqLogic[1].alreadyExist || false) {
                             style = 'background-color: ' + getBackgroundColor() + ' !important';
                             cbChecked = '';
                             checkAll = '';

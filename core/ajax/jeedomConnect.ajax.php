@@ -18,7 +18,7 @@
 
 try {
 	require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-	require_once dirname(__FILE__) . '/../class/JeedomConnectWidget.class.php';
+	require_once dirname(__FILE__) . '/../class/JeedomConnect.class.php';
 	include_file('core', 'authentification', 'php');
 
 	if (!isConnect('admin')) {
@@ -84,23 +84,10 @@ try {
 
 	if (init('action') == 'getCmdsForWidgetType') {
 		$widget_type = init('widget_type');
-		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type);
-		$widgetConfigParam = JeedomConnect::getWidgetParam(false, array($widget_type));
-		$widgetConfig = $widgetConfigParam[$widget_type] ?? null;
-		if ($widgetConfig == null) ajax::error('Type de widget inconnu.');
+		$eqLogicId = !is_numeric(init('eqLogic_Id')) ? null : init('eqLogic_Id');
+		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type . ' - for eqLogicId : ' . $eqLogicId);
 
-		$genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
-		if ($genericTypes == null) ajax::error('Pas de type générique trouvé pour ce type de widget.');
-
-		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));
-
-		$eqLogicId = init('eqLogic_Id');
-		if (!is_numeric($eqLogicId)) $eqLogicId = null;
-
-		$widgetsAvailable = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
-
-		$results = JeedomConnectUtils::filterWidgetsWithStrictMode($widgetsAvailable, $eqLogicId, $widgetConfig);
-
+		$results = JeedomConnectUtils::generateWidgetWithGenType($widget_type, $eqLogicId);
 		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
 
 		ajax::success($results);
