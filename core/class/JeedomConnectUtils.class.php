@@ -108,7 +108,7 @@ class JeedomConnectUtils {
                 continue;
             }
 
-            if ($item['id'] == 'doc' && $isBeta) {
+            if (in_array($item['id'], array('doc', 'changelog')) && $isBeta) {
                 $item['link'] .= "_beta";
                 $linksData[$key] = $item;
                 continue;

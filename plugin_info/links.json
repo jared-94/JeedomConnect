@@ -6,6 +6,12 @@
         "link": "http://jared-94.github.io/JeedomConnectDoc/fr_FR/index"
     },
     {
+        "id": "changelog",
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/changelog.png",
+        "title": "Changelog",
+        "link": "http://jared-94.github.io/JeedomConnectDoc/fr_FR/changelog"
+    },
+    {
         "id": "git",
         "img": "/var/www/html/plugins/JeedomConnect/data/img/github.png",
         "title": "Github du projet",
