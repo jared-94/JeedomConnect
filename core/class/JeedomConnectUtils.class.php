@@ -85,4 +85,38 @@ class JeedomConnectUtils {
         log::add('JeedomConnect', 'debug', 'temp createAutoWidget:' .  json_encode($result));
         return $result;
     }
+
+    public static function isBeta() {
+        $plugin = plugin::byId('JeedomConnect');
+        $update = $plugin->getUpdate();
+        if (is_object($update)) {
+            $version = $update->getConfiguration('version');
+            return ($version && $version != 'stable');
+        }
+
+        return false;
+    }
+
+    public static function getLinks() {
+
+        $isBeta = self::isBeta();
+        $linksData = json_decode(file_get_contents(JeedomConnect::$_plugin_info_dir . 'links.json'), true);
+
+        foreach ($linksData as $key => $item) {
+            if ($item['id'] == 'donate' && file_exists(JeedomConnect::$_plugin_info_dir . 'partiallink')) {
+                unset($linksData[$key]);
+                continue;
+            }
+
+            if (in_array($item['id'], array('doc', 'changelog')) && $isBeta) {
+                $item['link'] .= "_beta";
+                $linksData[$key] = $item;
+                continue;
+            }
+        }
+
+        // log::add('JeedomConnect', 'debug', 'result : ' .  json_encode($linksData));
+
+        return $linksData;
+    }
 }

@@ -165,7 +165,8 @@ switch ($method) {
         'pluginConfig' => apiHelper::getPluginConfig(),
         'cmdInfo' => apiHelper::getCmdInfoData($config),
         'scInfo' => apiHelper::getScenarioData($config),
-        'objInfo' => apiHelper::getObjectData($config)
+        'objInfo' => apiHelper::getObjectData($config),
+        'links' => JeedomConnectUtils::getLinks()
       )
     );
     log::add('JeedomConnect', 'debug', 'send ' . json_encode($result));

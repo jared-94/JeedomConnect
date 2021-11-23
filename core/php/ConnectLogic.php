@@ -219,7 +219,8 @@ class ConnectLogic implements MessageComponentInterface {
 					'pluginConfig' => \apiHelper::getPluginConfig(),
 					'cmdInfo' => \apiHelper::getCmdInfoData($config),
 					'scInfo' => \apiHelper::getScenarioData($config),
-					'objInfo' => \apiHelper::getObjectData($config)
+					'objInfo' => \apiHelper::getObjectData($config),
+					'links' => \JeedomConnectUtils::getLinks()
 				)
 			);
 			\log::add('JeedomConnect', 'info', "Send " . json_encode($result));
