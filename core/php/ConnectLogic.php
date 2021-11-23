@@ -472,6 +472,10 @@ class ConnectLogic implements MessageComponentInterface {
 					"payload" => $eqLogic->getNotifs()
 				)));
 				break;
+
+			default:
+				$from->send(json_encode(\apiHelper::raiseException($msg['type'])));
+				break;
 		}
 	}
 

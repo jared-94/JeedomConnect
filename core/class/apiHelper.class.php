@@ -656,10 +656,12 @@ class apiHelper {
       config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
     }
 
-    return array(
+    $result = array(
       'type' => 'SET_MULTIPLE_WIDGET_DATA',
       'payload' => array_values($widgets)
     );
+    log::add('JeedomConnect', 'debug', 'Send : ' . json_encode($result));
+    return $result;
   }
 
   public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
@@ -1326,5 +1328,15 @@ class apiHelper {
     unlink($file);
     return
       self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
+  }
+
+  public static function raiseException($type) {
+    $result = array(
+      "type" => "EXCEPTION",
+      "payload" => "Sorry " . $type . " is not a recognized function"
+    );
+    log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+
+    return $result;
   }
 }

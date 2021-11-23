@@ -514,4 +514,9 @@ switch ($method) {
       "payload" => $eqLogic->getNotifs()
     ));
     break;
+
+  default:
+    $result = apiHelper::raiseException($method);
+    $jsonrpc->makeSuccess($result);
+    break;
 }
