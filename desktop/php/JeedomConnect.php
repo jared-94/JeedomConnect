@@ -137,13 +137,16 @@ foreach ($eqLogics as $eqLogic) {
 	$versionAppConfig = $eqLogic->getConfiguration('appVersion');
 	$versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
 
-	$connexionType = $eqLogic->getConfiguration('useWs') == '1' ? ' (ws)'  : '';
+	$connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
+	$withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
+
+	$cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
 
 	$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
 	if ($platform == '' && $versionApp == '') {
 		$infoPlugin .= ' : non enregistré<br/>';
 	} else {
-		$infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $connexionType . '<br/>';
+		$infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
 	}
 }
 

@@ -197,6 +197,7 @@ class ConnectLogic implements MessageComponentInterface {
 			$this->hasAuthenticatedClients = true;
 			$eqLogic->setConfiguration('platformOs', $objectMsg->platformOs);
 			$eqLogic->setConfiguration('appVersion', $objectMsg->appVersion ?? '#NA#');
+			$eqLogic->setConfiguration('polling', $objectMsg->polling ?? '0');
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
 			$eqLogic->setConfiguration('connected', 1);
 			$eqLogic->setConfiguration('scAll', 0);

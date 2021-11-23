@@ -148,6 +148,7 @@ try {
 
       $eqLogic->setConfiguration('platformOs', $params['platformOs']);
       $eqLogic->setConfiguration('appVersion', $params['appVersion'] ?? '#NA#');
+      $eqLogic->setConfiguration('polling', $params['polling'] ?? '0');
       $eqLogic->save();
 
       $result = array(

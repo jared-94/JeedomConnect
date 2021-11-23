@@ -1083,7 +1083,6 @@ class apiHelper {
     return $result;
   }
 
-
   public static function saveBatteryEquipment($apiKey, $level) {
 
     $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
