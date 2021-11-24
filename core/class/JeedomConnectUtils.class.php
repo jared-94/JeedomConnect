@@ -142,7 +142,7 @@ class JeedomConnectUtils {
                     $allCmdAlreadyUsed = true;
                     foreach ($cmdsWithGenType as $cmd) {
                         // log::add('JeedomConnect', 'debug', "will check for {$cmd} : generated=>" . ($generatedWidget[$cmd]['id'] ?? 'none') . ' // widget=>' . ($widget[$cmd]['id'] ?? 'none'));
-                        if (($generatedWidget[$cmd]['id'] ?? 'none') != ($widget[$cmd]['id'] ?? 'none')) {
+                        if (isset($generatedWidget[$cmd]['id']) && $generatedWidget[$cmd]['id'] != ($widget[$cmd]['id'] ?? 'none')) {
                             $allCmdAlreadyUsed = false;
                             // log::add('JeedomConnect', 'debug', " -- return false !");
                             break;
