@@ -647,10 +647,11 @@ class apiHelper {
           break;
         }
       }
-      $widgetId = JeedomConnectWidget::incrementIndex();
-      $widgets[$i]['id'] = $widgetId;
-
       $newConfWidget['imgPath'] = $imgPath;
+
+      $widgetId = JeedomConnectWidget::incrementIndex();
+      $widget['id'] = intval($widgetId);
+
       $newConfWidget['widgetJC'] = json_encode($widget);
 
       config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
