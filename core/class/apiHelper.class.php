@@ -651,6 +651,7 @@ class apiHelper {
 
       $widgetId = JeedomConnectWidget::incrementIndex();
       $widget['id'] = intval($widgetId);
+      $widgets[$i]['id'] = $widgetId;
 
       $newConfWidget['widgetJC'] = json_encode($widget);
 
