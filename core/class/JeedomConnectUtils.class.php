@@ -185,7 +185,7 @@ class JeedomConnectUtils {
 
         return $result;
     }
-  
+
     public static function getIconAndColor($iconClass) {
         $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
         $matches = array();
@@ -227,8 +227,8 @@ class JeedomConnectUtils {
 
         return array('icon' => $newIconClass, 'source' => '', 'name' => '', 'color' => '');
     }
-  
-  public static function isBeta() {
+
+    public static function isBeta() {
         $plugin = plugin::byId('JeedomConnect');
         $update = $plugin->getUpdate();
         if (is_object($update)) {
