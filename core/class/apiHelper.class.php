@@ -1317,7 +1317,8 @@ class apiHelper {
       "type" => "EXCEPTION",
       "payload" => "Error with '" . $type . "' method " . $errMsg
     );
-    log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
+    log::add('JeedomConnect', 'error', $result["payload"]);
+    // log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
 
     return $result;
   }
