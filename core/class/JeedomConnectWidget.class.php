@@ -67,10 +67,10 @@ class JeedomConnectWidget extends config {
 		return $result;
 	}
 
-	public static function getWidgets($_id = 'all', $_fullConfig = true) {
+	public static function getWidgets($_id = 'all', $_fullConfig = true, $_onlyConfig = false) {
 
 		if ($_id === 'all') {
-			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widget');
+			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widgets with full config');
 			$widgets = JeedomConnectWidget::getAllConfigurations();
 		} else {
 			$widgets = array();
@@ -87,25 +87,30 @@ class JeedomConnectWidget extends config {
 			foreach ($widgets as $widget) {
 				$widgetItem = array();
 
-				$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
+				if ($_onlyConfig) {
+					$widgetItem = json_decode($widget['conf']['widgetJC'], true) ?? '';
+				} else {
+					$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 
-				$widgetJC = json_decode($widget['conf']['widgetJC'], true);
-				if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
-				$widgetItem['enable'] = $widgetJC['enable'];
-				$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
-				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
-				$widgetItem['roomId'] = $widgetJC['room'] ?? '';
-				$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
-				$widgetItem['roomName'] = (!is_null($widgetRoomObjet) && is_object($widgetRoomObjet)) ? ($widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName()) : 'Aucun';
-				$widgetItem['id'] = $widgetJC['id'] ?? 'none';
+					$widgetJC = json_decode($widget['conf']['widgetJC'], true);
+					if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
+					$widgetItem['enable'] = $widgetJC['enable'];
+					$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
+					$widgetItem['type'] = $widgetJC['type'] ?? 'none';
+					$widgetItem['roomId'] = $widgetJC['room'] ?? '';
+					$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
+					$widgetItem['roomName'] = (!is_null($widgetRoomObjet) && is_object($widgetRoomObjet)) ? ($widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName()) : 'Aucun';
+					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
+				}
 
 				array_push($widgetArray, $widgetItem);
 			}
 
-			$roomName  = array_column($widgetArray, 'roomName');
-			$widgetName = array_column($widgetArray, 'name');
-
-			array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+			if (!$_onlyConfig) {
+				$roomName  = array_column($widgetArray, 'roomName');
+				$widgetName = array_column($widgetArray, 'name');
+				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+			}
 
 			//log::add(self::$_plugin_id, 'debug', ' final result sent >' . json_encode($widgetArray) );
 		}

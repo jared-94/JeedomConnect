@@ -309,7 +309,7 @@ class apiHelper {
       $jeeObject = array(
         'id' => $array['id'],
         'name' => $array['name'],
-        'display' => self::getIconAndColor($array['display']['icon'])
+        'display' => JeedomConnectUtils::getIconAndColor($array['display']['icon'])
       );
       array_push($result['payload']['objects'], $jeeObject);
     }
@@ -325,7 +325,7 @@ class apiHelper {
     }
 
     foreach (config::byKey('object:summary') as $item) {
-      $item['display'] = self::getIconAndColor($item['icon']);
+      $item['display'] = JeedomConnectUtils::getIconAndColor($item['icon']);
       $item['icon'] = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']));
       array_push($result['payload']['summariesConfig'], $item);
     }
@@ -333,47 +333,6 @@ class apiHelper {
     return $result;
   }
 
-  public static function getIconAndColor($iconClass) {
-    $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
-    $matches = array();
-    preg_match('/(.*)class=\"(.*)\"(.*)/', $iconClass, $matches);
-
-    if (count($matches) > 3) {
-      list($iconType, $iconImg) = explode(" ", $matches[2], 2);
-      $iconType = ($iconType == 'icon') ? 'jeedom' : 'fa';
-      $iconImg = ($iconType == 'fa') ? trim(str_replace('fa-', '', $iconImg)) : trim($iconImg);
-
-      preg_match('/(.*) icon_(.*)/', $iconImg, $matches);
-      $color = '';
-      if (count($matches) > 2) {
-        switch ($matches[2]) {
-          case 'blue':
-            $color = '#0000FF';
-            break;
-          case 'yellow':
-            $color = '#FFFF00';
-            break;
-          case 'orange':
-            $color = '#FFA500';
-            break;
-          case 'red':
-            $color = '#FF0000';
-            break;
-          case 'green':
-            $color = '#008000';
-            break;
-          default:
-            $color = '';
-            break;
-        }
-        $iconImg = trim(str_replace('icon_' . $matches[2], '', $iconImg));
-      }
-
-      return array('icon' => $newIconClass, 'source' => $iconType, 'name' => $iconImg, 'color' => $color);
-    }
-
-    return array('icon' => $newIconClass, 'source' => '', 'name' => '', 'color' => '');
-  }
 
   //WIDGET DATA
   public static function getWidgetData() {
@@ -697,10 +656,12 @@ class apiHelper {
       config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
     }
 
-    return array(
+    $result = array(
       'type' => 'SET_MULTIPLE_WIDGET_DATA',
       'payload' => array_values($widgets)
     );
+    log::add('JeedomConnect', 'debug', 'Send : ' . json_encode($result));
+    return $result;
   }
 
   public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
@@ -1022,25 +983,12 @@ class apiHelper {
 
 
 
-  public static function generateWidgetWithGenType($_widget_type, $_eqLogicId) {
+  public static function getWidgetFromGenType($_widget_type, $_eqLogicId) {
     $result = array(
       'type' => 'SET_WIDGET_WITH_GEN_TYPE',
-      'payload' => null
+      'payload' => JeedomConnectUtils::generateWidgetWithGenType($_widget_type, $_eqLogicId)
     );
 
-    if ($_widget_type == null) return $result;
-
-    $widgetConfigParam = JeedomConnect::getWidgetParam(false, array($_widget_type));
-    $widgetConfig = $widgetConfigParam[$_widget_type] ?? null;
-
-    if ($widgetConfig == null) return $result;
-
-    $genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
-    if ($genericTypes == null) return $result;
-
-    $cmdGeneric = JeedomConnectUtils::getCmdForGenericType($genericTypes, $_eqLogicId);
-
-    $result['payload'] = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $cmdGeneric);
     return $result;
   }
 
@@ -1134,7 +1082,6 @@ class apiHelper {
     log::add('JeedomConnect', 'debug', 'Send batteries =>' . json_encode($result));
     return $result;
   }
-
 
   public static function saveBatteryEquipment($apiKey, $level) {
 
@@ -1362,5 +1309,15 @@ class apiHelper {
     unlink($file);
     return
       self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
+  }
+
+  public static function raiseException($type, $errMsg = '') {
+    $result = array(
+      "type" => "EXCEPTION",
+      "payload" => "Error with '" . $type . "' method " . $errMsg
+    );
+    log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
+
+    return $result;
   }
 }
