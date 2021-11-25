@@ -85,7 +85,6 @@ class JeedomConnectUtils {
         return $result;
     }
 
-
     public static function filterWidgetsWithStrictMode($results, $eqLogicId, $widgetConfig) {
         $isStrict = config::byKey('isStrict', 'JeedomConnect', true);
         foreach ($results as $eqLogicId => $eqLogicConfig) {
@@ -186,6 +185,7 @@ class JeedomConnectUtils {
 
         return $result;
     }
+  
     public static function getIconAndColor($iconClass) {
         $newIconClass = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $iconClass));
         $matches = array();
@@ -226,5 +226,39 @@ class JeedomConnectUtils {
         }
 
         return array('icon' => $newIconClass, 'source' => '', 'name' => '', 'color' => '');
+    }
+  
+  public static function isBeta() {
+        $plugin = plugin::byId('JeedomConnect');
+        $update = $plugin->getUpdate();
+        if (is_object($update)) {
+            $version = $update->getConfiguration('version');
+            return ($version && $version != 'stable');
+        }
+
+        return false;
+    }
+
+    public static function getLinks() {
+
+        $isBeta = self::isBeta();
+        $linksData = json_decode(file_get_contents(JeedomConnect::$_plugin_info_dir . 'links.json'), true);
+
+        foreach ($linksData as $key => $item) {
+            if ($item['id'] == 'donate' && file_exists(JeedomConnect::$_plugin_info_dir . 'partiallink')) {
+                unset($linksData[$key]);
+                continue;
+            }
+
+            if (in_array($item['id'], array('doc', 'changelog')) && $isBeta) {
+                $item['link'] .= "_beta";
+                $linksData[$key] = $item;
+                continue;
+            }
+        }
+
+        // log::add('JeedomConnect', 'debug', 'result : ' .  json_encode($linksData));
+
+        return $linksData;
     }
 }
