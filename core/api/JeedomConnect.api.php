@@ -23,16 +23,24 @@ require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
 require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
 
-$jsonData = file_get_contents("php://input");
-log::add('JeedomConnect', 'debug', 'HTTP API received ' . $jsonData);
-$jsonrpc = new jsonrpc($jsonData);
+try {
+  $jsonData = file_get_contents("php://input");
+  $jsonrpc = new jsonrpc($jsonData);
 
-if ($jsonrpc->getJsonrpc() != '2.0') {
-  throw new Exception(__('Requête invalide. Version JSON-RPC invalide : ', __FILE__) . $jsonrpc->getJsonrpc(), -32001);
+  if ($jsonrpc->getJsonrpc() != '2.0') {
+    throw new Exception(__('Requête invalide. Version JSON-RPC invalide : ', __FILE__) . $jsonrpc->getJsonrpc(), -32001);
+  }
+
+  $params = $jsonrpc->getParams();
+  $method = $jsonrpc->getMethod();
+
+  if (!in_array($method, array('GET_EVENTS'))) {
+    log::add('JeedomConnect', 'debug', 'HTTP API received ' . $jsonData);
+  }
+} catch (Exception $e) {
+  log::add('JeedomConnect', 'debug', 'HTTP API received ' . $jsonData);
+  log::add('JeedomConnect', 'error', $e->getMessage());
 }
-
-$params = $jsonrpc->getParams();
-$method = $jsonrpc->getMethod();
 
 if ($method == 'GEOLOC') {
   $apiKey = $jsonrpc->getId();
