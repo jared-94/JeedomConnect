@@ -20,6 +20,68 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 
 class apiHelper {
 
+  // GENERIC FUNCTIONS
+
+  public static function addTypeInPayload($payload, $type) {
+    $result = array(
+      'type' => $type,
+      'payload' => $payload
+    );
+
+    return $result;
+  }
+
+  public static function getAllInformations($eqLogic, $withType = true) {
+    $returnType = 'SET_INFO';
+
+    if (!is_object($eqLogic)) {
+      throw new Exception('No equipment found');
+    }
+
+    $config = $eqLogic->getGeneratedConfigFile();
+    $payload =  array(
+      'cmds' => apiHelper::getCmdInfoData($config, false),
+      'scenarios' => apiHelper::getScenarioData($config, false, false),
+      'objects' => apiHelper::getObjectData($config, false)
+    );
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+
+
+  // EQUIPMENT FUNCTIONS
+  public static function getAvailableEquipement($userHash, $withType = true) {
+    $returnType = 'AVAILABLE_EQUIPEMENT';
+
+    $eqLogics = eqLogic::byType('JeedomConnect');
+
+    if (is_null($eqLogics)) {
+      throw new Exception(__("No equipment available", __FILE__), -32699);
+    } else {
+      $payload = array();
+      $userConnected = user::byHash($userHash);
+      $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
+      foreach ($eqLogics as $eqLogic) {
+
+        $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
+        $userOnEquipmentHash = !is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+
+        if (strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $userHash) {
+          array_push($payload, array(
+            'logicalId' => $eqLogic->getLogicalId(),
+            'name' => $eqLogic->getName(),
+            'enable' => $eqLogic->getIsEnable(),
+            'useWs' => $eqLogic->getConfiguration('useWs', 0)
+          ));
+        }
+      }
+    }
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+
   // CMD FUNCTIONS
 
   public static function getInfoCmdList($config) {
@@ -79,9 +141,11 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getCmdInfoData($config) {
+  public static function getCmdInfoData($config, $withType = true) {
+    $returnType = 'SET_CMD_INFO';
+
     $cmds = cmd::byIds(self::getInfoCmdList($config));
-    $result = array();
+    $payload = array();
 
     foreach ($cmds as $cmd) {
       $state = $cmd->getCache(array('valueDate', 'value'));
@@ -90,12 +154,13 @@ class apiHelper {
         'value' => $state['value'],
         'modified' => strtotime($state['valueDate'])
       );
-      array_push($result, $cmd_info);
+      array_push($payload, $cmd_info);
     }
-    return $result;
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
-  // SCEANRIO FUNCTIONS
+  // SCENARIO FUNCTIONS
 
   public static function getScenarioList($config) {
     $return = array();
@@ -109,9 +174,11 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getScenarioData($config, $all = false) {
+  public static function getScenarioData($config, $all = false, $withType = true) {
+    $returnType = $all ? 'SET_ALL_SC' : 'SET_SC_INFO';
+
     $scIds = self::getScenarioList($config);
-    $result = array();
+    $payload = array();
 
     foreach (scenario::all() as $sc) {
       if (in_array($sc->getId(), $scIds) || $all) {
@@ -126,10 +193,11 @@ class apiHelper {
           'active' => $sc->getIsActive() ? 1 : 0,
           'icon' => self::getScenarioIcon($sc)
         );
-        array_push($result, $sc_info);
+        array_push($payload, $sc_info);
       }
     }
-    return $result;
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
   public static function getScenarioIcon($sc) {
@@ -150,9 +218,11 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getObjectData($config) {
+  public static function getObjectData($config, $withType = true) {
+    $returnType = 'SET_OBJ_INFO';
+
     $objIds = self::getObjectList($config);
-    $result = array();
+    $payload = array();
 
     foreach (jeeObject::all() as $object) {
       if (in_array($object->getId(), $objIds)) {
@@ -166,7 +236,7 @@ class apiHelper {
             $key => array('value' => $sum, 'cmds' => $value)
           ));
         }
-        array_push($result, $object_info);
+        array_push($payload, $object_info);
       }
     }
     $global_info = array(
@@ -179,11 +249,29 @@ class apiHelper {
         $key => array('value' => jeeObject::getGlobalSummary($key))
       ));
     }
-    array_push($result, $global_info);
-    return $result;
+    array_push($payload, $global_info);
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+  // NOTIFICATION FUNCTIONS
+  public static function getNotifConfig($eqLogic, $withType = true) {
+    $returnType = 'SET_NOTIFS_CONFIG';
+
+    $payload =  $eqLogic->getNotifs();
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
   // GEOFENCE FUNCTIONS
+  public static function addGeofence($eqLogic, $geo) {
+    return $eqLogic->addGeofenceCmd($geo);
+  }
+
+  public static function removeGeofence($eqLogic, $geo) {
+    return $eqLogic->removeGeofenceCmd($geo);
+  }
+
   public static function getGeofencesData($eqLogic) {
     $result = array(
       'type' => 'SET_GEOFENCES',
@@ -210,15 +298,21 @@ class apiHelper {
   }
 
   //PLUGIN CONF FUNCTIONS
-  public static function getPluginConfig() {
+  public static function getPluginConfig($eqLogic, $withType = true) {
+    $returnType = 'PLUGIN_CONFIG';
+
     $plugin = update::byLogicalId('JeedomConnect');
-    return array(
+
+    $payload =  array(
+      'useWs' => is_object($eqLogic) ?  $eqLogic->getConfiguration('useWs', 0) : 0,
       'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
       'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
       'pluginJeedomVersion' => $plugin->getLocalVersion()
     );
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
   // REGISTER FUNCTION
@@ -1111,34 +1205,24 @@ class apiHelper {
   // PLUGINS UPDATE
 
   public static function doUpdate($pluginId) {
-    try {
-      $update = update::byLogicalId($pluginId);
+    $update = update::byLogicalId($pluginId);
 
-      if (!is_object($update)) {
-        log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
-        return false;
-      }
-
-      $update->doUpdate();
-      return true;
-    } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', 'doUpdate -- ' . $e->getMessage());
+    if (!is_object($update)) {
+      log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
       return false;
     }
+
+    $update->doUpdate();
+    return true;
   }
 
   public static function getPluginsUpdate() {
-    try {
-      $result = array(
-        'type' => 'SET_PLUGINS_UPDATE',
-        'payload' => JeedomConnect::getPluginsUpdate()
-      );
-      log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result));
-      return $result;
-    } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', 'getUpdates -- ' . $e->getMessage());
-      return false;
-    }
+    $result = array(
+      'type' => 'SET_PLUGINS_UPDATE',
+      'payload' => JeedomConnect::getPluginsUpdate()
+    );
+    log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result));
+    return $result;
   }
 
   // BACKUPS
@@ -1212,7 +1296,6 @@ class apiHelper {
       'type' => 'SET_JEEDOM_GLOBAL_HEALTH',
       'payload' => JeedomConnect::getHealthDetails($apiKey)
     );
-    log::add('JeedomConnect', 'debug', 'Send health =>' . json_encode($result));
     return $result;
   }
 

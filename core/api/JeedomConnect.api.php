@@ -60,45 +60,22 @@ try {
     case 'PING':
       $eqLogic->setConfiguration('appState', 'active');
       $eqLogic->save();
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode(null));
       $jsonrpc->makeSuccess();
       break;
+
     case 'GET_AVAILABLE_EQUIPEMENT':
-      $eqLogics = eqLogic::byType('JeedomConnect');
-
-      if (is_null($eqLogics)) {
-        throw new Exception(__("No equipment available", __FILE__), -32699);
-      } else {
-        $result = array();
-        $userConnected = user::byHash($params['userHash']);
-        $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
-        foreach ($eqLogics as $eqLogic) {
-
-          $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
-          $userOnEquipmentHash = !is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
-
-          if (strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $params['userHash']) {
-            array_push($result, array(
-              'logicalId' => $eqLogic->getLogicalId(),
-              'name' => $eqLogic->getName(),
-              'enable' => $eqLogic->getIsEnable(),
-              'useWs' => $eqLogic->getConfiguration('useWs', 0)
-            ));
-          }
-        }
-      }
-
-      $jsonrpc->makeSuccess(array(
-        'type' => 'AVAILABLE_EQUIPEMENT',
-        'payload' => $result
-      ));
+      $result = apiHelper::getAvailableEquipement($params['userHash']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
 
     case 'GET_PLUGIN_CONFIG':
-      $jsonrpc->makeSuccess(array(
-        'type' => 'PLUGIN_CONFIG',
-        'payload' => apiHelper::getPluginConfig()
-      ));
+      $result = apiHelper::getPluginConfig(is_object($eqLogic) ? $eqLogic : null);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
+
     case 'CONNECT':
       $versionPath = dirname(__FILE__) . '/../../plugin_info/version.json';
       $versionJson = json_decode(file_get_contents($versionPath));
@@ -172,17 +149,18 @@ try {
           'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
           'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
           'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
-          'pluginConfig' => apiHelper::getPluginConfig(),
-          'cmdInfo' => apiHelper::getCmdInfoData($config),
-          'scInfo' => apiHelper::getScenarioData($config),
-          'objInfo' => apiHelper::getObjectData($config),
+          'pluginConfig' => apiHelper::getPluginConfig($eqLogic, false),
+          'cmdInfo' => apiHelper::getCmdInfoData($config, false),
+          'scInfo' => apiHelper::getScenarioData($config, false, false),
+          'objInfo' => apiHelper::getObjectData($config, false),
           'links' => JeedomConnectUtils::getLinks()
 
         )
       );
-      log::add('JeedomConnect', 'debug', 'send ' . json_encode($result));
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_EVENTS':
       $eqLogic->setConfiguration('lastSeen', time());
       $eqLogic->save();
@@ -210,241 +188,304 @@ try {
       }
       $events = event::changes($params['lastReadTimestamp']);
       $data = apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($data));
       $jsonrpc->makeSuccess($data);
       break;
+
     case 'REGISTER_DEVICE':
       $rdk = apiHelper::registerUser($eqLogic, $params['userHash'], $params['rdk']);
       if (!isset($rdk)) {
         log::add('JeedomConnect', 'debug', "user not valid");
         throw new Exception(__("User not valid", __FILE__), -32699);
       }
-      $jsonrpc->makeSuccess(array(
+      $result = array(
         'type' => 'REGISTERED',
         'payload' => array(
           'rdk' => $rdk
         )
-      ));
-      break;
-    case 'GET_CONFIG':
-      $result = $eqLogic->getGeneratedConfigFile();
+      );
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
+    case 'GET_CONFIG':
+      // TODO wrong way to send an answer
+      $result = $eqLogic->getGeneratedConfigFile();
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
+      break;
+
     case 'GET_PWD':
+      // TODO wrong way to send an answer
       $jsonrpc->makeSuccess(array('pwd' => $eqLogic->getConfiguration('pwdAction', null)));
       break;
+
     case 'GET_CMD_INFO':
-      $result = array(
-        'type' => 'SET_CMD_INFO',
-        'payload' => apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())
-      );
-      log::add('JeedomConnect', 'debug', 'Send ' . json_encode($result));
-      $jsonrpc->makeSuccess($result);
+      $jsonrpc->makeSuccess(apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile()));
       break;
+
     case 'GET_SC_INFO':
-      $result = array(
-        'type' => 'SET_SC_INFO',
-        'payload' => apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile())
-      );
-      log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+      $result = apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), false, true);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_ALL_SC':
-      $result = array(
-        'type' => 'SET_ALL_SC',
-        'payload' => apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), true)
-      );
       $eqLogic->setConfiguration('scAll', 1);
       $eqLogic->save();
-      log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+      $result = apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), true, true);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_JEEDOM_DATA':
+      // TODO 
       $result = apiHelper::getFullJeedomData();
-      log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_WIDGET_DATA':
+      // TODO 
       $result = apiHelper::getWidgetData();
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_WIDGET_WITH_GEN_TYPE':
+      // TODO
       $result = \apiHelper::getWidgetFromGenType($params['widget_type'], $params['eqId'] ?? null);
-      log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'UNSUBSCRIBE_SC':
+      // TODO pas de reponse ? 
       $eqLogic->setConfiguration('scAll', 0);
       $eqLogic->save();
       break;
+
     case 'GET_OBJ_INFO':
-      $result = array(
-        'type' => 'SET_OBJ_INFO',
-        'payload' => apiHelper::getObjectData($eqLogic->getGeneratedConfigFile())
-      );
-      log::add('JeedomConnect', 'info', 'Send objects ' . json_encode($result));
+      $result = apiHelper::getObjectData($eqLogic->getGeneratedConfigFile());
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_INFO':
-      $config = $eqLogic->getGeneratedConfigFile();
-      $result = array(
-        'type' => 'SET_INFO',
-        'payload' => array(
-          'cmds' => apiHelper::getCmdInfoData($config),
-          'scenarios' => apiHelper::getScenarioData($config),
-          'objects' => apiHelper::getObjectData($config)
-        )
-      );
-      log::add('JeedomConnect', 'info', 'Send info ' . json_encode($result));
+      $result = apiHelper::getAllInformations($eqLogic);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_HISTORY':
-      $jsonrpc->makeSuccess(apiHelper::getHistory($params['id'], $params['options']));
+      $result = apiHelper::getHistory($params['id'], $params['options']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_BATTERIES':
-      $jsonrpc->makeSuccess(apiHelper::getBatteries());
+      $result = apiHelper::getBatteries();
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_GEOFENCES':
       $result = apiHelper::getGeofencesData($eqLogic);
       log::add('JeedomConnect', 'info', 'GEOFENCES ' . json_encode($result));
       if (count($result['payload']['geofences']) > 0) {
-        log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+        log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
         $jsonrpc->makeSuccess($result);
       }
       break;
+
     case 'GET_JEEDOM_GLOBAL_HEALTH':
-      $jsonrpc->makeSuccess(apiHelper::getJeedomHealthDetails($apiKey));
+      $result = apiHelper::getJeedomHealthDetails($apiKey);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
+
     case 'DAEMON_PLUGIN_RESTART':
       $jsonrpc->makeSuccess(array('result' => apiHelper::restartDaemon($params['userId'], $params['pluginId'])));
       break;
+
     case 'DAEMON_PLUGIN_STOP':
       $jsonrpc->makeSuccess(array('result' => apiHelper::stopDaemon($params['userId'], $params['pluginId'])));
       break;
+
     case 'GET_PLUGINS_UPDATE':
       $result = apiHelper::getPluginsUpdate();
-      if ($result !== false) {
-        $jsonrpc->makeSuccess($result);
-      }
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
+
     case 'DO_PLUGIN_UPDATE':
       $jsonrpc->makeSuccess(array('result' => apiHelper::doUpdate($params['pluginId'])));
       break;
+
     case 'CMD_EXEC':
-      apiHelper::execCmd($params['id'], $params['options']);
+      apiHelper::execCmd($params['id'], $params['options'] ?? null);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'CMDLIST_EXEC':
       apiHelper::execMultipleCmd($params['cmdList']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'SC_EXEC':
       apiHelper::execSc($params['id'], $params['options']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'SC_STOP':
       apiHelper::stopSc($params['id']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'SC_SET_ACTIVE':
       apiHelper::setActiveSc($params['id'], $params['active']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'SET_BATTERY':
       apiHelper::saveBatteryEquipment($apiKey, $params['level']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'SET_WIDGET':
       apiHelper::setWidget($params['widget']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'ADD_WIDGETS':
       apiHelper::addWidgets($eqLogic, $params['widgets'], $params['parentId'], $params['index']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'REMOVE_WIDGET':
       apiHelper::removeWidget($eqLogic, $params['widgetId']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'MOVE_WIDGET':
       apiHelper::moveWidget($eqLogic, $params['widgetId'], $params['destinationId'], $params['destinationIndex']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'SET_CUSTOM_WIDGETS':
       apiHelper::setCustomWidgetList($eqLogic, $params['customWidgetList']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'SET_GROUP':
       apiHelper::setGroup($eqLogic, $params['group']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'REMOVE_GROUP':
       apiHelper::removeGroup($eqLogic, $params['id']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'ADD_GROUP':
       apiHelper::addGroup($eqLogic, $params['group']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'MOVE_GROUP':
       apiHelper::moveGroup($eqLogic, $params['groupId'], $params['destinationId'], $params['destinationIndex']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'REMOVE_GLOBAL_WIDGET':
       apiHelper::removeGlobalWidget($params['id']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'ADD_GLOBAL_WIDGETS':
-      $jsonrpc->makeSuccess(apiHelper::addGlobalWidgets($params['widgets']));
+      $result = apiHelper::addGlobalWidgets($params['widgets']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
+
     case 'SET_BOTTOM_TABS':
       apiHelper::setBottomTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
       break;
+
     case 'REMOVE_BOTTOM_TAB':
       apiHelper::removeBottomTab($eqLogic, $params['id']);
       break;
+
     case 'SET_TOP_TABS':
       apiHelper::setTopTabList($eqLogic, $params['tabs'], $params['migrate'], $params['idCounter']);
       break;
+
     case 'REMOVE_TOP_TAB':
       apiHelper::removeTopTab($eqLogic, $params['id']);
       break;
+
     case 'MOVE_TOP_TAB':
       apiHelper::moveTopTab($eqLogic, $params['sectionId'], $params['destinationId']);
       $jsonrpc->makeSuccess();
       break;
+
     case 'SET_PAGE_DATA':
       apiHelper::setPageData($eqLogic, $params['rootData'], $params['idCounter']);
       break;
+
     case 'SET_ROOMS':
       apiHelper::setRooms($eqLogic, $params['rooms']);
       break;
+
     case 'SET_SUMMARIES':
       apiHelper::setSummaries($eqLogic, $params['summaries']);
       break;
+
     case 'SET_BACKGROUNDS':
       apiHelper::setBackgrounds($eqLogic, $params['backgrounds']);
       break;
+
     case 'SET_APP_CONFIG':
       apiHelper::setAppConfig($apiKey, $params['config']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'GET_APP_CONFIG':
       $result = apiHelper::getAppConfig($apiKey, $params['configId']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'SET_APPSTATE':
       $eqLogic->setConfiguration('appState', $params['state']);
       $eqLogic->save();
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'ADD_GEOFENCE':
-      $eqLogic->addGeofenceCmd($params['geofence']);
+      apiHelper::addGeofence($eqLogic, $params['geofence']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'REMOVE_GEOFENCE':
-      $eqLogic->removeGeofenceCmd($params['geofence']);
+      apiHelper::removeGeofence($eqLogic, $params['geofence']);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' - empty');
       $jsonrpc->makeSuccess();
       break;
+
     case 'GEOLOC':
       $ts = array_key_exists('timestampMeta', $params) ? floor($params['timestampMeta']['systemTime'] / 1000) : strtotime($params['timestamp']);
       $eqLogic->setCoordinates($params['coords']['latitude'], $params['coords']['longitude'], $params['coords']['altitude'], $params['activity']['type'], $params['battery']['level'] * 100, $ts);
@@ -485,6 +526,7 @@ try {
     $eqLogic->setGeofencesByCoordinates($params['coords']['latitude'], $params['coords']['longitude']);
   }*/
       break;
+
     case 'ASK_REPLY':
       $answer = $params['answer'];
       $cmd = cmd::byId($params['cmdId']);
@@ -512,27 +554,30 @@ try {
 
     case 'GET_FILES':
       $result = apiHelper::getFiles($params['folder'], $params['recursive']);
-      log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'REMOVE_FILE':
       $result = apiHelper::removeFile($params['file']);
-      log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
+
     case 'GET_NOTIFS_CONFIG':
-      $jsonrpc->makeSuccess(array(
-        "type" => "SET_NOTIFS_CONFIG",
-        "payload" => $eqLogic->getNotifs()
-      ));
+      $result = apiHelper::getNotifConfig($eqLogic);
+      log::add('JeedomConnect', 'debug', 'Send [API] ' . $method . ' -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
       break;
 
     default:
       $result = apiHelper::raiseException($method, '- method not recognized');
+      log::add('JeedomConnect', 'error', 'Send [API] ' . $method . ' -> ' . json_encode($result));
       $jsonrpc->makeSuccess($result);
       break;
   }
 } catch (Exception $e) {
   $result = apiHelper::raiseException($method, '- ' . $e->getMessage());
+  log::add('JeedomConnect', 'error', 'Send [API] ' . $method . ' -> ' . json_encode($result));
   $jsonrpc->makeSuccess($result);
 }
