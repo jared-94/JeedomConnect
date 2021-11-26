@@ -434,14 +434,14 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 
 							widget.options.filter(o => o.hasOwnProperty('generic_type')).forEach(option => {
 								if (option.category == "cmd") {
-									var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
+									var cmd = eqLogic[1][option.id] || undefined;
 									if (cmd != undefined) {
 										refreshCmdData(option.id, cmd.id, 'undefined');
 									}
 								} else if (option.category == "cmdList") {
 									cmdCat = [];
 									var maxIndex = -1;
-									eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
+									eqLogic[1].modes.filter(c => c.generic_type == option.generic_type).forEach(c => {
 										cmdCat.push({ id: c.id, name: c.name, index: ++maxIndex, subtype: c.subType });
 									});
 									refreshCmdListOption(JSON.stringify(option.options));

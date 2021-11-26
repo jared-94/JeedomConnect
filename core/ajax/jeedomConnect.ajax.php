@@ -18,7 +18,7 @@
 
 try {
 	require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-	require_once dirname(__FILE__) . '/../class/JeedomConnectWidget.class.php';
+	require_once dirname(__FILE__) . '/../class/JeedomConnect.class.php';
 	include_file('core', 'authentification', 'php');
 
 	if (!isConnect('admin')) {
@@ -84,49 +84,10 @@ try {
 
 	if (init('action') == 'getCmdsForWidgetType') {
 		$widget_type = init('widget_type');
-		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type);
-		$widgetConfigParam = JeedomConnect::getWidgetParam(false, array($widget_type));
-		$widgetConfig = $widgetConfigParam[$widget_type] ?? null;
-		if ($widgetConfig == null) ajax::error('Type de widget inconnu.');
+		$eqLogicId = !is_numeric(init('eqLogic_Id')) ? null : init('eqLogic_Id');
+		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type . ' - for eqLogicId : ' . $eqLogicId);
 
-		$genericTypes = JeedomConnectUtils::getGenericType($widgetConfig);
-		if ($genericTypes == null) ajax::error('Pas de type générique trouvé pour ce type de widget.');
-
-		log::add('JeedomConnect', 'debug', 'list of generic type:' . json_encode($genericTypes));
-
-		$eqLogicId = init('eqLogic_Id');
-		if (!is_numeric($eqLogicId)) $eqLogicId = null;
-
-		$results = JeedomConnectUtils::getCmdForGenericType($genericTypes, $eqLogicId);
-
-		$isStrict = config::byKey('isStrict', 'JeedomConnect', true);
-		foreach ($results as $eqLogicId => $eqLogicConfig) {
-			log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
-			$requiredCmdWithGenericTypeInConfig = false;
-			$requiredCmdWithGenericTypeFound = false;
-			foreach ($widgetConfig['options'] as $option) {
-				if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
-					$requiredCmdWithGenericTypeInConfig = true;
-					log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
-					$requiredCmdWithGenericTypeFound = false;
-					foreach ($eqLogicConfig['cmds'] as $cmds) {
-						if ($cmds['generic_type'] == $option['generic_type']) {
-							$requiredCmdWithGenericTypeFound = true;
-							break;
-						}
-					}
-					if ($isStrict && !$requiredCmdWithGenericTypeFound) {
-						log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
-						unset($results[$eqLogicId]);
-						break;
-					}
-				}
-			}
-			if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
-				log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
-				unset($results[$eqLogicId]);
-			}
-		}
+		$results = JeedomConnectUtils::generateWidgetWithGenType($widget_type, $eqLogicId);
 		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
 
 		ajax::success($results);
@@ -206,7 +167,7 @@ try {
 
 	if (init('action') == 'getWidgetMass') {
 		$ids = init('id') ?? 'all';
-		$allWidgets = JeedomConnectWidget::getWidgets($ids, true);
+		$allWidgets = JeedomConnectWidget::getWidgets($ids);
 
 		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../config/widgetsConfig.json'), true);
 		$widgetArrayConfig = array();
@@ -477,20 +438,14 @@ try {
 
 	if (init('action') == 'getWidgetConfigAll') {
 		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
-		$widgets = JeedomConnectWidget::getWidgets();
+		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
 
 		if ($widgets == '') {
 			log::add('JeedomConnect', 'debug', 'no widgets found');
 			ajax::error('Erreur - pas d\'équipement trouvé');
-		} else {
-			$result = array();
-			foreach ($widgets as $widget) {
-				$monWidget = json_decode($widget['widgetJC'], true);
-				array_push($result, $monWidget);
-			}
-			log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($result));
-			ajax::success($result);
 		}
+		log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($widgets));
+		ajax::success($widgets);
 	}
 
 	if (init('action') == 'getWidgetExistance') {
