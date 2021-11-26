@@ -314,11 +314,34 @@ class ConnectLogic implements MessageComponentInterface {
 				case 'GET_CMD_INFO':
 					$this->sendCmdInfo($from);
 					break;
+				case 'GET_OBJ_INFO':
+					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+					$result = array(
+						'type' => 'SET_OBJ_INFO',
+						'payload' => \apiHelper::getObjectData($eqLogic->getGeneratedConfigFile())
+					);
+					$from->send(json_encode($result));
+					break;
 				case 'GET_SC_INFO':
 					$this->sendScenarioInfo($from);
 					break;
 				case 'GET_ALL_SC':
 					$this->sendScenarioInfo($from, true);
+					break;
+				case 'GET_INFO':
+					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
+					$config = $eqLogic->getGeneratedConfigFile();
+					$result = array(
+						'type' => 'SET_INFO',
+						'payload' => array(
+							'cmds' => \apiHelper::getCmdInfoData($config),
+							'scenarios' => \apiHelper::getScenarioData($config),
+							'objects' => \apiHelper::getObjectData($config)
+						)
+					);
+					$result['messageId'] = $msg['messageId'];
+					\log::add('JeedomConnect', 'info', '[WS] Send info ' . json_encode($result));
+					$from->send(json_encode($result));
 					break;
 				case 'GET_JEEDOM_DATA':
 					$result = \apiHelper::getFullJeedomData();
