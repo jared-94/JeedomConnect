@@ -56,7 +56,7 @@ try {
 
   sse(
     json_encode(array('infos' => array(
-      'cmdInfo' => apiHelper::getCmdInfoData($config),
+      'cmdInfo' => apiHelper::getCmdInfoData($config, false),
       'scInfo' => apiHelper::getScenarioData($config, false, false),
       'objInfo' => apiHelper::getObjectData($config, false)
     )))
@@ -90,7 +90,7 @@ try {
         $config = $newConfig;
         sse(
           json_encode(array('infos' => array(
-            'cmdInfo' => apiHelper::getCmdInfoData($config),
+            'cmdInfo' => apiHelper::getCmdInfoData($config, false),
             'scInfo' => apiHelper::getScenarioData($config, false, false),
             'objInfo' => apiHelper::getObjectData($config, false)
           )))
