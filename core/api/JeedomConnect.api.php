@@ -212,7 +212,7 @@ try {
       $eventCount = count($events['result']);
       if ($eventCount == 0) {
         $data = null;
-      } elseif (count($events['result']) < 249) {
+      } elseif ($eventCount < 249) {
         $data = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
       } else {
         $data = \apiHelper::getEventsGlobalRefresh($config, $eqLogic->getConfiguration('scAll', 0) == 1);
