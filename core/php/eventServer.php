@@ -114,9 +114,7 @@ try {
         sleep(1);
       }
 
-      $events = event::changes($lastReadTimestamp);
-      $lastReadTimestamp = time();
-      $data = apiHelper::getEvents($events, $config, eqLogic::byLogicalId($apiKey, 'JeedomConnect')->getConfiguration('scAll', 0) == 1);
+      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp);
 
       foreach ($data as $res) {
         if (count($res['payload']) > 0) {
