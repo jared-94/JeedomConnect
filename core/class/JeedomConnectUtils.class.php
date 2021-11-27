@@ -7,7 +7,7 @@ class JeedomConnectUtils {
 
     public static function getCmdForGenericType($genericTypes, $eqLogicId = null) {
         $cmds = cmd::byGenericType($genericTypes, $eqLogicId);
-        log::add('JeedomConnect', 'debug', "found:" . count($cmds));
+        // log::add('JeedomConnect', 'debug', "found:" . count($cmds));
 
         $results = array();
         foreach ($cmds as $cmd) {
@@ -29,10 +29,10 @@ class JeedomConnectUtils {
                 'value' => $cmd->getValue(),
                 'icon' => self::getIconAndColor($cmd->getDisplay('icon'))
             );
-            log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
+            // log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
         }
 
-        log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
+        // log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
         return $results;
     }
 
@@ -81,20 +81,20 @@ class JeedomConnectUtils {
 
             array_push($result, $current);
         }
-        log::add('JeedomConnect', 'debug', 'temp createAutoWidget:' .  json_encode($result));
+        // log::add('JeedomConnect', 'debug', 'temp createAutoWidget:' .  json_encode($result));
         return $result;
     }
 
     public static function filterWidgetsWithStrictMode($results, $eqLogicId, $widgetConfig) {
         $isStrict = config::byKey('isStrict', 'JeedomConnect', true);
         foreach ($results as $eqLogicId => $eqLogicConfig) {
-            log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
+            // log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
             $requiredCmdWithGenericTypeInConfig = false;
             $requiredCmdWithGenericTypeFound = false;
             foreach ($widgetConfig['options'] as $option) {
                 if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
                     $requiredCmdWithGenericTypeInConfig = true;
-                    log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
+                    // log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
                     $requiredCmdWithGenericTypeFound = false;
                     foreach ($eqLogicConfig['cmds'] as $cmds) {
                         if ($cmds['generic_type'] == $option['generic_type']) {
@@ -103,14 +103,14 @@ class JeedomConnectUtils {
                         }
                     }
                     if ($isStrict && !$requiredCmdWithGenericTypeFound) {
-                        log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+                        // log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
                         unset($results[$eqLogicId]);
                         break;
                     }
                 }
             }
             if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
-                log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+                // log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
                 unset($results[$eqLogicId]);
             }
         }
