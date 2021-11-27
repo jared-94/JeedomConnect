@@ -604,7 +604,14 @@ class ConnectLogic implements MessageComponentInterface {
 			$events = \event::changes($client->lastReadTimestamp);
 			$client->lastReadTimestamp = time();
 			$config = $eqLogic->getGeneratedConfigFile();
-			$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+			$eventCount = count($events['result']);
+			if ($eventCount == 0) {
+				continue;
+			} elseif (count($events['result']) < 249) {
+				$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+			} else {
+				$eventsRes = \apiHelper::getEventsGlobalRefresh($config);
+			}
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
