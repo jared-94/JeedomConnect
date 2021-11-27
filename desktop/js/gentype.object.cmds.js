@@ -34,6 +34,13 @@ $('#bt_resetCmdSearch').off('click').on('click', function () {
     $('#in_searchCmd').val('').keyup()
 })
 
+$('.reinitCmd').off('click').on('click', function () {
+    var parentTable = $(this).parents('table').attr('id');
+    $('table#' + parentTable).find('select[data-l1key=generic_type]').each(function () {
+        $(this).val("");
+    })
+});
+
 $('#bt_openAll').off('click').on('click', function () {
     $(".accordion-toggle[aria-expanded='false']").each(function () {
         $(this).click()

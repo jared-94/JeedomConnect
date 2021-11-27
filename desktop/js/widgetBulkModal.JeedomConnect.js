@@ -58,7 +58,7 @@ function refreshAddWidgetBulk() {
                     var indexRow = 0;
                     var checkAll = 'checked';
                     Object.entries(data.result).forEach(eqLogic => {
-                        var requiredCmds = [];
+                        var cmdsWithGenType = [];
                         tr = '<td>'
                         tr += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
                         tr += '<option value="none">Sélection  d\'une pièce</option>'
@@ -72,7 +72,7 @@ function refreshAddWidgetBulk() {
                             if (option.category == "cmd") {
                                 var cmd = undefined
                                 if (option.hasOwnProperty('generic_type')) {
-                                    var cmd = eqLogic[1].cmds.find(c => c.generic_type == option.generic_type)
+                                    var cmd = eqLogic[1][option.id] || undefined;
                                 }
                                 if (cmd == undefined) {
                                     cmd = {}
@@ -83,12 +83,12 @@ function refreshAddWidgetBulk() {
                                     cmd.minValue = option.minValue || ''
                                     cmd.maxValue = option.maxValue || ''
                                     cmd.unit = option.unit || ''
-                                } else if (option.required) {
+                                } else {
                                     var rc = {
                                         optionId: option.id,
                                         cmdId: cmd.id
                                     }
-                                    requiredCmds.push(rc);
+                                    cmdsWithGenType.push(rc);
                                 }
                                 eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdAttrib needRefresh' data-l1key="${option.id}" id='${option.id}-input' title='${cmd.humanName} -- id : ${cmd.id}' value='${cmd.humanName}' cmdId='${cmd.id}' cmdType='${cmd.type}' cmdSubType='${cmd.subType}' minValue='${cmd.minValue}' maxValue='${cmd.maxValue}' unit='${cmd.unit}' ${isDisabled}>`
                                 eqLogicInfo += '<span class="input-group-btn">'
@@ -119,8 +119,8 @@ function refreshAddWidgetBulk() {
                                 eqLogicInfo += `</div></div></div></li>`;
                             } else if (option.category == "cmdList") {
                                 eqLogicInfo += '<div class="jcCmdList">';
-                                eqLogic[1].cmds.filter(c => c.generic_type == option.generic_type).forEach(c => {
-                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.cmdid}' value='${c.humanName}' cmdId='${c.cmdid}' cmdName='${c.name}' cmdType='${c.cmdtype}' cmdSubType='${c.cmdsubType}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
+                                eqLogic[1].modes.filter(c => c.generic_type == option.generic_type).forEach(c => {
+                                    eqLogicInfo += `<div class="input-group"><input class='input-sm form-control roundedLeft cmdListAttr' data-l1key="${option.id}" id='${option.id}-input' title='${c.humanName} -- id : ${c.id}' value='${c.humanName}' cmdId='${c.id}' cmdName='${c.name}' cmdType='${c.type}' cmdSubType='${c.subType}' minValue='${c.minValue}' maxValue='${c.maxValue}' unit='${c.unit}' ${isDisabled} >`
                                     eqLogicInfo += '<span class="input-group-btn">'
                                     eqLogicInfo += '<a class="btn btn-sm btn-default roundedRight listCmdInfo tooltips" title="Rechercher une commande"><i class="fas fa-list-alt"></i></a>'
                                     eqLogicInfo += '</span>'
@@ -133,18 +133,8 @@ function refreshAddWidgetBulk() {
                             tr += '</td>'
                         });
 
-                        var exist = allWidgetsDetail.some(e => {
-                            var allCmdAlreadyUsed = true;
-                            requiredCmds.forEach((rc) => {
-                                if (!(e.hasOwnProperty(rc.optionId) && e[rc.optionId].id == rc.cmdId)) {
-                                    allCmdAlreadyUsed = false;
-                                    return;
-                                }
-                            });
-                            return allCmdAlreadyUsed;
-                        });
 
-                        if (exist) {
+                        if (eqLogic[1].alreadyExist || false) {
                             style = 'background-color: ' + getBackgroundColor() + ' !important';
                             cbChecked = '';
                             checkAll = '';

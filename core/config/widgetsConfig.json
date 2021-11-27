@@ -2062,7 +2062,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "AC_ON"
 				},
 				{
 					"id": "offAction",
@@ -2072,7 +2073,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "AC_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -2080,7 +2082,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du climatiseur (binaire ou numérique)."
+					"description": "Etat du climatiseur (binaire ou numérique).",
+					"generic_type": "AC_STATE"
 				},
 				{
 					"id": "setpointAction",
@@ -2089,7 +2092,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "slider",
-					"value": "setpointInfo"
+					"value": "setpointInfo",
+					"generic_type": "AC_SET_TEMPERATURE"
 				},
 				{
 					"id": "setpointInfo",
@@ -2097,7 +2101,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "AC_TEMPERATURE"
 				},
 				{
 					"id": "tempInfo",
@@ -2105,7 +2110,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "AC_INDOOR_TEMPERATURE"
 				},
 				{
 					"id": "modeInfo",
@@ -2114,7 +2120,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant (la valeur donne le nom de l'action)"
+					"description": "Info qui donne le mode courant (la valeur donne le nom de l'action)",
+					"generic_type": "AC_MODE"
 				},
 				{
 					"id": "modes",
@@ -2127,7 +2134,8 @@
 						"hasIcon": false,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "AC_SET_MODE"
 				},
 				{
 					"id": "fanSpeedInfo",
@@ -2135,7 +2143,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"description": "Info (numérique ou texte) qui donne la vitesse de ventilation"
+					"description": "Info (numérique ou texte) qui donne la vitesse de ventilation",
+					"generic_type": "AC_FAN_MODE"
 				},
 				{
 					"id": "fanSpeedAction",
@@ -2143,7 +2152,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Action de type slider si info numérique ou texte si info select"
+					"description": "Action de type slider si info numérique ou texte si info select",
+					"generic_type": "AC_SET_FAN_MODE"
 				},
 				{
 					"id": "image",
@@ -5143,7 +5153,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Commande chaîne sous la forme latitude,longitude"
+					"description": "Commande chaîne sous la forme latitude,longitude",
+					"generic_type": "GEOLOCATION"
 				},
 				{
 					"id": "image",
