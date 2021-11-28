@@ -423,7 +423,7 @@ $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 						Object.entries(data.result).forEach(eqLogic => {
 							//room
 							$("#room-input > option").each(function () {
-								if ($(this).text().includes(eqLogic[1].room)) {
+								if ($(this).val() == eqLogic[1].room) {
 									$(this).prop('selected', true);
 									return;
 								}
