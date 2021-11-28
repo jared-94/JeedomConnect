@@ -209,8 +209,15 @@ try {
         return;
       }
       $events = event::changes($params['lastReadTimestamp']);
-      $data = apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
-      $jsonrpc->makeSuccess($data);
+      $eventCount = count($events['result']);
+      if ($eventCount == 0) {
+        $data = null;
+      } elseif ($eventCount < 249) {
+        $data = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      } else {
+        $data = \apiHelper::getEventsGlobalRefresh($config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      }
+      if (!is_null($data)) $jsonrpc->makeSuccess($data);
       break;
     case 'REGISTER_DEVICE':
       $rdk = apiHelper::registerUser($eqLogic, $params['userHash'], $params['rdk']);

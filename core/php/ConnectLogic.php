@@ -604,7 +604,17 @@ class ConnectLogic implements MessageComponentInterface {
 			$events = \event::changes($client->lastReadTimestamp);
 			$client->lastReadTimestamp = time();
 			$config = $eqLogic->getGeneratedConfigFile();
-			$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+			$eventCount = count($events['result']);
+			if ($eventCount == 0) {
+				// \log::add('JeedomConnect', 'debug', '--- no change - skipped (' . $eventCount . ')');
+				continue;
+			} elseif ($eventCount < 249) {
+				// \log::add('JeedomConnect', 'debug', '--- using cache (' . $eventCount . ')');
+				$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+			} else {
+				// \log::add('JeedomConnect', 'debug', '*****  too many items, refresh all (' . $eventCount . ')');
+				$eventsRes = \apiHelper::getEventsGlobalRefresh($config, $eqLogic->getConfiguration('scAll', 0) == 1);
+			}
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
