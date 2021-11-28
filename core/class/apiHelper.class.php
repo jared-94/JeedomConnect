@@ -997,6 +997,23 @@ class apiHelper {
 
 
   // EVENTS FUNCTION
+  public static function getEventsGlobalRefresh($config, $scAll = false) {
+    $result = array(
+      array(
+        'type' => 'CMD_INFO',
+        'payload' => apiHelper::getCmdInfoData($config)
+      ),
+      array(
+        'type' => 'SC_INFO',
+        'payload' => apiHelper::getScenarioData($config, $scAll)
+      ), array(
+        'type' => 'OBJ_INFO',
+        'payload' => apiHelper::getObjectData($config)
+      )
+    );
+    return $result;
+  }
+
   public static function getEvents($events, $config, $scAll = false) {
     $result_cmd = array(
       'type' => 'CMD_INFO',
