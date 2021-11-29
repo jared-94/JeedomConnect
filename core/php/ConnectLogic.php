@@ -482,7 +482,7 @@ class ConnectLogic implements MessageComponentInterface {
 					$from->send(json_encode(\apiHelper::getAppConfig($from->apiKey, $msg['payload']['configId'])));
 					break;
 				case 'ADD_GEOFENCE':
-					$this->addGeofence($from, $msg['payload']['geofence']);
+					$this->addGeofence($from, $msg['payload']['geofence'], $msg['payload']['coordinates']);
 					break;
 				case 'REMOVE_GEOFENCE':
 					$this->removeGeofence($from, $msg['payload']['geofence']);
@@ -672,9 +672,9 @@ class ConnectLogic implements MessageComponentInterface {
 		$client->send(json_encode($result));
 	}
 
-	public function addGeofence($client, $geofence) {
+	public function addGeofence($client, $geofence, $coordinates) {
 		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$eqLogic->addGeofenceCmd($geofence);
+		$eqLogic->addGeofenceCmd($geofence, $coordinates);
 	}
 
 	public function removeGeofence($client, $geofence) {

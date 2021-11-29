@@ -445,7 +445,7 @@ try {
       $jsonrpc->makeSuccess();
       break;
     case 'ADD_GEOFENCE':
-      $eqLogic->addGeofenceCmd($params['geofence']);
+      $eqLogic->addGeofenceCmd($params['geofence'], $params['coordinates']);
       $jsonrpc->makeSuccess();
       break;
     case 'REMOVE_GEOFENCE':
