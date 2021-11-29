@@ -290,7 +290,7 @@ class apiHelper {
           break;
 
         case 'ADD_GEOFENCE':
-          self::addGeofence($eqLogic, $param['geofence']);
+          self::addGeofence($eqLogic, $param['geofence'], $param['coordinates']);
           return null;
           break;
 
@@ -756,8 +756,8 @@ class apiHelper {
   }
 
   // GEOFENCE FUNCTIONS
-  public static function addGeofence($eqLogic, $geo) {
-    return $eqLogic->addGeofenceCmd($geo);
+  public static function addGeofence($eqLogic, $geo, $coordinates) {
+    return $eqLogic->addGeofenceCmd($geo, $coordinates);
   }
 
   public static function removeGeofence($eqLogic, $geo) {

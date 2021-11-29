@@ -813,7 +813,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function addGeofenceCmd($geofence) {
+	public function addGeofenceCmd($geofence, $coordinates) {
 		log::add('JeedomConnect', 'debug', "Add or update geofence cmd : " . json_encode($geofence));
 
 		$geofenceCmd = cmd::byEqLogicIdAndLogicalId($this->getId(), 'geofence_' . $geofence['identifier']);
@@ -830,6 +830,8 @@ class JeedomConnect extends eqLogic {
 		$geofenceCmd->setConfiguration('longitude', $geofence['longitude']);
 		$geofenceCmd->setConfiguration('radius', $geofence['radius']);
 		$geofenceCmd->save();
+
+		$this->setCoordinates($coordinates['latitude'], $coordinates['longitude'], $coordinates['altitude'], '', '', time());
 	}
 
 	public function removeGeofenceCmd($geofence) {
@@ -863,7 +865,7 @@ class JeedomConnect extends eqLogic {
 						$cmd->event(1, date('Y-m-d H:i:s', $timestamp));
 					}
 				} else {
-					if ($cmd->execCmd() != 0) {
+					if ($cmd->execCmd() !== 0) {
 						log::add('JeedomConnect', 'debug', "Set 0 for geofence " . $cmd->getName());
 						$cmd->event(0, date('Y-m-d H:i:s', $timestamp));
 					}
