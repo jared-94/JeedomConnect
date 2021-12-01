@@ -5168,13 +5168,15 @@
 					"id": "zoomDistance",
 					"name": "Zoom",
 					"category": "string",
-					"description": "Zoom initial de la carte en mètres (par défaut 4000)"
+					"description": "Zoom initial de la carte en mètres (par défaut 4000)",
+					"customizable": true
 				},
 				{
 					"id": "animateRegion",
 					"name": "Animer la carte",
 					"category": "binary",
-					"description": "Déplace la carte à chaque nouvelle position"
+					"description": "Déplace la carte à chaque nouvelle position",
+					"customizable": true
 				},
 				{
 					"id": "image",
