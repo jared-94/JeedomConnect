@@ -4936,6 +4936,14 @@
 					"generic_type": "MODE_SET_STATE"
 				},
 				{
+					"id": "contentCard",
+					"name": "Contenu dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Actions dans la carte plutôt qu'à droite",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
