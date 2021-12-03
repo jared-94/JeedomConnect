@@ -35,7 +35,7 @@ try {
   $params = $jsonrpc->getParams();
   $method = $jsonrpc->getMethod();
 
-  $skipLog = in_array($method, array('GET_EVENTS'));
+  $skipLog = in_array($method, array('GET_EVENTS', 'GET_LOG'));
 
   if (!$skipLog) log::add('JeedomConnect', 'debug', '[API] HTTP Received ' . $jsonData);
 
