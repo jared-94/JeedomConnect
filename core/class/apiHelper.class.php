@@ -174,7 +174,7 @@ class apiHelper {
           break;
 
         case 'SET_BATTERY':
-          self::saveBatteryEquipment($apiKey, $param['level']);
+          self::saveBatteryEquipment($eqLogic, $param['level']);
           return null;
           break;
 
@@ -313,7 +313,7 @@ class apiHelper {
           break;
 
         case 'ASK_REPLY':
-          self::setAskReply($param);
+          self::setAskReply($eqLogic, $param);
           return null;
           break;
 
@@ -357,11 +357,6 @@ class apiHelper {
 
         case 'CONNECT':
           $result = self::checkConnexion($eqLogic, $param);
-          return $result;
-          break;
-
-        case 'GET_LOG':
-          $result = self::getLog($param['type'], $param['id']);
           return $result;
           break;
 
@@ -490,7 +485,7 @@ class apiHelper {
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
       'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
-      'getLogAllowed' => $userConnected->getProfils() == "admin",
+      'getLogAllowed' => JeedomConnectUtils::isCoreGreaterThan('4.2.5') && $userConnected->getProfils() == "admin",
       'pluginConfig' => self::getPluginConfig($eqLogic, false),
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
@@ -502,7 +497,7 @@ class apiHelper {
     return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
-  private static function setAskReply($param) {
+  private static function setAskReply(JeedomConnect $eqLogic, $param) {
     $answer = $param['answer'];
     $cmd = cmd::byId($param['cmdId']);
     if (!is_object($cmd)) {
@@ -514,7 +509,6 @@ class apiHelper {
 
     // if ASK was sent to other equipment, then we will let them know that an answer was already given
     if (!empty($param['otherAskCmdId']) && !is_null($param['otherAskCmdId'])) {
-      $eqLogic = eqLogic::byLogicalId($param['apiKey'], 'JeedomConnect');
       $eqName = $eqLogic->getName();
 
       foreach ($param['otherAskCmdId'] as $cmdId) {
@@ -1721,27 +1715,13 @@ class apiHelper {
     return $result;
   }
 
-  private static function saveBatteryEquipment($apiKey, $level) {
-    /**
-     * @var JeedomConnect
-     */
-    $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+  private static function saveBatteryEquipment(JeedomConnect $eqLogic, $level) {
+    $eqLogic->checkAndUpdateCmd('battery', $level);
 
-    if (is_object($eqLogic)) {
-
-      $batteryCmd = $eqLogic->getCmd(null, 'battery');
-
-      if (is_object($batteryCmd)) {
-        $batteryCmd->event($level);
-      }
-
-      if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
-        $eqLogic->setStatus("battery", $level);
-        $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
-      }
-    } else {
-      log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | not able to retrieve an equipment for apiKey ' . $apiKey);
+    if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
+      $eqLogic->setStatus("battery", $level);
+      $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+      //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
     }
   }
 
@@ -1966,23 +1946,5 @@ class apiHelper {
     // log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
 
     return $result;
-  }
-
-  // MANAGE LOG FILE
-  public static function getLog($type, $id, $withType = true) {
-    $returnType = 'SET_LOG';
-
-    $logRootDir =   __DIR__ . '/../../../../log/';
-
-    $filePath = $logRootDir . (($type == 'scenario') ? 'scenarioLog/scenario' . $id . '.log' : $id);
-
-    if (!file_exists($filePath)) {
-      log::add('JeedomConnect', 'warning', 'file ' . $filePath . ' does not exist');
-      $fileContent = 'pas de log disponible - fichier introuvable';
-    } else {
-      $fileContent = json_encode(file_get_contents($filePath));
-    }
-
-    return (!$withType) ? $fileContent : self::addTypeInPayload($fileContent, $returnType);
   }
 }
