@@ -360,6 +360,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'GET_LOG':
+          $result = self::getLog($param['type'], $param['id']);
+          return $result;
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
@@ -485,7 +490,7 @@ class apiHelper {
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
       'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
-      'getLogAllowed' => JeedomConnectUtils::isCoreGreaterThan('4.2.5') && $userConnected->getProfils() == "admin",
+      'getLogAllowed' => $userConnected->getProfils() == "admin",
       'pluginConfig' => self::getPluginConfig($eqLogic, false),
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
@@ -1961,5 +1966,23 @@ class apiHelper {
     // log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
 
     return $result;
+  }
+
+  // MANAGE LOG FILE
+  public static function getLog($type, $id, $withType = true) {
+    $returnType = 'SET_LOG';
+
+    $logRootDir =   __DIR__ . '/../../../../log/';
+
+    $filePath = $logRootDir . (($type == 'scenario') ? 'scenarioLog/scenario' . $id . '.log' : $id);
+
+    if (!file_exists($filePath)) {
+      log::add('JeedomConnect', 'warning', 'file ' . $filePath . ' does not exist');
+      $fileContent = 'pas de log disponible - fichier introuvable';
+    } else {
+      $fileContent = json_encode(file_get_contents($filePath));
+    }
+
+    return (!$withType) ? $fileContent : self::addTypeInPayload($fileContent, $returnType);
   }
 }
