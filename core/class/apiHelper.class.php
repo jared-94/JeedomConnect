@@ -71,14 +71,12 @@ class apiHelper {
           break;
 
         case 'GET_CONFIG':
-          // TODO wrong way to send an answer
-          $config = $eqLogic->getGeneratedConfigFile();
+          $config = array('SET_CONFIG' => $eqLogic->getGeneratedConfigFile());
           return $config;
           break;
 
         case 'GET_PWD':
-          // TODO wrong way to send an answer
-          return array('pwd' => $eqLogic->getConfiguration('pwdAction', null));
+          return array('SET_PWD' => $eqLogic->getConfiguration('pwdAction', null));
           break;
 
         case 'GET_BATTERIES':
@@ -140,7 +138,7 @@ class apiHelper {
 
         case 'DO_PLUGIN_UPDATE':
           $result = self::doUpdate($param['pluginId']);
-          return array('result' => $result);
+          return array('SET_PLUGIN_UPDATE' => $result);
           break;
 
         case 'GET_JEEDOM_GLOBAL_HEALTH':
@@ -149,12 +147,12 @@ class apiHelper {
 
         case 'DAEMON_PLUGIN_RESTART':
           $result = self::restartDaemon($param['userId'], $param['pluginId']);
-          return array('result' => $result);
+          return array('SET_DAEMON_PLUGIN_RESTART' => $result);
           break;
 
         case 'DAEMON_PLUGIN_STOP':
           $result = self::stopDaemon($param['userId'], $param['pluginId']);
-          return array('result' => $result);
+          return array('SET_DAEMON_PLUGIN_STOP' => $result);
           break;
 
         case 'UNSUBSCRIBE_SC':
