@@ -119,13 +119,28 @@ class ConnectLogic implements MessageComponentInterface {
 			return;
 		} else {
 			$param = (array) $objectMsg;
-			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param, $param['apiKey']);
 
 			foreach ($this->authenticatedClients as $client) {
 				if ($client->apiKey == $param['apiKey']) {
 					\log::add('JeedomConnect', 'debug', 'Disconnect previous connection client ' . ${$client->resourceId});
 					$client->close();
 				}
+			}
+
+
+			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param, $param['apiKey']);
+
+			if (
+				isset($connexion['type']) &&
+				in_array($connexion['type'], array(
+					'BAD_DEVICE', 'EQUIPMENT_DISABLE',
+					'APP_VERSION_ERROR', 'PLUGIN_VERSION_ERROR',
+					'EMPTY_CONFIG_FILE', 'FORMAT_VERSION_ERROR'
+				))
+			) {
+				$conn->send(json_encode($connexion));
+				$conn->close();
+				return;
 			}
 
 			$config = $eqLogic->getGeneratedConfigFile();
@@ -141,17 +156,6 @@ class ConnectLogic implements MessageComponentInterface {
 			$eqLogic->save();
 
 			$conn->send(json_encode($connexion));
-			if (
-				isset($connexion['type']) &&
-				in_array($connexion['type'], array(
-					'BAD_DEVICE', 'EQUIPMENT_DISABLE',
-					'APP_VERSION_ERROR', 'PLUGIN_VERSION_ERROR',
-					'EMPTY_CONFIG_FILE', 'FORMAT_VERSION_ERROR'
-				))
-			) {
-				$conn->close();
-				return;
-			}
 		}
 	}
 
