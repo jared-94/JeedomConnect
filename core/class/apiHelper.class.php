@@ -71,12 +71,12 @@ class apiHelper {
           break;
 
         case 'GET_CONFIG':
-          $config = array('SET_CONFIG' => $eqLogic->getGeneratedConfigFile());
+          $config = self::addTypeInPayload($eqLogic->getGeneratedConfigFile(), 'SET_CONFIG');
           return $config;
           break;
 
         case 'GET_PWD':
-          return array('SET_PWD' => $eqLogic->getConfiguration('pwdAction', null));
+          return self::addTypeInPayload($eqLogic->getConfiguration('pwdAction', null), 'SET_PWD');
           break;
 
         case 'GET_BATTERIES':
@@ -138,7 +138,7 @@ class apiHelper {
 
         case 'DO_PLUGIN_UPDATE':
           $result = self::doUpdate($param['pluginId']);
-          return array('SET_PLUGIN_UPDATE' => $result);
+          return self::addTypeInPayload($result, 'SET_PLUGIN_UPDATE');
           break;
 
         case 'GET_JEEDOM_GLOBAL_HEALTH':
@@ -147,12 +147,12 @@ class apiHelper {
 
         case 'DAEMON_PLUGIN_RESTART':
           $result = self::restartDaemon($param['userId'], $param['pluginId']);
-          return array('SET_DAEMON_PLUGIN_RESTART' => $result);
+          return self::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_RESTART');
           break;
 
         case 'DAEMON_PLUGIN_STOP':
           $result = self::stopDaemon($param['userId'], $param['pluginId']);
-          return array('SET_DAEMON_PLUGIN_STOP' => $result);
+          return self::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_STOP');
           break;
 
         case 'UNSUBSCRIBE_SC':
