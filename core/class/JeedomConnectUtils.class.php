@@ -4,6 +4,16 @@
 
 class JeedomConnectUtils {
 
+    public static function isCoreGreaterThan($version = '0.0.0') {
+        $update = update::byTypeAndLogicalId('core', 'jeedom');
+        if (is_object($update)) {
+            $currentVersion =  $update->getLocalVersion();
+            return version_compare($currentVersion, $version, ">");
+        }
+
+        return  false;
+    }
+
     public static function getPluginDetails($pluginObj) {
 
         $update = update::byLogicalId($pluginObj->getId());
