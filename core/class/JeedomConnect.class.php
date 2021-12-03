@@ -1833,6 +1833,7 @@ class JeedomConnect extends eqLogic {
 		$nbNeedUpdate = update::nbNeedUpdate();
 
 		$updateArr = array();
+		$pluginUpdateId = array();
 		if ($nbNeedUpdate != 0) {
 
 			foreach (update::all() as $update) {
@@ -1840,28 +1841,24 @@ class JeedomConnect extends eqLogic {
 				if (strtolower($update->getStatus()) != 'update') continue;
 
 				$item = array();
-				$item['pluginId'] =  $update->getLogicalId();
 				try {
 
 					if ($update->getType() == 'core') {
+						$item['pluginId'] =  $update->getLogicalId();
 						$item['message'] = 'La mise à jour du core n\'est possible depuis l\'application';
 						$item['doNotUpdate'] = true;
 						$item['name'] =  'Jeedom Core';
 
 						$version = substr(jeedom::version(), 0, 3);
 						$item['changelogLink'] =  'https://doc.jeedom.com/' . config::byKey('language', 'core', 'fr_FR') . '/core/' . $version . '/changelog';
+						$item['currentVersion'] =  $update->getLocalVersion();
+						$item['updateVersion'] = $update->getRemoteVersion();
 					} else {
-						$plugin = plugin::byId($update->getLogicalId());
-						$item['name'] = $plugin->getName();
-						$item['img'] = $plugin->getPathImgIcon();
-						$item['changelogLink'] =  $plugin->getChangelog();
-						$item['docLink'] =  $plugin->getDocumentation();
-						$item['doNotUpdate'] = $update->getConfiguration('doNotUpdate') == 1;
-						$item['pluginType'] = $update->getConfiguration('version');
-					}
 
-					$item['currentVersion'] =  $update->getLocalVersion();
-					$item['updateVersion'] = $update->getRemoteVersion();
+						$plugin = plugin::byId($update->getLogicalId());
+						$item = JeedomConnectUtils::getPluginDetails($plugin);
+						array_push($pluginUpdateId, $item['pluginId']);
+					}
 				} catch (Exception $e) {
 					log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage());
 					$item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
@@ -1870,7 +1867,13 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		$result = array('nbUpdate' => $nbNeedUpdate, 'pluginsToUpdate' => $updateArr);
+		$otherPlugins = array();
+		foreach (plugin::listPlugin() as $plugin) {
+			if (in_array($plugin->getId(), $pluginUpdateId)) continue;
+			array_push($otherPlugins, JeedomConnectUtils::getPluginDetails($plugin));
+		}
+
+		$result = array('nbUpdate' => $nbNeedUpdate, 'pluginsToUpdate' => $updateArr, 'otherPlugins' => $otherPlugins);
 		return $result;
 	}
 }

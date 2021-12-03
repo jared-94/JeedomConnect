@@ -4,6 +4,23 @@
 
 class JeedomConnectUtils {
 
+    public static function getPluginDetails($pluginObj) {
+
+        $update = update::byLogicalId($pluginObj->getId());
+        $item = array();
+        $item['pluginId'] =  $update->getLogicalId();
+        $item['name'] = $pluginObj->getName();
+        $item['img'] = $pluginObj->getPathImgIcon();
+        $item['changelogLink'] =  $pluginObj->getChangelog();
+        $item['docLink'] =  $pluginObj->getDocumentation();
+        $item['doNotUpdate'] = $update->getConfiguration('doNotUpdate') == 1;
+        $item['pluginType'] = $update->getConfiguration('version');
+        $item['currentVersion'] =  $update->getLocalVersion();
+        $item['updateVersion'] = $update->getRemoteVersion();
+        $item['isActive'] = $pluginObj->isActive() == "1";
+
+        return $item;
+    }
 
     public static function getCmdForGenericType($genericTypes, $eqLogicId = null) {
         $cmds = cmd::byGenericType($genericTypes, $eqLogicId);
