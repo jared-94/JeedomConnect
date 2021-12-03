@@ -489,6 +489,7 @@ class apiHelper {
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
       'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
+      'getLogAllowed' => JeedomConnectUtils::isCoreGreaterThan('4.2.5') && $userConnected->getProfils() == "admin",
       'pluginConfig' => self::getPluginConfig($eqLogic, false),
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),

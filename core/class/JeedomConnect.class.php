@@ -1873,7 +1873,11 @@ class JeedomConnect extends eqLogic {
 			array_push($otherPlugins, JeedomConnectUtils::getPluginDetails($plugin));
 		}
 
-		$result = array('nbUpdate' => $nbNeedUpdate, 'pluginsToUpdate' => $updateArr, 'otherPlugins' => $otherPlugins);
+		$result = array(
+			'nbUpdate' => $nbNeedUpdate,
+			'pluginsToUpdate' => $updateArr,
+			'otherPlugins' => $otherPlugins
+		);
 		return $result;
 	}
 }
