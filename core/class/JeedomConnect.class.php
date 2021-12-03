@@ -899,7 +899,7 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('configVersion') == '') {
 			$this->setConfiguration('configVersion', 0);
 		}
-		$this->save();
+		$this->save(true);
 
 		$this->saveConfig(self::$_initialConfig);
 		$this->saveNotifs(self::$_notifConfig);
@@ -922,7 +922,7 @@ class JeedomConnect extends eqLogic {
 			//update configVersion in the equipment configuration
 			$this->setConfiguration('configVersion', $configVersion);
 			$this->setConfiguration('pwdChanged',  'false');
-			$this->save();
+			$this->save(true);
 
 			$this->getConfig(true, true);
 		}
@@ -937,15 +937,15 @@ class JeedomConnect extends eqLogic {
 
 		if ($this->getConfiguration('scenariosEnabled') == '') {
 			$this->setConfiguration('scenariosEnabled', '1');
-			$this->save();
+			$this->save(true);
 		}
 		if ($this->getConfiguration('webviewEnabled') == '') {
 			$this->setConfiguration('webviewEnabled', '1');
-			$this->save();
+			$this->save(true);
 		}
 		if ($this->getConfiguration('editEnabled') == '') {
 			$this->setConfiguration('editEnabled', '1');
-			$this->save();
+			$this->save(true);
 		}
 	}
 
