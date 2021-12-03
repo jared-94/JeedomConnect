@@ -321,7 +321,22 @@ class apiHelper {
           $eqLogic->setConfiguration('lastSeen', time());
           $eqLogic->save();
 
+          $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
+          if ($newConfig != false) {
+            log::add('JeedomConnect', 'debug', "pollingServer send new config : " . json_encode($newConfig));
+            return array($newConfig);
+          }
 
+          $actions = self::getJCActions($apiKey);
+          if (count($actions['payload']) > 0) {
+            return array($actions);
+          }
+
+          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp']);
+          return $result;
+
+          // TODO : target solution 
+          /*
           $newConfig = array(
             'type' => 'SET_CONFIG',
             'payload' => apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']) ?: array()
@@ -336,6 +351,7 @@ class apiHelper {
           $result = self::addTypeInPayload($payload, 'SET_EVENTS');
 
           return $result;
+          */
           break;
 
 
