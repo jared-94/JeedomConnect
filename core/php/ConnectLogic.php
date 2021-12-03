@@ -128,7 +128,7 @@ class ConnectLogic implements MessageComponentInterface {
 			}
 
 
-			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param, $param['apiKey']);
+			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param ?? array(), $param['apiKey']);
 
 			if (
 				isset($connexion['type']) &&
@@ -202,7 +202,7 @@ class ConnectLogic implements MessageComponentInterface {
 		try {
 			$eqLogic = isset($from->apiKey) ?  \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect') : null;
 
-			$result = \apiHelper::dispatch('WS', $msg['type'], $eqLogic, $msg['payload']  ?? null, $from->apiKey ?? null);
+			$result = \apiHelper::dispatch('WS', $msg['type'], $eqLogic, $msg['payload']  ?? array(), $from->apiKey ?? null);
 
 			if (!is_null($result)) {
 				// if (in_array($msg['type'], array())) {

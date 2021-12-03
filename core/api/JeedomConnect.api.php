@@ -47,7 +47,7 @@ try {
     throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
   }
 
-  $result = apiHelper::dispatch('API', $method, $eqLogic, $params, $apiKey);
+  $result = apiHelper::dispatch('API', $method, $eqLogic, $params ?? array(), $apiKey);
   if (!$skipLog) log::add('JeedomConnect', 'debug', '[API] Send ' . $method . ' -> ' . json_encode($result));
 
   if (is_null($result)) {
