@@ -119,6 +119,7 @@ try {
       foreach ($data as $res) {
         if (count($res['payload']) > 0) {
           $sendInfo = true;
+          break;
         }
       }
 

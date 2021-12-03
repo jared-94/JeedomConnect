@@ -357,11 +357,11 @@ class apiHelper {
           break;
 
         default:
-          return self::raiseException($method . ' called by ' . $type . ' - method not recognized');
+          return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
       }
     } catch (Exception $e) {
-      return self::raiseException('on ' . $method . ' for ' . $type . '- ' . $e->getMessage());
+      return self::raiseException($method . ' [' . $type . '] - ' . $e->getMessage());
     }
   }
 
@@ -433,16 +433,6 @@ class apiHelper {
       return array('type' => 'PLUGIN_VERSION_ERROR');
     }
 
-    // TODO --- to check it's late
-    //close previous connection from the same client
-    // foreach ($param['CurrentConnectLogic']->authenticatedClients as $client) {
-    //   if ($client->apiKey == $param['apiKey']) {
-    //     log::add('JeedomConnect', 'debug', 'Disconnect previous connection client ' . ${$client->resourceId});
-    //     $client->close();
-    //   }
-    // }
-    // end TODO
-
     $user = user::byId($eqLogic->getConfiguration('userId'));
     if ($user == null) {
       $user = user::all()[0];
@@ -467,19 +457,9 @@ class apiHelper {
       return array('type' => 'FORMAT_VERSION_ERROR');
     }
 
-    // TODO --- to check it's late
-    // $param['ConnectionInterface']->apiKey = $param['apiKey'];
-    // $param['ConnectionInterface']->sessionId = rand(0, 1000);
-    // $param['ConnectionInterface']->configVersion = $config['payload']['configVersion'];
-    // $param['ConnectionInterface']->lastReadTimestamp = time();
-    // $param['CurrentConnectLogic']->authenticatedClients->attach($param['ConnectionInterface']);
-    // $param['CurrentConnectLogic']->hasAuthenticatedClients = true;
-    // end TODO
-
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
     $eqLogic->setConfiguration('polling', $param['polling'] ?? '0');
-    // $eqLogic->setConfiguration('sessionId', $param['ConnectionInterface']->sessionId);  // TODO --- check it's late
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');

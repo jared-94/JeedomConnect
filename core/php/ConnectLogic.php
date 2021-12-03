@@ -118,11 +118,7 @@ class ConnectLogic implements MessageComponentInterface {
 			$conn->close();
 			return;
 		} else {
-			// TODO -- to check it's late ...
 			$param = (array) $objectMsg;
-			// $param['ConnectionInterface'] = $conn;
-			// $param['CurrentConnectLogic'] = $this;
-			// end TODO
 			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param, $param['apiKey']);
 
 			foreach ($this->authenticatedClients as $client) {
