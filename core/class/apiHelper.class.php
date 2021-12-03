@@ -1965,9 +1965,9 @@ class apiHelper {
       log::add('JeedomConnect', 'warning', 'file ' . $filePath . ' does not exist');
       $fileContent = 'pas de log disponible - fichier introuvable';
     } else {
-      $fileContent = json_encode(file_get_contents($filePath));
+      $fileContent = file_get_contents($filePath);
     }
 
-    return (!$withType) ? $fileContent : self::addTypeInPayload($fileContent, $returnType);
+    return (!$withType) ? $fileContent : self::addTypeInPayload(json_encode($fileContent), $returnType);
   }
 }
