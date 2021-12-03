@@ -319,34 +319,24 @@ class apiHelper {
           return null;
           break;
 
-        case 'GET_EVENTS_OLD':
-          $eqLogic->setConfiguration('lastSeen', time());
-          $eqLogic->save();
-          $config = $eqLogic->getGeneratedConfigFile();
-          $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
-          if ($newConfig != false) {
-            log::add('JeedomConnect', 'debug', "pollingServer send new config : " . json_encode($newConfig));
-            return array($newConfig);
-          }
-
-          $actions = JeedomConnectActions::getAllActions($apiKey);
-          if (count($actions) > 0) {
-            $result = array(
-              'type' => 'ACTIONS',
-              'payload' => array()
-            );
-            foreach ($actions as $action) {
-              array_push($result['payload'], $action['value']['payload']);
-            }
-            log::add('JeedomConnect', 'debug', "send action " . json_encode(array($result)));
-            JeedomConnectActions::removeActions($actions);
-            return array($result);
-          }
-
         case 'GET_EVENTS':
-          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp']);
           $eqLogic->setConfiguration('lastSeen', time());
           $eqLogic->save();
+
+
+          $newConfig = array(
+            'type' => 'SET_CONFIG',
+            'payload' => apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']) ?: array()
+          );
+
+
+          $actions = self::getJCActions($apiKey);
+
+          $allEvents = self::addTypeInPayload(self::getEventsFull($eqLogic, $param['lastReadTimestamp']), 'ALL_EVENTS');
+
+          $payload = array($newConfig, $actions, $allEvents);
+          $result = self::addTypeInPayload($payload, 'SET_EVENTS');
+
           return $result;
           break;
 
@@ -1854,6 +1844,24 @@ class apiHelper {
     }
   }
 
+  public static function getJCActions($apiKey, $withType = true) {
+    $returnType = 'ACTIONS';
+
+    $actions = JeedomConnectActions::getAllActions($apiKey);
+    $payload = array();
+    if (count($actions) > 0) {
+      foreach ($actions as $action) {
+        array_push($payload, $action['value']['payload']);
+      }
+      JeedomConnectActions::removeActions($actions);
+    }
+
+    log::add('JeedomConnect', 'debug', "send action " . json_encode($payload));
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+  // MANAGE SC          
   public static function execSc($id, $options = null) {
     if ($options == null) {
       $options = array(
