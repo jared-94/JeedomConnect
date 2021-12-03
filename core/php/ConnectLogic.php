@@ -271,7 +271,6 @@ class ConnectLogic implements MessageComponentInterface {
 			}
 			$newConfig = \apiHelper::lookForNewConfig($eqLogic, $client->configVersion);
 			if ($newConfig != false) {
-				$config = $newConfig;
 				\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} with api key " . $client->apiKey);
 				$client->configVersion = $newConfig['payload']['configVersion'];
 				$client->send(json_encode(\apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())));
