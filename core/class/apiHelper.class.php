@@ -20,7 +20,7 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 
 class apiHelper {
 
-  public static function dispatch($type, $method, JeedomConnect $eqLogic, $param, $apiKey) {
+  public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
 
     try {
       switch ($method) {
@@ -384,7 +384,7 @@ class apiHelper {
     return $result;
   }
 
-  private static function getAllInformations(JeedomConnect $eqLogic, $withType = true) {
+  private static function getAllInformations($eqLogic, $withType = true) {
     $returnType = 'SET_INFO';
 
     if (!is_object($eqLogic)) {
@@ -402,7 +402,7 @@ class apiHelper {
   }
 
   // CONNEXION FUNCTIONS
-  private static function checkConnexion(JeedomConnect $eqLogic, $param, $withType = true) {
+  private static function checkConnexion($eqLogic, $param, $withType = true) {
 
     $versionJson = JeedomConnect::getPluginInfo();
 
@@ -474,7 +474,7 @@ class apiHelper {
   }
 
 
-  private static function getWelcomeMsg(JeedomConnect $eqLogic, $userConnected, $pluginVersion, $withType = true) {
+  private static function getWelcomeMsg($eqLogic, $userConnected, $pluginVersion, $withType = true) {
     $returnType = 'WELCOME';
 
     $config = $eqLogic->getGeneratedConfigFile();
@@ -502,7 +502,7 @@ class apiHelper {
     return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
-  private static function setAskReply(JeedomConnect $eqLogic, $param) {
+  private static function setAskReply($eqLogic, $param) {
     $answer = $param['answer'];
     $cmd = cmd::byId($param['cmdId']);
     if (!is_object($cmd)) {
@@ -800,7 +800,7 @@ class apiHelper {
   }
 
   //PLUGIN CONF FUNCTIONS
-  private static function getPluginConfig(JeedomConnect $eqLogic, $withType = true) {
+  private static function getPluginConfig($eqLogic, $withType = true) {
     $returnType = 'PLUGIN_CONFIG';
 
     $plugin = update::byLogicalId('JeedomConnect');
@@ -818,7 +818,7 @@ class apiHelper {
   }
 
   // REGISTER FUNCTION
-  private static function registerUser(JeedomConnect $eqLogic, $userHash, $rdk, $user = null, $withType = true) {
+  private static function registerUser($eqLogic, $userHash, $rdk, $user = null, $withType = true) {
     $returnType = 'REGISTERED';
 
     if ($user == null) {
@@ -856,7 +856,7 @@ class apiHelper {
   }
 
   // Config Watcher
-  public static function lookForNewConfig(JeedomConnect $eqLogic, $prevConfig) {
+  public static function lookForNewConfig($eqLogic, $prevConfig) {
     $configVersion = $eqLogic->getConfiguration('configVersion');
     //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
     if ($configVersion != $prevConfig) {
@@ -954,7 +954,7 @@ class apiHelper {
     JeedomConnectWidget::updateWidgetConfig($widget);
   }
 
-  private static function addWidgets(JeedomConnect $eqLogic, $widgets, $parentId, $index) {
+  private static function addWidgets($eqLogic, $widgets, $parentId, $index) {
     $curConfig = $eqLogic->getConfig();
 
     foreach ($curConfig['payload']['widgets'] as $i => $widget) {
@@ -987,7 +987,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function removeWidget(JeedomConnect $eqLogic, $widgetId) {
+  private static function removeWidget($eqLogic, $widgetId) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
     if ($toRemove !== false) {
@@ -1013,7 +1013,7 @@ class apiHelper {
     }
   }
 
-  private static function moveWidget(JeedomConnect $eqLogic, $widgetId, $destinationId, $destinationIndex) {
+  private static function moveWidget($eqLogic, $widgetId, $destinationId, $destinationIndex) {
     $curConfig = $eqLogic->getConfig();
     $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
     if ($widgetIndex === false) {
@@ -1089,7 +1089,7 @@ class apiHelper {
     }
   }
 
-  private static function setCustomWidgetList(JeedomConnect $eqLogic, $customWidgetList) {
+  private static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
       log::add('JeedomConnect', 'debug', 'save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
@@ -1098,7 +1098,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function setGroup(JeedomConnect $eqLogic, $group) {
+  private static function setGroup($eqLogic, $group) {
     $curConfig = $eqLogic->getConfig();
     $toEdit = array_search($group['id'], array_column($curConfig['payload']['groups'], 'id'));
     if ($toEdit !== false) {
@@ -1108,7 +1108,7 @@ class apiHelper {
     }
   }
 
-  private static function removeGroup(JeedomConnect $eqLogic, $id) {
+  private static function removeGroup($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['groups'], 'id'));
     if ($toRemove !== false) {
@@ -1137,7 +1137,7 @@ class apiHelper {
     }
   }
 
-  private static function addGroup(JeedomConnect $eqLogic, $curGroup) {
+  private static function addGroup($eqLogic, $curGroup) {
     $curConfig = $eqLogic->getConfig();
     $parentId = $curGroup['parentId'];
     $index = $curGroup['index'];
@@ -1163,7 +1163,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function moveGroup(JeedomConnect $eqLogic, $groupId, $destinationId, $destinationIndex) {
+  private static function moveGroup($eqLogic, $groupId, $destinationId, $destinationIndex) {
     $curConfig = $eqLogic->getConfig();
     $groupIndex = array_search($groupId, array_column($curConfig['payload']['groups'], 'id'));
     if ($groupIndex === false) {
@@ -1267,7 +1267,7 @@ class apiHelper {
     return $result;
   }
 
-  private static function setBottomTabList(JeedomConnect $eqLogic, $tabs, $migrate = false, $idCounter) {
+  private static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['idCounter'] = $idCounter;
 
@@ -1335,7 +1335,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function removeBottomTab(JeedomConnect $eqLogic, $id) {
+  private static function removeBottomTab($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['tabs'], 'id'));
     if ($toRemove !== false) {
@@ -1381,7 +1381,7 @@ class apiHelper {
     }
   }
 
-  private static function setTopTabList(JeedomConnect $eqLogic, $tabs, $migrate = false, $idCounter) {
+  private static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
     if (count($tabs) == 0) {
       return;
     }
@@ -1442,7 +1442,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function removeTopTab(JeedomConnect $eqLogic, $id) {
+  private static function removeTopTab($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['sections'], 'id'));
     if ($toRemove !== false) {
@@ -1480,7 +1480,7 @@ class apiHelper {
     }
   }
 
-  private static function moveTopTab(JeedomConnect $eqLogic, $sectionId, $destinationId) {
+  private static function moveTopTab($eqLogic, $sectionId, $destinationId) {
     $curConfig = $eqLogic->getConfig();
     $sectionIndex = array_search($sectionId, array_column($curConfig['payload']['sections'], 'id'));
     if ($sectionIndex === false) {
@@ -1525,7 +1525,7 @@ class apiHelper {
   }
 
   // Receive root data (already ordered) (widgets, groups) for a page view (index < 0 ==> remove)
-  private static function setPageData(JeedomConnect $eqLogic, $rootData, $idCounter) {
+  private static function setPageData($eqLogic, $rootData, $idCounter) {
     if (count($rootData) == 0) {
       return;
     }
@@ -1560,7 +1560,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function setRooms(JeedomConnect $eqLogic, $rooms) {
+  private static function setRooms($eqLogic, $rooms) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['rooms'] = $rooms;
 
@@ -1568,7 +1568,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function setSummaries(JeedomConnect $eqLogic, $summaries) {
+  private static function setSummaries($eqLogic, $summaries) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['summaries'] = $summaries;
 
@@ -1576,7 +1576,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  private static function setBackgrounds(JeedomConnect $eqLogic, $backgrounds) {
+  private static function setBackgrounds($eqLogic, $backgrounds) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['background'] = $backgrounds;
 
@@ -1595,7 +1595,7 @@ class apiHelper {
 
 
   // EVENTS FUNCTION
-  public static function getEventsFull(JeedomConnect $eqLogic, $lastReadTimestamp) {
+  public static function getEventsFull($eqLogic, $lastReadTimestamp) {
 
     $config = $eqLogic->getGeneratedConfigFile();
 
@@ -1769,7 +1769,7 @@ class apiHelper {
     return $result;
   }
 
-  private static function saveBatteryEquipment(JeedomConnect $eqLogic, $level) {
+  private static function saveBatteryEquipment($eqLogic, $level) {
     $eqLogic->checkAndUpdateCmd('battery', $level);
 
     if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
