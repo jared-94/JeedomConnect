@@ -35,7 +35,7 @@ try {
   $params = $jsonrpc->getParams();
   $method = $jsonrpc->getMethod();
 
-  $skipLog = in_array($method, array('GET_EVENTS', 'GET_LOG'));
+  $skipLog = in_array($method, apiHelper::$_skipLog);
 
   if (!$skipLog) log::add('JeedomConnect', 'debug', '[API] HTTP Received ' . $jsonData);
 
@@ -56,7 +56,7 @@ try {
   return $jsonrpc->makeSuccess($result);
 } catch (Exception $e) {
 
-  if ($skipLog) log::add('JeedomConnect', 'debug', 'HTTP API Received ' . $jsonData);
+  if ($skipLog) log::add('JeedomConnect', 'debug', '[API] HTTP Received ' . $jsonData);
 
   $result = apiHelper::raiseException($method, '- ' . $e->getMessage());
   // log::add('JeedomConnect', 'error', '[API] Send ' . $method . ' -> ' . json_encode($result));

@@ -129,7 +129,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 
 			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param ?? array(), $param['apiKey']);
-
+			\log::add('JeedomConnect', 'debug', '[WS] Send CONNECT -> ' . json_encode($connexion));
 			if (
 				isset($connexion['type']) &&
 				in_array($connexion['type'], array(
@@ -205,10 +205,10 @@ class ConnectLogic implements MessageComponentInterface {
 			$result = \apiHelper::dispatch('WS', $msg['type'], $eqLogic, $msg['payload']  ?? array(), $from->apiKey ?? null);
 
 			if (!is_null($result)) {
-				// if (in_array($msg['type'], array())) {
 				if (isset($msg['messageId'])) $result['messageId'] = $msg['messageId'];
-				// }
-				\log::add('JeedomConnect', 'debug', '[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+
+				if (!in_array($msg['type'], \apiHelper::$_skipLog)) \log::add('JeedomConnect', 'debug', '[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+
 				return $from->send(json_encode($result));
 			}
 		} catch (\Exception $e) {

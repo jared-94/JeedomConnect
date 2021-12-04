@@ -19,6 +19,7 @@
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 
 class apiHelper {
+  public static $_skipLog = array('GET_EVENTS', 'GET_LOG');
 
   public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
 
