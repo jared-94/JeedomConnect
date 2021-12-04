@@ -142,7 +142,7 @@ class apiHelper {
           break;
 
         case 'GET_JEEDOM_GLOBAL_HEALTH':
-          return self::getJeedomHealthDetails($apiKey);
+          return self::getJeedomHealthDetails();
           break;
 
         case 'DAEMON_PLUGIN_RESTART':
@@ -1914,7 +1914,7 @@ class apiHelper {
     return false;
   }
 
-  private static function getJeedomHealthDetails($apiKey) {
+  private static function getJeedomHealthDetails() {
     $allPluginsData = array();
     $jeedomData = array();
 
