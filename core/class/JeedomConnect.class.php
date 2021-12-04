@@ -1827,59 +1827,6 @@ class JeedomConnect extends eqLogic {
 		$result = array('plugins' => $allPluginsData, 'jeedom' => $jeedomData, 'nbUpdate' => $nb);
 		return $result;
 	}
-
-	public static function getPluginsUpdate() {
-		update::checkAllUpdate();
-		$nbNeedUpdate = update::nbNeedUpdate();
-
-		$updateArr = array();
-		$pluginUpdateId = array();
-		if ($nbNeedUpdate != 0) {
-
-			foreach (update::all() as $update) {
-
-				if (strtolower($update->getStatus()) != 'update') continue;
-
-				$item = array();
-				try {
-
-					if ($update->getType() == 'core') {
-						$item['pluginId'] =  $update->getLogicalId();
-						$item['message'] = 'La mise à jour du core n\'est possible depuis l\'application';
-						$item['doNotUpdate'] = true;
-						$item['name'] =  'Jeedom Core';
-
-						$version = substr(jeedom::version(), 0, 3);
-						$item['changelogLink'] =  'https://doc.jeedom.com/' . config::byKey('language', 'core', 'fr_FR') . '/core/' . $version . '/changelog';
-						$item['currentVersion'] =  $update->getLocalVersion();
-						$item['updateVersion'] = $update->getRemoteVersion();
-					} else {
-
-						$plugin = plugin::byId($update->getLogicalId());
-						$item = JeedomConnectUtils::getPluginDetails($plugin);
-						array_push($pluginUpdateId, $item['pluginId']);
-					}
-				} catch (Exception $e) {
-					log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage());
-					$item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
-				}
-				array_push($updateArr, $item);
-			}
-		}
-
-		$otherPlugins = array();
-		foreach (plugin::listPlugin() as $plugin) {
-			if (in_array($plugin->getId(), $pluginUpdateId)) continue;
-			array_push($otherPlugins, JeedomConnectUtils::getPluginDetails($plugin));
-		}
-
-		$result = array(
-			'nbUpdate' => $nbNeedUpdate,
-			'pluginsToUpdate' => $updateArr,
-			'otherPlugins' => $otherPlugins
-		);
-		return $result;
-	}
 }
 
 class JeedomConnectCmd extends cmd {
