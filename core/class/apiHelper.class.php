@@ -1954,7 +1954,7 @@ class apiHelper {
   }
 
   // MANAGE LOG FILE
-  public static function getLog($type, $id, $withType = true) {
+  private static function getLog($type, $id, $withType = true) {
     $returnType = 'SET_LOG';
 
     $logRootDir =   __DIR__ . '/../../../../log/';
