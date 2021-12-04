@@ -1713,10 +1713,59 @@ class apiHelper {
 
   // BATTERIES
   private static function getBatteries() {
+    $list = array();
+    foreach (eqLogic::all() as $eqLogic) {
+      if ($eqLogic->getIsEnable() && $eqLogic->getStatus('battery', -2) != -2) {
+        array_push($list, self::getBatteryDetails($eqLogic));
+      }
+    }
+
     $result = array(
       'type' => 'SET_BATTERIES',
-      'payload' => JeedomConnect::getBatteryAllEquipements()
+      'payload' => $list
     );
+    return $result;
+  }
+
+  private static function getBatteryDetails(eqLogic $eqLogic) {
+    // $eqLogic = eqLogic::byId($eqLogicId);
+    $result = array();
+    $level = 'good';
+    $batteryType = $eqLogic->getConfiguration('battery_type', '');
+    $batteryTime = $eqLogic->getConfiguration('batterytime', 'NA');
+    $batterySince = '';
+    if ($batteryTime != 'NA') {
+      $batterySince = round((strtotime(date("Y-m-d")) - strtotime(date("Y-m-d", strtotime($batteryTime)))) / 86400, 1);
+    }
+
+    $plugin = ucfirst($eqLogic->getEqType_name());
+
+    $object_name = 'Aucun';
+    $object_id = null;
+    if (is_object($eqLogic->getObject())) {
+      $object_name = $eqLogic->getObject()->getName();
+      $object_id = $eqLogic->getObject()->getId();
+    }
+
+    if ($eqLogic->getStatus('battery') <= $eqLogic->getConfiguration('battery_danger_threshold', config::byKey('battery::danger'))) {
+      $level = 'critical';
+    } else if ($eqLogic->getStatus('battery') <= $eqLogic->getConfiguration('battery_warning_threshold', config::byKey('battery::warning'))) {
+      $level = 'warning';
+    }
+
+    $result['eqName'] = $eqLogic->getName();
+    $result['roomName'] = $object_name;
+    $result['roomId'] = $object_id;
+    $result['plugin'] = $plugin;
+
+    $result['level'] = $level;
+
+    $result['battery'] = $eqLogic->getStatus('battery', -2);
+    $result['batteryType'] = $batteryType;
+    $result['lastUpdate'] =  date("d/m/Y H:i:s", strtotime($eqLogic->getStatus('batteryDatetime', 'inconnue')));
+
+    $result['lastReplace'] = ($batteryTime != 'NA') ? $batterySince : '';
+
     return $result;
   }
 
