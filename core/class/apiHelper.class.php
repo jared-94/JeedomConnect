@@ -20,7 +20,7 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 
 class apiHelper {
 
-  public static function dispatch(string $type, string $method, JeedomConnect $eqLogic, array $param, string $apiKey) {
+  public static function dispatch($type, $method, JeedomConnect $eqLogic, $param, $apiKey) {
 
     try {
       switch ($method) {
