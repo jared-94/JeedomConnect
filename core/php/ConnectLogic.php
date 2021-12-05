@@ -118,114 +118,44 @@ class ConnectLogic implements MessageComponentInterface {
 			$conn->close();
 			return;
 		} else {
-			$config = $eqLogic->getGeneratedConfigFile();
-			if ($eqLogic->getConfiguration('deviceId') == '') {
-				\log::add('JeedomConnect', 'info', "Register new device {$objectMsg->deviceName}");
-				$eqLogic->registerDevice($objectMsg->deviceId, $objectMsg->deviceName);
-			}
-			$eqLogic->registerToken($objectMsg->token);
+			$param = (array) $objectMsg;
 
-			//check registered device
-			if ($eqLogic->getConfiguration('deviceId') != $objectMsg->deviceId) {
-				\log::add('JeedomConnect', 'warning', "Authentication failed (invalid device) for client #{$conn->resourceId} from IP: {$conn->ip}");
-				$result = array('type' => 'BAD_DEVICE');
-				$conn->send(json_encode($result));
-				$conn->close();
-				return;
-			}
-
-			//check version requierement
-			if (version_compare($objectMsg->appVersion, $this->appRequire, "<")) {
-				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad version requierement");
-				$result = array(
-					'type' => 'APP_VERSION_ERROR',
-					'payload' => \JeedomConnect::getPluginInfo()
-				);
-				$conn->send(json_encode($result));
-				$conn->close();
-				return;
-			}
-			if (version_compare($this->pluginVersion, $objectMsg->pluginRequire, "<")) {
-				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad plugin requierement");
-				$result = array('type' => 'PLUGIN_VERSION_ERROR');
-				$conn->send(json_encode($result));
-				$conn->close();
-				return;
-			}
-
-			//close previous connection from the same client
 			foreach ($this->authenticatedClients as $client) {
-				if ($client->apiKey == $objectMsg->apiKey) {
+				if ($client->apiKey == $param['apiKey']) {
 					\log::add('JeedomConnect', 'debug', 'Disconnect previous connection client ' . ${$client->resourceId});
 					$client->close();
 				}
 			}
 
-			$user = \user::byId($eqLogic->getConfiguration('userId'));
-			if ($user == null) {
-				$user = \user::all()[0];
-				$eqLogic->setConfiguration('userId', $user->getId());
-				$eqLogic->save();
-			}
 
-			$userConnected = \user::byHash($objectMsg->userHash);
-			if (!is_object($userConnected)) $userConnected = $user;
-
-			//check config content
-			if (is_null($config)) {
-				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : empty config file");
-				$result = array('type' => 'EMPTY_CONFIG_FILE');
-				$conn->send(json_encode($result));
+			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param ?? array(), $param['apiKey']);
+			\log::add('JeedomConnect', 'debug', '[WS] Send CONNECT -> ' . json_encode($connexion));
+			if (
+				isset($connexion['type']) &&
+				in_array($connexion['type'], array(
+					'BAD_DEVICE', 'EQUIPMENT_DISABLE',
+					'APP_VERSION_ERROR', 'PLUGIN_VERSION_ERROR',
+					'EMPTY_CONFIG_FILE', 'FORMAT_VERSION_ERROR'
+				))
+			) {
+				$conn->send(json_encode($connexion));
 				$conn->close();
 				return;
 			}
 
-			//check config format version
-			if (!array_key_exists('formatVersion', $config)) {
-				\log::add('JeedomConnect', 'warning', "Failed to connect #{$conn->resourceId} : bad format version");
-				$result = array('type' => 'FORMAT_VERSION_ERROR');
-				$conn->send(json_encode($result));
-				$conn->close();
-				return;
-			}
+			$config = $eqLogic->getGeneratedConfigFile();
 
-			$conn->apiKey = $objectMsg->apiKey;
+			$conn->apiKey = $param['apiKey'];
 			$conn->sessionId = rand(0, 1000);
 			$conn->configVersion = $config['payload']['configVersion'];
 			$conn->lastReadTimestamp = time();
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
-			$eqLogic->setConfiguration('platformOs', $objectMsg->platformOs);
-			$eqLogic->setConfiguration('appVersion', $objectMsg->appVersion ?? '#NA#');
-			$eqLogic->setConfiguration('polling', $objectMsg->polling ?? '0');
+
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
-			$eqLogic->setConfiguration('connected', 1);
-			$eqLogic->setConfiguration('scAll', 0);
-			$eqLogic->setConfiguration('appState', 'active');
 			$eqLogic->save();
-			\log::add('JeedomConnect', 'info', "#{$conn->resourceId} is authenticated with api Key '{$conn->apiKey}'");
-			$result = array(
-				'type' => 'WELCOME',
-				'payload' => array(
-					'pluginVersion' => $this->pluginVersion,
-					'useWs' => $eqLogic->getConfiguration('useWs', 0),
-					'userHash' => $userConnected->getHash(),
-					'userId' => $userConnected->getId(),
-					'userName' => $userConnected->getLogin(),
-					'userProfil' => $userConnected->getProfils(),
-					'configVersion' => $config['payload']['configVersion'],
-					'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
-					'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
-					'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
-					'pluginConfig' => \apiHelper::getPluginConfig(),
-					'cmdInfo' => \apiHelper::getCmdInfoData($config),
-					'scInfo' => \apiHelper::getScenarioData($config),
-					'objInfo' => \apiHelper::getObjectData($config),
-					'links' => \JeedomConnectUtils::getLinks()
-				)
-			);
-			\log::add('JeedomConnect', 'info', "Send " . json_encode($result));
-			$conn->send(json_encode($result));
+
+			$conn->send(json_encode($connexion));
 		}
 	}
 
@@ -256,7 +186,7 @@ class ConnectLogic implements MessageComponentInterface {
 	 * @param string $msg Data received from the client
 	 */
 	public function onMessage(ConnectionInterface $from, $msg) {
-		\log::add('JeedomConnect', 'debug', "Incoming message from #{$from->resourceId} : {$msg}");
+		\log::add('JeedomConnect', 'debug', "[WS] Incoming message from #{$from->resourceId} : {$msg}");
 		if ($this->unauthenticatedClients->contains($from)) {
 			// this is a message from an unauthenticated client, check if it contains credentials
 			$this->authenticate($from, $msg);
@@ -270,237 +200,17 @@ class ConnectLogic implements MessageComponentInterface {
 			return;
 		}
 		try {
-			switch ($msg['type']) {
-				case 'CMD_EXEC':
-					\apiHelper::execCmd($msg['payload']['id'], $msg['payload']['options'] ?? null);
-					break;
-				case 'CMDLIST_EXEC':
-					\apiHelper::execMultipleCmd($msg['payload']['cmdList']);
-					break;
-				case 'SC_EXEC':
-					\apiHelper::execSc($msg['payload']['id'], $msg['payload']['options']);
-					break;
-				case 'SC_STOP':
-					\apiHelper::stopSc($msg['payload']['id']);
-					break;
-				case 'SC_SET_ACTIVE':
-					\apiHelper::setActiveSc($msg['payload']['id'], $msg['payload']['active']);
-					break;
-				case 'GET_PLUGIN_CONFIG':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					$conf = array(
-						'type' => 'PLUGIN_CONFIG',
-						'payload' => array(
-							'useWs' => $eqLogic->getConfiguration('useWs', 0),
-							'httpUrl' => \config::byKey('httpUrl', 'JeedomConnect', \network::getNetworkAccess('external')),
-							'internalHttpUrl' => \config::byKey('internHttpUrl', 'JeedomConnect', \network::getNetworkAccess('internal')),
-							'wsAddress' => \config::byKey('wsAddress', 'JeedomConnect', 'ws://' . \config::byKey('externalAddr') . ':8090'),
-							'internalWsAddress' => \config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . \config::byKey('internalAddr', 'core', 'localhost') . ':8090')
-						)
-					);
-					\log::add('JeedomConnect', 'debug', "Send : " . json_encode($conf));
-					$from->send(json_encode($conf));
-					break;
-				case 'GET_CONFIG':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					$config = $eqLogic->getGeneratedConfigFile();
-					\log::add('JeedomConnect', 'debug', "Send : " . json_encode($config));
-					$from->send(json_encode($config));
-					break;
-				case 'GET_BATTERIES':
-					$config = \apiHelper::getBatteries();
-					$from->send(json_encode($config));
-					break;
-				case 'GET_CMD_INFO':
-					$this->sendCmdInfo($from);
-					break;
-				case 'GET_OBJ_INFO':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					$result = array(
-						'type' => 'SET_OBJ_INFO',
-						'payload' => \apiHelper::getObjectData($eqLogic->getGeneratedConfigFile())
-					);
-					$from->send(json_encode($result));
-					break;
-				case 'GET_SC_INFO':
-					$this->sendScenarioInfo($from);
-					break;
-				case 'GET_ALL_SC':
-					$this->sendScenarioInfo($from, true);
-					break;
-				case 'GET_INFO':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					$config = $eqLogic->getGeneratedConfigFile();
-					$result = array(
-						'type' => 'SET_INFO',
-						'payload' => array(
-							'cmds' => \apiHelper::getCmdInfoData($config),
-							'scenarios' => \apiHelper::getScenarioData($config),
-							'objects' => \apiHelper::getObjectData($config)
-						)
-					);
-					$result['messageId'] = $msg['messageId'];
-					\log::add('JeedomConnect', 'info', '[WS] Send info ' . json_encode($result));
-					$from->send(json_encode($result));
-					break;
-				case 'GET_JEEDOM_DATA':
-					$result = \apiHelper::getFullJeedomData();
-					\log::add('JeedomConnect', 'debug', "Send : " . json_encode($result));
-					$from->send(json_encode($result));
-					break;
-				case 'GET_WIDGET_DATA':
-					$result = \apiHelper::getWidgetData();
-					$from->send(json_encode($result));
-					break;
-				case 'GET_WIDGET_WITH_GEN_TYPE':
-					$result = \apiHelper::getWidgetFromGenType($msg['payload']['widget_type'], $msg['payload']['eqId'] ?? null);
-					$result['messageId'] = $msg['messageId'];
-					$from->send(json_encode($result));
-					break;
-				case 'GET_PLUGINS_UPDATE':
-					$pluginUpdate = \apiHelper::getPluginsUpdate();
-					$from->send(json_encode($pluginUpdate));
-					break;
-				case 'DO_PLUGIN_UPDATE':
-					$result = \apiHelper::doUpdate($msg['payload']['pluginId']);
-					if ($result !== false) {
-						$from->send(json_encode(array('result' => $result)));
-					}
-					break;
-				case 'GET_JEEDOM_GLOBAL_HEALTH':
-					$health = \apiHelper::getJeedomHealthDetails($from->apiKey);
-					$from->send(json_encode($health));
-					break;
-				case 'DAEMON_PLUGIN_RESTART':
-					$result = \apiHelper::restartDaemon($msg['payload']['userId'], $msg['payload']['pluginId']);
-					$from->send(json_encode(array('result' => $result)));
-					break;
-				case 'DAEMON_PLUGIN_STOP':
-					$result = \apiHelper::stopDaemon($msg['payload']['userId'], $msg['payload']['pluginId']);
-					$from->send(json_encode(array('result' => $result)));
-					break;
-				case 'UNSUBSCRIBE_SC':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					$eqLogic->setConfiguration('scAll', 0);
-					$eqLogic->save();
-					break;
-				case 'GET_HISTORY':
-					$from->send(json_encode(\apiHelper::getHistory($msg['payload']['id'], $msg['payload']['options'])));
-					break;
-				case 'GET_FILES':
-					$from->send(json_encode(\apiHelper::getFiles($msg['payload']['folder'], $msg['payload']['recursive'])));
-					break;
-				case 'REMOVE_FILE':
-					$from->send(json_encode(\apiHelper::removeFile($msg['payload']['file'])));
-					break;
-				case 'SET_BATTERY':
-					\apiHelper::saveBatteryEquipment($from->apiKey, $msg['payload']['level']);
-					break;
-				case 'SET_WIDGET':
-					\apiHelper::setWidget($msg['payload']['widget']);
-					break;
-				case 'ADD_WIDGETS':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::addWidgets($eqLogic, $msg['payload']['widgets'], $msg['payload']['parentId'], $msg['payload']['index']);
-					break;
-				case 'REMOVE_WIDGET':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::removeWidget($eqLogic, $msg['payload']['widgetId']);
-					break;
-				case 'MOVE_WIDGET':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::moveWidget($eqLogic, $msg['payload']['widgetId'], $msg['payload']['destinationId'], $msg['payload']['destinationIndex']);
-					break;
-				case 'SET_CUSTOM_WIDGETS':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setCustomWidgetList($eqLogic, $msg['payload']['customWidgetList']);
-					break;
-				case 'SET_GROUP':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setGroup($eqLogic, $msg['payload']['group']);
-					break;
-				case 'REMOVE_GROUP':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::removeGroup($eqLogic, $msg['payload']['id']);
-					break;
-				case 'ADD_GROUP':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::addGroup($eqLogic, $msg['payload']['group']);
-					break;
-				case 'MOVE_GROUP':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::moveGroup($eqLogic, $msg['payload']['groupId'], $msg['payload']['destinationId'], $msg['payload']['destinationIndex']);
-					break;
-				case 'REMOVE_GLOBAL_WIDGET':
-					\apiHelper::removeGlobalWidget($msg['payload']['id']);
-					break;
-				case 'ADD_GLOBAL_WIDGETS':
-					$result = \apiHelper::addGlobalWidgets($msg['payload']['widgets']);
-					$result['messageId'] = $msg['messageId'];
-					$from->send(json_encode($result));
-					break;
-				case 'SET_BOTTOM_TABS':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setBottomTabList($eqLogic, $msg['payload']['tabs'], $msg['payload']['migrate'], $msg['payload']['idCounter']);
-					break;
-				case 'REMOVE_BOTTOM_TAB':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::removeBottomTab($eqLogic, $msg['payload']['id']);
-					break;
-				case 'SET_TOP_TABS':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setTopTabList($eqLogic, $msg['payload']['tabs'], $msg['payload']['migrate'], $msg['payload']['idCounter']);
-					break;
-				case 'REMOVE_TOP_TAB':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::removeTopTab($eqLogic, $msg['payload']['id']);
-					break;
-				case 'MOVE_TOP_TAB':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::moveTopTab($eqLogic, $msg['payload']['sectionId'], $msg['payload']['destinationId']);
-					break;
-				case 'SET_PAGE_DATA':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setPageData($eqLogic, $msg['payload']['rootData'], $msg['payload']['idCounter']);
-					break;
-				case 'SET_ROOMS':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setRooms($eqLogic, $msg['payload']['rooms']);
-					break;
-				case 'SET_SUMMARIES':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setSummaries($eqLogic, $msg['payload']['summaries']);
-					break;
-				case 'SET_BACKGROUNDS':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					\apiHelper::setBackgrounds($eqLogic, $msg['payload']['backgrounds']);
-					break;
-				case 'SET_APP_CONFIG':
-					\apiHelper::setAppConfig($from->apiKey, $msg['payload']['config']);
-					break;
-				case 'GET_APP_CONFIG':
-					$from->send(json_encode(\apiHelper::getAppConfig($from->apiKey, $msg['payload']['configId'])));
-					break;
-				case 'ADD_GEOFENCE':
-					$this->addGeofence($from, $msg['payload']['geofence'], $msg['payload']['coordinates']);
-					break;
-				case 'REMOVE_GEOFENCE':
-					$this->removeGeofence($from, $msg['payload']['geofence']);
-					break;
-				case 'GET_GEOFENCES':
-					$this->sendGeofences($from);
-					break;
-				case 'GET_NOTIFS_CONFIG':
-					$eqLogic = \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect');
-					$from->send(json_encode(array(
-						"type" => "SET_NOTIFS_CONFIG",
-						"payload" => $eqLogic->getNotifs()
-					)));
-					break;
 
-				default:
-					$from->send(json_encode(\apiHelper::raiseException($msg['type'], '- method not recognized')));
-					break;
+			$eqLogic = isset($from->apiKey) ?  \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect') : null;
+
+			$result = \apiHelper::dispatch('WS', $msg['type'], $eqLogic, $msg['payload']  ?? array(), $from->apiKey ?? null);
+
+			if (!is_null($result)) {
+				if (isset($msg['messageId'])) $result['messageId'] = $msg['messageId'];
+
+				if (!in_array($msg['type'], \apiHelper::$_skipLog)) \log::add('JeedomConnect', 'debug', '[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+
+				return $from->send(json_encode($result));
 			}
 		} catch (\Exception $e) {
 			$from->send(json_encode(\apiHelper::raiseException($msg['type'], '- ' . $e->getMessage())));
@@ -562,11 +272,10 @@ class ConnectLogic implements MessageComponentInterface {
 			}
 			$newConfig = \apiHelper::lookForNewConfig($eqLogic, $client->configVersion);
 			if ($newConfig != false) {
-				$config = $newConfig;
 				\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} with api key " . $client->apiKey);
 				$client->configVersion = $newConfig['payload']['configVersion'];
-				$this->sendCmdInfo($client);
-				$this->sendScenarioInfo($client);
+				$client->send(json_encode(\apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())));
+				$client->send(json_encode(\apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), false, true)));
 				$client->send(json_encode($newConfig));
 			}
 		}
@@ -601,20 +310,9 @@ class ConnectLogic implements MessageComponentInterface {
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
-			$events = \event::changes($client->lastReadTimestamp);
+
+			$eventsRes = \apiHelper::getEventsFull($eqLogic, $client->lastReadTimestamp);
 			$client->lastReadTimestamp = time();
-			$config = $eqLogic->getGeneratedConfigFile();
-			$eventCount = count($events['result']);
-			if ($eventCount == 0) {
-				// \log::add('JeedomConnect', 'debug', '--- no change - skipped (' . $eventCount . ')');
-				continue;
-			} elseif ($eventCount < 249) {
-				// \log::add('JeedomConnect', 'debug', '--- using cache (' . $eventCount . ')');
-				$eventsRes = \apiHelper::getEvents($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
-			} else {
-				// \log::add('JeedomConnect', 'debug', '*****  too many items, refresh all (' . $eventCount . ')');
-				$eventsRes = \apiHelper::getEventsGlobalRefresh($config, $eqLogic->getConfiguration('scAll', 0) == 1);
-			}
 
 			foreach ($eventsRes as $res) {
 				if (count($res['payload']) > 0) {
@@ -625,88 +323,4 @@ class ConnectLogic implements MessageComponentInterface {
 		}
 	}
 
-	public function sendSummaries($client) {
-		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$config = $eqLogic->getGeneratedConfigFile();
-		$objIds = \apiHelper::getObjectData($config);
-		$result = array(
-			'type' => 'SET_CMD_INFO',
-			'payload' => array()
-		);
-		foreach (\jeeObject::all() as $object) {
-			if (in_array($object->getId(), $objIds)) {
-				$summary = array(
-					'id' => $object->getId(),
-					'summary' => $object->getSummary()
-				);
-				array_push($result['payload'], $summary);
-			}
-		}
-		\log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
-		$client->send(json_encode($result));
-	}
-
-	public function sendCmdInfo($client) {
-		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$config = $eqLogic->getGeneratedConfigFile();
-		$result = array(
-			'type' => 'SET_CMD_INFO',
-			'payload' => \apiHelper::getCmdInfoData($config)
-		);
-		\log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
-		$client->send(json_encode($result));
-	}
-
-	public function sendScenarioInfo($client, $scAll = false) {
-		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$config = $eqLogic->getGeneratedConfigFile();
-		if ($scAll) {
-			$eqLogic->setConfiguration('scAll', 1);
-			$eqLogic->save();
-		}
-		$result = array(
-			'type' => $scAll ? 'SET_ALL_SC' : 'SET_SC_INFO',
-			'payload' => \apiHelper::getScenarioData($config, true)
-		);
-		\log::add('JeedomConnect', 'info', 'Send ' . json_encode($result));
-		$client->send(json_encode($result));
-	}
-
-	public function addGeofence($client, $geofence, $coordinates) {
-		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$eqLogic->addGeofenceCmd($geofence, $coordinates);
-	}
-
-	public function removeGeofence($client, $geofence) {
-		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$eqLogic->removeGeofenceCmd($geofence);
-	}
-
-	public function sendGeofences($client) {
-		$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
-		$result = array(
-			'type' => 'SET_GEOFENCES',
-			'payload' => array(
-				'geofences' => array()
-			)
-		);
-		foreach ($eqLogic->getCmd('info') as $cmd) {
-			if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
-				array_push($result['payload']['geofences'], array(
-					'identifier' => substr($cmd->getLogicalId(), 9),
-					'extras' => array(
-						'name' => $cmd->getName()
-					),
-					'radius' => $cmd->getConfiguration('radius'),
-					'latitude' => $cmd->getConfiguration('latitude'),
-					'longitude' => $cmd->getConfiguration('longitude'),
-					'notifyOnEntry' => true,
-					'notifyOnExit' => true
-				));
-			}
-		}
-		if (count($result['payload']['geofences']) > 0) {
-			$client->send(json_encode($result));
-		}
-	}
 }
