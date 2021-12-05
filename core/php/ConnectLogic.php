@@ -200,6 +200,7 @@ class ConnectLogic implements MessageComponentInterface {
 			return;
 		}
 		try {
+
 			$eqLogic = isset($from->apiKey) ?  \eqLogic::byLogicalId($from->apiKey, 'JeedomConnect') : null;
 
 			$result = \apiHelper::dispatch('WS', $msg['type'], $eqLogic, $msg['payload']  ?? array(), $from->apiKey ?? null);
@@ -321,4 +322,5 @@ class ConnectLogic implements MessageComponentInterface {
 			}
 		}
 	}
+
 }

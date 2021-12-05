@@ -60,7 +60,7 @@ function refreshAddWidgetBulk() {
                     Object.entries(data.result).forEach(eqLogic => {
                         var cmdsWithGenType = [];
                         tr = '<td>'
-                        tr += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" room="' + eqLogic[1].room + '">'
+                        tr += '<select class="room-input cmdAttrib" data-l1key="room" id="room-input" roomId="' + eqLogic[1].room + '">'
                         tr += '<option value="none">Sélection  d\'une pièce</option>'
                         tr += roomListOptions
                         tr += '</select>'
@@ -167,7 +167,7 @@ function refreshAddWidgetBulk() {
                     $("#table_widgets").html(thead + tbody);
 
                     $("#room-input > option").each(function () {
-                        if ($(this).text().includes($(this).parent().attr('room'))) {
+                        if ($(this).val() == $(this).parent().attr('roomId')) {
                             $(this).prop('selected', true);
                             return;
                         }
