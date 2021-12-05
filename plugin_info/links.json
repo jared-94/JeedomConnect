@@ -9,7 +9,7 @@
     {
         "id": "changelog",
         "index": 2,
-        "img": "/var/www/html/plugins/JeedomConnect/data/img/changelog.png",
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/listmodif.png",
         "title": "Changelog",
         "link": "http://jared-94.github.io/JeedomConnectDoc/fr_FR/changelog"
     },

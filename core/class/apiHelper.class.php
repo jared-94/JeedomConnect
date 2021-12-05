@@ -19,10 +19,549 @@
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 
 class apiHelper {
+  public static $_skipLog = array('GET_EVENTS', 'GET_LOG');
+
+  public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
+
+    try {
+      switch ($method) {
+        case 'PING':
+          $eqLogic->setConfiguration('appState', 'active');
+          $eqLogic->save(true);
+          return null;
+          break;
+
+        case 'REGISTER_DEVICE':
+          $rdk = self::registerUser($eqLogic, $param['userHash'], $param['rdk']);
+          return $rdk;
+          break;
+
+        case 'GET_AVAILABLE_EQUIPEMENT':
+          $result = self::getAvailableEquipement($param['userHash']);
+          return $result;
+          break;
+
+        case 'CMD_EXEC':
+          self::execCmd($param['id'], $param['options'] ?? null);
+          return null;
+          break;
+
+        case 'CMDLIST_EXEC':
+          self::execMultipleCmd($param['cmdList']);
+          return null;
+          break;
+
+        case 'SC_EXEC':
+          self::execSc($param['id'], $param['options']);
+          return null;
+          break;
+
+        case 'SC_STOP':
+          self::stopSc($param['id']);
+          return null;
+          break;
+
+        case 'SC_SET_ACTIVE':
+          self::setActiveSc($param['id'], $param['active']);
+          return null;
+          break;
+
+        case 'GET_PLUGIN_CONFIG':
+          $conf = self::getPluginConfig($eqLogic);
+          return $conf;
+          break;
+
+        case 'GET_CONFIG':
+          $config = self::addTypeInPayload($eqLogic->getGeneratedConfigFile(), 'SET_CONFIG');
+          return $config;
+          break;
+
+        case 'GET_PWD':
+          return self::addTypeInPayload($eqLogic->getConfiguration('pwdAction', null), 'SET_PWD');
+          break;
+
+        case 'GET_BATTERIES':
+          $config = self::getBatteries();
+          return $config;
+          break;
+
+        case 'GET_CMD_INFO':
+          $result = self::getCmdInfoData($eqLogic->getGeneratedConfigFile());
+          return $result;
+          break;
+
+        case 'GET_OBJ_INFO':
+          $result = self::getObjectData($eqLogic->getGeneratedConfigFile());
+          return $result;
+          break;
+
+        case 'GET_SC_INFO':
+          $result = self::getScenarioData($eqLogic->getGeneratedConfigFile());
+          return $result;
+          break;
+
+        case 'GET_ALL_SC':
+          $eqLogic->setConfiguration('scAll', 1);
+          $eqLogic->save(true);
+          $result = self::getScenarioData($eqLogic->getGeneratedConfigFile(), true);
+          return $result;
+          break;
+
+        case 'GET_INFO':
+          $result = self::getAllInformations($eqLogic);
+          return $result;
+          break;
+
+        case 'SET_APPSTATE':
+          $eqLogic->setConfiguration('appState', $param['state']);
+          $eqLogic->save(true);
+          return null;
+          break;
+
+        case 'GET_JEEDOM_DATA':
+          $result = self::getFullJeedomData();
+          return $result;
+          break;
+
+        case 'GET_WIDGET_DATA':
+          $result = self::getWidgetData();
+          return $result;
+          break;
+
+        case 'GET_WIDGET_WITH_GEN_TYPE':
+          $result = self::getWidgetFromGenType($param['widget_type'], $param['eqId'] ?? null);
+          return $result;
+          break;
+
+        case 'GET_PLUGINS_UPDATE':
+          return self::getPluginsUpdate();
+          break;
+
+        case 'DO_PLUGIN_UPDATE':
+          $result = self::doUpdate($param['pluginId']);
+          return self::addTypeInPayload($result, 'SET_PLUGIN_UPDATE');
+          break;
+
+        case 'GET_JEEDOM_GLOBAL_HEALTH':
+          return self::getJeedomHealthDetails();
+          break;
+
+        case 'DAEMON_PLUGIN_RESTART':
+          $result = self::restartDaemon($param['userId'], $param['pluginId']);
+          return self::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_RESTART');
+          break;
+
+        case 'DAEMON_PLUGIN_STOP':
+          $result = self::stopDaemon($param['userId'], $param['pluginId']);
+          return self::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_STOP');
+          break;
+
+        case 'UNSUBSCRIBE_SC':
+          $eqLogic->setConfiguration('scAll', 0);
+          $eqLogic->save(true);
+          return null;
+          break;
+
+        case 'GET_HISTORY':
+          return self::getHistory($param['id'], $param['options']);
+          break;
+
+        case 'GET_FILES':
+          return self::getFiles($param['folder'], $param['recursive']);
+          break;
+
+        case 'REMOVE_FILE':
+          return self::removeFile($param['file']);
+          break;
+
+        case 'SET_BATTERY':
+          self::saveBatteryEquipment($eqLogic, $param['level']);
+          return null;
+          break;
+
+        case 'SET_WIDGET':
+          self::setWidget($param['widget']);
+          return null;
+          break;
+
+        case 'ADD_WIDGETS':
+          self::addWidgets($eqLogic, $param['widgets'], $param['parentId'], $param['index']);
+          return null;
+          break;
+
+        case 'REMOVE_WIDGET':
+          self::removeWidget($eqLogic, $param['widgetId']);
+          return null;
+          break;
+
+        case 'MOVE_WIDGET':
+          self::moveWidget($eqLogic, $param['widgetId'], $param['destinationId'], $param['destinationIndex']);
+          return null;
+          break;
+
+        case 'SET_CUSTOM_WIDGETS':
+          self::setCustomWidgetList($eqLogic, $param['customWidgetList']);
+          return null;
+          break;
+
+        case 'SET_GROUP':
+          self::setGroup($eqLogic, $param['group']);
+          return null;
+          break;
+
+        case 'REMOVE_GROUP':
+          self::removeGroup($eqLogic, $param['id']);
+          return null;
+          break;
+
+        case 'ADD_GROUP':
+          self::addGroup($eqLogic, $param['group']);
+          return null;
+          break;
+
+        case 'MOVE_GROUP':
+          self::moveGroup($eqLogic, $param['groupId'], $param['destinationId'], $param['destinationIndex']);
+          return null;
+          break;
+
+        case 'REMOVE_GLOBAL_WIDGET':
+          self::removeGlobalWidget($param['id']);
+          return null;
+          break;
+
+        case 'ADD_GLOBAL_WIDGETS':
+          $result = self::addGlobalWidgets($param['widgets']);
+          return $result;
+          break;
+
+        case 'SET_BOTTOM_TABS':
+          self::setBottomTabList($eqLogic, $param['tabs'], $param['migrate'], $param['idCounter']);
+          return null;
+          break;
+
+        case 'REMOVE_BOTTOM_TAB':
+          self::removeBottomTab($eqLogic, $param['id']);
+          return null;
+          break;
+
+        case 'SET_TOP_TABS':
+          self::setTopTabList($eqLogic, $param['tabs'], $param['migrate'], $param['idCounter']);
+          return null;
+          break;
+
+        case 'REMOVE_TOP_TAB':
+          self::removeTopTab($eqLogic, $param['id']);
+          return null;
+          break;
+
+        case 'MOVE_TOP_TAB':
+          self::moveTopTab($eqLogic, $param['sectionId'], $param['destinationId']);
+          return null;
+          break;
+
+        case 'SET_PAGE_DATA':
+          self::setPageData($eqLogic, $param['rootData'], $param['idCounter']);
+          return null;
+          break;
+
+        case 'SET_ROOMS':
+          self::setRooms($eqLogic, $param['rooms']);
+          return null;
+          break;
+
+        case 'SET_SUMMARIES':
+          self::setSummaries($eqLogic, $param['summaries']);
+          return null;
+          break;
+
+        case 'SET_BACKGROUNDS':
+          self::setBackgrounds($eqLogic, $param['backgrounds']);
+          return null;
+          break;
+
+        case 'SET_APP_CONFIG':
+          self::setAppConfig($apiKey, $param['config']);
+          return null;
+          break;
+
+        case 'GET_APP_CONFIG':
+          return self::getAppConfig($apiKey, $param['configId']);
+          break;
+
+        case 'ADD_GEOFENCE':
+          self::addGeofence($eqLogic, $param['geofence'], $param['coordinates']);
+          return null;
+          break;
+
+        case 'REMOVE_GEOFENCE':
+          self::removeGeofence($eqLogic, $param['geofence']);
+          return null;
+          break;
+
+        case 'GET_GEOFENCES':
+          $result = self::getGeofencesData($eqLogic);
+          return $result;
+          break;
+
+        case 'GET_NOTIFS_CONFIG':
+          $result = self::getNotifConfig($eqLogic);
+          return $result;
+          break;
+
+        case 'GEOLOC':
+          self::setGeofence($eqLogic, $param);
+          return null;
+          break;
+
+        case 'ASK_REPLY':
+          self::setAskReply($eqLogic, $param);
+          return null;
+          break;
+
+        case 'GET_EVENTS':
+          $eqLogic->setConfiguration('lastSeen', time());
+          $eqLogic->save(true);
+
+          $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
+          if ($newConfig != false) {
+            log::add('JeedomConnect', 'debug', "pollingServer send new config : " . json_encode($newConfig));
+            return array($newConfig);
+          }
+
+          $actions = self::getJCActions($apiKey);
+          if (count($actions['payload']) > 0) {
+            return array($actions);
+          }
+
+          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp']);
+          return $result;
+
+          // TODO : target solution
+          /*
+          $newConfig = array(
+            'type' => 'SET_CONFIG',
+            'payload' => apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']) ?: array()
+          );
+
+
+          $actions = self::getJCActions($apiKey);
+
+          $allEvents = self::addTypeInPayload(self::getEventsFull($eqLogic, $param['lastReadTimestamp']), 'ALL_EVENTS');
+
+          $payload = array($newConfig, $actions, $allEvents);
+          $result = self::addTypeInPayload($payload, 'SET_EVENTS');
+
+          return $result;
+          */
+          break;
+
+
+        case 'CONNECT':
+          $result = self::checkConnexion($eqLogic, $param);
+          return $result;
+          break;
+
+        case 'GET_LOG':
+          $result = self::getLog($param['type'], $param['id']);
+          return $result;
+          break;
+
+        default:
+          return self::raiseException($method . ' [' . $type . '] - method not defined');
+          break;
+      }
+    } catch (Exception $e) {
+      return self::raiseException($method . ' [' . $type . '] - ' . $e->getMessage());
+    }
+  }
+
+  // GENERIC FUNCTIONS
+  private static function addTypeInPayload($payload, $type) {
+    $result = array(
+      'type' => $type,
+      'payload' => $payload
+    );
+
+    return $result;
+  }
+
+  private static function getAllInformations($eqLogic, $withType = true) {
+    $returnType = 'SET_INFO';
+
+    if (!is_object($eqLogic)) {
+      throw new Exception('No equipment found');
+    }
+
+    $config = $eqLogic->getGeneratedConfigFile();
+    $payload =  array(
+      'cmds' => apiHelper::getCmdInfoData($config, false),
+      'scenarios' => apiHelper::getScenarioData($config, false, false),
+      'objects' => apiHelper::getObjectData($config, false)
+    );
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+  // CONNEXION FUNCTIONS
+  private static function checkConnexion($eqLogic, $param, $withType = true) {
+
+    $versionJson = JeedomConnect::getPluginInfo();
+
+    if ($eqLogic->getConfiguration('deviceId') == '') {
+      log::add('JeedomConnect', 'info', "Register new device {$param['deviceName']}");
+      $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
+    }
+    $eqLogic->registerToken($param['token']);
+
+    //check registered device
+    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId']) {
+      log::add('JeedomConnect', 'warning', "Authentication failed (invalid device)");
+      return array('type' => 'BAD_DEVICE');
+    }
+
+    //check if eqLogic is enable
+    if (!$eqLogic->getIsEnable()) {
+      log::add('JeedomConnect', 'warning', "Equipment " . $eqLogic->getName() . " disabled");
+      return array('type' => 'EQUIPMENT_DISABLE');
+    }
+
+    //check version requirement
+    if (version_compare($param['appVersion'], $versionJson['require'], "<")) {
+      log::add('JeedomConnect', 'warning', "Failed to connect : bad version requirement");
+      return array(
+        'type' => 'APP_VERSION_ERROR',
+        'payload' => JeedomConnect::getPluginInfo()
+      );
+    }
+
+    if (version_compare($versionJson['version'], $param['pluginRequire'], "<")) {
+      log::add('JeedomConnect', 'warning', "Failed to connect : bad plugin requirement");
+      return array('type' => 'PLUGIN_VERSION_ERROR');
+    }
+
+    $user = user::byId($eqLogic->getConfiguration('userId'));
+    if ($user == null) {
+      $user = user::all()[0];
+      $eqLogic->setConfiguration('userId', $user->getId());
+      $eqLogic->save(true);
+    }
+
+    $userConnected = user::byHash($param['userHash']);
+    if (!is_object($userConnected)) $userConnected = $user;
+
+    $config = $eqLogic->getGeneratedConfigFile();
+
+    //check config content
+    if (is_null($config)) {
+      log::add('JeedomConnect', 'warning', "Failed to connect : empty config file");
+      return array('type' => 'EMPTY_CONFIG_FILE');
+    }
+
+    //check config format version
+    if (!array_key_exists('formatVersion', $config)) {
+      log::add('JeedomConnect', 'warning', "Failed to connect : bad format version");
+      return array('type' => 'FORMAT_VERSION_ERROR');
+    }
+
+    $eqLogic->setConfiguration('platformOs', $param['platformOs']);
+    $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
+    $eqLogic->setConfiguration('polling', $param['polling'] ?? '0');
+    $eqLogic->setConfiguration('connected', 1);
+    $eqLogic->setConfiguration('scAll', 0);
+    $eqLogic->setConfiguration('appState', 'active');
+    $eqLogic->save(true);
+
+    return self::getWelcomeMsg($eqLogic, $userConnected, $versionJson['version'], $withType);
+  }
+
+
+  private static function getWelcomeMsg($eqLogic, $userConnected, $pluginVersion, $withType = true) {
+    $returnType = 'WELCOME';
+
+    $config = $eqLogic->getGeneratedConfigFile();
+
+    $payload = array(
+      'pluginVersion' => $pluginVersion,
+      'useWs' => $eqLogic->getConfiguration('useWs', 0),
+      'userHash' => $userConnected->getHash(),
+      'userId' => $userConnected->getId(),
+      'userName' => $userConnected->getLogin(),
+      'userProfil' => $userConnected->getProfils(),
+      'configVersion' => $eqLogic->getConfiguration('configVersion'),
+      'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+      'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
+      'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
+      'getLogAllowed' => $userConnected->getProfils() == "admin",
+      'pluginConfig' => self::getPluginConfig($eqLogic, false),
+      'cmdInfo' => self::getCmdInfoData($config, false),
+      'scInfo' => self::getScenarioData($config, false, false),
+      'objInfo' => self::getObjectData($config, false),
+      'links' => JeedomConnectUtils::getLinks()
+
+    );
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function setAskReply($eqLogic, $param) {
+    $answer = $param['answer'];
+    $cmd = cmd::byId($param['cmdId']);
+    if (!is_object($cmd)) {
+      throw new Exception("Can't find command [id=" . $param['cmdId'] . "]");
+    }
+    if (!$cmd->askResponse($answer)) {
+      log::add('JeedomConnect', 'warning', 'issue while reply to ask');
+    }
+
+    // if ASK was sent to other equipment, then we will let them know that an answer was already given
+    if (!empty($param['otherAskCmdId']) && !is_null($param['otherAskCmdId'])) {
+      $eqName = $eqLogic->getName();
+
+      foreach ($param['otherAskCmdId'] as $cmdId) {
+        $cmd = JeedomConnectCmd::byId($cmdId);
+        if (is_object($cmd)) {
+          $cmd->cancelAsk($param['notificationId'], $answer, $eqName, $param['dateAnswer']);
+        }
+      }
+    }
+
+    return;
+  }
+
+  // EQUIPMENT FUNCTIONS
+  private static function getAvailableEquipement($userHash, $withType = true) {
+    $returnType = 'AVAILABLE_EQUIPEMENT';
+
+    $eqLogics = eqLogic::byType('JeedomConnect');
+
+    if (is_null($eqLogics)) {
+      throw new Exception(__("No equipment available", __FILE__), -32699);
+    }
+
+    $payload = array();
+    $userConnected = user::byHash($userHash);
+    $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
+    foreach ($eqLogics as $eqLogic) {
+
+      $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
+      $userOnEquipmentHash = !is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+
+      if (strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $userHash) {
+        array_push($payload, array(
+          'logicalId' => $eqLogic->getLogicalId(),
+          'name' => $eqLogic->getName(),
+          'enable' => $eqLogic->getIsEnable(),
+          'useWs' => $eqLogic->getConfiguration('useWs', 0)
+        ));
+      }
+    }
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
 
   // CMD FUNCTIONS
-
-  public static function getInfoCmdList($config) {
+  private static function getInfoCmdList($config) {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
       foreach ($widget as $item => $value) {
@@ -79,9 +618,11 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getCmdInfoData($config) {
+  public static function getCmdInfoData($config, $withType = true) {
+    $returnType = 'SET_CMD_INFO';
+
     $cmds = cmd::byIds(self::getInfoCmdList($config));
-    $result = array();
+    $payload = array();
 
     foreach ($cmds as $cmd) {
       $state = $cmd->getCache(array('valueDate', 'value'));
@@ -90,14 +631,15 @@ class apiHelper {
         'value' => $state['value'],
         'modified' => strtotime($state['valueDate'])
       );
-      array_push($result, $cmd_info);
+      array_push($payload, $cmd_info);
     }
-    return $result;
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
-  // SCEANRIO FUNCTIONS
+  // SCENARIO FUNCTIONS
 
-  public static function getScenarioList($config) {
+  private static function getScenarioList($config) {
     $return = array();
     foreach ($config['payload']['widgets'] as $widget) {
       if (array_key_exists('type', $widget)) {
@@ -109,9 +651,11 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getScenarioData($config, $all = false) {
+  public static function getScenarioData($config, $all = false, $withType = true) {
+    $returnType = $all ? 'SET_ALL_SC' : 'SET_SC_INFO';
+
     $scIds = self::getScenarioList($config);
-    $result = array();
+    $payload = array();
 
     foreach (scenario::all() as $sc) {
       if (in_array($sc->getId(), $scIds) || $all) {
@@ -126,13 +670,14 @@ class apiHelper {
           'active' => $sc->getIsActive() ? 1 : 0,
           'icon' => self::getScenarioIcon($sc)
         );
-        array_push($result, $sc_info);
+        array_push($payload, $sc_info);
       }
     }
-    return $result;
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
-  public static function getScenarioIcon($sc) {
+  private static function getScenarioIcon($sc) {
     if (strpos($sc->getDisplay('icon'), '<i') === 0) {
       return trim(str_replace(array('<i', 'class=', '"', '/>', '></i>'), '', $sc->getDisplay('icon')));
     }
@@ -140,7 +685,7 @@ class apiHelper {
   }
 
   // OBJECT FUNCTIONS
-  public static function getObjectList($config) {
+  private static function getObjectList($config) {
     $return = array();
     foreach ($config['payload']['rooms'] as $room) {
       if (array_key_exists("id", $room)) {
@@ -150,9 +695,11 @@ class apiHelper {
     return array_unique($return);
   }
 
-  public static function getObjectData($config) {
+  public static function getObjectData($config, $withType = true) {
+    $returnType = 'SET_OBJ_INFO';
+
     $objIds = self::getObjectList($config);
-    $result = array();
+    $payload = array();
 
     foreach (jeeObject::all() as $object) {
       if (in_array($object->getId(), $objIds)) {
@@ -166,25 +713,65 @@ class apiHelper {
             $key => array('value' => $sum, 'cmds' => $value)
           ));
         }
-        array_push($result, $object_info);
+        array_push($payload, $object_info);
       }
     }
     $global_info = array(
       'object_id' => 'global',
       'keys' => array()
     );
+    /**
+     * @var array
+     */
     $globalSum = config::byKey('object:summary');
     foreach ($globalSum as $key => $value) {
       array_push($global_info['keys'], array(
         $key => array('value' => jeeObject::getGlobalSummary($key))
       ));
     }
-    array_push($result, $global_info);
-    return $result;
+    array_push($payload, $global_info);
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+  // NOTIFICATION FUNCTIONS
+  private static function getNotifConfig($eqLogic, $withType = true) {
+    $returnType = 'SET_NOTIFS_CONFIG';
+
+    $payload =  $eqLogic->getNotifs();
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
   // GEOFENCE FUNCTIONS
-  public static function getGeofencesData($eqLogic) {
+  private static function addGeofence($eqLogic, $geo, $coordinates) {
+    return $eqLogic->addGeofenceCmd($geo, $coordinates);
+  }
+
+  private static function removeGeofence($eqLogic, $geo) {
+    return $eqLogic->removeGeofenceCmd($geo);
+  }
+
+  private static function setGeofence($eqLogic, $param) {
+    $ts = array_key_exists('timestampMeta', $param) ? floor($param['timestampMeta']['systemTime'] / 1000) : strtotime($param['timestamp']);
+    $eqLogic->setCoordinates($param['coords']['latitude'], $param['coords']['longitude'], $param['coords']['altitude'], $param['activity']['type'], $param['battery']['level'] * 100, $ts);
+
+    $activityCmd = $eqLogic->getCmd(null, 'activity');
+    if (is_object($activityCmd)) {
+      $activityCmd->event($param['activity']['type']);
+    }
+
+    if (array_key_exists('battery', $param)) {
+      if ($param['battery']['level'] > -1) {
+        $batteryCmd = $eqLogic->getCmd(null, 'battery');
+        if (is_object($batteryCmd)) {
+          $batteryCmd->event($param['battery']['level'] * 100, date('Y-m-d H:i:s', $ts));
+        }
+      }
+    }
+    return;
+  }
+  private static function getGeofencesData($eqLogic) {
     $result = array(
       'type' => 'SET_GEOFENCES',
       'payload' => array(
@@ -206,31 +793,43 @@ class apiHelper {
         ));
       }
     }
-    return $result;
+
+    if (count($result['payload']['geofences']) > 0) {
+      return $result;
+    }
+    return null;
   }
 
   //PLUGIN CONF FUNCTIONS
-  public static function getPluginConfig() {
+  private static function getPluginConfig($eqLogic, $withType = true) {
+    $returnType = 'PLUGIN_CONFIG';
+
     $plugin = update::byLogicalId('JeedomConnect');
-    return array(
+
+    $payload =  array(
+      'useWs' => is_object($eqLogic) ?  $eqLogic->getConfiguration('useWs', 0) : 0,
       'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
       'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
       'pluginJeedomVersion' => $plugin->getLocalVersion()
     );
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
   }
 
   // REGISTER FUNCTION
-  public static function registerUser($eqLogic, $userHash, $rdk, $user = null) {
+  private static function registerUser($eqLogic, $userHash, $rdk, $user = null, $withType = true) {
+    $returnType = 'REGISTERED';
+
     if ($user == null) {
       $user = user::byHash($userHash);
     }
     if (!isset($user)) {
-      return null;
+      throw new Exception(__("User not valid", __FILE__), -32699);
     }
     $eqLogic->setConfiguration('userHash', $userHash);
-    $eqLogic->save();
+    $eqLogic->save(true);
 
     $registerDevice = $user->getOptions('registerDevice', array());
     if (!is_array($registerDevice)) {
@@ -253,7 +852,8 @@ class apiHelper {
     $user->setOptions('registerDevice', $registerDevice);
     $user->save();
     @session_write_close();
-    return $rdk;
+
+    return (!$withType) ? $rdk : self::addTypeInPayload(array('rdk' => $rdk), $returnType);
   }
 
   // Config Watcher
@@ -268,7 +868,7 @@ class apiHelper {
   }
 
   // JEEDOM FULL DATA
-  public static function getFullJeedomData() {
+  private static function getFullJeedomData() {
     $result = array(
       'type' => 'SET_JEEDOM_DATA',
       'payload' => array(
@@ -323,8 +923,11 @@ class apiHelper {
       );
       array_push($result['payload']['scenarios'], $scenario);
     }
-
-    foreach (config::byKey('object:summary') as $item) {
+    /**
+     * @var array
+     */
+    $globalSum = config::byKey('object:summary');
+    foreach ($globalSum as $item) {
       $item['display'] = JeedomConnectUtils::getIconAndColor($item['icon']);
       $item['icon'] = trim(preg_replace('/ icon_(red|yellow|blue|green|orange)/', '', $item['icon']));
       array_push($result['payload']['summariesConfig'], $item);
@@ -335,7 +938,7 @@ class apiHelper {
 
 
   //WIDGET DATA
-  public static function getWidgetData() {
+  private static function getWidgetData() {
     $result = array(
       'type' => 'SET_WIDGET_DATA',
       'payload' => array(
@@ -347,12 +950,12 @@ class apiHelper {
   }
 
   // EDIT FUNCTIONS
-  public static function setWidget($widget) {
+  private static function setWidget($widget) {
     log::add('JeedomConnect', 'debug', 'save widget data');
     JeedomConnectWidget::updateWidgetConfig($widget);
   }
 
-  public static function addWidgets($eqLogic, $widgets, $parentId, $index) {
+  private static function addWidgets($eqLogic, $widgets, $parentId, $index) {
     $curConfig = $eqLogic->getConfig();
 
     foreach ($curConfig['payload']['widgets'] as $i => $widget) {
@@ -385,7 +988,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function removeWidget($eqLogic, $widgetId) {
+  private static function removeWidget($eqLogic, $widgetId) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
     if ($toRemove !== false) {
@@ -411,7 +1014,7 @@ class apiHelper {
     }
   }
 
-  public static function moveWidget($eqLogic, $widgetId, $destinationId, $destinationIndex) {
+  private static function moveWidget($eqLogic, $widgetId, $destinationId, $destinationIndex) {
     $curConfig = $eqLogic->getConfig();
     $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
     if ($widgetIndex === false) {
@@ -487,7 +1090,7 @@ class apiHelper {
     }
   }
 
-  public static function setCustomWidgetList($eqLogic, $customWidgetList) {
+  private static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
       log::add('JeedomConnect', 'debug', 'save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
@@ -496,7 +1099,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function setGroup($eqLogic, $group) {
+  private static function setGroup($eqLogic, $group) {
     $curConfig = $eqLogic->getConfig();
     $toEdit = array_search($group['id'], array_column($curConfig['payload']['groups'], 'id'));
     if ($toEdit !== false) {
@@ -506,7 +1109,7 @@ class apiHelper {
     }
   }
 
-  public static function removeGroup($eqLogic, $id) {
+  private static function removeGroup($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['groups'], 'id'));
     if ($toRemove !== false) {
@@ -535,7 +1138,7 @@ class apiHelper {
     }
   }
 
-  public static function addGroup($eqLogic, $curGroup) {
+  private static function addGroup($eqLogic, $curGroup) {
     $curConfig = $eqLogic->getConfig();
     $parentId = $curGroup['parentId'];
     $index = $curGroup['index'];
@@ -561,7 +1164,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function moveGroup($eqLogic, $groupId, $destinationId, $destinationIndex) {
+  private static function moveGroup($eqLogic, $groupId, $destinationId, $destinationIndex) {
     $curConfig = $eqLogic->getConfig();
     $groupIndex = array_search($groupId, array_column($curConfig['payload']['groups'], 'id'));
     if ($groupIndex === false) {
@@ -631,11 +1234,11 @@ class apiHelper {
     }
   }
 
-  public static function removeGlobalWidget($id) {
+  private static function removeGlobalWidget($id) {
     JeedomConnectWidget::removeWidget($id);
   }
 
-  public static function addGlobalWidgets($widgets) {
+  private static function addGlobalWidgets($widgets) {
     $newConfWidget = array();
     $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
 
@@ -662,11 +1265,10 @@ class apiHelper {
       'type' => 'SET_MULTIPLE_WIDGET_DATA',
       'payload' => array_values($widgets)
     );
-    log::add('JeedomConnect', 'debug', 'Send : ' . json_encode($result));
     return $result;
   }
 
-  public static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
+  private static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['idCounter'] = $idCounter;
 
@@ -734,7 +1336,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function removeBottomTab($eqLogic, $id) {
+  private static function removeBottomTab($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['tabs'], 'id'));
     if ($toRemove !== false) {
@@ -780,7 +1382,7 @@ class apiHelper {
     }
   }
 
-  public static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
+  private static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
     if (count($tabs) == 0) {
       return;
     }
@@ -841,7 +1443,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function removeTopTab($eqLogic, $id) {
+  private static function removeTopTab($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['sections'], 'id'));
     if ($toRemove !== false) {
@@ -879,7 +1481,7 @@ class apiHelper {
     }
   }
 
-  public static function moveTopTab($eqLogic, $sectionId, $destinationId) {
+  private static function moveTopTab($eqLogic, $sectionId, $destinationId) {
     $curConfig = $eqLogic->getConfig();
     $sectionIndex = array_search($sectionId, array_column($curConfig['payload']['sections'], 'id'));
     if ($sectionIndex === false) {
@@ -924,7 +1526,7 @@ class apiHelper {
   }
 
   // Receive root data (already ordered) (widgets, groups) for a page view (index < 0 ==> remove)
-  public static function setPageData($eqLogic, $rootData, $idCounter) {
+  private static function setPageData($eqLogic, $rootData, $idCounter) {
     if (count($rootData) == 0) {
       return;
     }
@@ -959,7 +1561,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function setRooms($eqLogic, $rooms) {
+  private static function setRooms($eqLogic, $rooms) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['rooms'] = $rooms;
 
@@ -967,7 +1569,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function setSummaries($eqLogic, $summaries) {
+  private static function setSummaries($eqLogic, $summaries) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['summaries'] = $summaries;
 
@@ -975,7 +1577,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-  public static function setBackgrounds($eqLogic, $backgrounds) {
+  private static function setBackgrounds($eqLogic, $backgrounds) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['background'] = $backgrounds;
 
@@ -983,9 +1585,7 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
-
-
-  public static function getWidgetFromGenType($_widget_type, $_eqLogicId) {
+  private static function getWidgetFromGenType($_widget_type, $_eqLogicId) {
     $result = array(
       'type' => 'SET_WIDGET_WITH_GEN_TYPE',
       'payload' => JeedomConnectUtils::generateWidgetWithGenType($_widget_type, $_eqLogicId)
@@ -995,9 +1595,30 @@ class apiHelper {
   }
 
 
-
   // EVENTS FUNCTION
-  public static function getEventsGlobalRefresh($config, $scAll = false) {
+  public static function getEventsFull($eqLogic, $lastReadTimestamp) {
+
+    $config = $eqLogic->getGeneratedConfigFile();
+
+    $events = event::changes($lastReadTimestamp);
+
+    $eventCount = count($events['result']);
+    if ($eventCount == 0) {
+      // log::add('JeedomConnect', 'debug', '--- no change - skipped (' . $eventCount . ')');
+      $data = array();
+    } elseif ($eventCount < 249) {
+      // log::add('JeedomConnect', 'debug', '--- using cache (' . $eventCount . ')');
+      $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+    } else {
+      // log::add('JeedomConnect', 'debug', '*****  too many items, refresh all (' . $eventCount . ')');
+      $data = self::getEventsGlobalRefresh($config, $eqLogic->getConfiguration('scAll', 0) == 1);
+    }
+
+    return $data;
+  }
+
+
+  private static function getEventsGlobalRefresh($config, $scAll = false) {
     $result = array(
       array(
         'type' => 'CMD_INFO',
@@ -1014,7 +1635,7 @@ class apiHelper {
     return $result;
   }
 
-  public static function getEvents($events, $config, $scAll = false) {
+  private static function getEventsFromCache($events, $config, $scAll = false) {
     $result_cmd = array(
       'type' => 'CMD_INFO',
       'payload' => array()
@@ -1029,7 +1650,6 @@ class apiHelper {
       'type' => 'OBJ_INFO',
       'payload' => array()
     );
-    $objIds = self::getObjectList($config);
 
     foreach ($events['result'] as $event) {
       if ($event['name'] == 'jeeObject::summary::update') {
@@ -1063,7 +1683,7 @@ class apiHelper {
   }
 
   //HISTORY
-  public static function getHistory($id, $options = null) {
+  private static function getHistory($id, $options = null) {
     $history = array();
     if ($options == null) {
       $history = history::all($id);
@@ -1093,73 +1713,145 @@ class apiHelper {
   }
 
   // BATTERIES
-  public static function getBatteries() {
+  private static function getBatteries() {
+    $list = array();
+    foreach (eqLogic::all() as $eqLogic) {
+      if ($eqLogic->getIsEnable() && $eqLogic->getStatus('battery', -2) != -2) {
+        array_push($list, self::getBatteryDetails($eqLogic));
+      }
+    }
+
     $result = array(
       'type' => 'SET_BATTERIES',
-      'payload' => JeedomConnect::getBatteryAllEquipements()
+      'payload' => $list
     );
-    log::add('JeedomConnect', 'debug', 'Send batteries =>' . json_encode($result));
     return $result;
   }
 
-  public static function saveBatteryEquipment($apiKey, $level) {
+  private static function getBatteryDetails(eqLogic $eqLogic) {
+    // $eqLogic = eqLogic::byId($eqLogicId);
+    $result = array();
+    $level = 'good';
+    $batteryType = $eqLogic->getConfiguration('battery_type', '');
+    $batteryTime = $eqLogic->getConfiguration('batterytime', 'NA');
+    $batterySince = '';
+    if ($batteryTime != 'NA') {
+      $batterySince = round((strtotime(date("Y-m-d")) - strtotime(date("Y-m-d", strtotime($batteryTime)))) / 86400, 1);
+    }
 
-    $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+    $plugin = ucfirst($eqLogic->getEqType_name());
 
-    if (is_object($eqLogic)) {
+    $object_name = 'Aucun';
+    $object_id = null;
+    if (is_object($eqLogic->getObject())) {
+      $object_name = $eqLogic->getObject()->getName();
+      $object_id = $eqLogic->getObject()->getId();
+    }
 
-      $batteryCmd = $eqLogic->getCmd(null, 'battery');
+    if ($eqLogic->getStatus('battery') <= $eqLogic->getConfiguration('battery_danger_threshold', config::byKey('battery::danger'))) {
+      $level = 'critical';
+    } else if ($eqLogic->getStatus('battery') <= $eqLogic->getConfiguration('battery_warning_threshold', config::byKey('battery::warning'))) {
+      $level = 'warning';
+    }
 
-      if (is_object($batteryCmd)) {
-        $batteryCmd->event($level);
-      }
+    $result['eqName'] = $eqLogic->getName();
+    $result['roomName'] = $object_name;
+    $result['roomId'] = $object_id;
+    $result['plugin'] = $plugin;
 
-      if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
-        $eqLogic->setStatus("battery", $level);
-        $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-        //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
-      }
-    } else {
-      log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | not able to retrieve an equipment for apiKey ' . $apiKey);
+    $result['level'] = $level;
+
+    $result['battery'] = $eqLogic->getStatus('battery', -2);
+    $result['batteryType'] = $batteryType;
+    $result['lastUpdate'] =  date("d/m/Y H:i:s", strtotime($eqLogic->getStatus('batteryDatetime', 'inconnue')));
+
+    $result['lastReplace'] = ($batteryTime != 'NA') ? $batterySince : '';
+
+    return $result;
+  }
+
+  private static function saveBatteryEquipment($eqLogic, $level) {
+    $eqLogic->checkAndUpdateCmd('battery', $level);
+
+    if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
+      $eqLogic->setStatus("battery", $level);
+      $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+      //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
     }
   }
 
 
   // PLUGINS UPDATE
 
-  public static function doUpdate($pluginId) {
-    try {
-      $update = update::byLogicalId($pluginId);
+  private static function doUpdate($pluginId) {
+    $update = update::byLogicalId($pluginId);
 
-      if (!is_object($update)) {
-        log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
-        return false;
-      }
-
-      $update->doUpdate();
-      return true;
-    } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', 'doUpdate -- ' . $e->getMessage());
+    if (!is_object($update)) {
+      log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
       return false;
     }
+
+    $update->doUpdate();
+    return true;
   }
 
-  public static function getPluginsUpdate() {
-    try {
-      $result = array(
-        'type' => 'SET_PLUGINS_UPDATE',
-        'payload' => JeedomConnect::getPluginsUpdate()
-      );
-      log::add('JeedomConnect', 'debug', 'Send plugins update =>' . json_encode($result));
-      return $result;
-    } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', 'getUpdates -- ' . $e->getMessage());
-      return false;
+  private static function getPluginsUpdate() {
+    update::checkAllUpdate();
+    $nbNeedUpdate = update::nbNeedUpdate();
+
+    $updateArr = array();
+    $pluginUpdateId = array();
+    if ($nbNeedUpdate != 0) {
+      foreach (update::all() as $update) {
+
+        if (strtolower($update->getStatus()) != 'update') continue;
+
+        $item = array();
+        try {
+
+          if ($update->getType() == 'core') {
+            $item['pluginId'] =  $update->getLogicalId();
+            $item['message'] = 'La mise à jour du core n\'est pas possible depuis l\'application';
+            $item['doNotUpdate'] = true;
+            $item['name'] =  'Jeedom Core';
+
+            $version = substr(jeedom::version(), 0, 3);
+            $item['changelogLink'] =  'https://doc.jeedom.com/' . config::byKey('language', 'core', 'fr_FR') . '/core/' . $version . '/changelog';
+            $item['currentVersion'] =  $update->getLocalVersion();
+            $item['updateVersion'] = $update->getRemoteVersion();
+          } else {
+
+            $plugin = plugin::byId($update->getLogicalId());
+            $item = JeedomConnectUtils::getPluginDetails($plugin);
+            array_push($pluginUpdateId, $item['pluginId']);
+          }
+        } catch (Exception $e) {
+          log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage());
+          $item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
+        }
+        array_push($updateArr, $item);
+      }
     }
+
+    $otherPlugins = array();
+    foreach (plugin::listPlugin() as $plugin) {
+      if (in_array($plugin->getId(), $pluginUpdateId)) continue;
+      array_push($otherPlugins, JeedomConnectUtils::getPluginDetails($plugin));
+    }
+
+    $result = array(
+      'type' => 'SET_PLUGINS_UPDATE',
+      'payload' => array(
+        'nbUpdate' => $nbNeedUpdate,
+        'pluginsToUpdate' => $updateArr,
+        'otherPlugins' => $otherPlugins
+      )
+    );
+    return $result;
   }
 
   // BACKUPS
-  public static function setAppConfig($apiKey, $config) {
+  private static function setAppConfig($apiKey, $config) {
     $_backup_dir = __DIR__ . '/../../data/backups/';
     if (!is_dir($_backup_dir)) {
       mkdir($_backup_dir);
@@ -1184,7 +1876,7 @@ class apiHelper {
     }
   }
 
-  public static function getAppConfig($apiKey, $configId) {
+  private static function getAppConfig($apiKey, $configId) {
     $_backup_dir = '/plugins/JeedomConnect/data/backups/';
     $eqDir = $_backup_dir . $apiKey;
     $files = self::getFiles($eqDir);
@@ -1203,7 +1895,7 @@ class apiHelper {
 
   // JEEDOM & PLUGINS HEALTH
 
-  public static function restartDaemon($userId, $pluginId) {
+  private static function restartDaemon($userId, $pluginId) {
     $_plugin = \plugin::byId($pluginId);
     if (is_object($_plugin)) {
       log::add('JeedomConnect', 'debug', 'DAEMON restart by [' . $userId . '] =>' . $pluginId);
@@ -1213,7 +1905,7 @@ class apiHelper {
     return false;
   }
 
-  public static function stopDaemon($userId, $pluginId) {
+  private static function stopDaemon($userId, $pluginId) {
     $_plugin = \plugin::byId($pluginId);
     if (is_object($_plugin)) {
       log::add('JeedomConnect', 'debug', 'DAEMON stopped by [' . $userId . '] =>' . $pluginId);
@@ -1223,19 +1915,181 @@ class apiHelper {
     return false;
   }
 
-  public static function getJeedomHealthDetails($apiKey) {
+  private static function getJeedomHealthDetails() {
+    $allPluginsData = array();
+    $jeedomData = array();
+
+    // get the number of update availables
+    $nb = update::nbNeedUpdate();
+
+    // CUSTOM FX to disable health details -- not available now on screen -- personal use :) -- tomtom
+    $sendHealth = config::byKey('sendHealth', 'JeedomConnect', 'true');
+
+    if ($sendHealth == 'true') {
+
+      foreach (plugin::listPlugin(true) as $plugin) {
+
+        if ($plugin->getHasDependency() == 1 || $plugin->getHasOwnDeamon() == 1 || method_exists($plugin->getId(), 'health')) {
+          $plugin_id = $plugin->getId();
+
+          $asNok = 0;
+          $asPending = 0;
+
+          $portInfo = null;
+          if (config::byKey('port', $plugin->getId()) != '') {
+            $portInfo = ucfirst(config::byKey('port', $plugin->getId()));
+          }
+
+          $dependencyInfo = null;
+          if ($plugin->getHasDependency() == 1) {
+            try {
+              $dependancy_info = $plugin->dependancy_info();
+              switch ($dependancy_info['state']) {
+                case 'ok':
+                  $dependencyInfo = 'OK';
+                  break;
+                case 'in_progress':
+                  $dependencyInfo = 'En cours';
+                  $asPending += 1;
+                  break;
+                default:
+                  $dependencyInfo = 'KO';
+                  $asNok += 1;
+                  break;
+              }
+            } catch (Exception $e) {
+              log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting dependancy_info -- ' . $e->getMessage());
+            }
+          }
+
+          $daemonData = array();
+          if ($plugin->getHasOwnDeamon() == 1) {
+            try {
+
+              $daemonData['setup'] = array();
+              $daemon_info = $plugin->deamon_info();
+
+              $daemonData['setup']['mode'] = $daemon_info['auto'] ? 'auto' : 'manuel';
+
+              $daemonData['setup']['message'] = null;
+
+              switch ($daemon_info['launchable']) {
+                case 'ok':
+                  $daemonData['setup']['status'] = 'OK';
+                  break;
+                case 'nok':
+                  if ($daemon_info['auto'] != 1) {
+                    $daemonData['setup']['status'] = 'Désactivé';
+                  } else {
+                    $daemonData['setup']['status'] = 'KO';
+                    $daemonData['setup']['message'] =  $daemon_info['launchable_message'];
+                    $asNok += 1;
+                  }
+                  break;
+              }
+
+              $daemonData['last_launch'] = $daemon_info['last_launch'];
+              switch ($daemon_info['state']) {
+                case 'ok':
+                  $daemonData['state'] = 'OK';
+                  break;
+                case 'nok':
+                  if ($daemon_info['auto'] != 1) {
+                    $daemonData['state'] = 'Désactivé';
+                  } else {
+                    $daemonData['state'] = 'KO';
+                    $asNok += 1;
+                  }
+                  break;
+              }
+            } catch (Exception $e) {
+              log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting daemon_info -- ' . $e->getMessage());
+            }
+          }
+
+          $healthData = array();
+          if (method_exists($plugin->getId(), 'health')) {
+
+            try {
+              foreach ($plugin_id::health() as $result) {
+                $item = array();
+                $item['test'] = $result['test'];
+                $item['advice'] = $result['advice'];
+
+                if (!$result['state']) {
+                  $asNok += 1;
+                }
+                $item['result'] = $result['result'];
+
+                array_push($healthData, $item);
+              }
+            } catch (Exception $e) {
+              log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting health info -- ' . $e->getMessage());
+            }
+          }
+
+
+          $update = $plugin->getUpdate();
+          $versionType = $versionDate = null;
+          if (is_object($update)) {
+            $versionType = $update->getConfiguration('version');
+            $versionDate = $update->getLocalVersion();
+          }
+
+          $pluginData = array();
+
+          $pluginData['id'] = $plugin_id;
+          $pluginData['name'] = $plugin->getName();
+          $pluginData['img'] = $plugin->getPathImgIcon();
+          $pluginData['versionDate'] = $versionDate;
+          $pluginData['versionType'] = $versionType;
+          $pluginData['error'] = $asNok;
+          $pluginData['pending'] = $asPending;
+          $pluginData['portInfo'] = $portInfo;
+          $pluginData['dependencyInfo'] = $dependencyInfo;
+          $pluginData['daemonData'] = $daemonData;
+          $pluginData['healthData'] = $healthData;
+
+          array_push($allPluginsData, $pluginData);
+        }
+      }
+
+      // get jeedom health page
+      foreach ((jeedom::health()) as $datas) {
+        $item = array();
+        $item['name'] = $datas['name'];
+        $item['comment'] = $datas['comment'];
+
+        if ($datas['state'] === 2) {
+          $item['state'] = 'warning';
+        } else if ($datas['state']) {
+          $item['state'] = 'OK';
+        } else {
+          $item['state'] = 'KO';
+        }
+
+        $item['result'] = $datas['result'];
+
+        array_push($jeedomData, $item);
+      }
+    } else {
+      log::add('JeedomConnect', 'debug', 'HEALTH -- skip');
+    }
 
     $result = array(
       'type' => 'SET_JEEDOM_GLOBAL_HEALTH',
-      'payload' => JeedomConnect::getHealthDetails($apiKey)
+      'payload' => array(
+        'plugins' => $allPluginsData,
+        'jeedom' => $jeedomData,
+        'nbUpdate' => $nb
+      )
     );
-    log::add('JeedomConnect', 'debug', 'Send health =>' . json_encode($result));
     return $result;
   }
 
 
   //EXEC ACTIONS
-  public static function execCmd($id, $options = null) {
+  private static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
       log::add('JeedomConnect', 'error', "Can't find command [id=" . $id . "]");
@@ -1249,13 +2103,31 @@ class apiHelper {
     }
   }
 
-  public static function execMultipleCmd($cmdList) {
+  private static function execMultipleCmd($cmdList) {
     foreach ($cmdList as $cmd) {
       self::execCmd($cmd['id'], $cmd['options']);
     }
   }
 
-  public static function execSc($id, $options = null) {
+  private static function getJCActions($apiKey, $withType = true) {
+    $returnType = 'ACTIONS';
+
+    $actions = JeedomConnectActions::getAllActions($apiKey);
+    $payload = array();
+    if (count($actions) > 0) {
+      foreach ($actions as $action) {
+        array_push($payload, $action['value']['payload']);
+      }
+      JeedomConnectActions::removeActions($actions);
+    }
+
+    log::add('JeedomConnect', 'debug', "send action " . json_encode($payload));
+
+    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+  }
+
+  // MANAGE SC
+  private static function execSc($id, $options = null) {
     if ($options == null) {
       $options = array(
         'action' => 'start',
@@ -1269,7 +2141,7 @@ class apiHelper {
     }
   }
 
-  public static function stopSc($id) {
+  private static function stopSc($id) {
     try {
       $sc = scenario::byId($id);
       $sc->stop();
@@ -1278,7 +2150,7 @@ class apiHelper {
     }
   }
 
-  public static function setActiveSc($id, $active) {
+  private static function setActiveSc($id, $active) {
     try {
       $sc = scenario::byId($id);
       $sc->setIsActive($active);
@@ -1289,7 +2161,7 @@ class apiHelper {
   }
 
   // FILES
-  public static function getFiles($folder, $recursive = false) {
+  private static function getFiles($folder, $recursive = false) {
     $dir = __DIR__ . '/../../../..' . $folder;
     $result = array();
     try {
@@ -1323,7 +2195,7 @@ class apiHelper {
   }
 
 
-  public static function removeFile($file) {
+  private static function removeFile($file) {
     $pathInfo = pathinfo($file);
     unlink($file);
     return
@@ -1339,5 +2211,23 @@ class apiHelper {
     // log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
 
     return $result;
+  }
+
+  // MANAGE LOG FILE
+  private static function getLog($type, $id, $withType = true) {
+    $returnType = 'SET_LOG';
+
+    $logRootDir =   __DIR__ . '/../../../../log/';
+
+    $filePath = $logRootDir . (($type == 'scenario') ? 'scenarioLog/scenario' . $id . '.log' : $id);
+
+    if (!file_exists($filePath)) {
+      log::add('JeedomConnect', 'warning', 'file ' . $filePath . ' does not exist');
+      $fileContent = 'pas de log disponible - fichier introuvable';
+    } else {
+      $fileContent = file_get_contents($filePath);
+    }
+
+    return (!$withType) ? $fileContent : self::addTypeInPayload(json_encode($fileContent), $returnType);
   }
 }

@@ -211,8 +211,11 @@ function get_all_files($dir, $includeSubDir = false) {
 
         foreach ($myFiles as $img) {
           $div .= '<div class="divIconSel divImgSel">';
-          $div .= '<div class="cursor iconSel"><img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
-          $div .= '<div class="iconDesc">' . $img['name'] . '</div>';
+          $div .= '<div class="cursor iconSel">';
+          $div .= '<img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
+          $div .= '<div class="iconDesc">' . $img['name'];
+          $div .= '<i class="fas fa-minus-circle bt_removeImg" style="color: red;padding-left: 5px;" data-realfilepath="' . $img['path'] . '"></i>';
+          $div .= '</div>';
           $div .= '</div>';
         }
         echo $div;
@@ -223,188 +226,31 @@ function get_all_files($dir, $includeSubDir = false) {
 
 </div>
 
-<div id="mySearch" class="input-group col-sm-10" style="margin-left:6px;margin-top:6px;">
-  <div class="col-sm-4 ">
+<div id="mySearch" class="col-sm-10" style="margin-left:6px;margin-top:6px;">
+  <div class="col-sm-5">
     <div id="icon-params-div" class="input-group col-sm-12" style="display:none">
       <label style="float:left; margin-top:5px">Couleur :</label>
       <input class="form-control roundedLeft" style="width : 100px;margin-left:10px;" type="color" id="mod-color-picker" value='' onchange="iconColorDefined(this)">
-      <input class="form-control roundedLeft" style="width : 100px;" id="mod-color-input" value=''>
+      <input class="form-control roundedRight" style="width : 100px;" id="mod-color-input" value=''>
     </div>
-    <div id="img-params-div" class="checkbox-group  col-sm-5" style="display:none">
+    <div id="img-params-div" class="checkbox-group col-sm-5" style="display:none">
       <label style="float:left">Noir et blanc :</label>
       <input class="form-control roundedLeft" style="margin-left:5px" id="bw-input" type="checkbox">
     </div>
-    <div class="pull-right btnImgUserAdd  col-sm-6" style="display:none;">
+    <div class="pull-right btnImgUserAdd col-sm-6" style="display:none;">
       <span class="btn btn-default btn-file">
         <i class="fas fa-plus-square"></i> Ajouter<input id="bt_uploadImg" type="file" name="file" multiple="multiple" data-path="" style="display: inline-block;">
       </span>
     </div>
   </div>
-  <div class="col-sm-7 ">
-    <input class="form-control" placeholder="{{Rechercher}}" id="in_searchIconSelector">
+  <div class="col-sm-7 input-group">
+    <input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchIconSelector">
+    <div class="input-group-btn">
+      <a id="bt_resetSearchIcon" class="btn roundedRight"><i class="fas fa-times"></i> </a>
+    </div>
   </div>
-  <div class="col-sm-1">
-    <a id="bt_resetSearchIcon" class="btn roundedRight"><i class="fas fa-times"></i> </a>
-  </div>
+
 
 </div>
 
-<script>
-  $('#bt_uploadImg').fileupload({
-    add: function(e, data) {
-      let currentPath = $('#bt_uploadImg').attr('data-path');
-      data.url = 'core/ajax/jeedom.ajax.php?action=uploadImageIcon&filepath=' + userImgPath;
-      data.submit();
-    },
-    done: function(e, data) {
-      if (data.result.state != 'ok') {
-        $('#div_iconSelectorAlert').showAlert({
-          message: data.result.result,
-          level: 'danger'
-        });
-        return;
-      }
-      var name = data.result.result.filepath.replace(/^.*[\\\/]/, '');
-      div = '<div class="divIconSel divImgSel">';
-      div += '<div class="cursor iconSel"><img class="img-responsive" source="user" name="' + name + '" src="' + userImgPath + name + '" /></div>';
-      div += '<div class="iconDesc">' + name + '</div>';
-      div += '</div>';
-      $("#div_imageGallery[source='user']").append(div);
-
-      $('#div_iconSelectorAlert').showAlert({
-        message: 'Fichier(s) ajouté(s) avec succès',
-        level: 'success'
-      });
-    }
-  });
-
-  $('#mod_selectIcon').off('click', '.divIconSel').on('click', '.divIconSel', function() {
-    $('.divIconSel').removeClass('iconSelected');
-    $(this).closest('.divIconSel').addClass('iconSelected');
-  });
-
-  function iconColorDefined(c) {
-    $("#mod-color-input").val(c.value);
-  }
-
-  function setIconParams() {
-    $("#icon-params-div").show();
-    $("#img-params-div").hide();
-  }
-
-  function setImgParams() {
-    $("#icon-params-div").hide();
-    $("#img-params-div").show();
-  }
-
-
-  //searching
-  $('#in_searchIconSelector').on('keyup', function() {
-
-    var search = $(this).value()
-    if (search.length == 1) {
-      return;
-    }
-    $('.divIconSel').css({
-      'display': ''
-    })
-    $('.iconCategory').css({
-      'display': ''
-    })
-
-    if (search != '') {
-      search = normTextLower(search)
-      $('.iconDesc').each(function() {
-        iconName = normTextLower($(this).text())
-        if (iconName.indexOf(search) == -1) {
-          $(this).closest('.divIconSel').css({
-            'display': 'none'
-          })
-        }
-      })
-    }
-
-    var somethingFound = 0
-    $('.iconCategory').each(function() {
-      var hide = true
-      if ($(this).find('.divIconSel:visible').length == 0) {
-        $(this).css({
-          'display': 'none'
-        })
-      } else {
-        somethingFound += 1
-      }
-    })
-    if (somethingFound == 0) {
-      $('.generalCategory').css({
-        'display': ''
-      })
-    }
-  })
-
-  $('#bt_resetSearchIcon').on('click', function() {
-    $('#in_searchIconSelector').val('').keyup()
-  })
-
-
-  $('#mod_selectIcon ul li a').click(function() {
-    $('.jcpanel.tab-pane').css('display', 'none');
-
-    var type = $(this).attr('href').replace('#', '');
-
-    $('.tab-pane[source="' + type + '"]').css('display', 'block');
-
-    if (type == 'user') {
-      $('.btnImgUserAdd').css('display', 'block');
-    } else {
-      $('.btnImgUserAdd').css('display', 'none');
-    }
-
-    if (['jc', 'user'].indexOf(type) > -1) {
-      setImgParams();
-    } else {
-      setIconParams()
-    }
-
-    $('#in_searchIconSelector').keyup();
-  })
-
-
-  $(function() {
-    var buttonSet = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('.ui-dialog-buttonpane')
-    buttonSet.find('#mySearch').remove()
-    var mySearch = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('#mySearch')
-    buttonSet.append(mySearch)
-    if (selectedIcon.source == 0) {
-      $('#mod_selectIcon ul li a').first().click();
-    } else {
-      $(`#mod_selectIcon ul li a[href="#${selectedIcon.source}"]`).click();
-      if (selectedIcon.source == 'user') {
-        tmpSrc = (userImgPath || '') + selectedIcon.name;
-        $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[src="${decodeURI(tmpSrc)}"]`).closest('.divIconSel').addClass('iconSelected');
-      } else {
-        $(`.tab-pane[source="${selectedIcon.source}"]`).find(`[name="${decodeURI(selectedIcon.name)}"]`).closest('.divIconSel').addClass('iconSelected');
-      }
-      setTimeout(function() {
-        elem = $('div.divIconSel.iconSelected')
-        if (elem.position()) {
-          container = $('#mod_selectIcon > .tab-content')
-          pos = elem.position().top + container.scrollTop() - container.position().top
-          container.animate({
-            scrollTop: pos - 20
-          })
-        }
-      }, 250)
-    }
-
-    if (selectedIcon.color != 0) {
-      $("#mod-color-picker").val("#" + selectedIcon.color);
-      $("#mod-color-input").val("#" + selectedIcon.color);
-    }
-    if (selectedIcon.shadow === "true") {
-      $("#bw-input").prop('checked', true);
-    }
-
-
-  });
-</script>
+<?php include_file('desktop', 'assistant.iconModal', 'js', 'JeedomConnect'); ?>

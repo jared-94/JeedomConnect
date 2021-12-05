@@ -4936,6 +4936,14 @@
 					"generic_type": "MODE_SET_STATE"
 				},
 				{
+					"id": "contentCard",
+					"name": "Contenu dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Actions dans la carte plutôt qu'à droite",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -5155,6 +5163,20 @@
 					"subtype": "string",
 					"description": "Commande chaîne sous la forme latitude,longitude",
 					"generic_type": "GEOLOCATION"
+				},
+				{
+					"id": "zoomDistance",
+					"name": "Zoom",
+					"category": "string",
+					"description": "Zoom initial de la carte en mètres (par défaut 4000)",
+					"customizable": true
+				},
+				{
+					"id": "animateRegion",
+					"name": "Animer la carte",
+					"category": "binary",
+					"description": "Déplace la carte à chaque nouvelle position",
+					"customizable": true
 				},
 				{
 					"id": "image",

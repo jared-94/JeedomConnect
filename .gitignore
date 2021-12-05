@@ -3,6 +3,7 @@ data/qrcodes/
 data/notifs/
 data/backups/
 data/img/user_files/
+test/
 
 3rdparty/composer.phar
 3rdparty/composer.json
