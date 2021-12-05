@@ -214,7 +214,7 @@ function get_all_files($dir, $includeSubDir = false) {
           $div .= '<div class="cursor iconSel">';
           $div .= '<img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
           $div .= '<div class="iconDesc">' . $img['name'];
-          $div .= '&nbsp;&nbsp;<i class="fas fa-minus-circle bt_removeImg" style="color: red;padding-left: 5px;" data-realfilepath="' . $img['path'] . '"></i>';
+          $div .= '<i class="fas fa-minus-circle bt_removeImg" style="color: red;padding-left: 5px;" data-realfilepath="' . $img['path'] . '"></i>';
           $div .= '</div>';
           $div .= '</div>';
         }
