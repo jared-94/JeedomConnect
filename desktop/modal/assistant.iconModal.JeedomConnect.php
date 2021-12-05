@@ -211,9 +211,11 @@ function get_all_files($dir, $includeSubDir = false) {
 
         foreach ($myFiles as $img) {
           $div .= '<div class="divIconSel divImgSel">';
-          $div .= '<div class="cursor iconSel"><img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
-          $div .= '<div class="iconDesc">' . $img['name'] . '</div>';
-          $div .= '<a class="btn btn-danger btn-xs bt_removeImg" data-realfilepath="' . $img['path'] . '"><i class="fas fa-trash"></i> {{Supprimer}}</a>';
+          $div .= '<div class="cursor iconSel">';
+          $div .= '<img source="user" name="' . $img['name'] . '" class="img-responsive" src="' . $img['path'] . '"/></div>';
+          $div .= '<div class="iconDesc">' . $img['name'];
+          $div .= '&nbsp;&nbsp;<i class="fas fa-minus-circle bt_removeImg" style="color: red;padding-left: 5px;" data-realfilepath="' . $img['path'] . '"></i>';
+          $div .= '</div>';
           $div .= '</div>';
         }
         echo $div;
