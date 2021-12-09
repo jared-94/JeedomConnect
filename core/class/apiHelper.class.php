@@ -1622,14 +1622,14 @@ class apiHelper {
     $result = array(
       array(
         'type' => 'CMD_INFO',
-        'payload' => apiHelper::getCmdInfoData($config)
+        'payload' => apiHelper::getCmdInfoData($config, false)
       ),
       array(
         'type' => 'SC_INFO',
-        'payload' => apiHelper::getScenarioData($config, $scAll)
+        'payload' => apiHelper::getScenarioData($config, $scAll, false)
       ), array(
         'type' => 'OBJ_INFO',
-        'payload' => apiHelper::getObjectData($config)
+        'payload' => apiHelper::getObjectData($config, false)
       )
     );
     return $result;
