@@ -804,7 +804,8 @@ class apiHelper {
   private static function getPluginConfig($eqLogic, $withType = true) {
     $returnType = 'PLUGIN_CONFIG';
 
-    $plugin = update::byLogicalId('JeedomConnect');
+    $versionJson = JeedomConnect::getPluginInfo();
+    $beta = JeedomConnectUtils::isBeta() ? " (beta)" : "";
 
     $payload =  array(
       'useWs' => is_object($eqLogic) ?  $eqLogic->getConfiguration('useWs', 0) : 0,
@@ -812,7 +813,7 @@ class apiHelper {
       'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
-      'pluginJeedomVersion' => $plugin->getLocalVersion()
+      'pluginJeedomVersion' => $versionJson['version'] . $beta
     );
 
     return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
