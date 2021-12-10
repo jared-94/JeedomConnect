@@ -813,7 +813,7 @@ class apiHelper {
       'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
       'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
-      'pluginJeedomVersion' => $versionJson['version'] . $beta
+      'pluginJeedomVersion' => "v" . $versionJson['version'] . $beta
     );
 
     return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
