@@ -1,0 +1,30 @@
+[
+    {
+        "id": "doc",
+        "index": 1,
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/doc.png",
+        "title": "Documentation",
+        "link": "http://jared-94.github.io/JeedomConnectDoc/fr_FR/index"
+    },
+    {
+        "id": "changelog",
+        "index": 2,
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/listmodif.png",
+        "title": "Changelog",
+        "link": "http://jared-94.github.io/JeedomConnectDoc/fr_FR/changelog"
+    },
+    {
+        "id": "git",
+        "index": 3,
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/github.png",
+        "title": "Github du projet",
+        "link": "https://github.com/jared-94/JeedomConnect/"
+    },
+    {
+        "id": "donate",
+        "index": 4,
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/donate.png",
+        "title": "Faire un don",
+        "link": "https://paypal.me/JeedomConnect"
+    }
+]

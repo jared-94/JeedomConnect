@@ -18,7 +18,7 @@
 
 try {
 	require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-	require_once dirname(__FILE__) . '/../class/JeedomConnectWidget.class.php';
+	require_once dirname(__FILE__) . '/../class/JeedomConnect.class.php';
 	include_file('core', 'authentification', 'php');
 
 	if (!isConnect('admin')) {
@@ -80,6 +80,17 @@ try {
 		}
 		// echo $options;
 		ajax::success(array('details' => $list, 'options' => $options));
+	}
+
+	if (init('action') == 'getCmdsForWidgetType') {
+		$widget_type = init('widget_type');
+		$eqLogicId = !is_numeric(init('eqLogic_Id')) ? null : init('eqLogic_Id');
+		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type . ' - for eqLogicId : ' . $eqLogicId);
+
+		$results = JeedomConnectUtils::generateWidgetWithGenType($widget_type, $eqLogicId);
+		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
+
+		ajax::success($results);
 	}
 
 	if (init('action') == 'saveWidgetConfig') {
@@ -156,9 +167,9 @@ try {
 
 	if (init('action') == 'getWidgetMass') {
 		$ids = init('id') ?? 'all';
-		$allWidgets = JeedomConnectWidget::getWidgets($ids, true);
+		$allWidgets = JeedomConnectWidget::getWidgets($ids);
 
-		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../../resources/widgetsConfig.json'), true);
+		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../config/widgetsConfig.json'), true);
 		$widgetArrayConfig = array();
 		foreach ($jsonConfig['widgets'] as $config) {
 			$widgetArrayConfig[$config['type']] =  $config;
@@ -210,7 +221,7 @@ try {
 			$hasSubTitle = false;
 			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
 			{
-				if ($opt['id'] != 'subtitle') continue;	
+				if ($opt['id'] != 'subtitle') continue;
 				$hasSubTitle = true;
 				break;
 			}
@@ -427,20 +438,14 @@ try {
 
 	if (init('action') == 'getWidgetConfigAll') {
 		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
-		$widgets = JeedomConnectWidget::getWidgets();
+		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
 
 		if ($widgets == '') {
 			log::add('JeedomConnect', 'debug', 'no widgets found');
 			ajax::error('Erreur - pas d\'équipement trouvé');
-		} else {
-			$result = array();
-			foreach ($widgets as $widget) {
-				$monWidget = json_decode($widget['widgetJC'], true);
-				array_push($result, $monWidget);
-			}
-			log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($result));
-			ajax::success($result);
 		}
+		log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($widgets));
+		ajax::success($widgets);
 	}
 
 	if (init('action') == 'getWidgetExistance') {
@@ -560,6 +565,14 @@ try {
 		}
 	}
 
+	if (init('action') == 'saveNotifAll') {
+		$cmdList = init('cmdList');
+		if ($cmdList == "") $cmdList = array();
+		log::add('JeedomConnect', 'debug', 'saveNotifAll - info received : ' . json_encode($cmdList));
+		config::save('notifAll', json_encode($cmdList), 'JeedomConnect');
+		ajax::success();
+	}
+
 	if (init('action') == 'uploadImg') {
 		$filename = $_FILES['file']['name'];
 		$destination = __DIR__ . '/../../data/img/user_files/';
@@ -583,9 +596,12 @@ try {
 	}
 
 	if (init('action') == 'getCmd') {
-		$cmd = (preg_match("/^\d+$/", init('id'))) ? cmd::byId(init('id')) : cmd::byString(init('id'));
+		$id = init('id');
+		if ($id == '') throw new Exception("id est obligatoire");
+
+		$cmd = (preg_match("/^\d+$/", $id)) ? cmd::byId($id) : cmd::byString($id);
 		if (!is_object($cmd)) {
-			throw new Exception(__('Commande inconnue : ', __FILE__) . init('id'));
+			throw new Exception(__('Commande inconnue : ', __FILE__) . $id);
 		}
 		ajax::success(array(
 			'id' => $cmd->getId(),

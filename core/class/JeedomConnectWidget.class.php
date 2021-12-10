@@ -3,26 +3,32 @@
 /* * ***************************Includes********************************* */
 // require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
+require_once __DIR__  . '/JeedomConnectLock.class.php';
 
 class JeedomConnectWidget extends config {
 
 	public static $_plugin_id = 'JeedomConnect';
 
 	public static function getMaxIndex() {
-
 		return config::byKey('index::max', self::$_plugin_id) ?: '0';
 	}
 
 	public static function incrementIndex() {
-
 		log::add(self::$_plugin_id, 'debug', 'increment widget index ');
-		$current = config::byKey('index::max', self::$_plugin_id) ?: '0';
-		log::add(self::$_plugin_id, 'debug', 'current index : ' . $current);
+		$lock = new JeedomConnectLock('Widget_incrementIndex');
+		try {
+			if ($lock->Lock()) {
+				$current = config::byKey('index::max', self::$_plugin_id) ?: '0';
+				log::add(self::$_plugin_id, 'debug', 'current index : ' . $current);
 
-		$next = intval($current) + 1;
-		config::save('index::max', strval($next), self::$_plugin_id);
-		log::add(self::$_plugin_id, 'debug', 'incrementIndex done');
-		return $next;
+				$next = intval($current) + 1;
+				config::save('index::max', strval($next), self::$_plugin_id);
+				log::add(self::$_plugin_id, 'debug', 'incrementIndex done');
+				return $next;
+			}
+		} finally {
+			unset($lock);
+		}
 	}
 
 	public static function setConfiguration($_widgetId, $_key, $_value) {
@@ -61,10 +67,10 @@ class JeedomConnectWidget extends config {
 		return $result;
 	}
 
-	public static function getWidgets($_id = 'all', $_fullConfig = true) {
+	public static function getWidgets($_id = 'all', $_fullConfig = true, $_onlyConfig = false) {
 
 		if ($_id === 'all') {
-			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widget');
+			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widgets with full config');
 			$widgets = JeedomConnectWidget::getAllConfigurations();
 		} else {
 			$widgets = array();
@@ -81,25 +87,30 @@ class JeedomConnectWidget extends config {
 			foreach ($widgets as $widget) {
 				$widgetItem = array();
 
-				$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
+				if ($_onlyConfig) {
+					$widgetItem = json_decode($widget['conf']['widgetJC'], true) ?? '';
+				} else {
+					$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 
-				$widgetJC = json_decode($widget['conf']['widgetJC'], true);
-				if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
-				$widgetItem['enable'] = $widgetJC['enable'];
-				$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
-				$widgetItem['type'] = $widgetJC['type'] ?? 'none';
-				$widgetItem['roomId'] = $widgetJC['room'] ?? '';
-				$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
-				$widgetItem['roomName'] = (!is_null($widgetRoomObjet) && is_object($widgetRoomObjet)) ? ($widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName()) : 'Aucun';
-				$widgetItem['id'] = $widgetJC['id'] ?? 'none';
+					$widgetJC = json_decode($widget['conf']['widgetJC'], true);
+					if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
+					$widgetItem['enable'] = $widgetJC['enable'];
+					$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
+					$widgetItem['type'] = $widgetJC['type'] ?? 'none';
+					$widgetItem['roomId'] = $widgetJC['room'] ?? '';
+					$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
+					$widgetItem['roomName'] = (!is_null($widgetRoomObjet) && is_object($widgetRoomObjet)) ? ($widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName()) : 'Aucun';
+					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
+				}
 
 				array_push($widgetArray, $widgetItem);
 			}
 
-			$roomName  = array_column($widgetArray, 'roomName');
-			$widgetName = array_column($widgetArray, 'name');
-
-			array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+			if (!$_onlyConfig) {
+				$roomName  = array_column($widgetArray, 'roomName');
+				$widgetName = array_column($widgetArray, 'name');
+				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+			}
 
 			//log::add(self::$_plugin_id, 'debug', ' final result sent >' . json_encode($widgetArray) );
 		}
@@ -108,7 +119,7 @@ class JeedomConnectWidget extends config {
 
 	public static function getWidgetsList() {
 
-		$widgetArray = self::getWidgets('all', true);
+		$widgetArray = self::getWidgets('all', false);
 		usort($widgetArray, function ($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});

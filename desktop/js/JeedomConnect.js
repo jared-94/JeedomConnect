@@ -120,6 +120,10 @@ function getWidgetModal(_options, _callback) {
     $('.widgetMenu .saveWidget').removeClass('roundedLeft');
   }
 
+  if ($('#widgetOptions').attr('widget-id') != undefined && $('#widgetOptions').attr('widget-id') != '') {
+    $('.autoFillWidgetCmds').hide();
+  }
+
   if (_options.exit == true) {
     $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
   }
@@ -173,6 +177,48 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
 
 })
 
+$('.eqLogicAction[data-action=addWidgetBulk]').off('click').on('click', function () {
+  $("#widgetModal").dialog('destroy').remove();
+  $('body').append('<div id="widgetModal"></div>');
+  $('#widgetModal').dialog({
+    title: "{{Ajout de widgets en masse}}",
+    width: 0.95 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    modal: true,
+    closeText: ''
+  });
+  $('#widgetModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetBulkModal.JeedomConnect').dialog('open');
+})
+
+
+$('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function () {
+  // $('.pluginInfo').toggle("slide", { direction: "right" }, 1000);
+  getSimpleModal({
+    title: "Forum",
+    width: 0.5 * $(window).width(),
+    fields: [{
+      type: "string",
+      value: $('.txtInfoPlugin').html()
+    },
+    {
+      type: "string",
+      id: "infoPluginModal",
+      value: $('.infoPlugin').html()
+    }],
+    buttons: {
+      "Fermer": function () {
+        $('#simpleModalAlert').hide();
+        $(this).dialog("close");
+      },
+      "Copier": function () {
+        copyDivToClipboard('#infoPluginModal', true)
+      }
+    }
+  }, function (result) { });
+
+
+});
+
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
   $('#widgetSummaryModal').dialog({
@@ -189,6 +235,31 @@ $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function (
   $('#widgetSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
+$('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function () {
+  $('body').append('<div id="notifAllModal"></div>');
+  $('#notifAllModal').dialog({
+    title: "{{Configuration de la notification de \"tous\" les équipements}}",
+    autoOpen: false,
+    modal: true,
+    closeText: '',
+    width: 0.7 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    closeOnEscape: false
+  });
+  $('#notifAllModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.notifAll.JeedomConnect').dialog('open');
+})
+
+// Start Generic Types
+// HACK Remove when gentype config in plugin is not needed anymore
+function gotoGenTypeConfig() {
+  $('#md_modal').dialog({ title: "{{Objets / Pièces}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=gentype.objects').dialog('open');
+}
+
+$('.eqLogicAction[data-action=gotoGenTypeConfig]').off('click').on('click', function () {
+  gotoGenTypeConfig();
+})
+// End Generic Types
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
@@ -217,7 +288,8 @@ $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', funct
 
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
   var a = document.createElement("a");
-  a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
+  //a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
+  a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + key + '.json';
   a.download = key + '_' + today + '_' + time + '.json';
   a.click();
   a.remove();
@@ -252,7 +324,8 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
       }
       else {
         var a = document.createElement("a");
-        a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
+        //a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
+        a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
         a.download = apiKey + '_' + today + '_' + time + '_GENERATED.json';
         a.click();
         a.remove();
@@ -605,7 +678,7 @@ var widgetsList = (function () {
     'async': false,
     'global': false,
     'cache': false,
-    'url': "plugins/JeedomConnect/resources/widgetsConfig.json",
+    'url': "plugins/JeedomConnect/core/config/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
       data.widgets.sort(function (a, b) {
@@ -813,6 +886,7 @@ function refreshAddWidgets() {
   moreInfos = [];
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
+  showAutoFillWidgetCmds();
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
 
   $("#widgetDescription").html(widget.description);
@@ -1079,7 +1153,15 @@ function selectCmd(name, type, subtype, value) {
   if (subtype != 'undefined') {
     cmd = { type: type, subType: subtype }
   }
-  jeedom.cmd.getSelectModal({ cmd: cmd }, function (result) {
+  var obj = $('#room-input option:selected').val();
+  obj = (obj == 'none') ? '' : obj;
+
+  jeedom.cmd.getSelectModal({
+    object: {
+      id: obj
+    },
+    cmd: cmd
+  }, function (result) {
     refreshCmdData(name, result.cmd.id, value);
   })
 }
@@ -1095,6 +1177,7 @@ $("#widgetOptions").on('change', '.needRefresh', function () {
 
 
 function refreshCmdData(name, id, value) {
+  if (name == '' || id == '') return;
   getCmd({
     id: id,
     error: function (error) {
@@ -1377,9 +1460,7 @@ $("#widgetOptions").on('focusout', '.jcCmdListOptionsCommand', function () {
 
         // update cmdCat
         cmdCat.forEach(item => {
-          console.log('item in CmdCat :', item);
           if (item.id == currentId && item.index == currentIndex) {
-            console.log('found cmdCat !');
             item.id = data.result.id;
             item.name = data.result.humanName;
             item.subtype = data.result.subType;
@@ -1467,7 +1548,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1489,7 +1570,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}"><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -1511,7 +1592,7 @@ function getCmdOptions(item) {
             <span class="input-group-btn">
               <button class="btn btn-default listEquipementInfo roundedRight" type="button" tooltip="Sélectionner la commande" data-uid="${customUid}" data-index="${item.index}" data-cmd_id="${item.id}"><i class="fas fa-list-alt"></i></button>
             </span>
-        
+
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').off('click').on('click', function () {
             var el = $(this);
@@ -1900,6 +1981,7 @@ function loadSortable(elt) {
           info.human = $(el).find("#" + info.id + "-input").val();
           info.name = $(el).find("#" + info.id + "-name-input").val();
           info.unit = $(el).find("#" + info.id + "-unit-input").val();
+          info.index = i;
           moreInfos.push(info);
         }
         );
@@ -2427,6 +2509,7 @@ function duplicateWidget() {
 
   $('.widgetMenu .duplicateWidget').hide()
   $('.widgetMenu .removeWidget').hide()
+  showAutoFillWidgetCmds();
   $('#widget-alert').showAlert({ message: 'Vous êtes sur le widget dupliqué, réalisez (ou non) vos modifications. Dans tous les cas, pensez à sauvegarder !', level: 'success' });
   // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 
@@ -2532,14 +2615,14 @@ function getWidgetPath(id) {
   var widget = allWidgetsDetail.find(w => w.id == id);
   var name = (' ' + widget.name).slice(1);
 
-  if (widget.parentId === undefined | widget.parentId == null) {
+  if (widget.parentId === undefined || widget.parentId == null || typeof configData === 'undefined') {
     return name;
   }
   var id = (' ' + widget.parentId.toString()).slice(1);
   parent = configData.payload.groups.find(i => i.id == id);
   if (parent) {
     name = parent.name + " / " + name;
-    if (parent.parentId === undefined | parent.parentId == null) {
+    if (parent.parentId === undefined || parent.parentId == null) {
       return name;
     }
     id = (' ' + parent.parentId.toString()).slice(1);
@@ -2547,7 +2630,7 @@ function getWidgetPath(id) {
   parent2 = configData.payload.sections.find(i => i.id == id);
   if (parent2) {
     name = parent2.name + " / " + name;
-    if (parent2.parentId === undefined | parent2.parentId == null) {
+    if (parent2.parentId === undefined || parent2.parentId == null) {
       return name;
     }
     id = (' ' + parent2.parentId.toString()).slice(1);
@@ -2868,4 +2951,28 @@ function setCondToHuman(confArr) {
     }
     input.val(value);
   });
+}
+
+$('body').off('click', '.removeParent').on('click', '.removeParent', function () {
+  $(this).parent().remove();
+});
+
+function copyDivToClipboard(myInput, addBacktick = false) {
+  var initialText = $(myInput).html();
+  if (addBacktick) {
+    $(myInput).html('```<br/>' + initialText.replaceAll('<b>', '').replaceAll('</b>', '') + '```');
+  }
+  var range = document.createRange();
+  range.selectNode($(myInput).get(0));
+  window.getSelection().removeAllRanges(); // clear current selection
+  window.getSelection().addRange(range); // to select text
+  document.execCommand("copy");
+  window.getSelection().removeAllRanges();// to deselect
+  $('#div_simpleModalAlert').showAlert({
+    message: 'Infos copiées',
+    level: 'success'
+  });
+  if (addBacktick) {
+    $(myInput).html(initialText);
+  }
 }

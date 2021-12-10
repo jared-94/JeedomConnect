@@ -14,7 +14,7 @@ $.post({
 		validateDataIndex();
 		$.ajax({
 			dataType: 'json',
-			url: "plugins/JeedomConnect/resources/widgetsConfig.json",
+			url: "plugins/JeedomConnect/core/config/widgetsConfig.json",
 			cache: false,
 			success: function (data) {
 				data.widgets.sort(function (a, b) {
@@ -88,7 +88,7 @@ function refreshTopTabContent() {
 	items = [];
 	$.each(tabs, function (key, val) {
 		items.push(`<li data-id="${val.id}" class="topItem" title="id=${val.id}"><a  onclick="editTopTabModal('${val.id}');">${val.name}</a>
-			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>	
+			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upTopTab('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downTopTab('${val.id}');"></i> -->
@@ -107,7 +107,7 @@ function refreshRoomData() {
 	$.each(rooms, function (key, val) {
 		items.push(`<li data-id="${val.id}" title="id=${val.id}" class="roomItem"><a>${val.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
-			
+
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upRoom('${val.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downRoom('${val.id}');"></i> -->
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteRoom('${val.id}');"></i></li>`);
@@ -150,9 +150,9 @@ function refreshWidgetsContent() {
 			<img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${val.name}${enable}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
-			
+
 			<i class="mdi mdi-arrow-up-circle" title="Monter" style="color:orange;font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${val.id}','${value.parentId}','${value.index}');"></i>
-			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:orange;font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}','${value.parentId}','${value.index}');"></i> 
+			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:orange;font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${val.id}','${value.parentId}','${value.index}');"></i>
 
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}','${value.parentId}','${value.index}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
@@ -160,10 +160,10 @@ function refreshWidgetsContent() {
 		} else { //it's a group
 			items.push(`<li class="widgetItem widgetGroup" data-id="${value.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
-			
+
 			<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upGroup('${value.id}');"></i>
 			<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downGroup('${value.id}');"></i> -->
-			
+
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteGroup('${value.id}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveGroupModal('${value.id}');"></i></li>`);
 			var curWidgets = configData.payload.widgets.filter(w => w.parentId == value.id);
@@ -177,12 +177,12 @@ function refreshWidgetsContent() {
 					$("#selWidgetDetail option[data-widget-id=" + w.id + "]").attr('data-exist', true);
 					var enableSub = w.enable ? '' : hideSpan;
 					var img = widgetsList.widgets.find(i => i.type == w.type).img;
-					items.push(`<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}${enableSub}</a>
+					items.push(`<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}\nwidgetId=${wid.widgetId}" onclick="editWidgetModal('${w.id}');"><img src="plugins/JeedomConnect/data/img/${img}" class="imgList"/>${w.name}${enableSub}</a>
 					<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
-					
+
 					<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
 				<i class="mdi mdi-arrow-down-circle" title="Descendre" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidget('${w.id}','${wid.parentId}','${wid.index}');"></i> -->
-				
+
 				<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>
 				<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;;" aria-hidden="true" onclick="moveWidgetModal('${w.id}','${wid.parentId}','${wid.index}');"></i></li>`);
 				}
@@ -252,16 +252,20 @@ function getWidgetsParents() {
 	var items = [];
 	$.each(configData.payload.tabs, function (key, val) {
 		if (configData.payload.sections.find(s => s.parentId == val.id) === undefined) {
-			items.push({ id: val.id, name: val.name });
+			items.push({ id: val.id, name: val.name, index: val.index });
 		}
 	});
 	$.each(configData.payload.sections, function (key, val) {
 		var tab = configData.payload.tabs.find(t => t.id == val.parentId);
 		if (tab === undefined & configData.payload.tabs.length == 0) {
-			items.push({ id: val.id, name: val.name });
+			items.push({ id: val.id, name: val.name, index: 0 - val.index }); // move section without tab (is it possible?) on top with a virtual negative index
 		} else {
-			items.push({ id: val.id, name: tab.name + " / " + val.name });
+			items.push({ id: val.id, name: tab.name + " / " + val.name, index: tab.index });
 		}
+	});
+
+	items = items.sort(function (s, t) {
+		return s.index - t.index;
 	});
 	return items;
 }
@@ -1340,7 +1344,7 @@ function duplicateWidget(widgetId) {
 	refreshWidgetsContent();
 }
 
-// BACKGROUND FUNCTIONS	
+// BACKGROUND FUNCTIONS
 
 function refreshBackgroundData() {
 	if (configData.payload.background == undefined) {
@@ -1471,7 +1475,7 @@ function getWeatherEq() {
 }
 
 
-// BATTERIES FUNCTIONS	
+// BATTERIES FUNCTIONS
 function getDataPayload(pageType) {
 
 	if (pageType == 'batteries') {

@@ -49,6 +49,20 @@ foreach ($orderByArray as $key => $value) {
   $optionsOrderBy .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
 }
 
+
+$userHash = '';
+if (isConnect()) {
+  if (isset($_SESSION['user']) && is_object($_SESSION['user'])) {
+    $user = user::byId($_SESSION['user']->getId());
+    if (is_object($user)) {
+      log::add('JeedomConnect', 'debug', 'user session:' . $user->getHash());
+      $userHash = $user->getHash();
+    }
+  }
+}
+sendVarToJS('userHash', $userHash);
+
+
 ?>
 <form class="form-horizontal jeedomConnect">
 
@@ -144,6 +158,17 @@ foreach ($orderByArray as $key => $value) {
     </div>
 
     <div class="form-group">
+      <label class="col-lg-6 control-label">{{QR Code avec le logo JC}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Insère le logo JC à l'intérieur du qr code de chaque équipement"></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="withQrCode" checked />
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="col-lg-6 control-label">{{Activer le mode Expert}}
         <sup>
           <i class="fas fa-question-circle floatright" title="Permet de laisser l'utilisateur modifier les commandes manuellement"></i>
@@ -151,6 +176,17 @@ foreach ($orderByArray as $key => $value) {
       </label>
       <div class="col-lg-3">
         <input type="checkbox" class="configKey" data-l1key="isExpert" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-lg-6 control-label">{{Création en masse en mode strict}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Impose que tous les types génériques nécessaires soient correctement configurés pour la création de widget en masse mais réduit le nombre d'erreur de l'assistant"></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="isStrict" checked />
       </div>
     </div>
 

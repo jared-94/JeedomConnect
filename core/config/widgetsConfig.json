@@ -4,7 +4,7 @@
 			"type": "single-light-switch",
 			"name": "Lumière On/Off",
 			"img": "light100.png",
-			"description": "Gère une lumière simple à deux états allumé/éteind",
+			"description": "Gère une lumière simple à deux états allumé/éteint",
 			"variables": [
 				{
 					"name": "room",
@@ -13,6 +13,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -51,7 +55,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "LIGHT_ON"
 				},
 				{
 					"id": "offAction",
@@ -61,7 +66,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "LIGHT_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -69,7 +75,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat de la lumière (binaire ou numérique)"
+					"description": "Etat de la lumière (binaire ou numérique)",
+					"generic_type": "LIGHT_STATE"
 				},
 				{
 					"id": "powerInfo",
@@ -78,7 +85,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -110,6 +118,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -157,6 +169,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -195,7 +211,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "LIGHT_ON"
 				},
 				{
 					"id": "offAction",
@@ -205,7 +222,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "LIGHT_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -214,7 +232,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
 					"id": "brightAction",
@@ -223,7 +242,8 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "brightInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "LIGHT_SLIDER"
 				},
 				{
 					"id": "brightInfo",
@@ -232,7 +252,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Intensité de la lumière"
+					"description": "Intensité de la lumière",
+					"generic_type": "LIGHT_STATE"
 				},
 				{
 					"id": "whiteTempAction",
@@ -240,14 +261,16 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "whiteTempInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "LIGHT_SET_COLOR_TEMP"
 				},
 				{
 					"id": "whiteTempInfo",
 					"name": "Info Temp. blanc",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "LIGHT_COLOR_TEMP"
 				},
 				{
 					"id": "powerInfo",
@@ -256,7 +279,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -289,6 +313,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -336,6 +364,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -373,7 +405,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "color",
-					"value": "colorInfo"
+					"value": "colorInfo",
+					"generic_type": "LIGHT_SET_COLOR"
 				},
 				{
 					"id": "colorInfo",
@@ -382,7 +415,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Couleur de la lumière"
+					"description": "Couleur de la lumière",
+					"generic_type": "LIGHT_COLOR"
 				},
 				{
 					"id": "onAction",
@@ -392,7 +426,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "LIGHT_ON"
 				},
 				{
 					"id": "offAction",
@@ -402,7 +437,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "LIGHT_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -411,7 +447,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité"
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
 					"id": "brightAction",
@@ -420,7 +457,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "slider",
-					"value": "brightInfo"
+					"value": "brightInfo",
+					"generic_type": "LIGHT_SLIDER"
 				},
 				{
 					"id": "brightInfo",
@@ -429,7 +467,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Intensité de la lumière"
+					"description": "Intensité de la lumière",
+					"generic_type": "LIGHT_STATE"
 				},
 				{
 					"id": "whiteTempAction",
@@ -437,14 +476,16 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "whiteTempInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "LIGHT_SET_COLOR_TEMP"
 				},
 				{
 					"id": "whiteTempInfo",
 					"name": "Info Temp. blanc",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "LIGHT_COLOR_TEMP"
 				},
 				{
 					"id": "powerInfo",
@@ -453,7 +494,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "grabberAction",
@@ -495,6 +537,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -652,6 +698,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -697,6 +747,10 @@
 				{
 					"name": "statusText",
 					"descr": "Statut 'Eteint' ou 'Allumé'"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -742,7 +796,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"value": "statusInfo"
+					"value": "statusInfo",
+					"generic_type": "ENERGY_ON"
 				},
 				{
 					"id": "offAction",
@@ -751,7 +806,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"value": "statusInfo"
+					"value": "statusInfo",
+					"generic_type": "ENERGY_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -760,7 +816,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat (Allumé/Eteint) de la prise"
+					"description": "Etat (Allumé/Eteint) de la prise",
+					"generic_type": "ENERGY_STATE"
 				},
 				{
 					"id": "powerInfo",
@@ -769,7 +826,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -802,6 +860,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -932,6 +994,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -1051,6 +1117,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -1096,6 +1166,13 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -1108,10 +1185,23 @@
 					"description": "Liste des widgets à afficher"
 				},
 				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
 					"id": "blocDisplay",
 					"name": "Affichage bloc",
 					"category": "binary",
-					"description": "Affichage du résumé sur plusieurs lignes"
+					"description": "Affichage du résumé sur plusieurs lignes",
+					"customizable": true
 				}
 			]
 		},
@@ -1126,6 +1216,25 @@
 					"name": "Nom",
 					"required": true,
 					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "blocDisplay",
@@ -1148,6 +1257,13 @@
 					"category": "string"
 				},
 				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": []
+				},
+				{
 					"id": "widgets",
 					"name": "Widgets",
 					"required": true,
@@ -1158,6 +1274,18 @@
 						"room"
 					],
 					"description": "Liste des widgets à afficher"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
 				},
 				{
 					"id": "blocDisplay",
@@ -1176,6 +1304,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1209,7 +1341,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de la luminosité en Lux"
+					"description": "Etat de la luminosité en Lux",
+					"generic_type": "BRIGHTNESS"
 				},
 				{
 					"id": "image",
@@ -1242,6 +1375,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -1285,6 +1422,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1318,7 +1459,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de l'humidité en %"
+					"description": "Etat de l'humidité en %",
+					"generic_type": "HUMIDITY"
 				},
 				{
 					"id": "image",
@@ -1351,6 +1493,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -1394,6 +1540,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1427,7 +1577,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de la température en °C"
+					"description": "Etat de la température en °C",
+					"generic_type": "TEMPERATURE"
 				},
 				{
 					"id": "image",
@@ -1461,6 +1612,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -1504,6 +1659,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -1537,7 +1696,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Etat de la puissance en W"
+					"description": "Etat de la puissance en W",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -1571,6 +1731,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -1646,7 +1810,7 @@
 							"name": "Temps écoulé"
 						},
 						{
-							"id": "status",
+							"id": "formatedValue",
 							"name": "Statut"
 						},
 						{
@@ -1674,7 +1838,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du thermostat (chaîne ou binaire)."
+					"description": "Etat du thermostat (chaîne ou binaire).",
+					"generic_type": "THERMOSTAT_STATE"
 				},
 				{
 					"id": "setpointAction",
@@ -1684,7 +1849,8 @@
 					"type": "action",
 					"subtype": "slider",
 					"value": "setpointInfo",
-					"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)"
+					"description": "Commande (slider) qui gère la consigne ('Thermostat' avec le plugin Thermostat)",
+					"generic_type": "THERMOSTAT_SET_SETPOINT"
 				},
 				{
 					"id": "setpointInfo",
@@ -1692,7 +1858,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "THERMOSTAT_SETPOINT"
 				},
 				{
 					"id": "tempInfo",
@@ -1700,7 +1867,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "THERMOSTAT_TEMPERATURE"
 				},
 				{
 					"id": "tempExtInfo",
@@ -1708,7 +1876,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "THERMOSTAT_TEMPERATURE_OUTDOOR"
 				},
 				{
 					"id": "modeInfo",
@@ -1717,7 +1886,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant"
+					"description": "Info qui donne le mode courant",
+					"generic_type": "THERMOSTAT_MODE"
 				},
 				{
 					"id": "modes",
@@ -1730,7 +1900,8 @@
 						"hasIcon": true,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "THERMOSTAT_SET_MODE"
 				},
 				{
 					"id": "powerInfo",
@@ -1747,7 +1918,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "binary"
+					"subtype": "binary",
+					"generic_type": "THERMOSTAT_LOCK"
 				},
 				{
 					"id": "lockAction",
@@ -1755,14 +1927,16 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "THERMOSTAT_SET_LOCK"
 				},
 				{
 					"id": "unlockAction",
 					"name": "Déverrouillage",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "THERMOSTAT_SET_UNLOCK"
 				},
 				{
 					"id": "image",
@@ -1795,6 +1969,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -1884,7 +2062,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "AC_ON"
 				},
 				{
 					"id": "offAction",
@@ -1894,7 +2073,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "AC_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -1902,7 +2082,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du climatiseur (binaire ou numérique)."
+					"description": "Etat du climatiseur (binaire ou numérique).",
+					"generic_type": "AC_STATE"
 				},
 				{
 					"id": "setpointAction",
@@ -1911,7 +2092,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "slider",
-					"value": "setpointInfo"
+					"value": "setpointInfo",
+					"generic_type": "AC_SET_TEMPERATURE"
 				},
 				{
 					"id": "setpointInfo",
@@ -1919,7 +2101,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "AC_TEMPERATURE"
 				},
 				{
 					"id": "tempInfo",
@@ -1927,7 +2110,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "AC_INDOOR_TEMPERATURE"
 				},
 				{
 					"id": "modeInfo",
@@ -1936,31 +2120,22 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Info qui donne le mode courant (Froid, Chaud, Sechage)"
+					"description": "Info qui donne le mode courant (la valeur donne le nom de l'action)",
+					"generic_type": "AC_MODE"
 				},
 				{
-					"id": "hotAction",
-					"name": "Mode Chaud",
+					"id": "modes",
+					"name": "Modes",
 					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "coldAction",
-					"name": "Mode Froid",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
-				},
-				{
-					"id": "dryAction",
-					"name": "Mode Séchage",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other"
+					"category": "cmdList",
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": false
+					},
+					"generic_type": "AC_SET_MODE"
 				},
 				{
 					"id": "fanSpeedInfo",
@@ -1968,8 +2143,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric",
-					"description": "Info qui donne la vitesse de ventilation"
+					"description": "Info (numérique ou texte) qui donne la vitesse de ventilation",
+					"generic_type": "AC_FAN_MODE"
 				},
 				{
 					"id": "fanSpeedAction",
@@ -1977,7 +2152,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "slider"
+					"description": "Action de type slider si info numérique ou texte si info select",
+					"generic_type": "AC_SET_FAN_MODE"
 				},
 				{
 					"id": "image",
@@ -2010,6 +2186,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -2053,6 +2233,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2086,7 +2270,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la porte"
+					"description": "Etat de la porte",
+					"generic_type": "OPENING"
 				},
 				{
 					"id": "image",
@@ -2119,6 +2304,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -2237,6 +2426,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -2278,6 +2471,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2310,7 +2507,8 @@
 					"required": true,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat de la fenêtre"
+					"description": "Etat de la fenêtre",
+					"generic_type": "OPENING_WINDOW"
 				},
 				{
 					"id": "image",
@@ -2343,6 +2541,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -2457,6 +2659,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -2534,7 +2740,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])"
+					"description": "Etat du portail (Fermé=0, Ouvert=1, Piéton=2 [optionnel])",
+					"generic_type": "BARRIER_STATE"
 				},
 				{
 					"id": "openAction",
@@ -2543,7 +2750,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Ouverture totale du portail"
+					"description": "Ouverture totale du portail",
+					"generic_type": "GB_OPEN"
 				},
 				{
 					"id": "closeAction",
@@ -2552,7 +2760,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Fermeture du portail"
+					"description": "Fermeture du portail",
+					"generic_type": "GB_CLOSE"
 				},
 				{
 					"id": "partialAction",
@@ -2594,6 +2803,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -2681,25 +2894,30 @@
 					"required": false,
 					"category": "cmd",
 					"type": "info",
-					"description": "Etat du volet (numérique ou binaire)"
+					"description": "Etat du volet (numérique ou binaire)",
+					"generic_type": "FLAP_STATE"
 				},
 				{
 					"id": "upAction",
 					"name": "Monter",
+					"required": true,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande pour monter le volet"
+					"description": "Commande pour monter le volet",
+					"generic_type": "FLAP_UP"
 				},
 				{
 					"id": "downAction",
 					"name": "Descendre",
+					"required": true,
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande pour déscendre le volet"
+					"description": "Commande pour déscendre le volet",
+					"generic_type": "FLAP_DOWN"
 				},
 				{
 					"id": "stopAction",
@@ -2708,7 +2926,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"description": "Commande pour arrêter le volet"
+					"description": "Commande pour arrêter le volet",
+					"generic_type": "FLAP_STOP"
 				},
 				{
 					"id": "positionAction",
@@ -2718,7 +2937,8 @@
 					"type": "action",
 					"subtype": "slider",
 					"value": "statusInfo",
-					"description": "Commande de positionnement du volet"
+					"description": "Commande de positionnement du volet",
+					"generic_type": "FLAP_SLIDER"
 				},
 				{
 					"id": "powerInfo",
@@ -2727,7 +2947,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "numeric",
-					"description": "Puissance en watts"
+					"description": "Puissance en watts",
+					"generic_type": "POWER"
 				},
 				{
 					"id": "image",
@@ -2760,6 +2981,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -2882,6 +3107,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -2923,6 +3152,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -2956,7 +3189,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat du capteur"
+					"description": "Etat du capteur",
+					"generic_type": "PRESENCE"
 				},
 				{
 					"id": "image",
@@ -2989,6 +3223,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -3107,6 +3345,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -3185,7 +3427,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de l'alarme (armée/désarmée)"
+					"description": "Etat de l'alarme (armée/désarmée)",
+					"generic_type": "ALARM_ENABLE_STATE"
 				},
 				{
 					"id": "statusInfo",
@@ -3194,7 +3437,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Statut de l'alarme (alarme en cours)"
+					"description": "Statut de l'alarme (alarme en cours)",
+					"generic_type": "ALARM_STATE"
 				},
 				{
 					"id": "onAction",
@@ -3204,7 +3448,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "enableInfo",
-					"description": "Commande pour activer l'alarme"
+					"description": "Commande pour activer l'alarme",
+					"generic_type": "ALARM_ARMED"
 				},
 				{
 					"id": "offAction",
@@ -3214,7 +3459,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "enableInfo",
-					"description": "Commande pour désactiver l'alarme"
+					"description": "Commande pour désactiver l'alarme",
+					"generic_type": "ALARM_RELEASED"
 				},
 				{
 					"id": "modeInfo",
@@ -3223,7 +3469,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Etat actuel du mode de l'alarme"
+					"description": "Etat actuel du mode de l'alarme",
+					"generic_type": "ALARM_MODE"
 				},
 				{
 					"id": "modes",
@@ -3236,7 +3483,8 @@
 						"hasIcon": false,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "ALARM_SET_MODE"
 				},
 				{
 					"id": "lineMode",
@@ -3292,6 +3540,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -3414,6 +3666,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -3455,6 +3711,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3535,6 +3795,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -3653,6 +3917,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -3694,6 +3962,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3770,6 +4042,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -3811,6 +4087,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -3883,6 +4163,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -3924,6 +4208,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4034,6 +4322,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -4075,6 +4367,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4161,6 +4457,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -4288,6 +4588,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -4404,6 +4708,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -4524,6 +4832,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -4565,6 +4877,10 @@
 				{
 					"name": "room",
 					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande de statut"
 				}
 			],
 			"options": [
@@ -4602,7 +4918,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Etat actuel du mode"
+					"description": "Etat actuel du mode",
+					"generic_type": "MODE_STATE"
 				},
 				{
 					"id": "modes",
@@ -4615,7 +4932,16 @@
 						"hasIcon": false,
 						"hasImage": true,
 						"hasName": false
-					}
+					},
+					"generic_type": "MODE_SET_STATE"
+				},
+				{
+					"id": "contentCard",
+					"name": "Contenu dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Actions dans la carte plutôt qu'à droite",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -4648,6 +4974,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -4762,6 +5092,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -4827,7 +5161,22 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
-					"description": "Commande chaîne sous la forme latitude,longitude"
+					"description": "Commande chaîne sous la forme latitude,longitude",
+					"generic_type": "GEOLOCATION"
+				},
+				{
+					"id": "zoomDistance",
+					"name": "Zoom",
+					"category": "string",
+					"description": "Zoom initial de la carte en mètres (par défaut 4000)",
+					"customizable": true
+				},
+				{
+					"id": "animateRegion",
+					"name": "Animer la carte",
+					"category": "binary",
+					"description": "Déplace la carte à chaque nouvelle position",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -4854,6 +5203,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -4942,6 +5295,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "string",
+					"generic_type": "CAMERA_URL",
 					"description": "Commande info contenant l'URL du flux"
 				},
 				{
@@ -4999,7 +5353,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour démarrer un enregistrement"
+					"description": "Commande action pour démarrer un enregistrement",
+					"generic_type": "CAMERA_RECORD"
 				},
 				{
 					"id": "stopRecordAction",
@@ -5007,7 +5362,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour arrêter un enregistrement"
+					"description": "Commande action pour arrêter un enregistrement",
+					"generic_type": "CAMERA_STOP"
 				},
 				{
 					"id": "recordInfo",
@@ -5016,7 +5372,8 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Commande info d'enregistrement"
+					"description": "Commande info d'enregistrement",
+					"generic_type": "CAMERA_RECORD_STATE"
 				},
 				{
 					"id": "snapshotAction",
@@ -5024,7 +5381,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"description": "Commande action pour enregistrer un instantané"
+					"description": "Commande action pour enregistrer un instantané",
+					"generic_type": "CAMERA_TAKE"
 				},
 				{
 					"id": "recordFolder",
@@ -5039,7 +5397,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_UP"
 				},
 				{
 					"id": "downAction",
@@ -5047,7 +5406,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_DOWN"
 				},
 				{
 					"id": "leftAction",
@@ -5055,7 +5415,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_LEFT"
 				},
 				{
 					"id": "rightAction",
@@ -5063,7 +5424,8 @@
 					"required": false,
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "CAMERA_RIGHT"
 				},
 				{
 					"id": "image",
@@ -5103,6 +5465,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -5197,6 +5563,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",
@@ -5373,6 +5743,10 @@
 							"name": "Vignette"
 						},
 						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
 							"id": "detail",
 							"name": "Détail"
 						}
@@ -5476,6 +5850,10 @@
 						{
 							"id": "miniWidget",
 							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
 						},
 						{
 							"id": "detail",

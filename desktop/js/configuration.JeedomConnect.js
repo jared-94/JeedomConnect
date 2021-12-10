@@ -249,7 +249,8 @@ $('.jeedomConnect').off('click', '.exportConf').on('click', '.exportConf', funct
             }
             else {
                 var a = document.createElement("a");
-                a.href = 'plugins/JeedomConnect/data/configs/export_' + fileName + 'Widgets.json';
+                //a.href = 'plugins/JeedomConnect/data/configs/export_' + fileName + 'Widgets.json';
+                a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/export_' + fileName + 'Widgets.json';
                 a.download = 'export_' + fileName + 'Widgets_' + today + '_' + time + '.json';
                 a.click();
                 a.remove();
