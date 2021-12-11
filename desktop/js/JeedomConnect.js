@@ -15,6 +15,9 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 var allWidgetsDetail;
+var roomList;
+var roomListOptions;
+
 refreshWidgetDetails();
 
 function refreshWidgetDetails() {
@@ -34,12 +37,46 @@ function refreshWidgetDetails() {
         });
       }
       else {
-        allWidgetsDetail = data.result
+        allWidgetsDetail = data.result.widgets;
+        roomList = data.result.room_details;
+        roomListOptions = data.result.room_options;
+        sortWidgets();
       }
     }
   });
 
 }
+
+
+function sortWidgets() {
+  if (jcOrderBy === undefined) jcOrderBy = 'object';
+
+  allWidgetsDetail.sort(SortByName);
+  if (jcOrderBy == 'object') {
+    allWidgetsDetail.sort(SortByRoom);
+  } else if (jcOrderBy == 'type') {
+    allWidgetsDetail.sort(SortByType);
+  }
+}
+
+function SortByName(a, b) {
+  var aName = a.name.toLowerCase();
+  var bName = b.name.toLowerCase();
+  return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+}
+
+function SortByType(a, b) {
+  var aType = a.type.toLowerCase();
+  var bType = b.type.toLowerCase();
+  return ((aType < bType) ? -1 : ((aType > bType) ? 1 : 0));
+}
+
+function SortByRoom(a, b) {
+  var aRoom = ('room' in a) ? roomList.find(r => r.id == a.room).name.toLowerCase() : 'AAAucun';
+  var bRoom = ('room' in b) ? roomList.find(r => r.id == b.room).name.toLowerCase() : 'AAAucun';
+  return ((aRoom < bRoom) ? -1 : ((aRoom > bRoom) ? 1 : 0));
+}
+
 
 $.post({
   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -692,37 +729,6 @@ var widgetsList = (function () {
 
 //used for moreInfos
 var moreInfos = [];
-
-var roomList;
-var roomListOptions;
-getRoomList()
-
-function getRoomList() {
-  $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-      'action': 'getJeedomObject'
-    },
-    cache: false,
-    dataType: 'json',
-    success: function (data) {
-      //console.log("roomList ajax received : ", data) ;
-      if (data.state != 'ok') {
-        $('#div_alert').showAlert({
-          message: data.result,
-          level: 'danger'
-        });
-      }
-      else {
-        roomList = data.result.details;
-        roomListOptions = data.result.options;
-        // console.log("roomList  : ", roomList);
-        // console.log("roomListOptions  : ", roomListOptions);
-      }
-    }
-  });
-}
-
 
 items = [];
 widgetsList.widgets.forEach(item => {
@@ -2641,9 +2647,6 @@ function getWidgetPath(id) {
   }
   return name;
 }
-
-
-// getRoomList();
 
 function getRoomName(id) {
   if (id == 'global') { return 'Global'; }

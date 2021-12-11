@@ -441,11 +441,20 @@ try {
 		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
 
 		if ($widgets == '') {
-			log::add('JeedomConnect', 'debug', 'no widgets found');
-			ajax::error('Erreur - pas d\'équipement trouvé');
+			log::add('JeedomConnect', 'warning', 'no widgets found');
+			//ajax::error('Erreur - pas d\'équipement trouvé');
 		}
+
+		$list = array();
+		$options = '';
+		foreach ((jeeObject::buildTree(null, false)) as $object) {
+			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName()));
+		}
+
 		log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($widgets));
-		ajax::success($widgets);
+
+		ajax::success(array('widgets' => $widgets, 'room_details' => $list, 'room_options' => $options));
 	}
 
 	if (init('action') == 'getWidgetExistance') {
