@@ -48,6 +48,35 @@ if (!isConnect('admin')) {
 
 
 <script>
+  function SortByName(a, b) {
+    var aName = a.name.toLowerCase();
+    var bName = b.name.toLowerCase();
+    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+  }
+
+  function SortByType(a, b) {
+    var aName = a.type.toLowerCase();
+    var bName = b.type.toLowerCase();
+    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+  }
+
+  function SortByRoom(a, b) {
+    var aName = ('room' in a) ? roomList.find(r => r.id == a.room).name.toLowerCase() : 'AAAucun';
+    var bName = ('room' in b) ? roomList.find(r => r.id == b.room).name.toLowerCase() : 'AAAucun';
+    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+  }
+
+  function sortWidgets() {
+    if (jcOrderBy === undefined) jcOrderBy = 'object';
+
+    allWidgetsDetail.sort(SortByName);
+    if (jcOrderBy == 'object') {
+      allWidgetsDetail.sort(SortByRoom);
+    } else if (jcOrderBy == 'type') {
+      allWidgetsDetail.sort(SortByType);
+    }
+  }
+
   function setSimpleModalData(options) {
     items = [];
     options.forEach(option => {
@@ -109,6 +138,7 @@ if (!isConnect('admin')) {
 			<div class='col-xs-9'><div class='input-group'>
 			<select style="width:250px;" id="mod-widget-input">`
 
+        sortWidgets();
         // configData.payload.widgets.forEach(item => {
         allWidgetsDetail.forEach(item => {
           if (option.choices.includes(item.type)) {
@@ -117,6 +147,7 @@ if (!isConnect('admin')) {
             if (room) {
               name = name + ' (' + room + ')'
             }
+
             widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name} [${item.id}]</option>`;
           }
         })

@@ -33,6 +33,8 @@ $jcFilter = $_GET['jcFilter'] ?? '';
 $orderBy = $_GET['jcOrderBy'] ?? config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
 $widgetSearch = $_GET['jcSearch'] ?? '';
 
+sendVarToJS('jcOrderBy', $orderBy);
+
 switch ($orderBy) {
 	case 'name':
 		$widgetName = array_column($widgetArray, 'name');
