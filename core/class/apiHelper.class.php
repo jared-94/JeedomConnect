@@ -366,6 +366,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_DEVICE_INFOS':
+          self::setDeviceInfos($eqLogic, $param);
+          return null;
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
@@ -2230,5 +2235,23 @@ class apiHelper {
     }
 
     return (!$withType) ? $fileContent : self::addTypeInPayload(json_encode($fileContent), $returnType);
+  }
+
+  private static function setDeviceInfos($eqLogic, $infos) {
+    if (isset($infos['batteryLevel'])) {
+      self::saveBatteryEquipment($eqLogic, $infos['batteryLevel']);
+    }
+    if (isset($infos['ipAddress'])) {
+      $eqLogic->checkAndUpdateCmd('ipAddress', $infos['ipAddress']);
+    }
+    if (isset($infos['wifiEnabled'])) {
+      $eqLogic->checkAndUpdateCmd('wifiEnabled', $infos['wifiEnabled'] ? 1 : 0);
+    }
+    if (isset($infos['isScreenOn'])) {
+      $eqLogic->checkAndUpdateCmd('isScreenOn', $infos['isScreenOn'] ? 1 : 0);
+    }
+    if (isset($infos['isCharging'])) {
+      $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
+    }
   }
 }

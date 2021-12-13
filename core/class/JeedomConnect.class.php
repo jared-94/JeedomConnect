@@ -989,6 +989,18 @@ class JeedomConnect extends eqLogic {
 		$batteryCmd->setName(__('Batterie', __FILE__));
 		$batteryCmd->save();
 
+		$isCharging = $this->getCmd(null, 'isCharging');
+		if (!is_object($isCharging)) {
+			$isCharging = new JeedomConnectCmd();
+			$isCharging->setLogicalId('isCharging');
+			$isCharging->setEqLogic_id($this->getId());
+			$isCharging->setType('info');
+			$isCharging->setSubType('binary');
+			$isCharging->setIsVisible(1);
+		}
+		$isCharging->setName(__('En charge', __FILE__));
+		$isCharging->save();
+
 		$goToPageCmd = $this->getCmd(null, 'goToPage');
 		if (!is_object($goToPageCmd)) {
 			$goToPageCmd = new JeedomConnectCmd();
@@ -1041,6 +1053,68 @@ class JeedomConnect extends eqLogic {
 		$toaster->setName(__('Pop-up', __FILE__));
 		$toaster->setDisplay('title_disable', 1);
 		$toaster->save();
+
+		$screenOn = $this->getCmd(null, 'screenOn');
+		if (!is_object($screenOn)) {
+			$screenOn = new JeedomConnectCmd();
+			$screenOn->setLogicalId('screenOn');
+			$screenOn->setEqLogic_id($this->getId());
+			$screenOn->setType('action');
+			$screenOn->setSubType('other');
+			$screenOn->setIsVisible(1);
+		}
+		$screenOn->setName(__('Allumer écran', __FILE__));
+		$screenOn->setDisplay('title_disable', 1);
+		$screenOn->save();
+
+		$screenOff = $this->getCmd(null, 'screenOff');
+		if (!is_object($screenOff)) {
+			$screenOff = new JeedomConnectCmd();
+			$screenOff->setLogicalId('screenOff');
+			$screenOff->setEqLogic_id($this->getId());
+			$screenOff->setType('action');
+			$screenOff->setSubType('other');
+			$screenOff->setIsVisible(1);
+		}
+		$screenOff->setName(__('Eteindre écran', __FILE__));
+		$screenOff->setDisplay('title_disable', 1);
+		$screenOff->save();
+
+		$isScreenOn = $this->getCmd(null, 'isScreenOn');
+		if (!is_object($isScreenOn)) {
+			$isScreenOn = new JeedomConnectCmd();
+			$isScreenOn->setLogicalId('isScreenOn');
+			$isScreenOn->setEqLogic_id($this->getId());
+			$isScreenOn->setType('info');
+			$isScreenOn->setSubType('binary');
+			$isScreenOn->setIsVisible(1);
+		}
+		$isScreenOn->setName(__('Ecran allumé', __FILE__));
+		$isScreenOn->save();
+
+		$wifiEnabled = $this->getCmd(null, 'wifiEnabled');
+		if (!is_object($wifiEnabled)) {
+			$wifiEnabled = new JeedomConnectCmd();
+			$wifiEnabled->setLogicalId('wifiEnabled');
+			$wifiEnabled->setEqLogic_id($this->getId());
+			$wifiEnabled->setType('info');
+			$wifiEnabled->setSubType('binary');
+			$wifiEnabled->setIsVisible(1);
+		}
+		$wifiEnabled->setName(__('Wifi', __FILE__));
+		$wifiEnabled->save();
+
+		$ipAddress = $this->getCmd(null, 'ipAddress');
+		if (!is_object($ipAddress)) {
+			$ipAddress = new JeedomConnectCmd();
+			$ipAddress->setLogicalId('ipAddress');
+			$ipAddress->setEqLogic_id($this->getId());
+			$ipAddress->setType('info');
+			$ipAddress->setSubType('string');
+			$ipAddress->setIsVisible(1);
+		}
+		$ipAddress->setName(__('Adresse IP', __FILE__));
+		$ipAddress->save();
 
 		$notifall = $this->getCmd(null, 'notifall');
 		if (!is_object($notifall)) {
@@ -1728,6 +1802,30 @@ class JeedomConnectCmd extends cmd {
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'screenOn':
+				$payload = array(
+					'action' => 'screenOn'
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'screenOff':
+				$payload = array(
+					'action' => 'screenOff'
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
 				}
 				break;
 
