@@ -2244,6 +2244,9 @@ class apiHelper {
     if (isset($infos['ipAddress'])) {
       $eqLogic->checkAndUpdateCmd('ipAddress', $infos['ipAddress']);
     }
+    if (isset($infos['ssid'])) {
+      $eqLogic->checkAndUpdateCmd('ssid', $infos['ssid']);
+    }
     if (isset($infos['wifiEnabled'])) {
       $eqLogic->checkAndUpdateCmd('wifiEnabled', $infos['wifiEnabled'] ? 1 : 0);
     }

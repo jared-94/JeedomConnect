@@ -1116,6 +1116,18 @@ class JeedomConnect extends eqLogic {
 		$ipAddress->setName(__('Adresse IP', __FILE__));
 		$ipAddress->save();
 
+		$ssid = $this->getCmd(null, 'ssid');
+		if (!is_object($ssid)) {
+			$ssid = new JeedomConnectCmd();
+			$ssid->setLogicalId('ssid');
+			$ssid->setEqLogic_id($this->getId());
+			$ssid->setType('info');
+			$ssid->setSubType('string');
+			$ssid->setIsVisible(1);
+		}
+		$ssid->setName(__('SSID', __FILE__));
+		$ssid->save();
+
 		$notifall = $this->getCmd(null, 'notifall');
 		if (!is_object($notifall)) {
 			$notifall = new JeedomConnectCmd();
@@ -1157,6 +1169,20 @@ class JeedomConnect extends eqLogic {
 		$send_sms->setDisplay('title_placeholder', __('Numéro/Options', __FILE__));
 		$send_sms->setName(__('Envoyer un SMS', __FILE__));
 		$send_sms->save();
+
+		$play_sound = $this->getCmd(null, 'play_sound');
+		if (!is_object($play_sound)) {
+			$play_sound = new JeedomConnectCmd();
+			$play_sound->setLogicalId('play_sound');
+			$play_sound->setEqLogic_id($this->getId());
+			$play_sound->setType('action');
+			$play_sound->setSubType('message');
+		}
+		$play_sound->setDisplay('title_disable', 1);
+		$play_sound->setIsVisible(1);
+		$play_sound->setDisplay('message_placeholder', __('Fichier/URL', __FILE__));
+		$play_sound->setName(__('Jouer un son', __FILE__));
+		$play_sound->save();
 	}
 
 	public function preRemove() {
@@ -1825,6 +1851,22 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'play_sound':
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+				$payload = array(
+					'action' => 'playSound',
+					'sound' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} else {
 					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
 				}
 				break;
