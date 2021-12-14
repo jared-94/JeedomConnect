@@ -1195,6 +1195,20 @@ class JeedomConnect extends eqLogic {
 		$play_sound->setDisplay('message_placeholder', __('Fichier/URL', __FILE__));
 		$play_sound->setName(__('Jouer un son', __FILE__));
 		$play_sound->save();
+
+		$tts = $this->getCmd(null, 'tts');
+		if (!is_object($tts)) {
+			$tts = new JeedomConnectCmd();
+			$tts->setLogicalId('tts');
+			$tts->setEqLogic_id($this->getId());
+			$tts->setType('action');
+			$tts->setSubType('message');
+		}
+		$tts->setDisplay('title_disable', 1);
+		$tts->setIsVisible(1);
+		$tts->setDisplay('message_placeholder', __('Message', __FILE__));
+		$tts->setName(__('TTS', __FILE__));
+		$tts->save();
 	}
 
 	public function preRemove() {
@@ -1878,7 +1892,23 @@ class JeedomConnectCmd extends cmd {
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
-				} else {
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'tts':
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+				$payload = array(
+					'action' => 'tts',
+					'message' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
 					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
 				}
 				break;
