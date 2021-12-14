@@ -2250,6 +2250,9 @@ class apiHelper {
     if (isset($infos['wifiEnabled'])) {
       $eqLogic->checkAndUpdateCmd('wifiEnabled', $infos['wifiEnabled'] ? 1 : 0);
     }
+    if (isset($infos['bluetoothConnected'])) {
+      $eqLogic->checkAndUpdateCmd('bluetoothConnected', $infos['bluetoothConnected'] ? 1 : 0);
+    }
     if (isset($infos['isScreenOn'])) {
       $eqLogic->checkAndUpdateCmd('isScreenOn', $infos['isScreenOn'] ? 1 : 0);
     }

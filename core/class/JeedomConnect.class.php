@@ -1092,6 +1092,18 @@ class JeedomConnect extends eqLogic {
 		$isScreenOn->setName(__('Ecran allumé', __FILE__));
 		$isScreenOn->save();
 
+		$bluetoothConnected = $this->getCmd(null, 'bluetoothConnected');
+		if (!is_object($bluetoothConnected)) {
+			$bluetoothConnected = new JeedomConnectCmd();
+			$bluetoothConnected->setLogicalId('bluetoothConnected');
+			$bluetoothConnected->setEqLogic_id($this->getId());
+			$bluetoothConnected->setType('info');
+			$bluetoothConnected->setSubType('binary');
+			$bluetoothConnected->setIsVisible(1);
+		}
+		$bluetoothConnected->setName(__('Bluetooth connecté', __FILE__));
+		$bluetoothConnected->save();
+
 		$wifiEnabled = $this->getCmd(null, 'wifiEnabled');
 		if (!is_object($wifiEnabled)) {
 			$wifiEnabled = new JeedomConnectCmd();
