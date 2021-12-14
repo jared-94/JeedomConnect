@@ -1904,7 +1904,7 @@ class JeedomConnectCmd extends cmd {
 				}
 				$payload = array(
 					'action' => 'tts',
-					'message' => $_options['message']
+					'message' => str_replace("'", "&#039;", $_options['message'])
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
