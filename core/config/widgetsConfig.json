@@ -1939,6 +1939,14 @@
 					"generic_type": "THERMOSTAT_SET_UNLOCK"
 				},
 				{
+					"id": "contentCard",
+					"name": "Modes dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Afficher tous les modes dans le widget",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -2154,6 +2162,14 @@
 					"type": "action",
 					"description": "Action de type slider si info numérique ou texte si info select",
 					"generic_type": "AC_SET_FAN_MODE"
+				},
+				{
+					"id": "modeInCard",
+					"name": "Modes dans la carte",
+					"required": false,
+					"category": "binary",
+					"description": "Afficher les modes dans le widget",
+					"customizable": true
 				},
 				{
 					"id": "image",
