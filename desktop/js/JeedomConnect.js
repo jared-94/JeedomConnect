@@ -305,14 +305,33 @@ $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', func
 });
 
 $("#assistant-btn").click(function () {
-  $('#md_modal').dialog({ title: "{{Configuration de l'équipement}}" });
-  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+  openAssistantWidgetModal($('.eqLogicAttr[data-l1key=id]').value());
+
 });
 
-$("#notifConfig-btn").click(function () {
-  $('#md_modal').dialog({ title: "{{Configuration des notifications}}" });
-  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+$(".btnAssistant").click(function () {
+  var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
+  openAssistantWidgetModal(id);
 });
+
+function openAssistantWidgetModal(id) {
+  $('#md_modal').dialog({ title: "{{Configuration de l'équipement}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId=' + id).dialog('open');
+}
+
+$("#notifConfig-btn").click(function () {
+  openAssistantNotificationModal($('.eqLogicAttr[data-l1key=id]').value());
+});
+
+$(".btnNotification").click(function () {
+  var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
+  openAssistantNotificationModal(id);
+});
+
+function openAssistantNotificationModal(id) {
+  $('#md_modal').dialog({ title: "{{Configuration des notifications}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + id).dialog('open');
+}
 
 $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function () {
   var dt = new Date();
