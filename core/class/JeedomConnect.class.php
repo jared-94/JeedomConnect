@@ -1162,7 +1162,7 @@ class JeedomConnect extends eqLogic {
 		}
 		$update_conf->setIsVisible(0);
 		$update_conf->setDisplay('title_with_list', 1);
-		$update_conf->setConfiguration('listValue', 'themeColor|Couleur thème;darkMode|Activer mode sombre;tracking|Activer le tracking;updateData|Recharger les données');
+		$update_conf->setConfiguration('listValue', 'themeColor|Couleur thème;darkMode|Activer mode sombre;tracking|Activer le tracking;updateData|Recharger les données;jcService|Service JC');
 		$update_conf->setDisplay('title_placeholder', __('Choix du paramètre', __FILE__));
 		$update_conf->setDisplay('title_disable', 1);
 		$update_conf->setDisplay('message_placeholder', __('Valeur', __FILE__));
