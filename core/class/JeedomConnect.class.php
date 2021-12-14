@@ -1206,7 +1206,6 @@ class JeedomConnect extends eqLogic {
 		}
 		$tts->setDisplay('title_disable', 1);
 		$tts->setIsVisible(1);
-		$tts->setDisplay('message_placeholder', __('Message', __FILE__));
 		$tts->setName(__('TTS', __FILE__));
 		$tts->save();
 	}
