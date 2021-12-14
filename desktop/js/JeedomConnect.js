@@ -1727,7 +1727,8 @@ function downCmdOption(elm, optionsJson) {
 
 function refreshMoreInfos() {
   let div = '';
-  moreInfos.forEach(item => {
+  moreInfos.forEach((item, i) => {
+    item.index = i;
     var unit = item.unit || '';
     div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
           <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled>
