@@ -309,12 +309,13 @@ $("#assistant-btn").click(function () {
 
 });
 
-$(".btnAssistant").click(function () {
+$(".btnAssistant").click(function (event) {
   var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
-  openAssistantWidgetModal(id);
+  openAssistantWidgetModal(id, event);
 });
 
-function openAssistantWidgetModal(id) {
+function openAssistantWidgetModal(id, event) {
+  if (event !== undefined) event.stopPropagation();
   $('#md_modal').dialog({ title: "{{Configuration de l'équipement}}" });
   $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId=' + id).dialog('open');
 }
@@ -323,12 +324,13 @@ $("#notifConfig-btn").click(function () {
   openAssistantNotificationModal($('.eqLogicAttr[data-l1key=id]').value());
 });
 
-$(".btnNotification").click(function () {
+$(".btnNotification").click(function (event) {
   var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
-  openAssistantNotificationModal(id);
+  openAssistantNotificationModal(id, event);
 });
 
-function openAssistantNotificationModal(id) {
+function openAssistantNotificationModal(id, event) {
+  if (event !== undefined) event.stopPropagation();
   $('#md_modal').dialog({ title: "{{Configuration des notifications}}" });
   $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + id).dialog('open');
 }
