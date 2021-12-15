@@ -501,7 +501,8 @@ try {
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$id = $eqLogic->getConfiguration('apiKey');
 			$name = $eqLogic->getName();
-			array_push($result, array('id' => $id, 'name' => $name));
+			$eqId = $eqLogic->getId();
+			array_push($result, array('id' => $id, 'name' => $name, 'eqId' => $eqId));
 		}
 		ajax::success($result);
 	}

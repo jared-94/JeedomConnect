@@ -67,6 +67,17 @@ if (!isConnect('admin')) {
         });
         checkboxes += `</div></div></div></li>`;
         items.push(checkboxes);
+      } else if (option.type == "radios") {
+
+        radios = `<li><div class='form-group'>
+			<label class='col-xs-3  required' >${option.title}</label>
+			<div class='col-xs-9'><label class='radio-inline'>`;
+        randomId = Date.now();
+        option.choices.forEach(item => {
+          radios += `<label><input type="radio" class="radiosSelection" name="radio" style="width:150px;" id="${item.id}" > ${item.name}</label><br/>`;
+        });
+        radios += `</label></div></div></li>`;
+        items.push(radios);
       } else if (option.type == "name") {
         var value = option.value ? option.value : '';
         name = `<li><div class='form-group'>

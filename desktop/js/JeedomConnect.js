@@ -912,6 +912,15 @@ function refreshAddWidgets() {
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
   showAutoFillWidgetCmds();
+
+  if (type == 'jc') {
+    $('.searchForJCeq').show();
+  }
+  else {
+    $('.searchForJCeq').hide();
+  }
+
+
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
 
   $("#widgetDescription").html(widget.description);
