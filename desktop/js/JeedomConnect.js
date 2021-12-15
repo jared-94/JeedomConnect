@@ -918,13 +918,7 @@ function refreshAddWidgets() {
   var widget = widgetsList.widgets.find(i => i.type == type);
   showAutoFillWidgetCmds();
 
-  if (type == 'jc') {
-    $('.searchForJCeq').show();
-  }
-  else {
-    $('.searchForJCeq').hide();
-  }
-
+  (type == 'jc') ? $('.searchForJCeq').show() : $('.searchForJCeq').hide();
 
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
 
