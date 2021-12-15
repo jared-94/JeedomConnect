@@ -396,7 +396,12 @@ $('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function 
   var from = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
 
   allJCEquipmentsWithoutCurrent = allJCEquipments.filter(function (obj) {
-    return obj.id !== from;
+    return obj.apiKey !== from;
+  }).map(item => {
+    return {
+      id: item.apiKey,
+      name: item.name
+    };
   });
   getSimpleModal({ title: "Recopier vers quel(s) appareil(s)", fields: [{ title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent }] }, function (result) {
 
