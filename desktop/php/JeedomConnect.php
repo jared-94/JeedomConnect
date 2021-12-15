@@ -551,18 +551,44 @@ foreach ($eqLogics as $eqLogic) {
 				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
 				<br /><br />
 				<div class="table-responsive">
+
+					<div class="col-lg-6">
+						<legend><i class="fas fa-info-circle"></i> {{Commandes de type info}}</legend>
+					</div>
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
 							<tr>
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">{{Nom}}</th>
-								<th style="width: 160px;">{{Type}}</th>
+								<th style="width: 160px;">{{Sous-type}}</th>
 								<th style="width: 200px;">{{Valeur}}</th>
 								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
 								<th style="width: 100px;"></th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody class="cmd_info">
+						</tbody>
+					</table>
+				</div>
+				<br /><br />
+				<div class="table-responsive">
+					<div class="col-lg-6">
+						<legend><i class="fas fa-play-circle"></i> {{Commandes de type action}}</legend>
+					</div>
+					<table id="table_cmd" class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 50px;">#</th>
+								<th style="width: 300px;">{{Nom}}</th>
+								<th style="width: 160px;">{{Sous-type}}</th>
+								<th style="width: 200px;">{{Valeur}}</th>
+								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody class="cmd_action">
 						</tbody>
 					</table>
 				</div>
