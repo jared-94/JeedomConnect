@@ -1142,7 +1142,7 @@ function refreshAddWidgets() {
     moreDiv = `<li><div class='form-group'>
       <label class='col-xs-3 '>Ajouter des infos</label>
       <div class='col-xs-9'>
-      <div class="description">Permet d'ajouter des infos utilisables dans les images sous conditions</div>
+      <div class="description">Permet d'ajouter des infos utilisables dans les images sous conditions, nom et/ou sous-titre</div>
       <div class='input-group'>
       <span class="input-group-btn">
         <a class="btn btn-default roundedRight" onclick="addMoreCmd()"><i class="fas fa-plus-square">
