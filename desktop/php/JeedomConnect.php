@@ -120,37 +120,8 @@ foreach ($widgetTypeArray as $key => $value) {
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
-$infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
 
-$beta_version = false;
-$update = $plugin->getUpdate();
-if (is_object($update)) {
-	$version = $update->getConfiguration('version');
-	if ($version && $version != 'stable') $beta_version = true;
-}
-
-
-$infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
-$infoPlugin .= '<b>Equipements</b> : <br/>';
-foreach ($eqLogics as $eqLogic) {
-	$platformOs = $eqLogic->getConfiguration('platformOs');
-	$platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
-
-	$versionAppConfig = $eqLogic->getConfiguration('appVersion');
-	$versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
-
-	$connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
-	$withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
-
-	$cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
-
-	$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
-	if ($platform == '' && $versionApp == '') {
-		$infoPlugin .= ' : non enregistré<br/>';
-	} else {
-		$infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
-	}
-}
+$infoPlugin = JeedomConnectUtils::getInstallDetails();
 
 ?>
 

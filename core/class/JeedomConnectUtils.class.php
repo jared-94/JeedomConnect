@@ -14,6 +14,48 @@ class JeedomConnectUtils {
         return  false;
     }
 
+    public static function getInstallDetails(): string {
+
+        $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
+
+        $beta_version = false;
+
+        $plugin = plugin::byId('JeedomConnect');
+        $update = $plugin->getUpdate();
+        if (is_object($update)) {
+            $version = $update->getConfiguration('version');
+            if ($version && $version != 'stable') $beta_version = true;
+        }
+
+
+        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+        $infoPlugin .= '<b>Equipements</b> : <br/>';
+
+        $eqLogics = eqLogic::byType($plugin->getId());
+
+        foreach ($eqLogics as $eqLogic) {
+            $platformOs = $eqLogic->getConfiguration('platformOs');
+            $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
+
+            $versionAppConfig = $eqLogic->getConfiguration('appVersion');
+            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
+
+            $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
+            $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
+
+            $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
+
+            $infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
+            if ($platform == '' && $versionApp == '') {
+                $infoPlugin .= ' : non enregistré<br/>';
+            } else {
+                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
+            }
+        }
+
+        return $infoPlugin;
+    }
+
     public static function getPluginDetails($pluginObj) {
 
         $update = update::byLogicalId($pluginObj->getId());

@@ -371,6 +371,11 @@ class apiHelper {
           return null;
           break;
 
+        case 'GET_INSTALL_DETAILS':
+          $result = JeedomConnectUtils::getInstallDetails();
+          return self::addTypeInPayload($result, 'SET_INSTALL_DETAILS');
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
