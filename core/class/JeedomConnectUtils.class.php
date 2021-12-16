@@ -92,7 +92,7 @@ class JeedomConnectUtils {
         $item['currentVersion'] =  $update->getLocalVersion();
         $item['updateVersion'] = $update->getRemoteVersion();
         $item['isActive'] = $pluginObj->isActive() == "1";
-        $item['logs'] = $pluginObj->getLogList();
+        $item['logFiles'] = $pluginObj->getLogList();
 
         return $item;
     }
