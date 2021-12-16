@@ -881,6 +881,10 @@ function setWidgetModalData(options) {
             $('#tags-scenario-input').val(result);
           });
         }
+        $("#confirm-" + option.id).prop('checked', options.widget['options'].confirm ? "checked" : "");
+        $("#secure-" + option.id).prop('checked', options.widget['options'].secure ? "checked" : "");
+        $("#pwd-" + option.id).prop('checked', options.widget['options'].pwd ? "checked" : "");
+
       } else if (option.category == "stringList" & options.widget[option.id] !== undefined) {
         var selectedChoice = option.choices.find(s => s.id == options.widget[option.id]);
         if (selectedChoice !== undefined) {
@@ -993,7 +997,8 @@ function refreshAddWidgets() {
             <td>
                   <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
                   <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
-            </td><td>
+            </td>
+            <td>
                     <div style="width:50px; display:none;" id="secure-div-${option.id}">
                     <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
             </td>
@@ -1113,12 +1118,25 @@ function refreshAddWidgets() {
       curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
     <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir un scenario' onclick="selectScenario('${option.id}');">
     <i class='fas fa-list-alt'></i></a></span></div>
-      <div id='optionScenario' style='display:none;'>
+      <!-- <div id='optionScenario' style='display:none;'> -->
+      <div id='optionScenario'>
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
             <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
         </div>
+        <div class="" style="width: 100%;display: flex;">
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
+          </div>
+          <div style="padding-left: 10px;">
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="confirm-${option.id}" ><i class='fa fa-question' title="Demander confirmation"></i></label>
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="secure-${option.id}"  ><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="pwd-${option.id}"     ><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+          </div>
+        </div>
       </div>
+      
+      
     </div>
     </div></li>`;
     } else if (option.category == "choicesList") {
@@ -2291,6 +2309,10 @@ function saveWidget() {
               result['options']['tags'] = data;
             });
           }
+          result['options'].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
+          result['options'].secure = $("#secure-" + option.id).is(':checked') || undefined;
+          result['options'].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
+
         }
       }
       else if (option.category == "string") {
