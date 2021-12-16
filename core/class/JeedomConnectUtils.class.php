@@ -74,6 +74,10 @@ class JeedomConnectUtils {
         return $infoPlugin;
     }
 
+    /**
+     * @param plugin $pluginObj
+     * @return array
+     */
     public static function getPluginDetails($pluginObj) {
 
         $update = update::byLogicalId($pluginObj->getId());
@@ -88,6 +92,7 @@ class JeedomConnectUtils {
         $item['currentVersion'] =  $update->getLocalVersion();
         $item['updateVersion'] = $update->getRemoteVersion();
         $item['isActive'] = $pluginObj->isActive() == "1";
+        $item['logs'] = $pluginObj->getLogList();
 
         return $item;
     }
