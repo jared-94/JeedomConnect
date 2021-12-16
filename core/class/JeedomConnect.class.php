@@ -952,6 +952,9 @@ class JeedomConnect extends eqLogic {
 
 	public function postUpdate() {
 		$this->createCommands('all');
+		if ($this->getConfiguration('platformOs') == 'android') {
+			$this->createCommands('android');
+		}
 	}
 
 	public function preRemove() {
