@@ -737,6 +737,7 @@ class JeedomConnect extends eqLogic {
 	public function removeDevice() {
 		$this->setConfiguration('deviceId', '');
 		$this->setConfiguration('deviceName', '');
+		$this->setConfiguration('platformOs', '');
 		$this->save();
 	}
 
@@ -950,265 +951,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postUpdate() {
-		// Position format : latitude,longitude,altitude
-		$positionCmd = $this->getCmd(null, 'position');
-		if (!is_object($positionCmd)) {
-			$positionCmd = new JeedomConnectCmd();
-			$positionCmd->setLogicalId('position');
-			$positionCmd->setEqLogic_id($this->getId());
-			$positionCmd->setType('info');
-			$positionCmd->setSubType('string');
-			$positionCmd->setIsVisible(1);
-			$positionCmd->setGeneric_type('GEOLOCATION');
-		}
-		$positionCmd->setName(__('Position', __FILE__));
-		$positionCmd->save();
-
-		// Activity values : still, on_foot, running, on_bicycle and in_vehicle
-		$activityCmd = $this->getCmd(null, 'activity');
-		if (!is_object($activityCmd)) {
-			$activityCmd = new JeedomConnectCmd();
-			$activityCmd->setLogicalId('activity');
-			$activityCmd->setEqLogic_id($this->getId());
-			$activityCmd->setType('info');
-			$activityCmd->setSubType('string');
-			$activityCmd->setIsVisible(1);
-		}
-		$activityCmd->setName(__('Activité', __FILE__));
-		$activityCmd->save();
-
-		$batteryCmd = $this->getCmd(null, 'battery');
-		if (!is_object($batteryCmd)) {
-			$batteryCmd = new JeedomConnectCmd();
-			$batteryCmd->setLogicalId('battery');
-			$batteryCmd->setEqLogic_id($this->getId());
-			$batteryCmd->setType('info');
-			$batteryCmd->setSubType('numeric');
-			$batteryCmd->setIsVisible(1);
-		}
-		$batteryCmd->setName(__('Batterie', __FILE__));
-		$batteryCmd->save();
-
-		$isCharging = $this->getCmd(null, 'isCharging');
-		if (!is_object($isCharging)) {
-			$isCharging = new JeedomConnectCmd();
-			$isCharging->setLogicalId('isCharging');
-			$isCharging->setEqLogic_id($this->getId());
-			$isCharging->setType('info');
-			$isCharging->setSubType('binary');
-			$isCharging->setIsVisible(1);
-		}
-		$isCharging->setName(__('En charge', __FILE__));
-		$isCharging->save();
-
-		$goToPageCmd = $this->getCmd(null, 'goToPage');
-		if (!is_object($goToPageCmd)) {
-			$goToPageCmd = new JeedomConnectCmd();
-			$goToPageCmd->setLogicalId('goToPage');
-			$goToPageCmd->setEqLogic_id($this->getId());
-			$goToPageCmd->setType('action');
-			$goToPageCmd->setSubType('message');
-			$goToPageCmd->setIsVisible(1);
-		}
-		$goToPageCmd->setDisplay('title_disable', 1);
-		$goToPageCmd->setDisplay('message_placeholder', __('Id page', __FILE__));
-		$goToPageCmd->setName(__('Afficher page', __FILE__));
-		$goToPageCmd->save();
-
-		$launchAppCmd = $this->getCmd(null, 'launchApp');
-		if (!is_object($launchAppCmd)) {
-			$launchAppCmd = new JeedomConnectCmd();
-			$launchAppCmd->setLogicalId('launchApp');
-			$launchAppCmd->setEqLogic_id($this->getId());
-			$launchAppCmd->setType('action');
-			$launchAppCmd->setSubType('message');
-			$launchAppCmd->setIsVisible(1);
-		}
-		$launchAppCmd->setDisplay('title_disable', 1);
-		$launchAppCmd->setDisplay('message_placeholder', __('Nom de l\'application', __FILE__));
-		$launchAppCmd->setName(__('Lancer App', __FILE__));
-		$launchAppCmd->save();
-
-		$unlinkCmd = $this->getCmd(null, 'unlink');
-		if (!is_object($unlinkCmd)) {
-			$unlinkCmd = new JeedomConnectCmd();
-			$unlinkCmd->setLogicalId('unlink');
-			$unlinkCmd->setEqLogic_id($this->getId());
-			$unlinkCmd->setType('action');
-			$unlinkCmd->setSubType('other');
-			$unlinkCmd->setIsVisible(1);
-		}
-		$unlinkCmd->setName(__('Détacher', __FILE__));
-		$unlinkCmd->save();
-
-		$toaster = $this->getCmd(null, 'toaster');
-		if (!is_object($toaster)) {
-			$toaster = new JeedomConnectCmd();
-			$toaster->setLogicalId('toaster');
-			$toaster->setEqLogic_id($this->getId());
-			$toaster->setType('action');
-			$toaster->setSubType('message');
-			$toaster->setIsVisible(1);
-		}
-		$toaster->setName(__('Pop-up', __FILE__));
-		$toaster->setDisplay('title_disable', 1);
-		$toaster->save();
-
-		$screenOn = $this->getCmd(null, 'screenOn');
-		if (!is_object($screenOn)) {
-			$screenOn = new JeedomConnectCmd();
-			$screenOn->setLogicalId('screenOn');
-			$screenOn->setEqLogic_id($this->getId());
-			$screenOn->setType('action');
-			$screenOn->setSubType('other');
-			$screenOn->setIsVisible(1);
-		}
-		$screenOn->setName(__('Allumer écran', __FILE__));
-		$screenOn->setDisplay('title_disable', 1);
-		$screenOn->save();
-
-		$screenOff = $this->getCmd(null, 'screenOff');
-		if (!is_object($screenOff)) {
-			$screenOff = new JeedomConnectCmd();
-			$screenOff->setLogicalId('screenOff');
-			$screenOff->setEqLogic_id($this->getId());
-			$screenOff->setType('action');
-			$screenOff->setSubType('other');
-			$screenOff->setIsVisible(1);
-		}
-		$screenOff->setName(__('Eteindre écran', __FILE__));
-		$screenOff->setDisplay('title_disable', 1);
-		$screenOff->save();
-
-		$isScreenOn = $this->getCmd(null, 'isScreenOn');
-		if (!is_object($isScreenOn)) {
-			$isScreenOn = new JeedomConnectCmd();
-			$isScreenOn->setLogicalId('isScreenOn');
-			$isScreenOn->setEqLogic_id($this->getId());
-			$isScreenOn->setType('info');
-			$isScreenOn->setSubType('binary');
-			$isScreenOn->setIsVisible(1);
-		}
-		$isScreenOn->setName(__('Ecran allumé', __FILE__));
-		$isScreenOn->save();
-
-		$bluetoothConnected = $this->getCmd(null, 'bluetoothConnected');
-		if (!is_object($bluetoothConnected)) {
-			$bluetoothConnected = new JeedomConnectCmd();
-			$bluetoothConnected->setLogicalId('bluetoothConnected');
-			$bluetoothConnected->setEqLogic_id($this->getId());
-			$bluetoothConnected->setType('info');
-			$bluetoothConnected->setSubType('binary');
-			$bluetoothConnected->setIsVisible(1);
-		}
-		$bluetoothConnected->setName(__('Bluetooth connecté', __FILE__));
-		$bluetoothConnected->save();
-
-		$wifiEnabled = $this->getCmd(null, 'wifiEnabled');
-		if (!is_object($wifiEnabled)) {
-			$wifiEnabled = new JeedomConnectCmd();
-			$wifiEnabled->setLogicalId('wifiEnabled');
-			$wifiEnabled->setEqLogic_id($this->getId());
-			$wifiEnabled->setType('info');
-			$wifiEnabled->setSubType('binary');
-			$wifiEnabled->setIsVisible(1);
-		}
-		$wifiEnabled->setName(__('Wifi', __FILE__));
-		$wifiEnabled->save();
-
-		$ipAddress = $this->getCmd(null, 'ipAddress');
-		if (!is_object($ipAddress)) {
-			$ipAddress = new JeedomConnectCmd();
-			$ipAddress->setLogicalId('ipAddress');
-			$ipAddress->setEqLogic_id($this->getId());
-			$ipAddress->setType('info');
-			$ipAddress->setSubType('string');
-			$ipAddress->setIsVisible(1);
-		}
-		$ipAddress->setName(__('Adresse IP', __FILE__));
-		$ipAddress->save();
-
-		$ssid = $this->getCmd(null, 'ssid');
-		if (!is_object($ssid)) {
-			$ssid = new JeedomConnectCmd();
-			$ssid->setLogicalId('ssid');
-			$ssid->setEqLogic_id($this->getId());
-			$ssid->setType('info');
-			$ssid->setSubType('string');
-			$ssid->setIsVisible(1);
-		}
-		$ssid->setName(__('SSID', __FILE__));
-		$ssid->save();
-
-		$notifall = $this->getCmd(null, 'notifall');
-		if (!is_object($notifall)) {
-			$notifall = new JeedomConnectCmd();
-			$notifall->setLogicalId('notifall');
-			$notifall->setEqLogic_id($this->getId());
-			$notifall->setType('action');
-			$notifall->setSubType('message');
-			$notifall->setIsVisible(1);
-		}
-		$notifall->setName(__('Notifier les appareils JC', __FILE__));
-		$notifall->save();
-
-		$update_conf = $this->getCmd(null, 'update_pref_app');
-		if (!is_object($update_conf)) {
-			$update_conf = new JeedomConnectCmd();
-			$update_conf->setLogicalId('update_pref_app');
-			$update_conf->setEqLogic_id($this->getId());
-			$update_conf->setType('action');
-			$update_conf->setSubType('message');
-		}
-		$update_conf->setIsVisible(0);
-		$update_conf->setDisplay('title_with_list', 1);
-		$update_conf->setConfiguration('listValue', 'themeColor|Couleur thème;darkMode|Activer mode sombre;tracking|Activer le tracking;updateData|Recharger les données;jcService|Service JC');
-		$update_conf->setDisplay('title_placeholder', __('Choix du paramètre', __FILE__));
-		$update_conf->setDisplay('title_disable', 1);
-		$update_conf->setDisplay('message_placeholder', __('Valeur', __FILE__));
-		$update_conf->setName(__('Modifier Préférences Appli', __FILE__));
-		$update_conf->save();
-
-		$send_sms = $this->getCmd(null, 'send_sms');
-		if (!is_object($send_sms)) {
-			$send_sms = new JeedomConnectCmd();
-			$send_sms->setLogicalId('send_sms');
-			$send_sms->setEqLogic_id($this->getId());
-			$send_sms->setType('action');
-			$send_sms->setSubType('message');
-		}
-		$send_sms->setIsVisible(1);
-		$send_sms->setDisplay('title_placeholder', __('Numéro/Options', __FILE__));
-		$send_sms->setName(__('Envoyer un SMS', __FILE__));
-		$send_sms->save();
-
-		$play_sound = $this->getCmd(null, 'play_sound');
-		if (!is_object($play_sound)) {
-			$play_sound = new JeedomConnectCmd();
-			$play_sound->setLogicalId('play_sound');
-			$play_sound->setEqLogic_id($this->getId());
-			$play_sound->setType('action');
-			$play_sound->setSubType('message');
-		}
-		$play_sound->setDisplay('title_disable', 1);
-		$play_sound->setIsVisible(1);
-		$play_sound->setDisplay('message_placeholder', __('Fichier/URL', __FILE__));
-		$play_sound->setName(__('Jouer un son', __FILE__));
-		$play_sound->save();
-
-		$tts = $this->getCmd(null, 'tts');
-		if (!is_object($tts)) {
-			$tts = new JeedomConnectCmd();
-			$tts->setLogicalId('tts');
-			$tts->setEqLogic_id($this->getId());
-			$tts->setType('action');
-			$tts->setSubType('message');
-		}
-		$tts->setDisplay('title_disable', 1);
-		$tts->setDisplay('message_placeholder', __('Texte à lire', __FILE__));
-		$tts->setIsVisible(1);
-		$tts->setName(__('TTS', __FILE__));
-		$tts->save();
+		$this->createCommands('all');
 	}
 
 	public function preRemove() {
@@ -1225,6 +968,97 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postRemove() {
+	}
+
+	public function createCommands(string $type) {
+		$configFile = JeedomConnectUtils::getFileContent(self::$_plugin_config_dir . '/params.json');
+		$dict = $configFile['dictionary'];
+		try {
+			if (isset($configFile['cmds'][$type])) {
+				$this->createCommandsFromConfigFile($configFile['cmds'][$type], $dict);
+			} else {
+				log::add(__CLASS__, 'error', $type . ' not found in config');
+			}
+		} catch (Exception $e) {
+			log::add(__CLASS__, 'error', 'Cannot save Cmd for this EqLogic -- ' . $e->getMessage());
+		}
+	}
+
+	public function createCommandsFromConfigFile($commands, $dict) {
+		$cmd_updated_by = array();
+		foreach ($commands as $cmdData) {
+			$cmd = $this->getCmd(null, $cmdData["logicalId"]);
+
+			if (!is_object($cmd)) {
+				log::add(__CLASS__, 'debug', 'cmd creation  => ' . $cmdData["name"] . ' [' . $cmdData["logicalId"] . ']');
+
+				$cmd = new cmd();
+				$cmd->setLogicalId($cmdData["logicalId"]);
+				$cmd->setEqLogic_id($this->getId());
+
+				if (isset($cmdData["isVisible"])) {
+					$cmd->setIsVisible($cmdData["isVisible"]);
+				}
+
+				if (isset($cmdData["isHistorized"])) {
+					$cmd->setIsHistorized($cmdData["isHistorized"]);
+				}
+			}
+			$cmd->setName(__($cmdData["name"], __FILE__));
+
+			$cmd->setType($cmdData["type"]);
+			$cmd->setSubType($cmdData["subtype"]);
+
+			if (isset($cmdData["generic_type"])) {
+				$cmd->setGeneric_type($cmdData["generic_type"]);
+			}
+
+			if (isset($cmdData["unite"])) {
+				$cmd->setUnite($cmdData["unite"]);
+			}
+
+			if (isset($cmdData["order"])) {
+				$cmd->setOrder($cmdData["order"]);
+			}
+
+			if (isset($cmdData['configuration'])) {
+				foreach ($cmdData['configuration'] as $key => $value) {
+					if ($key == 'listValueToCreate') {
+						$key = 'listValue';
+						$value = JeedomConnectUtils::createListOption(explode(";", $value), $dict);
+					}
+					$cmd->setConfiguration($key, $value);
+				}
+			}
+
+			if (isset($cmdData['display'])) {
+				foreach ($cmdData['display'] as $key => $value) {
+					$cmd->setDisplay($key, $value);
+				}
+			}
+
+			if (isset($cmdData['template'])) {
+				foreach ($cmdData['template'] as $key => $value) {
+					$cmd->setTemplate($key, $value);
+				}
+			}
+
+			if (isset($cmdData['updateCmd'])) {
+				$cmd_updated_by[$cmdData["logicalId"]] = $cmdData['updateCmd'];
+			}
+
+			$cmd->save();
+		}
+
+		foreach ($cmd_updated_by as $cmdAction_logicalId => $cmdInfo_logicalId) {
+			$cmdAction = $this->getCmd(null, $cmdAction_logicalId);
+			$cmdInfo = $this->getCmd(null, $cmdInfo_logicalId);
+
+			if (is_object($cmdAction) && is_object($cmdInfo)) {
+				$cmdAction->setValue($cmdInfo->getId());
+				$cmdAction->save();
+			}
+		}
 	}
 
 	public static function checkAllEquimentsAndUpdateConfig($widgetId) {
@@ -1914,9 +1748,7 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'unlink':
-				$eqLogic->setConfiguration('deviceId', '');
-				$eqLogic->setConfiguration('deviceName', '');
-				$eqLogic->save();
+				$eqLogic->removeDevice();
 				break;
 
 

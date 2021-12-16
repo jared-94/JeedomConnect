@@ -1,0 +1,216 @@
+{
+    "cmds": {
+        "all": [
+            {
+                "logicalId": "position",
+                "name": "Position",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 1,
+                "generic_type": "GEOLOCATION"
+            },
+            {
+                "logicalId": "activity",
+                "name": "Activité",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1
+            },
+            {
+                "logicalId": "battery",
+                "name": "Batterie",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+                "order": 3,
+                "generic_type": "BATTERY"
+            },
+            {
+                "logicalId": "goToPage",
+                "name": "Afficher page",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1",
+                    "message_placeholder": "Id page"
+                },
+                "order": 5
+            },
+            {
+                "logicalId": "unlink",
+                "name": "Détacher",
+                "type": "action",
+                "subtype": "other",
+                "isVisible": 1,
+                "order": 7
+            },
+            {
+                "logicalId": "toaster",
+                "name": "Pop-up",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1"
+                },
+                "order": 8
+            },
+            {
+                "logicalId": "notifall",
+                "name": "Notifier les appareils JC",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "order": 7
+            },
+            {
+                "logicalId": "update_pref_app",
+                "name": "Modifier Préférences Appli",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "configuration": {
+                    "listValueToCreate": "themeColor;darkMode;tracking;updateData;jcService"
+                },
+                "order": 10,
+                "display": {
+                    "title_with_list": "1",
+                    "title_placeholder": "Choix du paramètre",
+                    "title_disable": "1",
+                    "message_placeholder": "Valeur"
+                }
+            },
+            {
+                "logicalId": "tts",
+                "name": "TTS",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "display": {
+                    "message_placeholder": "Texte à lire",
+                    "title_disable": 1
+                }
+            }
+        ],
+        "android": [
+            {
+                "logicalId": "isCharging",
+                "name": "En charge",
+                "type": "info",
+                "subtype": "binary",
+                "isVisible": 1,
+                "order": 4
+            },
+            {
+                "logicalId": "launchApp",
+                "name": "Lancer App",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1",
+                    "message_placeholder": "Nom de l'application"
+                },
+                "order": 6
+            },
+            {
+                "logicalId": "screenOn",
+                "name": "Allumer écran",
+                "type": "action",
+                "subtype": "other",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1"
+                },
+                "updateCmd": "isScreenOn",
+                "order": 14
+            },
+            {
+                "logicalId": "screenOff",
+                "name": "Eteindre écran",
+                "type": "action",
+                "subtype": "other",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1"
+                },
+                "updateCmd": "isScreenOn",
+                "order": 14
+            },
+            {
+                "logicalId": "isScreenOn",
+                "name": "Etat écran",
+                "type": "info",
+                "subtype": "binary",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "bluetoothConnected",
+                "name": "Etat Bluetooth",
+                "type": "info",
+                "subtype": "binary",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "wifiEnabled",
+                "name": "Etat Wifi",
+                "type": "info",
+                "subtype": "binary",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "ipAddress",
+                "name": "Adresse IP",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "ssid",
+                "name": "Réseau wifi (SSID)",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "send_sms",
+                "name": "Envoyer un SMS",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "display": {
+                    "title_placeholder": "Numéro/Options"
+                }
+            },
+            {
+                "logicalId": "play_sound",
+                "name": "Jouer un son",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "display": {
+                    "message_placeholder": "Fichier/URL",
+                    "title_disable": 1
+                }
+            }
+        ],
+        "ios": []
+    },
+    "dictionary": {
+        "themeColor": "Couleur thème",
+        "darkMode": "Activer mode sombre",
+        "tracking": "Activer le tracking",
+        "updateData": "Recharger les données",
+        "jcService": "Service JC"
+    }
+}

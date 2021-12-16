@@ -418,6 +418,9 @@ class apiHelper {
   }
 
   // CONNEXION FUNCTIONS
+  /**
+   * @param JeedomConnect $eqLogic a JeedomConnect eqLogic
+   */
   private static function checkConnexion($eqLogic, $param, $withType = true) {
 
     $versionJson = JeedomConnect::getPluginInfo();
@@ -478,6 +481,7 @@ class apiHelper {
       return array('type' => 'FORMAT_VERSION_ERROR');
     }
 
+    if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
     $eqLogic->setConfiguration('polling', $param['polling'] ?? '0');

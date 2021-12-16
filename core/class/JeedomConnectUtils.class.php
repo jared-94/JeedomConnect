@@ -348,4 +348,32 @@ class JeedomConnectUtils {
 
         return $linksData;
     }
+
+    public static function getFileContent($path) {
+
+        if (!file_exists($path)) {
+            log::add(__CLASS__, 'error', 'File not found  : ' . $path);
+            return null;
+        }
+
+        $content = file_get_contents($path);
+
+        if (is_json($content)) {
+            return json_decode($content, true);
+        }
+
+        return $content;
+    }
+
+    public static function createListOption($data, $dict) {
+
+        $list = '';
+        foreach ($data as $item) {
+            $val = $dict[$item] ?? $item;
+            $list .= $item . '|' . $val . ';';
+        }
+        $list = ($list != '') ? substr($list, 0, -1) : '';
+
+        return $list;
+    }
 }
