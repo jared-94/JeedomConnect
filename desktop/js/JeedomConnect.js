@@ -881,9 +881,11 @@ function setWidgetModalData(options) {
             $('#tags-scenario-input').val(result);
           });
         }
-        $("#confirm-" + option.id).prop('checked', options.widget['options'].confirm ? "checked" : "");
-        $("#secure-" + option.id).prop('checked', options.widget['options'].secure ? "checked" : "");
-        $("#pwd-" + option.id).prop('checked', options.widget['options'].pwd ? "checked" : "");
+        if (options.widget['options'] !== undefined) {
+          $("#confirm-" + option.id).prop('checked', options.widget['options'].confirm ? "checked" : "");
+          $("#secure-" + option.id).prop('checked', options.widget['options'].secure ? "checked" : "");
+          $("#pwd-" + option.id).prop('checked', options.widget['options'].pwd ? "checked" : "");
+        }
 
       } else if (option.category == "stringList" & options.widget[option.id] !== undefined) {
         var selectedChoice = option.choices.find(s => s.id == options.widget[option.id]);
@@ -1118,8 +1120,7 @@ function refreshAddWidgets() {
       curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
     <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir un scenario' onclick="selectScenario('${option.id}');">
     <i class='fas fa-list-alt'></i></a></span></div>
-      <!-- <div id='optionScenario' style='display:none;'> -->
-      <div id='optionScenario'>
+      <div id='optionScenario' style='display:none;'>
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
             <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
