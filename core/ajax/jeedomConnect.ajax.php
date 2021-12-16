@@ -527,7 +527,7 @@ try {
 		} else {
 			$eqLogic->saveConfig($configJson);
 			$eqLogic->setConfiguration('configVersion', $configJson->payload->configVersion);
-			$eqLogic->save();
+			$eqLogic->save(true);
 
 			$eqLogic->getConfig(true, true);
 			$eqLogic->cleanCustomData();

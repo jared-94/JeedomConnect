@@ -731,19 +731,19 @@ class JeedomConnect extends eqLogic {
 	public function registerDevice($id, $name) {
 		$this->setConfiguration('deviceId', $id);
 		$this->setConfiguration('deviceName', $name);
-		$this->save();
+		$this->save(true);
 	}
 
 	public function removeDevice() {
 		$this->setConfiguration('deviceId', '');
 		$this->setConfiguration('deviceName', '');
 		$this->setConfiguration('platformOs', '');
-		$this->save();
+		$this->save(true);
 	}
 
 	public function registerToken($token) {
 		$this->setConfiguration('token', $token);
-		$this->save();
+		$this->save(true);
 	}
 
 	public function sendNotif($notifId, $data) {
@@ -935,19 +935,22 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preUpdate() {
+		$save = false;
 
 		if ($this->getConfiguration('scenariosEnabled') == '') {
 			$this->setConfiguration('scenariosEnabled', '1');
-			$this->save(true);
+			$save = true;
 		}
 		if ($this->getConfiguration('webviewEnabled') == '') {
 			$this->setConfiguration('webviewEnabled', '1');
-			$this->save(true);
+			$save = true;
 		}
 		if ($this->getConfiguration('editEnabled') == '') {
 			$this->setConfiguration('editEnabled', '1');
-			$this->save(true);
+			$save = true;
 		}
+
+		if ($save) $this->save(true);
 	}
 
 	public function postUpdate() {
@@ -1108,7 +1111,7 @@ class JeedomConnect extends eqLogic {
 
 		//update configVersion in the equipment configuration
 		$this->setConfiguration('configVersion', $configVersion);
-		$this->save();
+		$this->save(true);
 
 		log::add('JeedomConnect', 'debug', 'Renewing the version of the widgets configuration');
 		$this->getConfig(true, true);
