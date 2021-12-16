@@ -376,6 +376,11 @@ class apiHelper {
           return self::addTypeInPayload($result, 'SET_INSTALL_DETAILS');
           break;
 
+        case 'SET_LOG':
+          log::add('JeedomConnect', $param['level'] ?? 'debug', $param['text'] ?? '');
+          return null;
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
