@@ -4,6 +4,24 @@
 
 class JeedomConnectUtils {
 
+    public static function getCustomPathIcon(JeedomConnect $eqLogic) {
+        $plugin = plugin::byId('JeedomConnect');
+
+        $platform = $eqLogic->getConfiguration('platformOs');
+        $standardIcon = $plugin->getPathImgIcon();
+
+        if ($platform == '') return $standardIcon;
+
+        $path_parts = pathinfo($standardIcon);
+        $extension = $path_parts['extension'];
+        $extensionSize = strlen($extension) + 1;
+        $finalIcon = substr($standardIcon, 0, $extensionSize * -1) . '_' . $platform . '.' . $extension;
+
+        if (!file_exists($finalIcon)) return $standardIcon;
+
+        return $finalIcon;
+    }
+
     public static function isCoreGreaterThan($version = '0.0.0') {
         $update = update::byTypeAndLogicalId('core', 'jeedom');
         if (is_object($update)) {

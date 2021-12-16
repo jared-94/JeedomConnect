@@ -228,7 +228,7 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
 				// echo '<div class="eqLogicDisplayCardParent">';
 				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				echo '<img src="' . $plugin->getPathImgIcon() . '"/>';
+				echo '<img src="' . JeedomConnectUtils::getCustomPathIcon($eqLogic) . '"/>';
 				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
 				echo '<span>';
 				// echo '</div>';
