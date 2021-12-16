@@ -202,6 +202,14 @@
                     "message_placeholder": "Fichier/URL",
                     "title_disable": 1
                 }
+            },
+            {
+                "logicalId": "nextAlarm",
+                "name": "Prochain réveil",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+                "order": 3
             }
         ],
         "ios": []

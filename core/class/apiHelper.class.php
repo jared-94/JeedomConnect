@@ -2273,5 +2273,8 @@ class apiHelper {
     if (isset($infos['isCharging'])) {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
+    if (isset($infos['nextAlarm'])) {
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm']) / 1000));
+    }
   }
 }
