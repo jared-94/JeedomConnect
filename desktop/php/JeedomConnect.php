@@ -33,6 +33,8 @@ $jcFilter = $_GET['jcFilter'] ?? '';
 $orderBy = $_GET['jcOrderBy'] ?? config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
 $widgetSearch = $_GET['jcSearch'] ?? '';
 
+sendVarToJS('jcOrderBy', $orderBy);
+
 switch ($orderBy) {
 	case 'name':
 		$widgetName = array_column($widgetArray, 'name');
@@ -118,37 +120,8 @@ foreach ($widgetTypeArray as $key => $value) {
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
-$infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
 
-$beta_version = false;
-$update = $plugin->getUpdate();
-if (is_object($update)) {
-	$version = $update->getConfiguration('version');
-	if ($version && $version != 'stable') $beta_version = true;
-}
-
-
-$infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
-$infoPlugin .= '<b>Equipements</b> : <br/>';
-foreach ($eqLogics as $eqLogic) {
-	$platformOs = $eqLogic->getConfiguration('platformOs');
-	$platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
-
-	$versionAppConfig = $eqLogic->getConfiguration('appVersion');
-	$versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
-
-	$connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
-	$withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
-
-	$cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
-
-	$infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
-	if ($platform == '' && $versionApp == '') {
-		$infoPlugin .= ' : non enregistré<br/>';
-	} else {
-		$infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
-	}
-}
+$infoPlugin = JeedomConnectUtils::getInstallDetails();
 
 ?>
 
@@ -253,10 +226,15 @@ foreach ($eqLogics as $eqLogic) {
 			<?php
 			foreach ($eqLogics as $eqLogic) {
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+				// echo '<div class="eqLogicDisplayCardParent">';
 				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				echo '<img src="' . $plugin->getPathImgIcon() . '"/>';
-				echo '<br>';
+				echo '<img src="' . JeedomConnectUtils::getCustomPathIcon($eqLogic) . '"/>';
 				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+				echo '<span>';
+				// echo '</div>';
+				echo '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
+				echo '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>';
+				echo '</span>';
 				echo '</div>';
 			}
 			?>
@@ -544,18 +522,44 @@ foreach ($eqLogics as $eqLogic) {
 				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
 				<br /><br />
 				<div class="table-responsive">
+
+					<div class="col-lg-6">
+						<legend><i class="fas fa-info-circle"></i> {{Commandes de type info}}</legend>
+					</div>
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
 							<tr>
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">{{Nom}}</th>
-								<th style="width: 160px;">{{Type}}</th>
+								<th style="width: 160px;">{{Sous-type}}</th>
 								<th style="width: 200px;">{{Valeur}}</th>
 								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
 								<th style="width: 100px;"></th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody class="cmd_info">
+						</tbody>
+					</table>
+				</div>
+				<br /><br />
+				<div class="table-responsive">
+					<div class="col-lg-6">
+						<legend><i class="fas fa-play-circle"></i> {{Commandes de type action}}</legend>
+					</div>
+					<table id="table_cmd" class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 50px;">#</th>
+								<th style="width: 300px;">{{Nom}}</th>
+								<th style="width: 160px;">{{Sous-type}}</th>
+								<th style="width: 200px;">{{Valeur}}</th>
+								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody class="cmd_action">
 						</tbody>
 					</table>
 				</div>

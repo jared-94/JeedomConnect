@@ -25,6 +25,13 @@
         "index": 4,
         "img": "/var/www/html/plugins/JeedomConnect/data/img/donate.png",
         "title": "Faire un don",
-        "link": "https://paypal.me/JeedomConnect"
+        "link": "https://tinyurl.com/JeedomConnect"
+    },
+    {
+        "id": "community",
+        "index": 5,
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/community.png",
+        "title": "Aller sur le forum",
+        "link": "https://community.jeedom.com/tag/plugin-jeedomconnect"
     }
 ]

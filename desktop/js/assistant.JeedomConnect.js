@@ -287,6 +287,10 @@ function getSimpleModal(_options, _callback) {
 						}).get();
 						result.checkboxes = checkedVals;
 					}
+					if (_options.fields.find(i => i.type == "radios")) {
+						result.radio = $('input[name=radio]:checked').attr('id');
+						result.radio_name = $('input[name=radio]:checked').parent().text();
+					}
 					const nameField = _options.fields.find(i => i.type == "name");
 					if (nameField) {
 						if (nameField.required !== false && $("#mod-name-input").val() == '') {
@@ -379,6 +383,38 @@ function showAutoFillWidgetCmds() {
 		$('.autoFillWidgetCmds').show();
 	}
 }
+
+$('.btnSearchForJCeq').off('click').on('click', function () {
+
+	var widget = widgetsList.widgets.find(i => i.type == 'jc');
+	if (widget == undefined) return;
+
+	allJCEquipmentsWithEqId = allJCEquipments.map(item => {
+		return {
+			id: item.eqId,
+			name: item.name
+		};
+	});
+	getSimpleModal({ title: "Importer quel équipement", fields: [{ title: "Choix", type: "radios", choices: allJCEquipmentsWithEqId }] }, function (result) {
+		$("#name-input").val(result.radio_name);
+
+		jeedom.eqLogic.getCmd({
+			id: result.radio,
+			success: function (result) {
+
+				Object.entries(result).forEach(([, cmdItem], index) => {
+					widget.options.forEach(option => {
+						if (option.category == "cmd" && option.id == cmdItem.logicalId) {
+							refreshCmdData(option.id, cmdItem.id, 'undefined');
+						}
+					});
+				});
+			}
+		})
+	});
+});
+
+
 
 $('.btnAutoFillWidgetCmds').off('click').on('click', function () {
 	var type = $("#widgetsList-select").val();

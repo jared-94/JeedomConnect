@@ -73,6 +73,9 @@ if (!isConnect('admin')) {
 			<div class="form-group autoFillWidgetCmds" style="display: none;">
 				<a class="btn btn-sm btn-success btnAutoFillWidgetCmds"><i class="fas fa-magic"></i> {{Création automatique}}</a>
 			</div>
+			<div class="form-group searchForJCeq" style="display: none;">
+				<a class="btn btn-sm btn-info btnSearchForJCeq"><i class="fas fa-magic"></i> {{Choisir un équipement JC}}</a>
+			</div>
 			<div class="form-group">
 				<img id="widgetImg" />
 				<div class="alert alert-info" id="widgetDescription"></div>

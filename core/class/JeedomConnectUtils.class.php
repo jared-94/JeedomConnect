@@ -4,6 +4,24 @@
 
 class JeedomConnectUtils {
 
+    public static function getCustomPathIcon(JeedomConnect $eqLogic) {
+        $plugin = plugin::byId('JeedomConnect');
+
+        $platform = $eqLogic->getConfiguration('platformOs');
+        $standardIcon = $plugin->getPathImgIcon();
+
+        if ($platform == '') return $standardIcon;
+
+        $path_parts = pathinfo($standardIcon);
+        $extension = $path_parts['extension'];
+        $extensionSize = strlen($extension) + 1;
+        $finalIcon = substr($standardIcon, 0, $extensionSize * -1) . '_' . $platform . '.' . $extension;
+
+        if (!file_exists($finalIcon)) return $standardIcon;
+
+        return $finalIcon;
+    }
+
     public static function isCoreGreaterThan($version = '0.0.0') {
         $update = update::byTypeAndLogicalId('core', 'jeedom');
         if (is_object($update)) {
@@ -14,6 +32,52 @@ class JeedomConnectUtils {
         return  false;
     }
 
+    public static function getInstallDetails(): string {
+
+        $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
+
+        $beta_version = false;
+
+        $plugin = plugin::byId('JeedomConnect');
+        $update = $plugin->getUpdate();
+        if (is_object($update)) {
+            $version = $update->getConfiguration('version');
+            if ($version && $version != 'stable') $beta_version = true;
+        }
+
+
+        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+        $infoPlugin .= '<b>Equipements</b> : <br/>';
+
+        $eqLogics = eqLogic::byType($plugin->getId());
+
+        foreach ($eqLogics as $eqLogic) {
+            $platformOs = $eqLogic->getConfiguration('platformOs');
+            $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
+
+            $versionAppConfig = $eqLogic->getConfiguration('appVersion');
+            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
+
+            $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
+            $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
+
+            $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
+
+            $infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
+            if ($platform == '' && $versionApp == '') {
+                $infoPlugin .= ' : non enregistré<br/>';
+            } else {
+                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
+            }
+        }
+
+        return $infoPlugin;
+    }
+
+    /**
+     * @param plugin $pluginObj
+     * @return array
+     */
     public static function getPluginDetails($pluginObj) {
 
         $update = update::byLogicalId($pluginObj->getId());
@@ -28,6 +92,7 @@ class JeedomConnectUtils {
         $item['currentVersion'] =  $update->getLocalVersion();
         $item['updateVersion'] = $update->getRemoteVersion();
         $item['isActive'] = $pluginObj->isActive() == "1";
+        $item['logFiles'] = $pluginObj->getLogList();
 
         return $item;
     }
@@ -287,5 +352,33 @@ class JeedomConnectUtils {
         // log::add('JeedomConnect', 'debug', 'result : ' .  json_encode($linksData));
 
         return $linksData;
+    }
+
+    public static function getFileContent($path) {
+
+        if (!file_exists($path)) {
+            log::add(__CLASS__, 'error', 'File not found  : ' . $path);
+            return null;
+        }
+
+        $content = file_get_contents($path);
+
+        if (is_json($content)) {
+            return json_decode($content, true);
+        }
+
+        return $content;
+    }
+
+    public static function createListOption($data, $dict) {
+
+        $list = '';
+        foreach ($data as $item) {
+            $val = $dict[$item] ?? $item;
+            $list .= $item . '|' . $val . ';';
+        }
+        $list = ($list != '') ? substr($list, 0, -1) : '';
+
+        return $list;
     }
 }
