@@ -77,6 +77,9 @@ function SortByRoom(a, b) {
   return ((aRoom < bRoom) ? -1 : ((aRoom > bRoom) ? 1 : 0));
 }
 
+$('.eqLogicAttr[data-l1key=name]').change(function () {
+  $('.eqNameQrCode').text($('.eqLogicAttr[data-l1key=name]').val());
+})
 
 $.post({
   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",

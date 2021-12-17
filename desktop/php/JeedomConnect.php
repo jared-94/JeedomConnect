@@ -507,7 +507,7 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 								</div>
 
 								<div class="row" style="margin: 0px auto;text-align:center;">
-									<span class="eqLogicAttr" style="font-size:1.2em;font-weight: bold;" data-l1key="name" type="text"></span>
+									<span class="eqNameQrCode" style="font-size:1.2em;font-weight: bold;"></span>
 								</div>
 								<div class="row" style="margin: 10px auto;text-align:center;">
 									<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
