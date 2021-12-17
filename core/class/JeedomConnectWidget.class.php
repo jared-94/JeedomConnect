@@ -294,6 +294,7 @@ class JeedomConnectWidget extends config {
 		}
 
 		$unexistingId = array();
+		/** @var JeedomConnect $eqLogic */
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			if ($eqLogic->getIsEnable()) {
 

@@ -49,6 +49,7 @@ class JeedomConnectUtils {
         $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
+        /** @var array<JeedomConnect> $eqLogics */
         $eqLogics = eqLogic::byType($plugin->getId());
 
         foreach ($eqLogics as $eqLogic) {
@@ -138,6 +139,14 @@ class JeedomConnectUtils {
         return array_unique($genericTypes);
     }
 
+    /**
+     * return an array of widget of type $_widget_Type with commands matching the corresponding generic type
+     *
+     * @param string $_widget_Type
+     * @param array $_widgetConf
+     * @param array $_cmd_GenType
+     * @return array
+     */
     public static function createAutoWidget($_widget_Type, $_widgetConf, $_cmd_GenType) {
 
         $result = array();

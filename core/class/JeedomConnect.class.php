@@ -1068,6 +1068,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function checkAllEquimentsAndUpdateConfig($widgetId) {
+		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$eqLogic->checkEqAndUpdateConfig($widgetId);
 		}
@@ -1233,7 +1234,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	/**
+	/*
 	 ************************************************************************
 	 ****************** FUNCTION TO UPDATE CONF FILE FORMAT *****************
 	 ******************    AND CREATE WIDGET ACCORDINGLY    *****************
@@ -1440,6 +1441,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function migrationAllNotif() {
 		$result = array();
+		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			foreach ($eqLogic->getCmd() as $cmd) {
 				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
@@ -1460,7 +1462,7 @@ class JeedomConnect extends eqLogic {
 
 
 	public static function migrateCustomData() {
-
+		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			// log::add('JeedomConnect_mig', 'debug', 'checking ' . $eqLogic->getName . ' [' . $apiKey . ']');
@@ -1515,6 +1517,7 @@ class JeedomConnect extends eqLogic {
 
 
 			//****** UPDATE ALL EQUIPMENT JSON CONFIG (summary)  ******
+			/** @var JeedomConnect $eqLogic */
 			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$hasChangesEq = false;
 				$jsonConfig = $eqLogic->getConfig();
