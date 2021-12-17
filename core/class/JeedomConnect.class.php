@@ -1699,6 +1699,22 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
+			case 'shellExec':
+				if (empty($_options['message'])) {
+					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					return;
+				}
+				$payload = array(
+					'action' => 'shellExec',
+					'cmd' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
 			case 'screenOn':
 				$payload = array(
 					'action' => 'screenOn'
