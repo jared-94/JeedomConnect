@@ -5032,7 +5032,7 @@
 			"type": "webview",
 			"name": "Web View",
 			"img": "web.png",
-			"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web.<br/>Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
+			"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web. Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
 			"variables": [
 				{
 					"name": "room",
@@ -5519,7 +5519,7 @@
 			"type": "appLauncher",
 			"name": "Lanceur d'application",
 			"img": "droid.png",
-			"description": "Permet de lancer une application.<br/> !! Uniquement compatible Android !!",
+			"description": "Permet de lancer une application. !! Uniquement compatible Android !!",
 			"variables": [
 				{
 					"name": "room",
