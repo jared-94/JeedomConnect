@@ -500,15 +500,28 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{QR Code :}}</label>
-								<img id="img_config" class="img-responsive" style="margin-top:10px; max-height : 250px;" />
-								<div class="col-sm-3" style=" margin-left:185px; margin-top:10px;">
+								<div class="row">
+									<div class="col-sm-6">
+										<img id="img_config" class="img-responsive" style="margin:10px auto; max-height : 250px;" />
+									</div>
+								</div>
+
+								<div class="row" style="margin: 0px auto;text-align:center;">
+									<span class="eqLogicAttr" style="font-size:1.2em;font-weight: bold;" data-l1key="name" type="text"></span>
+								</div>
+								<div class="row" style="margin: 10px auto;text-align:center;">
 									<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
 								</div>
-								<div class="alert alert-danger" style=" margin: 10px auto; margin-top:80px; width:400px;">
-									Veuillez re-générer le QR code si vous avez modifié :<br />
-									* Les adresses dans la config du plugin<br />
-									* L'utilisateur de cet équipement<br />
-									* La connexion websocket de cet équipement
+
+								<div class="row">
+									<div class="alert alert-danger" style=" margin: 10px auto; width:350px;">
+										Veuillez re-générer le QR code si vous avez modifié :<br />
+										<ul>
+											<li>Les adresses dans la config du plugin</li>
+											<li>L'utilisateur de cet équipement</li>
+											<li>La connexion websocket de cet équipement</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 						</div>
