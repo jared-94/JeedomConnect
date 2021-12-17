@@ -19,12 +19,5 @@
         "img": "/var/www/html/plugins/JeedomConnect/data/img/github.png",
         "title": "Github du projet",
         "link": "https://github.com/jared-94/JeedomConnect/"
-    },
-    {
-        "id": "donate",
-        "index": 4,
-        "img": "/var/www/html/plugins/JeedomConnect/data/img/donate.png",
-        "title": "Faire un don",
-        "link": "https://paypal.me/JeedomConnect"
     }
 ]
