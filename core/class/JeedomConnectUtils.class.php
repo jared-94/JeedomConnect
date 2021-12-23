@@ -381,4 +381,29 @@ class JeedomConnectUtils {
 
         return $list;
     }
+
+    public static function getNotifData($token) {
+        return array(
+            "to" => $token,
+            "android" => array(
+                "priority" => "high",
+            ),
+            "apns" => array(
+                "headers" => array(
+                    "apns-priority" => "5",
+                    "apns-topic" => "com.jeedomconnect.app",
+                ),
+                "payload" => array(
+                    "aps" => array(
+                        "contentAvailable" => true,
+                        "content-available" => true,
+                    ),
+                ),
+            ),
+            "collapse_key" => "type_a",
+            "content_available" => true,
+            "mutable_content" => true,
+            "priority" => "high",
+        );
+    }
 }

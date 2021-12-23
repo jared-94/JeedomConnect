@@ -747,29 +747,13 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function sendNotif($notifId, $data) {
-		if ($this->getConfiguration('token') == null) {
-			log::add('JeedomConnect', 'info', "No token defined. Please connect your device first");
+		$token = $this->getConfiguration('token', null);
+		if (is_null($token)) {
+			log::add('JeedomConnect', 'warning', "No token defined. Please connect your device first");
 			return;
 		}
-		$postData = array(
-			'to' => $this->getConfiguration('token')
-		);
-		if ($this->getConfiguration('platformOs') == 'android') {
-			$postData['priority'] = 'high';
-		} else {
-			$postData = array_merge($postData, array(
-				"mutable_content" => true,
-				"content_available" => true,
-				"collapse_key" => "type_a",
-				"apns" => array(
-					"payload" => array(
-						"aps" => array(
-							"contentAvailable" => true,
-						)
-					)
-				)
-			));
-		}
+
+		$postData = JeedomConnectUtils::getNotifData($token);
 
 		$data["payload"]["time"] = time();
 		$postData["data"] = $data;
@@ -780,38 +764,43 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		$sendBin = '';
 		switch (php_uname("m")) {
 			case "x86_64":
 				$sendBin = "sendNotif_x64";
 				break;
+
 			case "armv7l":
 				$sendBin = "sendNotif_arm";
 				break;
+
 			case "aarch64":
 				$sendBin = "sendNotif_arm64";
 				break;
+
 			case "i686":
 				$sendBin = "sendNotif_x32";
 				break;
+
+			default:
+				log::add('JeedomConnect', 'error', "Error while detecting system architecture. " . php_uname("m") . " detected");
+				return;
 		}
-		if ($sendBin == '') {
-			log::add('JeedomConnect', 'info', "Error while detecting system architecture. " . php_uname("m") . " detected");
-			return;
-		}
+
 		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
 		if (!is_executable($binFile)) {
 			chmod($binFile, 0555);
 		}
+
 		$cmd = $binFile . " -data='" . json_encode($postData) . "' 2>&1";
 		log::add('JeedomConnect', 'info', "Send notification with data " . json_encode($postData["data"]));
+
 		$output = shell_exec($cmd);
 		if (is_null($output) || empty($output)) {
-			log::add('JeedomConnect', 'info', "Error while sending notification");
-			return;
+			log::add('JeedomConnect', 'error', "Error while sending notification");
 		} else {
 			log::add('JeedomConnect', 'debug', "Send output : " . $output);
 		}
+		return;
 	}
 
 	public function addGeofenceCmd($geofence, $coordinates) {
