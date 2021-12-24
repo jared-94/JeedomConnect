@@ -391,7 +391,7 @@ class JeedomConnectUtils {
             "apns" => array(
                 "headers" => array(
                     "apns-priority" => "5",
-                    "apns-topic" => "com.jeedomconnect.app",
+                    "apns-topic" => "com.jeedom-connect.app",
                 ),
                 "payload" => array(
                     "aps" => array(
