@@ -402,11 +402,11 @@ class apiHelper {
           break;
 
         default:
-          return self::raiseException($method . ' [' . $type . '] - method not defined');
+          return self::raiseException($method, ' [' . $type . '] - method not defined');
           break;
       }
     } catch (Exception $e) {
-      return self::raiseException($method . ' [' . $type . '] - ' . $e->getMessage());
+      return self::raiseException($method, ' [' . $type . '] - ' . $e->getMessage());
     }
   }
 
