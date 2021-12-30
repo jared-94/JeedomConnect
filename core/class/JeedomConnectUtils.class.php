@@ -463,4 +463,40 @@ class JeedomConnectUtils {
         }
         return $return;
     }
+
+    /**
+     * @param string $plugin 
+     * @return array
+     */
+    public static function getJeedomMessages($plugin = '') {
+        $nbMessage = message::nbMessage();
+        $messages = array();
+
+        if ($nbMessage != 0) {
+            if ($plugin == '') {
+                $messages = utils::o2a(message::all());
+            } else {
+                $messages = utils::o2a(message::byPlugin($plugin));
+            }
+        }
+
+        return array('nbMessages' => $nbMessage, 'messages' => $messages);
+    }
+
+    /**
+     * @param string|null $messageId 
+     * @return array|Exception
+     */
+    public static function removeJeedomMessage($messageId = null) {
+
+        if ($messageId == 'all') return message::removeAll();
+
+        $message = message::byId($messageId);
+        if (!is_object($message) || is_null($messageId)) {
+            throw new Exception(__('Message inconnu. Vérifiez l\'ID', __FILE__));
+        }
+        $message->remove();
+
+        return true;
+    }
 }

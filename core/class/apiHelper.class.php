@@ -391,6 +391,16 @@ class apiHelper {
           return self::addTypeInPayload($result, 'SET_TIMELINE_EVENTS');
           break;
 
+        case 'GET_JEEDOM_MESSAGES':
+          $result = JeedomConnectUtils::getJeedomMessages($param['plugin'] ?? '');
+          return self::addTypeInPayload($result, 'SET_JEEDOM_MESSAGES');
+          break;
+
+        case 'REMOVE_JEEDOM_MESSAGE':
+          $result = JeedomConnectUtils::removeJeedomMessage($param['messageId'] ?? null);
+          return null;
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
