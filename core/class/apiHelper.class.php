@@ -381,6 +381,16 @@ class apiHelper {
           return null;
           break;
 
+        case 'GET_TIMELINE_FOLDERS':
+          $result = JeedomConnectUtils::getTimelineFolders();
+          return self::addTypeInPayload($result, 'SET_TIMELINE_FOLDERS');
+          break;
+
+        case 'GET_TIMELINE_EVENTS':
+          $result = JeedomConnectUtils::getTimelineEvents($param['folder'] ?? 'main');
+          return self::addTypeInPayload($result, 'SET_TIMELINE_EVENTS');
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
@@ -515,8 +525,8 @@ class apiHelper {
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
       'objInfo' => self::getObjectData($config, false),
-      'links' => JeedomConnectUtils::getLinks()
-
+      'links' => JeedomConnectUtils::getLinks(),
+      'timelineFolders' => $eqLogic->getConfiguration('timelineEnabled', 1) == '1' ?  JeedomConnectUtils::getTimelineFolders() : null
     );
 
     return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
@@ -2279,7 +2289,7 @@ class apiHelper {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
     if (isset($infos['nextAlarm'])) {
-      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000 )));
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
   }
 }

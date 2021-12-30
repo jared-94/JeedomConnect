@@ -441,6 +441,13 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 							</div>
 
 							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Accès à la timeline}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" checked type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+
+							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Accès Interface web}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="webviewEnabled" type="checkbox" placeholder="{{}}">
