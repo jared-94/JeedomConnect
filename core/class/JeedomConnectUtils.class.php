@@ -390,6 +390,7 @@ class JeedomConnectUtils {
             ),
             "apns" => array(
                 "headers" => array(
+                    "apns-push-type" => "background",
                     "apns-priority" => "5",
                     "apns-topic" => "com.jeedom-connect.app",
                 ),
