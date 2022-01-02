@@ -132,26 +132,76 @@ try {
 		ajax::success(array('more' => $more));
 	}
 
-	if (init('action') == 'exportWidgets') {
-		log::add('JeedomConnect', 'debug', 'ajax -- fx exportWidgets');
-		JeedomConnectWidget::exportWidgetConf();
-		ajax::success();
-	}
+	if (init('action') == 'generateFile') {
+		switch (init('type')) {
+			case 'exportEqConf':
+				$content = JeedomConnect::getWidgetConfigContent(init('apiKey'));
+				$content = JeedomConnectUtils::addTypeInPayload($content, 'JC_EXPORT_EQLOGIC_CONFIG');
+				break;
 
-	if (init('action') == 'exportCustomData') {
-		log::add('JeedomConnect', 'debug', 'ajax -- fx exportCustomData');
-		JeedomConnectWidget::exportWidgetCustomConf();
-		ajax::success();
+			case 'exportWidgets':
+				log::add('JeedomConnect', 'debug', 'ajax -- fx exportWidgets');
+				$content = JeedomConnectWidget::exportWidgetConf();
+				break;
+
+			case 'exportCustomData':
+				log::add('JeedomConnect', 'debug', 'ajax -- fx exportCustomData');
+				$content = JeedomConnectWidget::exportWidgetCustomConf();
+				break;
+
+			default:
+				ajax::error('Pas de type d\'export !');
+		}
+
+		ajax::success($content);
 	}
 
 	if (init('action') == 'uploadWidgets') {
 		log::add('JeedomConnect', 'debug', 'ajax -- fx uploadWidgets');
-		try {
-			JeedomConnectWidget::uploadWidgetConf(init('data'));
-			ajax::success("Import avec succès");
-		} catch (Exception $e) {
-			ajax::success($e->getMessage());
+
+		$allConf = json_decode(init('data'), true);
+		// log::add('JeedomConnect', 'debug', 'content file ==> ' . init('data'));
+		$type = $allConf['type'] ?? null;
+		// log::add('JeedomConnect', 'debug', 'Type ==> ' . $type);
+
+		$import = init('import');
+		// log::add('JeedomConnect', 'debug', 'Import ==> ' . $import);
+
+		switch ($type) {
+			case 'JC_EXPORT_EQLOGIC_CONFIG':
+				if ($import != 'eqConfig') {
+					throw new Exception("Mauvais fichier de configuration importé");
+				}
+				// log::add('JeedomConnect', 'debug', 'Starting JC_EXPORT_EQLOGIC_CONFIG import ');
+				$apiKey = init('apiKey');
+
+				$configJson = $allConf['payload'];
+				$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+				if (!is_object($eqLogic) or $configJson == null) {
+					throw new Exception("Pas d'équipement trouvé");
+				} else {
+					$eqLogic->saveConfig($configJson);
+					$eqLogic->setConfiguration('configVersion', $configJson->payload->configVersion);
+					$eqLogic->save(true);
+
+					$eqLogic->getConfig(true, true);
+					$eqLogic->cleanCustomData();
+				}
+				break;
+
+			case 'JC_EXPORT_WIDGETS_DATA':
+			case 'JC_EXPORT_CUSTOM_DATA':
+				if ($import != 'genericConfig') {
+					throw new Exception("Mauvais fichier de configuration importé");
+				}
+				JeedomConnectWidget::uploadWidgetConf($allConf['payload']);
+				break;
+
+			default:
+				throw new Exception("Type d'import inconnu");
 		}
+
+		ajax::success("Import avec succès");
 	}
 
 
@@ -658,6 +708,6 @@ try {
 	if (function_exists('displayException')) {
 		ajax::error(displayException($e), $e->getCode());
 	} else {
-		ajax::error(displayException($e), $e->getCode());
+		ajax::error($e->getMessage(), $e->getCode());
 	}
 }

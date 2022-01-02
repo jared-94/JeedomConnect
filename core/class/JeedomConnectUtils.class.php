@@ -499,4 +499,18 @@ class JeedomConnectUtils {
 
         return true;
     }
+
+    /**
+     * @param array $payload 
+     * @param string $type 
+     * @return array
+     */
+    public static function addTypeInPayload($payload, $type) {
+        $result = array(
+            'type' => $type,
+            'payload' => $payload
+        );
+
+        return $result;
+    }
 }

@@ -338,34 +338,65 @@ function openAssistantNotificationModal(id, event) {
   $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + id).dialog('open');
 }
 
+
+function download(filename, text, add_date_time = false) {
+
+  if (add_date_time) {
+    var dt = new Date();
+    var dd = String(dt.getDate()).padStart(2, '0');
+    var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = dt.getFullYear();
+
+    today = yyyy + mm + dd;
+    var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+
+    filename = today + '_' + time + '_' + filename;
+  }
+
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+
+
 $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function () {
-  var dt = new Date();
-  var dd = String(dt.getDate()).padStart(2, '0');
-  var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = dt.getFullYear();
 
-  today = yyyy + mm + dd;
-  var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+  var apiKeyVal = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 
-  var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
-  var a = document.createElement("a");
-  //a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
-  a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + key + '.json';
-  a.download = key + '_' + today + '_' + time + '.json';
-  a.click();
-  a.remove();
-});
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'generateFile',
+      type: 'exportEqConf',
+      apiKey: apiKeyVal
+    },
+    dataType: 'json',
+    success: function (data) {
+      if (data.state != 'ok') {
+        $('#div_alert').showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else {
+        download(apiKeyVal + '.json', JSON.stringify(data.result), true);
+      }
+    }
+  });
+
+})
+
 
 $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn', function () {
   var apiKey = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
-
-  var dt = new Date();
-  var dd = String(dt.getDate()).padStart(2, '0');
-  var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = dt.getFullYear();
-
-  today = yyyy + mm + dd;
-  var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
 
   $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -384,12 +415,7 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
         });
       }
       else {
-        var a = document.createElement("a");
-        //a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
-        a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
-        a.download = apiKey + '_' + today + '_' + time + '_GENERATED.json';
-        a.click();
-        a.remove();
+        download(apiKey + '_DEBUG.json', JSON.stringify(data.result), true);
       }
     }
   });
@@ -451,18 +477,22 @@ $("#import-input").change(function () {
         config = e.target.result;
         $.post({
           url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-          data: { 'action': 'saveConfig', 'config': config, 'apiKey': key },
-          success: function (r) {
-            if (JSON.parse(r).state == 'error') {
-              $('#div_alert').showAlert({ message: "Erreur lors de l'importation", level: 'danger' });
-            } else {
-              $('#div_alert').showAlert({ message: 'Configuration importée avec succès', level: 'success' });
-            }
+          data: {
+            action: 'uploadWidgets',
+            import: 'eqConfig',
+            data: config,
+            apiKey: key
           },
+          dataType: 'json',
           error: function (error) {
-            console.log(error);
-            $('#div_alert').showAlert({ message: "Erreur lors de l'importation", level: 'danger' });
-          }
+            $('#div_alert').showAlert({ message: data.result, level: 'danger' });
+          },
+          success: function (data) {
+            var levelType = (data.state != 'ok') ? 'danger' : 'success';
+            $('#div_alert').showAlert({ message: data.result, level: levelType });
+
+          },
+
         });
       };
     })(file);
