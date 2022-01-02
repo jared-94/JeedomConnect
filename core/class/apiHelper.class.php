@@ -501,6 +501,7 @@ class apiHelper {
 
     $payload = array(
       'pluginVersion' => $pluginVersion,
+      'jeedomName' => config::byKey('name'),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
@@ -2279,7 +2280,7 @@ class apiHelper {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
     if (isset($infos['nextAlarm'])) {
-      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000 )));
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
   }
 }
