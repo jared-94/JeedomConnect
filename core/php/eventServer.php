@@ -66,7 +66,7 @@ try {
   $eqLogic->setConfiguration('connected', 1);
   $eqLogic->setConfiguration('scAll', 0);
   $eqLogic->setConfiguration('appState', 'active');
-  $eqLogic->save();
+  $eqLogic->save(true);
 
   while (true) {
     $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');

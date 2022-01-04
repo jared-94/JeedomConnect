@@ -133,7 +133,7 @@ $('.jeedomConnect').off('click', '#reinitAllEq').on('click', '#reinitAllEq', fun
 $('.jeedomConnect').off('click', '#listWidget').on('click', '#listWidget', function () {
 
     var optionSelected = $('input[name=filter]:checked').attr('id');
-    console.log("option selected ==> " + optionSelected);
+
     $('.actions-detail').hideAlert();
     $('.resultListWidget').hideAlert();
 

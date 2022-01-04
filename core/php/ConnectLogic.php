@@ -153,7 +153,7 @@ class ConnectLogic implements MessageComponentInterface {
 			$this->hasAuthenticatedClients = true;
 
 			$eqLogic->setConfiguration('sessionId', $conn->sessionId);
-			$eqLogic->save();
+			$eqLogic->save(true);
 
 			$conn->send(json_encode($connexion));
 		}
@@ -230,7 +230,7 @@ class ConnectLogic implements MessageComponentInterface {
 			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
 				$eqLogic->setConfiguration('connected', 0);
 				$eqLogic->setConfiguration('appState', 'background');
-				$eqLogic->save();
+				$eqLogic->save(true);
 			}
 		}
 		$this->unauthenticatedClients->detach($conn);
@@ -252,7 +252,7 @@ class ConnectLogic implements MessageComponentInterface {
 			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
 				$eqLogic->setConfiguration('connected', 0);
 				$eqLogic->setConfiguration('appState', 'background');
-				$eqLogic->save();
+				$eqLogic->save(true);
 			}
 		}
 		$conn->close();
@@ -322,5 +322,4 @@ class ConnectLogic implements MessageComponentInterface {
 			}
 		}
 	}
-
 }

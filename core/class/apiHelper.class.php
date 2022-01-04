@@ -366,6 +366,21 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_DEVICE_INFOS':
+          self::setDeviceInfos($eqLogic, $param);
+          return null;
+          break;
+
+        case 'GET_INSTALL_DETAILS':
+          $result = JeedomConnectUtils::getInstallDetails();
+          return self::addTypeInPayload($result, 'SET_INSTALL_DETAILS');
+          break;
+
+        case 'SET_LOG':
+          log::add('JeedomConnect', $param['level'] ?? 'debug', $param['text'] ?? '');
+          return null;
+          break;
+
         default:
           return self::raiseException($method . ' [' . $type . '] - method not defined');
           break;
@@ -403,6 +418,9 @@ class apiHelper {
   }
 
   // CONNEXION FUNCTIONS
+  /**
+   * @param JeedomConnect $eqLogic a JeedomConnect eqLogic
+   */
   private static function checkConnexion($eqLogic, $param, $withType = true) {
 
     $versionJson = JeedomConnect::getPluginInfo();
@@ -463,6 +481,7 @@ class apiHelper {
       return array('type' => 'FORMAT_VERSION_ERROR');
     }
 
+    if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
     $eqLogic->setConfiguration('polling', $param['polling'] ?? '0');
@@ -482,6 +501,7 @@ class apiHelper {
 
     $payload = array(
       'pluginVersion' => $pluginVersion,
+      'jeedomName' => config::byKey('name'),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
@@ -544,7 +564,12 @@ class apiHelper {
     foreach ($eqLogics as $eqLogic) {
 
       $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
-      $userOnEquipmentHash = !is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+      if (is_object($userOnEquipment)) {
+        $userOnEquipmentHash = $userOnEquipment->getHash();
+      } else {
+        log::add('JeedomConnect', 'warning', 'No user found on ' . $eqLogic->getName());
+        $userOnEquipmentHash = null;
+      }
 
       if (strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $userHash) {
         array_push($payload, array(
@@ -2230,5 +2255,32 @@ class apiHelper {
     }
 
     return (!$withType) ? $fileContent : self::addTypeInPayload(json_encode($fileContent), $returnType);
+  }
+
+  private static function setDeviceInfos($eqLogic, $infos) {
+    if (isset($infos['batteryLevel'])) {
+      self::saveBatteryEquipment($eqLogic, $infos['batteryLevel']);
+    }
+    if (isset($infos['ipAddress'])) {
+      $eqLogic->checkAndUpdateCmd('ipAddress', $infos['ipAddress']);
+    }
+    if (isset($infos['ssid'])) {
+      $eqLogic->checkAndUpdateCmd('ssid', $infos['ssid']);
+    }
+    if (isset($infos['wifiEnabled'])) {
+      $eqLogic->checkAndUpdateCmd('wifiEnabled', $infos['wifiEnabled'] ? 1 : 0);
+    }
+    if (isset($infos['bluetoothConnected'])) {
+      $eqLogic->checkAndUpdateCmd('bluetoothConnected', $infos['bluetoothConnected'] ? 1 : 0);
+    }
+    if (isset($infos['isScreenOn'])) {
+      $eqLogic->checkAndUpdateCmd('isScreenOn', $infos['isScreenOn'] ? 1 : 0);
+    }
+    if (isset($infos['isCharging'])) {
+      $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
+    }
+    if (isset($infos['nextAlarm'])) {
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
+    }
   }
 }

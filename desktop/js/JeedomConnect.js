@@ -15,6 +15,9 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 var allWidgetsDetail;
+var roomList;
+var roomListOptions;
+
 refreshWidgetDetails();
 
 function refreshWidgetDetails() {
@@ -34,12 +37,49 @@ function refreshWidgetDetails() {
         });
       }
       else {
-        allWidgetsDetail = data.result
+        allWidgetsDetail = data.result.widgets;
+        roomList = data.result.room_details;
+        roomListOptions = data.result.room_options;
+        sortWidgets();
       }
     }
   });
 
 }
+
+
+function sortWidgets() {
+  if (jcOrderBy === undefined) jcOrderBy = 'object';
+
+  allWidgetsDetail.sort(SortByName);
+  if (jcOrderBy == 'object') {
+    allWidgetsDetail.sort(SortByRoom);
+  } else if (jcOrderBy == 'type') {
+    allWidgetsDetail.sort(SortByType);
+  }
+}
+
+function SortByName(a, b) {
+  var aName = a.name.toLowerCase();
+  var bName = b.name.toLowerCase();
+  return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+}
+
+function SortByType(a, b) {
+  var aType = a.type.toLowerCase();
+  var bType = b.type.toLowerCase();
+  return ((aType < bType) ? -1 : ((aType > bType) ? 1 : 0));
+}
+
+function SortByRoom(a, b) {
+  var aRoom = ('room' in a) ? roomList.find(r => r.id == a.room).name.toLowerCase() : 'AAAucun';
+  var bRoom = ('room' in b) ? roomList.find(r => r.id == b.room).name.toLowerCase() : 'AAAucun';
+  return ((aRoom < bRoom) ? -1 : ((aRoom > bRoom) ? 1 : 0));
+}
+
+$('.eqLogicAttr[data-l1key=name]').change(function () {
+  $('.eqNameQrCode').text($('.eqLogicAttr[data-l1key=name]').val());
+})
 
 $.post({
   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -268,14 +308,35 @@ $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', func
 });
 
 $("#assistant-btn").click(function () {
-  $('#md_modal').dialog({ title: "{{Configuration de l'équipement}}" });
-  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+  openAssistantWidgetModal($('.eqLogicAttr[data-l1key=id]').value());
+
 });
 
-$("#notifConfig-btn").click(function () {
-  $('#md_modal').dialog({ title: "{{Configuration des notifications}}" });
-  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+$(".btnAssistant").click(function (event) {
+  var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
+  openAssistantWidgetModal(id, event);
 });
+
+function openAssistantWidgetModal(id, event) {
+  if (event !== undefined) event.stopPropagation();
+  $('#md_modal').dialog({ title: "{{Configuration de l'équipement}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.JeedomConnect&eqLogicId=' + id).dialog('open');
+}
+
+$("#notifConfig-btn").click(function () {
+  openAssistantNotificationModal($('.eqLogicAttr[data-l1key=id]').value());
+});
+
+$(".btnNotification").click(function (event) {
+  var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
+  openAssistantNotificationModal(id, event);
+});
+
+function openAssistantNotificationModal(id, event) {
+  if (event !== undefined) event.stopPropagation();
+  $('#md_modal').dialog({ title: "{{Configuration des notifications}}" });
+  $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + id).dialog('open');
+}
 
 $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function () {
   var dt = new Date();
@@ -340,7 +401,12 @@ $('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function 
   var from = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
 
   allJCEquipmentsWithoutCurrent = allJCEquipments.filter(function (obj) {
-    return obj.id !== from;
+    return obj.apiKey !== from;
+  }).map(item => {
+    return {
+      id: item.apiKey,
+      name: item.name
+    };
   });
   getSimpleModal({ title: "Recopier vers quel(s) appareil(s)", fields: [{ title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent }] }, function (result) {
 
@@ -522,18 +588,21 @@ function addCmdToTable(_cmd) {
   tr += '</div>';
   tr += '</td>';
   tr += '<td>';
-  tr += '<span class="type" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType() + '</span>';
+  tr += '<span class="type" style="display:none;" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType() + '</span>';
   tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span>';
   tr += '</td>';
   tr += '<td style="min-width:120px;width:140px;">';
-  tr += '<div><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isVisible" checked/>{{Afficher}}</label></div> ';
-  tr += '<div><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isHistorized" checked/>{{Historiser}}</label></div> ';
-  tr += '<div><label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary"/>{{Inverser}}</label></div>';
+  tr += '<div><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isVisible" checked/>{{Afficher}}</label> ';
+  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isHistorized" checked/>{{Historiser}}</label> ';
+  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary"/>{{Inverser}}</label></div>';
   tr += '</td>';
   tr += '<td style="min-width:180px;">';
   tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="minValue" placeholder="{{Min.}}" title="{{Min.}}" style="width:30%;display:inline-block;"/> ';
   tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="maxValue" placeholder="{{Max.}}" title="{{Max.}}" style="width:30%;display:inline-block;"/> ';
   tr += '<input class="cmdAttr form-control input-sm" data-l1key="unite" placeholder="{{Unité}}" title="{{Unité}}" style="width:30%;display:inline-block;"/>';
+  tr += '</td>';
+  tr += '<td >';
+  tr += '<input style="min-width:30px;width:50px;" class="cmdAttr" data-l1key="order" placeholder="{{Ordre affichage}}"/> ';
   tr += '</td>';
   tr += '<td>';
   if (is_numeric(_cmd.id)) {
@@ -543,8 +612,10 @@ function addCmdToTable(_cmd) {
   tr += '<i class="fas fa-minus-circle pull-right cmdAction cursor" data-action="remove" style="display:none"></i>';
   tr += '</td>';
   tr += '</tr>';
-  $('#table_cmd tbody').append(tr);
-  var tr = $('#table_cmd tbody tr').last();
+
+  $('#table_cmd tbody.cmd_' + _cmd.type).append(tr);
+  var tr = $('#table_cmd tbody.cmd_' + _cmd.type + ' tr').last();
+
   jeedom.eqLogic.builSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),
     filter: { type: 'info' },
@@ -693,37 +764,6 @@ var widgetsList = (function () {
 //used for moreInfos
 var moreInfos = [];
 
-var roomList;
-var roomListOptions;
-getRoomList()
-
-function getRoomList() {
-  $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-      'action': 'getJeedomObject'
-    },
-    cache: false,
-    dataType: 'json',
-    success: function (data) {
-      //console.log("roomList ajax received : ", data) ;
-      if (data.state != 'ok') {
-        $('#div_alert').showAlert({
-          message: data.result,
-          level: 'danger'
-        });
-      }
-      else {
-        roomList = data.result.details;
-        roomListOptions = data.result.options;
-        // console.log("roomList  : ", roomList);
-        // console.log("roomListOptions  : ", roomListOptions);
-      }
-    }
-  });
-}
-
-
 items = [];
 widgetsList.widgets.forEach(item => {
   items.push('<option value="' + item.type + '">' + item.name + '</option>');
@@ -844,6 +884,12 @@ function setWidgetModalData(options) {
             $('#tags-scenario-input').val(result);
           });
         }
+        if (options.widget['options'] !== undefined) {
+          $("#confirm-" + option.id).prop('checked', options.widget['options'].confirm ? "checked" : "");
+          $("#secure-" + option.id).prop('checked', options.widget['options'].secure ? "checked" : "");
+          $("#pwd-" + option.id).prop('checked', options.widget['options'].pwd ? "checked" : "");
+        }
+
       } else if (option.category == "stringList" & options.widget[option.id] !== undefined) {
         var selectedChoice = option.choices.find(s => s.id == options.widget[option.id]);
         if (selectedChoice !== undefined) {
@@ -887,6 +933,9 @@ function refreshAddWidgets() {
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
   showAutoFillWidgetCmds();
+
+  (type == 'jc') ? $('.searchForJCeq').show() : $('.searchForJCeq').hide();
+
   $("#widgetImg").attr("src", "plugins/JeedomConnect/data/img/" + widget.img);
 
   $("#widgetDescription").html(widget.description);
@@ -953,7 +1002,8 @@ function refreshAddWidgets() {
             <td>
                   <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
                   <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
-            </td><td>
+            </td>
+            <td>
                     <div style="width:50px; display:none;" id="secure-div-${option.id}">
                     <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
             </td>
@@ -1078,7 +1128,20 @@ function refreshAddWidgets() {
             <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
             <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
         </div>
+        <div class="" style="width: 100%;display: flex;">
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
+          </div>
+          <div style="padding-left: 10px;">
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="confirm-${option.id}" ><i class='fa fa-question' title="Demander confirmation"></i></label>
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="secure-${option.id}"  ><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="pwd-${option.id}"     ><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="none-${option.id}"  checked   >Aucun</label>
+          </div>
+        </div>
       </div>
+      
+      
     </div>
     </div></li>`;
     } else if (option.category == "choicesList") {
@@ -1104,7 +1167,7 @@ function refreshAddWidgets() {
     moreDiv = `<li><div class='form-group'>
       <label class='col-xs-3 '>Ajouter des infos</label>
       <div class='col-xs-9'>
-      <div class="description">Permet d'ajouter des infos utilisables dans les images sous conditions</div>
+      <div class="description">Permet d'ajouter des infos utilisables dans les images sous conditions, nom et/ou sous-titre</div>
       <div class='input-group'>
       <span class="input-group-btn">
         <a class="btn btn-default roundedRight" onclick="addMoreCmd()"><i class="fas fa-plus-square">
@@ -1721,7 +1784,8 @@ function downCmdOption(elm, optionsJson) {
 
 function refreshMoreInfos() {
   let div = '';
-  moreInfos.forEach(item => {
+  moreInfos.forEach((item, i) => {
+    item.index = i;
     var unit = item.unit || '';
     div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
           <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled>
@@ -2250,6 +2314,10 @@ function saveWidget() {
               result['options']['tags'] = data;
             });
           }
+          result['options'].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
+          result['options'].secure = $("#secure-" + option.id).is(':checked') || undefined;
+          result['options'].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
+
         }
       }
       else if (option.category == "string") {
@@ -2641,9 +2709,6 @@ function getWidgetPath(id) {
   }
   return name;
 }
-
-
-// getRoomList();
 
 function getRoomName(id) {
   if (id == 'global') { return 'Global'; }
