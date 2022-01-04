@@ -224,36 +224,26 @@ $('.jeedomConnect').off('click', '.exportConf').on('click', '.exportConf', funct
     $('.resultListWidget').hideAlert();
 
     var typeExport = $(this).data('type');
-    var fileName = typeExport == 'exportWidgets' ? '' : 'custom_data_';
-
-    var dt = new Date();
-    var dd = String(dt.getDate()).padStart(2, '0');
-    var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = dt.getFullYear();
-
-    today = yyyy + mm + dd;
-    var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+    var fileName = (typeExport == 'exportWidgets') ? 'generic_' : 'custom_data_';
 
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
-            'action': typeExport
+            action: 'generateFile',
+            type: typeExport,
+            import: 'genericConfig'
         },
         dataType: 'json',
         success: function (data) {
             if (data.state != 'ok') {
-                $('#div_alert').showAlert({
+                $('#div_alertPluginConfiguration').showAlert({
                     message: data.result,
                     level: 'danger'
                 });
             }
             else {
-                var a = document.createElement("a");
-                //a.href = 'plugins/JeedomConnect/data/configs/export_' + fileName + 'Widgets.json';
-                a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/export_' + fileName + 'Widgets.json';
-                a.download = 'export_' + fileName + 'Widgets_' + today + '_' + time + '.json';
-                a.click();
-                a.remove();
+                var fileName2 = 'export_' + fileName + 'Widgets.json';
+                download(fileName2, JSON.stringify(data.result), true);
             }
         }
     });
@@ -287,12 +277,13 @@ $('.jeedomConnect').off('change', '#importConfig-input').on('change', '#importCo
             url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
             data: {
                 action: 'uploadWidgets',
-                data: dataUploaded
+                data: dataUploaded,
+                import: 'genericConfig'
             },
             dataType: 'json',
             success: function (data) {
                 if (data.state != 'ok') {
-                    $('#div_alert').showAlert({
+                    $('.resultListWidget').showAlert({
                         message: data.result,
                         level: 'danger'
                     });

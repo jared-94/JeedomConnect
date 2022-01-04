@@ -447,6 +447,22 @@ class JeedomConnect extends eqLogic {
 		return $jsonConfig;
 	}
 
+	/**
+	 * @param string $apiKey
+	 * @return array
+	 */
+	public static function getWidgetConfigContent($apiKey = '') {
+
+		$filePath = self::$_config_dir . $apiKey . '.json';
+		log::add('JeedomConnect', 'debug', 'will check for config file : ' . $filePath);
+
+		if (!file_exists($filePath) || $apiKey == '') {
+			throw new Exception("No config file found");
+		}
+
+		return json_decode(file_get_contents($filePath), true);
+	}
+
 	public function getCustomWidget() {
 
 		$myKey = 'customData::' . $this->getConfiguration('apiKey') . '::';
