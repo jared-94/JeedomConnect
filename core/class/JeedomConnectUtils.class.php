@@ -390,4 +390,136 @@ class JeedomConnectUtils {
 
         return $list;
     }
+
+    /**
+     * @return array
+     */
+    public static function getTimelineFolders() {
+        $folders = array("main" => "Principal");
+
+        foreach ((timeline::listFolder()) as $folder) {
+            if ($folder == 'main') continue;
+            $folders['custom'][$folder] = $folder;
+        }
+
+        return $folders;
+    }
+
+    /**
+     * @param string $folder 
+     * @return array
+     */
+    public static function getTimelineEvents($folder = 'main') {
+
+        $return = array();
+        $events = timeline::byFolder($folder);
+        foreach ($events as $event) {
+            // hasRight method available with core 4.2
+            if (method_exists($event, 'hasRight') && !$event->hasRight()) {
+                continue;
+            }
+            $info = self::getTimelineEventDetails($event);
+            if ($info != null) {
+                $return[] = $info;
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * @param timelime $event 
+     * @return array
+     */
+    public static function getTimelineEventDetails($event) {
+        $return = array();
+        $return['date'] = $event->getDatetime();
+        $d = DateTime::createFromFormat('Y-m-d H:i:s', $event->getDatetime());
+        $return['timestamp'] = $d->getTimestamp();
+        $return['type'] = $event->getType();
+        $return['folder'] = $event->getFolder();
+
+        switch ($event->getType()) {
+            case 'cmd':
+                $cmd = cmd::byId($event->getLink_id());
+                if (!is_object($cmd)) {
+                    return null;
+                }
+                $eqLogic = $cmd->getEqLogic();
+                $object = $eqLogic->getObject();
+                $return['object'] = is_object($object) ? $object->getName() : 'aucun';
+                $return['name'] = $cmd->getName();
+
+                $return['cmdtype'] = $cmd->getType();
+                $return['plugin'] = $eqLogic->getEqType_name();
+                $return['eqLogic'] = $eqLogic->getName();
+
+                if ($cmd->getType() == 'info') {
+                    $return['value'] = $event->getOptions('value');
+                }
+                break;
+
+            case 'scenario':
+                $scenario = scenario::byId($event->getLink_id());
+                if (!is_object($scenario)) {
+                    return null;
+                }
+                $object = $scenario->getObject();
+                $return['object'] = is_object($object) ? $object->getName() : 'aucun';
+
+                $return['name'] = $scenario->getName();
+                $return['trigger'] =  $event->getOptions('trigger');
+                break;
+        }
+        return $return;
+    }
+
+    /**
+     * @param string $plugin 
+     * @return array
+     */
+    public static function getJeedomMessages($plugin = '') {
+        $nbMessage = message::nbMessage();
+        $messages = array();
+
+        if ($nbMessage != 0) {
+            if ($plugin == '') {
+                $messages = utils::o2a(message::all());
+            } else {
+                $messages = utils::o2a(message::byPlugin($plugin));
+            }
+        }
+
+        return array('nbMessages' => $nbMessage, 'messages' => $messages);
+    }
+
+    /**
+     * @param string|null $messageId 
+     * @return array|Exception
+     */
+    public static function removeJeedomMessage($messageId = null) {
+
+        if ($messageId == 'all') return message::removeAll();
+
+        $message = message::byId($messageId);
+        if (!is_object($message) || is_null($messageId)) {
+            throw new Exception(__('Message inconnu. Vérifiez l\'ID', __FILE__));
+        }
+        $message->remove();
+
+        return true;
+    }
+
+    /**
+     * @param array $payload 
+     * @param string $type 
+     * @return array
+     */
+    public static function addTypeInPayload($payload, $type) {
+        $result = array(
+            'type' => $type,
+            'payload' => $payload
+        );
+
+        return $result;
+    }
 }

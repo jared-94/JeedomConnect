@@ -81,12 +81,12 @@ class apiHelper {
           break;
 
         case 'GET_CONFIG':
-          $config = self::addTypeInPayload($eqLogic->getGeneratedConfigFile(), 'SET_CONFIG');
+          $config = JeedomConnectUtils::addTypeInPayload($eqLogic->getGeneratedConfigFile(), 'SET_CONFIG');
           return $config;
           break;
 
         case 'GET_PWD':
-          return self::addTypeInPayload($eqLogic->getConfiguration('pwdAction', null), 'SET_PWD');
+          return JeedomConnectUtils::addTypeInPayload($eqLogic->getConfiguration('pwdAction', null), 'SET_PWD');
           break;
 
         case 'GET_BATTERIES':
@@ -148,7 +148,7 @@ class apiHelper {
 
         case 'DO_PLUGIN_UPDATE':
           $result = self::doUpdate($param['pluginId']);
-          return self::addTypeInPayload($result, 'SET_PLUGIN_UPDATE');
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_PLUGIN_UPDATE');
           break;
 
         case 'GET_JEEDOM_GLOBAL_HEALTH':
@@ -157,12 +157,12 @@ class apiHelper {
 
         case 'DAEMON_PLUGIN_RESTART':
           $result = self::restartDaemon($param['userId'], $param['pluginId']);
-          return self::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_RESTART');
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_RESTART');
           break;
 
         case 'DAEMON_PLUGIN_STOP':
           $result = self::stopDaemon($param['userId'], $param['pluginId']);
-          return self::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_STOP');
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_DAEMON_PLUGIN_STOP');
           break;
 
         case 'UNSUBSCRIBE_SC':
@@ -355,10 +355,10 @@ class apiHelper {
 
           $actions = self::getJCActions($apiKey);
 
-          $allEvents = self::addTypeInPayload(self::getEventsFull($eqLogic, $param['lastReadTimestamp']), 'ALL_EVENTS');
+          $allEvents = JeedomConnectUtils::addTypeInPayload(self::getEventsFull($eqLogic, $param['lastReadTimestamp']), 'ALL_EVENTS');
 
           $payload = array($newConfig, $actions, $allEvents);
-          $result = self::addTypeInPayload($payload, 'SET_EVENTS');
+          $result = JeedomConnectUtils::addTypeInPayload($payload, 'SET_EVENTS');
 
           return $result;
           */
@@ -382,7 +382,7 @@ class apiHelper {
 
         case 'GET_INSTALL_DETAILS':
           $result = JeedomConnectUtils::getInstallDetails();
-          return self::addTypeInPayload($result, 'SET_INSTALL_DETAILS');
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_INSTALL_DETAILS');
           break;
 
         case 'SET_LOG':
@@ -390,32 +390,36 @@ class apiHelper {
           return null;
           break;
 
+        case 'GET_TIMELINE_FOLDERS':
+          $result = JeedomConnectUtils::getTimelineFolders();
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_TIMELINE_FOLDERS');
+          break;
+
+        case 'GET_TIMELINE_EVENTS':
+          $result = JeedomConnectUtils::getTimelineEvents($param['folder'] ?? 'main');
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_TIMELINE_EVENTS');
+          break;
+
+        case 'GET_JEEDOM_MESSAGES':
+          $result = JeedomConnectUtils::getJeedomMessages($param['plugin'] ?? '');
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_JEEDOM_MESSAGES');
+          break;
+
+        case 'REMOVE_JEEDOM_MESSAGE':
+          $result = JeedomConnectUtils::removeJeedomMessage($param['messageId'] ?? null);
+          return null;
+          break;
+
         default:
-          return self::raiseException($method . ' [' . $type . '] - method not defined');
+          return self::raiseException($method, ' [' . $type . '] - method not defined');
           break;
       }
     } catch (Exception $e) {
-      return self::raiseException($method . ' [' . $type . '] - ' . $e->getMessage());
+      return self::raiseException($method, ' [' . $type . '] - ' . $e->getMessage());
     }
   }
 
   // GENERIC FUNCTIONS
-  private static function addTypeInPayload($payload, $type) {
-    $result = array(
-      'type' => $type,
-      'payload' => $payload
-    );
-
-    return $result;
-  }
-
-  /**
-   * getAllInformations
-   *
-   * @param JeedomConnect $eqLogic
-   * @param boolean $withType
-   * @return array
-   */
   private static function getAllInformations($eqLogic, $withType = true) {
     $returnType = 'SET_INFO';
 
@@ -430,7 +434,7 @@ class apiHelper {
       'objects' => apiHelper::getObjectData($config, false)
     );
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   // CONNEXION FUNCTIONS
@@ -525,6 +529,7 @@ class apiHelper {
 
     $payload = array(
       'pluginVersion' => $pluginVersion,
+      'jeedomName' => config::byKey('name'),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
@@ -539,11 +544,11 @@ class apiHelper {
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
       'objInfo' => self::getObjectData($config, false),
-      'links' => JeedomConnectUtils::getLinks()
-
+      'links' => JeedomConnectUtils::getLinks(),
+      'timelineFolders' => $eqLogic->getConfiguration('timelineEnabled', 1) == '1' ?  JeedomConnectUtils::getTimelineFolders() : null
     );
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   /**
@@ -596,7 +601,12 @@ class apiHelper {
     foreach ($eqLogics as $eqLogic) {
 
       $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
-      $userOnEquipmentHash = !is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+      if (is_object($userOnEquipment)) {
+        $userOnEquipmentHash = $userOnEquipment->getHash();
+      } else {
+        log::add('JeedomConnect', 'warning', 'No user found on ' . $eqLogic->getName());
+        $userOnEquipmentHash = null;
+      }
 
       if (strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $userHash) {
         array_push($payload, array(
@@ -608,7 +618,7 @@ class apiHelper {
       }
     }
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
 
@@ -686,7 +696,7 @@ class apiHelper {
       array_push($payload, $cmd_info);
     }
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   // SCENARIO FUNCTIONS
@@ -726,7 +736,7 @@ class apiHelper {
       }
     }
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   private static function getScenarioIcon($sc) {
@@ -783,7 +793,7 @@ class apiHelper {
     }
     array_push($payload, $global_info);
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   // NOTIFICATION FUNCTIONS
@@ -797,7 +807,7 @@ class apiHelper {
 
     $payload =  $eqLogic->getNotifs();
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   // GEOFENCE FUNCTIONS
@@ -906,7 +916,7 @@ class apiHelper {
       'pluginJeedomVersion' => "v" . $versionJson['version'] . $beta
     );
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   // REGISTER FUNCTION
@@ -954,7 +964,7 @@ class apiHelper {
     $user->save();
     @session_write_close();
 
-    return (!$withType) ? $rdk : self::addTypeInPayload(array('rdk' => $rdk), $returnType);
+    return (!$withType) ? $rdk : JeedomConnectUtils::addTypeInPayload(array('rdk' => $rdk), $returnType);
   }
 
   // Config Watcher
@@ -2294,7 +2304,7 @@ class apiHelper {
 
     log::add('JeedomConnect', 'debug', "send action " . json_encode($payload));
 
-    return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   // MANAGE SC
@@ -2399,7 +2409,7 @@ class apiHelper {
       $fileContent = file_get_contents($filePath);
     }
 
-    return (!$withType) ? $fileContent : self::addTypeInPayload(json_encode($fileContent), $returnType);
+    return (!$withType) ? $fileContent : JeedomConnectUtils::addTypeInPayload(json_encode($fileContent), $returnType);
   }
 
   /**
@@ -2428,7 +2438,7 @@ class apiHelper {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
     if (isset($infos['nextAlarm'])) {
-      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm']) / 1000));
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
   }
 }

@@ -117,6 +117,18 @@
                 "order": 6
             },
             {
+                "logicalId": "shellExec",
+                "name": "Commande shell",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1",
+                    "message_placeholder": "Commande à exécuter"
+                },
+                "order": 6
+            },
+            {
                 "logicalId": "screenOn",
                 "name": "Allumer écran",
                 "type": "action",

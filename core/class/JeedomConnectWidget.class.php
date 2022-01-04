@@ -360,7 +360,13 @@ class JeedomConnectWidget extends config {
 
 		try {
 			log::add('JeedomConnect', 'debug', 'Saving widgets conf file : ' . $export_file);
-			file_put_contents($export_file, json_encode($result, JSON_PRETTY_PRINT));
+			$resultFinal = JeedomConnectUtils::addTypeInPayload($result, 'JC_EXPORT_WIDGETS_DATA');
+
+			//saving file
+			file_put_contents($export_file, json_encode($resultFinal, JSON_PRETTY_PRINT));
+
+			//return data
+			return $resultFinal;
 		} catch (Exception $e) {
 			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
 		}
@@ -378,7 +384,13 @@ class JeedomConnectWidget extends config {
 
 		try {
 			log::add('JeedomConnect', 'debug', 'Saving  custom widgets conf file : ' . $export_file);
-			file_put_contents($export_file, json_encode($result, JSON_PRETTY_PRINT));
+			$resultFinal = JeedomConnectUtils::addTypeInPayload($result, 'JC_EXPORT_CUSTOM_DATA');
+
+			//saving file
+			file_put_contents($export_file, json_encode($resultFinal, JSON_PRETTY_PRINT));
+
+			//return data
+			return $resultFinal;
 		} catch (Exception $e) {
 			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
 		}
