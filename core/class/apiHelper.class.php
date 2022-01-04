@@ -21,6 +21,15 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 class apiHelper {
   public static $_skipLog = array('GET_EVENTS', 'GET_LOG');
 
+  /**
+   * Dispatch API call
+   * @param string $type 'API' | 'WS'
+   * @param string $method one of the API methods
+   * @param JeedomConnect|null $eqLogic a JeedomConnect eqLogic or null
+   * @param array<string>|null $param
+   * @param string $apiKey
+   * @return null|array
+   */
   public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
 
     try {
@@ -504,7 +513,15 @@ class apiHelper {
     return self::getWelcomeMsg($eqLogic, $userConnected, $versionJson['version'], $withType);
   }
 
-
+  /**
+   * getWelcomeMsg
+   *
+   * @param JeedomConnect $eqLogic
+   * @param user $userConnected
+   * @param string $pluginVersion
+   * @param boolean $withType
+   * @return array
+   */
   private static function getWelcomeMsg($eqLogic, $userConnected, $pluginVersion, $withType = true) {
     $returnType = 'WELCOME';
 
@@ -534,6 +551,13 @@ class apiHelper {
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
+  /**
+   * setAskReply
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $param
+   * @return void
+   */
   private static function setAskReply($eqLogic, $param) {
     $answer = $param['answer'];
     $cmd = cmd::byId($param['cmdId']);
@@ -549,6 +573,7 @@ class apiHelper {
       $eqName = $eqLogic->getName();
 
       foreach ($param['otherAskCmdId'] as $cmdId) {
+        /** @var JeedomConnectCmd $cmd */
         $cmd = JeedomConnectCmd::byId($cmdId);
         if (is_object($cmd)) {
           $cmd->cancelAsk($param['notificationId'], $answer, $eqName, $param['dateAnswer']);
@@ -563,6 +588,7 @@ class apiHelper {
   private static function getAvailableEquipement($userHash, $withType = true) {
     $returnType = 'AVAILABLE_EQUIPEMENT';
 
+    /** @var array<JeedomConnect> $eqLogics */
     $eqLogics = eqLogic::byType('JeedomConnect');
 
     if (is_null($eqLogics)) {
@@ -771,6 +797,11 @@ class apiHelper {
   }
 
   // NOTIFICATION FUNCTIONS
+  /**
+   * @param JeedomConnect $eqLogic
+   * @param boolean $withType
+   * @return array
+   */
   private static function getNotifConfig($eqLogic, $withType = true) {
     $returnType = 'SET_NOTIFS_CONFIG';
 
@@ -780,14 +811,34 @@ class apiHelper {
   }
 
   // GEOFENCE FUNCTIONS
+  /**
+   * @param JeedomConnect $eqLogic
+   * @param array $geo
+   * @param array $coordinates
+   * @return void
+   */
   private static function addGeofence($eqLogic, $geo, $coordinates) {
-    return $eqLogic->addGeofenceCmd($geo, $coordinates);
+    $eqLogic->addGeofenceCmd($geo, $coordinates);
   }
 
+  /**
+   * Undocumented function
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $geo
+   * @return void
+   */
   private static function removeGeofence($eqLogic, $geo) {
-    return $eqLogic->removeGeofenceCmd($geo);
+    $eqLogic->removeGeofenceCmd($geo);
   }
 
+  /**
+   * Undocumented function
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $param
+   * @return void
+   */
   private static function setGeofence($eqLogic, $param) {
     $ts = array_key_exists('timestampMeta', $param) ? floor($param['timestampMeta']['systemTime'] / 1000) : strtotime($param['timestamp']);
     $eqLogic->setCoordinates($param['coords']['latitude'], $param['coords']['longitude'], $param['coords']['altitude'], $param['activity']['type'], $param['battery']['level'] * 100, $ts);
@@ -807,6 +858,12 @@ class apiHelper {
     }
     return;
   }
+  /**
+   * Undocumented function
+   *
+   * @param JeedomConnect $eqLogic
+   * @return (string|array)[]|null
+   */
   private static function getGeofencesData($eqLogic) {
     $result = array(
       'type' => 'SET_GEOFENCES',
@@ -837,6 +894,13 @@ class apiHelper {
   }
 
   //PLUGIN CONF FUNCTIONS
+  /**
+   * Undocumented function
+   *
+   * @param JeedomConnect $eqLogic
+   * @param boolean $withType
+   * @return array
+   */
   private static function getPluginConfig($eqLogic, $withType = true) {
     $returnType = 'PLUGIN_CONFIG';
 
@@ -856,6 +920,16 @@ class apiHelper {
   }
 
   // REGISTER FUNCTION
+  /**
+   * Undocumented function
+   *
+   * @param JeedomConnect $eqLogic
+   * @param string $userHash
+   * @param string $rdk
+   * @param user|null $user
+   * @param boolean $withType
+   * @return array
+   */
   private static function registerUser($eqLogic, $userHash, $rdk, $user = null, $withType = true) {
     $returnType = 'REGISTERED';
 
@@ -894,6 +968,12 @@ class apiHelper {
   }
 
   // Config Watcher
+  /**
+   * Undocumented function
+   *
+   * @param JeedomConnect $eqLogic
+   * @param string $prevConfig
+   */
   public static function lookForNewConfig($eqLogic, $prevConfig) {
     $configVersion = $eqLogic->getConfiguration('configVersion');
     //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
@@ -992,6 +1072,9 @@ class apiHelper {
     JeedomConnectWidget::updateWidgetConfig($widget);
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function addWidgets($eqLogic, $widgets, $parentId, $index) {
     $curConfig = $eqLogic->getConfig();
 
@@ -1025,6 +1108,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function removeWidget($eqLogic, $widgetId) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
@@ -1051,6 +1137,9 @@ class apiHelper {
     }
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function moveWidget($eqLogic, $widgetId, $destinationId, $destinationIndex) {
     $curConfig = $eqLogic->getConfig();
     $widgetIndex = array_search($widgetId, array_column($curConfig['payload']['widgets'], 'widgetId'));
@@ -1127,6 +1216,9 @@ class apiHelper {
     }
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
@@ -1136,6 +1228,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setGroup($eqLogic, $group) {
     $curConfig = $eqLogic->getConfig();
     $toEdit = array_search($group['id'], array_column($curConfig['payload']['groups'], 'id'));
@@ -1146,6 +1241,9 @@ class apiHelper {
     }
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function removeGroup($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['groups'], 'id'));
@@ -1175,6 +1273,9 @@ class apiHelper {
     }
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function addGroup($eqLogic, $curGroup) {
     $curConfig = $eqLogic->getConfig();
     $parentId = $curGroup['parentId'];
@@ -1201,6 +1302,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function moveGroup($eqLogic, $groupId, $destinationId, $destinationIndex) {
     $curConfig = $eqLogic->getConfig();
     $groupIndex = array_search($groupId, array_column($curConfig['payload']['groups'], 'id'));
@@ -1305,6 +1409,9 @@ class apiHelper {
     return $result;
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setBottomTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['idCounter'] = $idCounter;
@@ -1373,6 +1480,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function removeBottomTab($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['tabs'], 'id'));
@@ -1419,6 +1529,9 @@ class apiHelper {
     }
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setTopTabList($eqLogic, $tabs, $migrate = false, $idCounter) {
     if (count($tabs) == 0) {
       return;
@@ -1480,6 +1593,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function removeTopTab($eqLogic, $id) {
     $curConfig = $eqLogic->getConfig();
     $toRemove = array_search($id, array_column($curConfig['payload']['sections'], 'id'));
@@ -1518,6 +1634,9 @@ class apiHelper {
     }
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function moveTopTab($eqLogic, $sectionId, $destinationId) {
     $curConfig = $eqLogic->getConfig();
     $sectionIndex = array_search($sectionId, array_column($curConfig['payload']['sections'], 'id'));
@@ -1562,14 +1681,18 @@ class apiHelper {
     }
   }
 
-  // Receive root data (already ordered) (widgets, groups) for a page view (index < 0 ==> remove)
+  /**
+   * Receive root data (already ordered) (widgets, groups) for a page view (index < 0 ==> remove)
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $rootData
+   */
   private static function setPageData($eqLogic, $rootData, $idCounter) {
     if (count($rootData) == 0) {
       return;
     }
     $curConfig = $eqLogic->getConfig();
     $curConfig['idCounter'] = $idCounter;
-    $parentId = $rootData[0]['parentId'] ?? null;
 
     foreach ($rootData as $element) {
       $type = 'groups';
@@ -1598,6 +1721,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setRooms($eqLogic, $rooms) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['rooms'] = $rooms;
@@ -1606,6 +1732,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setSummaries($eqLogic, $summaries) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['summaries'] = $summaries;
@@ -1614,6 +1743,9 @@ class apiHelper {
     $eqLogic->generateNewConfigVersion();
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setBackgrounds($eqLogic, $backgrounds) {
     $curConfig = $eqLogic->getConfig();
     $curConfig['payload']['background'] = $backgrounds;
@@ -1633,6 +1765,9 @@ class apiHelper {
 
 
   // EVENTS FUNCTION
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   public static function getEventsFull($eqLogic, $lastReadTimestamp) {
 
     $config = $eqLogic->getGeneratedConfigFile();
@@ -1752,6 +1887,7 @@ class apiHelper {
   // BATTERIES
   private static function getBatteries() {
     $list = array();
+    /** @var eqLogic $eqLogic */
     foreach (eqLogic::all() as $eqLogic) {
       if ($eqLogic->getIsEnable() && $eqLogic->getStatus('battery', -2) != -2) {
         array_push($list, self::getBatteryDetails($eqLogic));
@@ -1765,8 +1901,10 @@ class apiHelper {
     return $result;
   }
 
+  /**
+   * @param eqLogic $eqLogic
+   */
   private static function getBatteryDetails(eqLogic $eqLogic) {
-    // $eqLogic = eqLogic::byId($eqLogicId);
     $result = array();
     $level = 'good';
     $batteryType = $eqLogic->getConfiguration('battery_type', '');
@@ -1807,6 +1945,9 @@ class apiHelper {
     return $result;
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function saveBatteryEquipment($eqLogic, $level) {
     $eqLogic->checkAndUpdateCmd('battery', $level);
 
@@ -1819,8 +1960,11 @@ class apiHelper {
 
 
   // PLUGINS UPDATE
-
+  /**
+   * @param string $pluginId
+   */
   private static function doUpdate($pluginId) {
+    /** @var update $update */
     $update = update::byLogicalId($pluginId);
 
     if (!is_object($update)) {
@@ -2268,6 +2412,9 @@ class apiHelper {
     return (!$withType) ? $fileContent : JeedomConnectUtils::addTypeInPayload(json_encode($fileContent), $returnType);
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   */
   private static function setDeviceInfos($eqLogic, $infos) {
     if (isset($infos['batteryLevel'])) {
       self::saveBatteryEquipment($eqLogic, $infos['batteryLevel']);

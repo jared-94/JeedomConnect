@@ -41,6 +41,7 @@ try {
 
 
   $apiKey = ($method == 'GEOLOC') ? $jsonrpc->getId() : ($params['apiKey'] ?? null);
+  /** @var JeedomConnect $eqLogic */
   $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
   if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT') {

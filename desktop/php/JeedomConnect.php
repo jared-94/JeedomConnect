@@ -25,6 +25,7 @@ if (isConnect()) {
 }
 sendVarToJS('userHash', $userHash);
 
+/** @var array<JeedomConnect> $eqLogics */
 $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray = JeedomConnectWidget::getWidgets();

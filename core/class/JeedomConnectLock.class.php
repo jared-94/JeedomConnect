@@ -6,7 +6,7 @@ class JeedomConnectLock {
 	private static $_plugin_id = 'JeedomConnect';
 
 	/**
-	 * @var LoggerInterface
+	 * @var LoggerInterface $_logger
 	 */
 	private $_logger;
 

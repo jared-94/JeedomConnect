@@ -106,6 +106,7 @@ try {
 		JeedomConnectWidget::saveConfig($newConfWidget, $id);
 
 		if (!is_null(init('eqId'))  && init('eqId') != '') {
+			/** @var JeedomConnect $eqLogic */
 			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$eqLogic->checkEqAndUpdateConfig(init('eqId'));
 			}
@@ -119,6 +120,7 @@ try {
 
 		$scope = init('scope') ?? '';
 		$more = false;
+		/** @var JeedomConnect $eqLogic */
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			if (($scope == 'all') || (($scope == 'enableOnly') && $eqLogic->getIsEnable())) {
 				log::add('JeedomConnect_migration', 'info', 'migrate conf for equipment ' . $eqLogic->getName());
@@ -207,6 +209,7 @@ try {
 
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
+		/** @var JeedomConnect $eqLogic */
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$eqLogic->resetConfigFile();
 			$nbEq++;
@@ -227,6 +230,7 @@ try {
 
 
 		$widgetsByEquipment = array();
+		/** @var JeedomConnect $eqLogic */
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$item = array();
 
@@ -449,6 +453,7 @@ try {
 			JeedomConnectWidget::removeWidgetConf('index::max');
 
 			$nbEq = 0;
+			/** @var JeedomConnect $eqLogic */
 			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$eqLogic->resetConfigFile();
 				$nbEq++;
@@ -510,6 +515,7 @@ try {
 	if (init('action') == 'getWidgetExistance') {
 		$myId = init('id');
 		$arrayName = array();
+		/** @var JeedomConnect $eqLogic */
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$eqIds = $eqLogic->getWidgetId();
 			log::add('JeedomConnect', 'debug', 'all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
@@ -548,6 +554,7 @@ try {
 	if (init('action') == 'getEquipments') {
 
 		$result = array();
+		/** @var JeedomConnect $eqLogic */
 		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			$name = $eqLogic->getName();
@@ -571,6 +578,7 @@ try {
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config);
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		if (!is_object($eqLogic) or $configJson == null) {
 			ajax::error('Erreur');
@@ -587,6 +595,7 @@ try {
 
 	if (init('action') == 'getConfig') {
 		$apiKey = init('apiKey');
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		$allConfig = (init('all') !== null) && init('all');
 		$saveGenerated = (init('all') !== null) && init('all');
@@ -601,7 +610,7 @@ try {
 
 	if (init('action') == 'getNotifs') {
 		$apiKey = init('apiKey');
-
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		if (!is_object($eqLogic)) {
 			ajax::error('Erreur');
@@ -616,6 +625,7 @@ try {
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config, true);
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		if (!is_object($eqLogic) or $configJson == null) {
 			ajax::error('Erreur');
@@ -650,6 +660,7 @@ try {
 
 	if (init('action') == 'removeDevice') {
 		$id = init('id');
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = \eqLogic::byId($id);
 		$eqLogic->removeDevice();
 		ajax::success();
@@ -694,6 +705,7 @@ try {
 
 	if (init('action') == 'generateQRcode') {
 		$id = init('id');
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = \eqLogic::byId($id);
 		if (!is_object($eqLogic)) {
 			ajax::error('Erreur');
