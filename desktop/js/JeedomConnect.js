@@ -1136,6 +1136,7 @@ function refreshAddWidgets() {
             <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="confirm-${option.id}" ><i class='fa fa-question' title="Demander confirmation"></i></label>
             <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="secure-${option.id}"  ><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
             <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="pwd-${option.id}"     ><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+            <label class="radio-inline"><input type="radio" name="secure-radio-${option.id}" id="none-${option.id}"  checked   >Aucun</label>
           </div>
         </div>
       </div>

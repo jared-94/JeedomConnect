@@ -387,8 +387,12 @@ class JeedomConnect extends eqLogic {
 						}
 
 						if ($newWidgetConf['type'] == 'choices-list') {
-							$choices = self::getChoiceData($newWidgetConf['listAction']['id']);
-							$newWidgetConf['choices'] = $choices;
+							foreach ($newWidgetConf as $key => $value) {
+								if (is_array($value) && key_exists('subType', $value) && $value['subType'] == 'select') {
+									$choices = self::getChoiceData($newWidgetConf[$key]['id']);
+									$newWidgetConf[$key]['choices'] = $choices;
+								}
+							}
 						}
 
 						$maxIndex = $maxIndex + 1;
@@ -1628,12 +1632,14 @@ class JeedomConnectCmd extends cmd {
 				// log::add('JeedomConnect', 'debug', ' ----- running exec notif ! ---------');
 				$myData = self::getTitleAndArgs($_options);
 
+				if (key_exists('answer', $_options) && $myData['title'] == $_options['message']) $myData['title'] = null;
+
 				$data = array(
 					'type' => 'DISPLAY_NOTIF',
 					'payload' => array(
 						'cmdId' => $_options['orignalCmdId'] ?? $this->getId(),
 						'title' => str_replace("'", "&#039;", $myData['title']),
-						'message' => str_replace("'", "&#039;", $_options['message']),
+						'message' => str_replace("'", "&#039;", $myData['args']['message'] ?? $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
 						'notificationId' => $_options['notificationId'] ?? round(microtime(true) * 10000),

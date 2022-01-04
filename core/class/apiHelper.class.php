@@ -501,6 +501,7 @@ class apiHelper {
 
     $payload = array(
       'pluginVersion' => $pluginVersion,
+      'jeedomName' => config::byKey('name'),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
@@ -563,7 +564,12 @@ class apiHelper {
     foreach ($eqLogics as $eqLogic) {
 
       $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
-      $userOnEquipmentHash = !is_null($userOnEquipment) ? $userOnEquipment->getHash() : null;
+      if (is_object($userOnEquipment)) {
+        $userOnEquipmentHash = $userOnEquipment->getHash();
+      } else {
+        log::add('JeedomConnect', 'warning', 'No user found on ' . $eqLogic->getName());
+        $userOnEquipmentHash = null;
+      }
 
       if (strtolower($userConnectedProfil) == 'admin' || $userOnEquipmentHash == $userHash) {
         array_push($payload, array(
@@ -2274,7 +2280,7 @@ class apiHelper {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
     if (isset($infos['nextAlarm'])) {
-      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm']) / 1000));
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
   }
 }
