@@ -387,8 +387,12 @@ class JeedomConnect extends eqLogic {
 						}
 
 						if ($newWidgetConf['type'] == 'choices-list') {
-							$choices = self::getChoiceData($newWidgetConf['listAction']['id']);
-							$newWidgetConf['choices'] = $choices;
+							foreach ($newWidgetConf as $key => $value) {
+								if (is_array($value) && key_exists('subType', $value) && $value['subType'] == 'select') {
+									$choices = self::getChoiceData($newWidgetConf[$key]['id']);
+									$newWidgetConf[$key]['choices'] = $choices;
+								}
+							}
 						}
 
 						$maxIndex = $maxIndex + 1;
@@ -441,6 +445,22 @@ class JeedomConnect extends eqLogic {
 
 		// $jsonConfig = json_decode($widgetStringFinal, true);
 		return $jsonConfig;
+	}
+
+	/**
+	 * @param string $apiKey
+	 * @return array
+	 */
+	public static function getWidgetConfigContent($apiKey = '') {
+
+		$filePath = self::$_config_dir . $apiKey . '.json';
+		log::add('JeedomConnect', 'debug', 'will check for config file : ' . $filePath);
+
+		if (!file_exists($filePath) || $apiKey == '') {
+			throw new Exception("No config file found");
+		}
+
+		return json_decode(file_get_contents($filePath), true);
 	}
 
 	public function getCustomWidget() {
@@ -1057,6 +1077,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function checkAllEquimentsAndUpdateConfig($widgetId) {
+		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$eqLogic->checkEqAndUpdateConfig($widgetId);
 		}
@@ -1222,7 +1243,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	/**
+	/*
 	 ************************************************************************
 	 ****************** FUNCTION TO UPDATE CONF FILE FORMAT *****************
 	 ******************    AND CREATE WIDGET ACCORDINGLY    *****************
@@ -1429,6 +1450,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function migrationAllNotif() {
 		$result = array();
+		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			foreach ($eqLogic->getCmd() as $cmd) {
 				// log::add('JeedomConnect', 'debug', '    | checking cmd : ' . $cmd->getName());
@@ -1449,7 +1471,7 @@ class JeedomConnect extends eqLogic {
 
 
 	public static function migrateCustomData() {
-
+		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			// log::add('JeedomConnect_mig', 'debug', 'checking ' . $eqLogic->getName . ' [' . $apiKey . ']');
@@ -1504,6 +1526,7 @@ class JeedomConnect extends eqLogic {
 
 
 			//****** UPDATE ALL EQUIPMENT JSON CONFIG (summary)  ******
+			/** @var JeedomConnect $eqLogic */
 			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$hasChangesEq = false;
 				$jsonConfig = $eqLogic->getConfig();
@@ -1617,12 +1640,14 @@ class JeedomConnectCmd extends cmd {
 				// log::add('JeedomConnect', 'debug', ' ----- running exec notif ! ---------');
 				$myData = self::getTitleAndArgs($_options);
 
+				if (key_exists('answer', $_options) && $myData['title'] == $_options['message']) $myData['title'] = null;
+
 				$data = array(
 					'type' => 'DISPLAY_NOTIF',
 					'payload' => array(
 						'cmdId' => $_options['orignalCmdId'] ?? $this->getId(),
 						'title' => str_replace("'", "&#039;", $myData['title']),
-						'message' => str_replace("'", "&#039;", $_options['message']),
+						'message' => str_replace("'", "&#039;", $myData['args']['message'] ?? $_options['message']),
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
 						'notificationId' => $_options['notificationId'] ?? round(microtime(true) * 10000),

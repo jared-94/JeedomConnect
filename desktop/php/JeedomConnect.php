@@ -25,6 +25,7 @@ if (isConnect()) {
 }
 sendVarToJS('userHash', $userHash);
 
+/** @var array<JeedomConnect> $eqLogics */
 $eqLogics = eqLogic::byType($plugin->getId());
 
 $widgetArray = JeedomConnectWidget::getWidgets();
@@ -437,6 +438,13 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 								<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Accès à la timeline}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" checked type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 
