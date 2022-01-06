@@ -502,6 +502,49 @@ $("#import-input").change(function () {
 });
 
 
+$(".btRegenerateApiKey").click(function () {
+  var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
+
+  getSimpleModal({
+    title: "Confirmation",
+    fields: [
+      {
+        type: "string",
+        value: "Avant de réaliser cette opération, assurez-vous que l'application n'est pas lancée sur votre appareil.<br>L'application vous demandera ensuite de vous reconnecter.<br><br>Voulez-vous vraiment regénérer la clé API de cet équipement ?"
+      }]
+  }, function (result) {
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        'action': 'regenerateApiKey',
+        'eqId': $('.eqLogicAttr[data-l1key=id]').value(),
+        'apiKey': $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value()
+      },
+      cache: false,
+      dataType: 'json',
+      async: false,
+      success: function (data) {
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
+        }
+        else {
+          console.log('btRegenerateApiKey data :', data);
+          var ApiKey = data.result.newapikey;
+          console.log('new api key', ApiKey);
+          $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text(ApiKey)
+          $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + ApiKey + '.png');
+        }
+      },
+      error: function (error) {
+        console.log("error while regenerating the api key", error)
+      }
+    });
+  });
+})
+
 $("#qrcode-regenerate").click(function () {
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
   $.post({

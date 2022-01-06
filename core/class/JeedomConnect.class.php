@@ -156,6 +156,7 @@ class JeedomConnect extends eqLogic {
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
 	public static $_qr_dir = __DIR__ . '/../../data/qrcodes/';
 	public static $_notif_dir = __DIR__ . '/../../data/notifs/';
+	public static $_backup_dir = __DIR__ . '/../../data/backup/';
 
 	/*     * ***********************Methode static*************************** */
 
@@ -200,7 +201,7 @@ class JeedomConnect extends eqLogic {
 		JeedomConnectWidget::exportWidgetCustomConf();
 	}
 
-	public static function copyConfig($from, $to) {
+	public static function copyConfig($from, $to, $remove_original_data = false) {
 
 		$config_file_model = self::$_config_dir . $from . ".json";
 		if (!file_exists($config_file_model)) {
@@ -220,7 +221,7 @@ class JeedomConnect extends eqLogic {
 
 					$eqLogic = eqLogic::byLogicalId($item, 'JeedomConnect');
 					if (!is_object($eqLogic)) {
-						log::add('JeedomConnect', 'debug', 'no objct found');
+						log::add('JeedomConnect', 'debug', 'no object found');
 						continue;
 					}
 					$eqLogic->generateNewConfigVersion();
@@ -228,6 +229,10 @@ class JeedomConnect extends eqLogic {
 					log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
 				}
 			}
+		}
+
+		if ($remove_original_data) {
+			self::removeAllData($from);
 		}
 
 		return true;
@@ -908,7 +913,7 @@ class JeedomConnect extends eqLogic {
 	public function preInsert() {
 
 		if ($this->getConfiguration('apiKey') == '') {
-			$this->setConfiguration('apiKey', bin2hex(random_bytes(16)));
+			$this->setConfiguration('apiKey', JeedomConnectUtils::generateApiKey());
 			$this->setLogicalId($this->getConfiguration('apiKey'));
 			$this->generateQRCode();
 		}
@@ -982,12 +987,17 @@ class JeedomConnect extends eqLogic {
 
 	public function preRemove() {
 		$apiKey = $this->getConfiguration('apiKey');
+		self::removeAllData($apiKey);
+	}
+
+	public static function removeAllData($apiKey) {
 		unlink(self::$_qr_dir . $apiKey . '.png');
 		unlink(self::$_config_dir . $apiKey . ".json");
+		unlink(self::$_config_dir . $apiKey . ".json.generated");
 		unlink(self::$_notif_dir . $apiKey . ".json");
-		rmdir(__DIR__ . '/../../data/backup/' . $apiKey);
+		rmdir(self::$_backup_dir . $apiKey);
 
-		$allKey = config::searchKey('customData::' . $this->getConfiguration('apiKey'), 'JeedomConnect');
+		$allKey = config::searchKey('customData::' . $apiKey, 'JeedomConnect');
 		foreach ($allKey as $item) {
 			config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
 		}

@@ -410,6 +410,11 @@ class apiHelper {
           return null;
           break;
 
+        case 'GET_NEW_APIKEY':
+          $result = self::getApiKeyRegenerated($apiKey);
+          return $result;
+          break;
+
         default:
           return self::raiseException($method, ' [' . $type . '] - method not defined');
           break;
@@ -2388,8 +2393,8 @@ class apiHelper {
       "type" => "EXCEPTION",
       "payload" => "Error with '" . $type . "' method " . $errMsg
     );
+    log::add('JeedomConnect', 'debug', 'Send ' . json_encode($result));
     log::add('JeedomConnect', 'error', $result["payload"]);
-    // log::add('JeedomConnect', 'error', 'Send ' . json_encode($result));
 
     return $result;
   }
@@ -2440,5 +2445,31 @@ class apiHelper {
     if (isset($infos['nextAlarm'])) {
       $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
+  }
+
+  /**
+   * @param string $oldApiKey 
+   * @return bool
+   */
+  public static function isApiKeyRegenerated($oldApiKey) {
+    return (config::byKey('newApiKey::' . $oldApiKey, 'JeedomConnect', false) !== false);
+  }
+
+  /**
+   * @param string $oldApiKey 
+   * @return array
+   */
+  public static function getApiKeyRegenerated($oldApiKey, $withType = true) {
+    $returnType = 'SET_NEW_APIKEY';
+
+    $newApiKey = config::byKey('newApiKey::' . $oldApiKey, 'JeedomConnect', null);
+
+    if (is_null($newApiKey)) throw new Exception('No equipment found - no apikey regen');
+
+    config::remove('newApiKey::' . $oldApiKey, 'JeedomConnect');
+
+    $payload = array('apiKey' => $newApiKey);
+
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 }

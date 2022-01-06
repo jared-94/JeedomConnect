@@ -45,7 +45,14 @@ try {
   $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
   if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT') {
-    throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
+    $hasNewApiKey = apiHelper::isApiKeyRegenerated($apiKey);
+    if (!$hasNewApiKey) {
+      throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
+    } else {
+      $result = apiHelper::getApiKeyRegenerated($apiKey);
+      log::add('JeedomConnect', 'debug', '[API] No answer for ' . $method . ' || Sending new apiKey info -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
+    }
   }
 
   $result = apiHelper::dispatch('API', $method, $eqLogic, $params ?? array(), $apiKey);

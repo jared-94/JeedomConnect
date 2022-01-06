@@ -501,8 +501,15 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Clé API :}}</label>
-								<div class="col-sm-4">
+								<div class="col-sm-9">
 									<span class="eqLogicAttr label label-info" style="font-size:1em;" data-l1key="configuration" type="text" data-l2key="apiKey"></span>
+
+									<!-- <a class="btn btn-default form-control btRegenerateApiKey roundedRight" style="width:30px"><i class="fas fa-sync"></i></a> -->
+									<a class="btRegenerateApiKey" style="padding-left:10px" title="Regénérer la clé API de cet équipement"><i class="fas fa-sync"></i></a>
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Regénérer la clé API de cet équipement"></i>
+									</sup>
+
 								</div>
 							</div>
 

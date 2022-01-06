@@ -522,4 +522,12 @@ class JeedomConnectUtils {
 
         return $result;
     }
+
+    /**
+     * @param int $nbBytes 
+     * @return string
+     */
+    public static function generateApiKey($nbBytes = 16) {
+        return bin2hex(random_bytes($nbBytes));
+    }
 }

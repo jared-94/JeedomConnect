@@ -40,14 +40,13 @@ ignore_user_abort(true);
 $apiKey = init('apiKey');
 $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
-if (!is_object($eqLogic)) {
-  log::add('JeedomConnect', 'debug', "Can't find eqLogic");
-  throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
-}
-$id = rand(0, 1000);
-log::add('JeedomConnect', 'debug', "eventServer init client #" . $id);
-
 try {
+  if (!is_object($eqLogic)) {
+    log::add('JeedomConnect', 'debug', "Can't find eqLogic");
+    throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
+  }
+  $id = rand(0, 1000);
+  log::add('JeedomConnect', 'debug', "eventServer init client #" . $id);
 
 
   $config = $eqLogic->getConfig(true);
@@ -70,6 +69,11 @@ try {
 
   while (true) {
     $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+
+    if (!is_object($logic)) {
+      throw new Exception("EqLogic not found anymore");
+    }
+
     if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
       log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #" . $id);
       if ($logic->getConfiguration('sessionId', 0) == $id) {
@@ -141,5 +145,7 @@ try {
     sleep(1);
   }
 } catch (Exception $e) {
-  log::add('JeedomConnect', 'errro', 'on sse ' . $e->getMessage());
+  // log::add('JeedomConnect', 'error', 'on sse ' . $e->getMessage());
+  $result = apiHelper::raiseException('SSE', $e->getMessage());
+  sse(json_encode($result));
 }

@@ -715,6 +715,38 @@ try {
 		}
 	}
 
+	if (init('action') == 'regenerateApiKey') {
+		$id = init('eqId');
+		$currentApiKey = init('apiKey');
+		/** @var $eqLogic JeedomConnect */
+		$eqLogic = JeedomConnect::byId($id);
+		if (!is_object($eqLogic)) {
+			ajax::error('Error - no equipment found');
+		} else {
+			// generate new apiKey
+			$newApiKey = JeedomConnectUtils::generateApiKey();
+			log::add('JeedomConnect', 'debug', 'new api key generated : ' . $newApiKey . ' - previous one was [' . $currentApiKey . ']');
+
+			// save new apiKey
+			$eqLogic->setConfiguration('apiKey', $newApiKey);
+			$eqLogic->setLogicalId($newApiKey);
+
+			// generate new QR Code
+			$eqLogic->generateQRCode();
+
+			// add new apikey in conf => used during ping and/or connection
+			config::save('newApiKey::' . $currentApiKey, $newApiKey, 'JeedomConnect');
+
+			//saving all new info
+			$eqLogic->save(true);
+
+			// copy & remove config files
+			JeedomConnect::copyConfig($currentApiKey, array($newApiKey), true);
+
+			ajax::success(array('newapikey' => $newApiKey));
+		}
+	}
+
 	throw new \Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
 } catch (\Exception $e) {
 	if (function_exists('displayException')) {

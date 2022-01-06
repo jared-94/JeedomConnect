@@ -112,11 +112,20 @@ class ConnectLogic implements MessageComponentInterface {
 
 		if (!is_object($eqLogic)) {
 			// Invalid API key
-			\log::add('JeedomConnect', 'warning', "Authentication failed (invalid credentials) for client #{$conn->resourceId} from IP: {$conn->ip}");
-			$result = array('type' => 'BAD_KEY');
-			$conn->send(json_encode($result));
-			$conn->close();
-			return;
+
+			// check if new apiKey has beend generated
+			$hasNewApiKey = \apiHelper::isApiKeyRegenerated($objectMsg->apiKey);
+			if (!$hasNewApiKey) {
+				\log::add('JeedomConnect', 'warning', "Authentication failed (invalid credentials) for client #{$conn->resourceId} from IP: {$conn->ip}");
+				$result = array('type' => 'BAD_KEY');
+				$conn->send(json_encode($result));
+				$conn->close();
+				return;
+			} else {
+				$msg = \apiHelper::getApiKeyRegenerated($objectMsg->apiKey);
+				\log::add('JeedomConnect', 'debug', '[WS] no answer for CONNECT || Sending new apiKey info-> ' . json_encode($msg));
+				$conn->send(json_encode($msg));
+			}
 		} else {
 			$param = (array) $objectMsg;
 
@@ -267,6 +276,11 @@ class ConnectLogic implements MessageComponentInterface {
 	public function lookForNewConfig() {
 		foreach ($this->authenticatedClients as $client) {
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				\log::add('JeedomConnect', 'warning', 'eq not found - lookForNewConfig');
+				$client->close();
+				continue;
+			}
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
@@ -284,6 +298,11 @@ class ConnectLogic implements MessageComponentInterface {
 	private function sendActions() {
 		foreach ($this->authenticatedClients as $client) {
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				\log::add('JeedomConnect', 'warning', 'eq not found - sendActions');
+				$client->close();
+				continue;
+			}
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
@@ -307,6 +326,11 @@ class ConnectLogic implements MessageComponentInterface {
 	private function broadcastEvents() {
 		foreach ($this->authenticatedClients as $client) {
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				\log::add('JeedomConnect', 'warning', 'eq not found - broadcastEvents');
+				$client->close();
+				continue;
+			}
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
