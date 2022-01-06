@@ -2023,6 +2023,7 @@ function loadSortable(elt) {
         }
         );
         refreshImgListOption();
+        refreshInfoSelect();
 
       }
     });
