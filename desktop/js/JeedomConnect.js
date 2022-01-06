@@ -1992,6 +1992,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
   $("#imgList-option").html(curOption);
   setCondToHuman('imgList');
+  refreshInfoSelect();
 }
 
 function saveImgOption() {
@@ -2023,7 +2024,6 @@ function loadSortable(elt) {
         }
         );
         refreshImgListOption();
-        refreshInfoSelect();
 
       }
     });
