@@ -1793,9 +1793,16 @@ class JeedomConnectCmd extends cmd {
 					log::add('JeedomConnect', 'error', 'Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
+				if (!empty($_options['title'])) {
+					if (((string)(int)$_options['title'] !== $_options['title']) || (intval($_options['title']) < 0 || intval($_options['title']) > 100)) {
+						log::add('JeedomConnect', 'error', 'Field "' . $this->getDisplay('title_placeholder', 'Titre') . '" has to contain integer between 0 to 100');
+						return;
+					}
+				}
 				$payload = array(
 					'action' => 'tts',
-					'message' => str_replace("'", "&#039;", $_options['message'])
+					'message' => str_replace("'", "&#039;", $_options['message']),
+					'volume' => $_options['title']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
