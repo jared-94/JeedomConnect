@@ -618,7 +618,9 @@ class apiHelper {
           'logicalId' => $eqLogic->getLogicalId(),
           'name' => $eqLogic->getName(),
           'enable' => $eqLogic->getIsEnable(),
-          'useWs' => $eqLogic->getConfiguration('useWs', 0)
+          'useWs' => $eqLogic->getConfiguration('useWs', 0),
+          'deviceName' => $eqLogic->getConfiguration('deviceName', null),
+          'deviceId' => $eqLogic->getConfiguration('deviceId', null)
         ));
       }
     }
