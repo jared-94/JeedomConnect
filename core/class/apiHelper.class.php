@@ -2318,9 +2318,9 @@ class apiHelper {
         array_push($payload, $action['value']['payload']);
       }
       JeedomConnectActions::removeActions($actions);
+      log::add('JeedomConnect', 'debug', "send action " . json_encode($payload));
     }
 
-    log::add('JeedomConnect', 'debug', "send action " . json_encode($payload));
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
