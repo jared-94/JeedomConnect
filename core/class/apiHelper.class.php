@@ -1784,21 +1784,28 @@ class apiHelper {
     $eventCount = count($events['result']);
     if ($eventCount == 0) {
       // log::add('JeedomConnect', 'debug', '--- no change - skipped (' . $eventCount . ')');
-      $data = array();
+      $data = array(
+        'type' => 'DATETIME',
+        'payload' => $events['datetime']
+      );
     } elseif ($eventCount < 249) {
       // log::add('JeedomConnect', 'debug', '--- using cache (' . $eventCount . ')');
       $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     } else {
       // log::add('JeedomConnect', 'debug', '*****  too many items, refresh all (' . $eventCount . ')');
-      $data = self::getEventsGlobalRefresh($config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      $data = self::getEventsGlobalRefresh($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     }
 
     return $data;
   }
 
 
-  private static function getEventsGlobalRefresh($config, $scAll = false) {
+  private static function getEventsGlobalRefresh($events, $config, $scAll = false) {
     $result = array(
+      array(
+        'type' => 'DATETIME',
+        'payload' => $events['datetime']
+      ),
       array(
         'type' => 'CMD_INFO',
         'payload' => apiHelper::getCmdInfoData($config, false)
@@ -1815,6 +1822,10 @@ class apiHelper {
   }
 
   private static function getEventsFromCache($events, $config, $scAll = false) {
+    $result_datetime = array(
+      'type' => 'DATETIME',
+      'payload' => $events['datetime']
+    );
     $result_cmd = array(
       'type' => 'CMD_INFO',
       'payload' => array()
@@ -1858,7 +1869,7 @@ class apiHelper {
         }
       }
     }
-    return array($result_cmd, $result_sc, $result_obj);
+    return array($result_datetime, $result_cmd, $result_sc, $result_obj);
   }
 
   //HISTORY
