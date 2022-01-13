@@ -1785,8 +1785,10 @@ class apiHelper {
     if ($eventCount == 0) {
       // log::add('JeedomConnect', 'debug', '--- no change - skipped (' . $eventCount . ')');
       $data = array(
-        'type' => 'DATETIME',
-        'payload' => $events['datetime']
+        array(
+          'type' => 'DATETIME',
+          'payload' => $events['datetime']
+        )
       );
     } elseif ($eventCount < 249) {
       // log::add('JeedomConnect', 'debug', '--- using cache (' . $eventCount . ')');

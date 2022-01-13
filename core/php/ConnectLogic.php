@@ -339,7 +339,8 @@ class ConnectLogic implements MessageComponentInterface {
 			$client->lastReadTimestamp = time();
 
 			foreach ($eventsRes as $res) {
-				if (count($res['payload']) > 0) {
+
+				if (key_exists('payload', $res) && is_array($res['payload']) && count($res['payload']) > 0) {
 					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : " . json_encode($res));
 					$client->send(json_encode($res));
 				}
