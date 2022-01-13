@@ -1876,6 +1876,7 @@ function refreshMoreInfos() {
       id: item.id,
       success: function (data) {
         $("#" + item.id + "-input").val(data);
+        item.human = data;
       }
     });
   });
@@ -1952,7 +1953,7 @@ function idToHuman(string, infos) {
   if (!match) { return string; }
   match.forEach(item => {
     const info = infos.find(i => i.id == item.replace(/\#/g, ""));
-    if (info && info.human != '') {
+    if (info && info.human != '' && info.human != undefined) {
       result = result.replace(item, info.human);
     }
   });
@@ -2532,6 +2533,7 @@ function saveWidget() {
       moreInfos.forEach(info => {
         info.name = $("#" + info.id + "-name-input").val();
         info.unit = $("#" + info.id + "-unit-input").val();
+        delete info.human;
         result.moreInfos.push(info);
       });
     }
