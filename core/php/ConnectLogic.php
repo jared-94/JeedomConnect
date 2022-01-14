@@ -336,7 +336,7 @@ class ConnectLogic implements MessageComponentInterface {
 			}
 
 			$eventsRes = \apiHelper::getEventsFull($eqLogic, $client->lastReadTimestamp);
-			$client->lastReadTimestamp = time();
+			$client->lastReadTimestamp = $eventsRes[0]['payload'];
 
 			foreach ($eventsRes as $res) {
 				if (key_exists('payload', $res) && is_array($res['payload']) && count($res['payload']) > 0) {
