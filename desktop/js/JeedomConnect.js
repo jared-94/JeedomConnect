@@ -510,7 +510,7 @@ $(".btRegenerateApiKey").click(function () {
     fields: [
       {
         type: "string",
-        value: "Avant de réaliser cette opération, assurez-vous que l'application n'est pas lancée sur votre appareil.<br>L'application vous demandera ensuite de vous reconnecter.<br><br>Voulez-vous vraiment regénérer la clé API de cet équipement ?"
+        value: "Avant de réaliser cette opération, assurez-vous que l'application n'est pas lancée sur votre appareil.<br><br>Voulez-vous vraiment regénérer la clé API de cet équipement ?"
       }]
   }, function (result) {
     $.post({

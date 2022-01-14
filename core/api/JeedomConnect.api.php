@@ -44,7 +44,7 @@ try {
   /** @var JeedomConnect $eqLogic */
   $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
-  if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT') {
+  if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT' && $method != 'PING') {
     $hasNewApiKey = apiHelper::isApiKeyRegenerated($apiKey);
     if (!$hasNewApiKey) {
       throw new Exception(__("Can't find eqLogic", __FILE__), -32699);

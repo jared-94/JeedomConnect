@@ -35,8 +35,10 @@ class apiHelper {
     try {
       switch ($method) {
         case 'PING':
-          $eqLogic->setConfiguration('appState', 'active');
-          $eqLogic->save(true);
+          if (is_object($eqLogic)) {
+            $eqLogic->setConfiguration('appState', 'active');
+            $eqLogic->save(true);
+          }
           return null;
           break;
 
