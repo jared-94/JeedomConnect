@@ -718,7 +718,7 @@ try {
 	if (init('action') == 'regenerateApiKey') {
 		$id = init('eqId');
 		$currentApiKey = init('apiKey');
-		/** @var $eqLogic JeedomConnect */
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = JeedomConnect::byId($id);
 		if (!is_object($eqLogic)) {
 			ajax::error('Error - no equipment found');
@@ -734,14 +734,17 @@ try {
 			// generate new QR Code
 			$eqLogic->generateQRCode();
 
-			// add new apikey in conf => used during ping and/or connection
-			config::save('newApiKey::' . $currentApiKey, $newApiKey, 'JeedomConnect');
-
 			//saving all new info
 			$eqLogic->save(true);
 
 			// copy & remove config files
+			JeedomConnect::copyNotifConfig($currentApiKey, $newApiKey);
+			JeedomConnect::copyBackupConfig($currentApiKey, $newApiKey);
+			JeedomConnectWidget::moveCustomData($currentApiKey, $newApiKey);
 			JeedomConnect::copyConfig($currentApiKey, array($newApiKey), true);
+
+			// add new apikey in conf => used during ping and/or connection
+			config::save('newApiKey::' . $currentApiKey, $newApiKey, 'JeedomConnect');
 
 			ajax::success(array('newapikey' => $newApiKey));
 		}

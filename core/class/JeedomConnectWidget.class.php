@@ -396,6 +396,30 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
+	public static function moveCustomData($oldApiKey, $newApiKey) {
+
+		$customData = config::searchKey('::' . $oldApiKey, 'JeedomConnect');
+		log::add('JeedomConnect', 'debug', ' ++++ customData >> ' . json_encode($customData));
+
+		if (!empty($customData)) {
+			foreach ($customData as $item) {
+				log::add('JeedomConnect', 'debug', ' ******** updating key ' . $item['key']);
+				$newKey = str_replace($oldApiKey, $newApiKey, $item['key']);
+				log::add('JeedomConnect', 'debug', ' ******** updating key - new ' . $newKey);
+				config::save($newKey, $item['value'], 'JeedomConnect');
+				// config::save('customData::' . $newApiKey . '::' . $item['value']['widgetId'], $item['value'], 'JeedomConnect');
+				config::remove($item['key'], 'JeedomConnect');
+			}
+		}
+
+		$backupDir = JeedomConnect::$_backup_dir . $oldApiKey;
+		log::add('JeedomConnect', 'debug', ' ******** backup dir : ' . $backupDir);
+		if (is_dir($backupDir)) {
+			log::add('JeedomConnect', 'debug', ' ******** rename folder');
+			rename(JeedomConnect::$_backup_dir . $oldApiKey, JeedomConnect::$_backup_dir . $newApiKey);
+		}
+	}
+
 	//***************  EXPERIMENTAL ZONE  =) ****************************/
 
 	public static function replaceTextConfig($widgetId, $searchAndReplace, $reload = true) {

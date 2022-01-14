@@ -156,7 +156,7 @@ class JeedomConnect extends eqLogic {
 	public static $_config_dir = __DIR__ . '/../../data/configs/';
 	public static $_qr_dir = __DIR__ . '/../../data/qrcodes/';
 	public static $_notif_dir = __DIR__ . '/../../data/notifs/';
-	public static $_backup_dir = __DIR__ . '/../../data/backup/';
+	public static $_backup_dir = __DIR__ . '/../../data/backups/';
 
 	/*     * ***********************Methode static*************************** */
 
@@ -199,6 +199,24 @@ class JeedomConnect extends eqLogic {
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
+	}
+
+	public static function copyNotifConfig($oldApiKey, $newApiKey) {
+		$notif_file = self::$_notif_dir . $oldApiKey . ".json";
+		$notif_file_new = self::$_notif_dir . $newApiKey . ".json";
+
+		if (file_exists($notif_file)) {
+			copy($notif_file, $notif_file_new);
+		}
+	}
+
+	public static function copyBackupConfig($oldApiKey, $newApiKey) {
+		$backupDir = JeedomConnect::$_backup_dir . $oldApiKey;
+		$backupDir_new = JeedomConnect::$_backup_dir . $newApiKey;
+
+		if (is_dir($backupDir)) {
+			copy($backupDir, $backupDir_new);
+		}
 	}
 
 	public static function copyConfig($from, $to, $remove_original_data = false) {
@@ -254,6 +272,7 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 	}
+
 
 	/*     * *********************Méthodes d'instance************************* */
 
@@ -999,7 +1018,7 @@ class JeedomConnect extends eqLogic {
 
 		$allKey = config::searchKey('customData::' . $apiKey, 'JeedomConnect');
 		foreach ($allKey as $item) {
-			config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
+			config::remove($item['key'], 'JeedomConnect');
 		}
 	}
 
