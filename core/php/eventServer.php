@@ -131,7 +131,7 @@ try {
         //log::add('JeedomConnect', 'debug', "eventServer send ".json_encode($data));
         sse(json_encode($data));
         $step = 0;
-        $lastReadTimestamp = time();
+        $lastReadTimestamp = $data[0]['payload'];
       }
     }
     if (!$sendInfo) {
