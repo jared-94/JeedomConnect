@@ -409,7 +409,7 @@ class apiHelper {
 
         case 'REMOVE_JEEDOM_MESSAGE':
           JeedomConnectUtils::removeJeedomMessage($param['messageId'] ?? null);
-          $result = JeedomConnectUtils::getJeedomMessages('');
+          $result = JeedomConnectUtils::getJeedomMessages();
           return JeedomConnectUtils::addTypeInPayload($result, 'SET_JEEDOM_MESSAGES');
           break;
 
