@@ -72,9 +72,8 @@ if (!isConnect('admin')) {
         radios = `<li><div class='form-group'>
 			<label class='col-xs-3  required' >${option.title}</label>
 			<div class='col-xs-9'><label class='radio-inline'>`;
-        randomId = Date.now();
         option.choices.forEach(item => {
-          radios += `<label><input type="radio" class="radiosSelection" name="radio" style="width:150px;" id="${item.id}" > ${item.name}</label><br/>`;
+          radios += `<label><input type="radio" class="radiosSelection" name="radio" style="width:150px;" id="${item.id}"  ${item.selected || ''}> ${item.name}</label><br/>`;
         });
         radios += `</label></div></div></li>`;
         items.push(radios);

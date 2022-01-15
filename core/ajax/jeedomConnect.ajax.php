@@ -570,6 +570,10 @@ try {
 
 		$copy = JeedomConnect::copyConfig($from, $toArray);
 
+		if (init('withCustom', false)) {
+			JeedomConnectWidget::copyCustomData($from, $toArray);
+		}
+
 		ajax::success($copy);
 	}
 
@@ -740,7 +744,7 @@ try {
 			// copy & remove config files
 			JeedomConnect::copyNotifConfig($currentApiKey, $newApiKey);
 			JeedomConnect::copyBackupConfig($currentApiKey, $newApiKey);
-			JeedomConnectWidget::copyCustomData($currentApiKey, $newApiKey, true);
+			JeedomConnectWidget::copyCustomData($currentApiKey, array($newApiKey), true);
 			JeedomConnect::copyConfig($currentApiKey, array($newApiKey));
 			JeedomConnect::removeAllData($currentApiKey);
 

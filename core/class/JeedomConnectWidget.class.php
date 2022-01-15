@@ -396,15 +396,25 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
+	/**
+	 * @param string $oldApiKey 
+	 * @param array $newApiKey 
+	 * @param bool $removeOld 
+	 * @return void
+	 */
 	public static function copyCustomData($oldApiKey, $newApiKey, $removeOld = false) {
+		log::add('JeedomConnect', 'debug', 'Copying custom data from ' . $oldApiKey . ' to ' . json_encode($newApiKey));
 
-		$customData = config::searchKey('::' . $oldApiKey, 'JeedomConnect');
+
+		$customData = config::searchKey('customData::' . $oldApiKey, 'JeedomConnect');
 
 		if (!empty($customData)) {
 			foreach ($customData as $item) {
-				$newKey = str_replace($oldApiKey, $newApiKey, $item['key']);
-				log::add('JeedomConnect', 'debug', ' ******** copying key ' . $item['key'] . ' to ' . $newKey);
-				config::save($newKey, $item['value'], 'JeedomConnect');
+				foreach ($newApiKey as $api) {
+					$newKey = str_replace($oldApiKey, $api, $item['key']);
+					log::add('JeedomConnect', 'debug', ' ******** copying key ' . $item['key'] . ' to ' . $newKey);
+					config::save($newKey, $item['value'], 'JeedomConnect');
+				}
 
 				if ($removeOld) config::remove($item['key'], 'JeedomConnect');
 			}

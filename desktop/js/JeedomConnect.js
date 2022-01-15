@@ -434,18 +434,26 @@ $('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function 
       name: item.name
     };
   });
-  getSimpleModal({ title: "Recopier vers quel(s) appareil(s)", fields: [{ title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent }] }, function (result) {
-
+  getSimpleModal({
+    title: "Recopier vers quel(s) appareil(s)",
+    fields: [
+      { title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent },
+      { title: "Inclure les perso", type: "radios", choices: [{ id: 'yes', name: 'Oui' }, { id: 'no', name: 'Non', selected: 'checked' }] }
+    ]
+  }, function (result) {
+    if (result.checkboxes.length === 0) {
+      throw "Il faut sélectionner au moins un appareil ! ";
+    }
     $.post({
       url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
       data: {
         'action': 'copyConfig',
         'from': from,
-        'to': result.checkboxes
+        'to': result.checkboxes,
+        'withCustom': (result.radio == 'yes')
       },
       dataType: 'json',
       success: function (data) {
-        console.log("copyConfig ajax received : ", data);
         if (data.state != 'ok') {
           $('#div_alert').showAlert({
             message: data.result,
