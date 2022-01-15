@@ -411,13 +411,6 @@ class JeedomConnectWidget extends config {
 				config::remove($item['key'], 'JeedomConnect');
 			}
 		}
-
-		$backupDir = JeedomConnect::$_backup_dir . $oldApiKey;
-		log::add('JeedomConnect', 'debug', ' ******** backup dir : ' . $backupDir);
-		if (is_dir($backupDir)) {
-			log::add('JeedomConnect', 'debug', ' ******** rename folder');
-			rename(JeedomConnect::$_backup_dir . $oldApiKey, JeedomConnect::$_backup_dir . $newApiKey);
-		}
 	}
 
 	//***************  EXPERIMENTAL ZONE  =) ****************************/
