@@ -418,6 +418,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_EVENT':
+          self::setEvent($param['commandId'], $param['message']);
+          return null;
+          break;
+
         default:
           return self::raiseException($method, ' [' . $type . '] - method not defined');
           break;
@@ -2489,5 +2494,26 @@ class apiHelper {
     $payload = array('apiKey' => $newApiKey);
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+
+
+  /**
+   * 
+   * Allow to update an event on a command
+   * 
+   * @param string $commandId 
+   * @param string $message 
+   * @return void
+   */
+  public static function setEvent($commandId, $message) {
+
+    $cmd = cmd::byId($commandId);
+
+    if (!is_object($cmd)) {
+      throw new Exception($commandId . " is not a valid command");
+    }
+
+    $cmd->event($message);
   }
 }
