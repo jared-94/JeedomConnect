@@ -665,7 +665,7 @@ class apiHelper {
         }
       }
     }
-    if (array_key_exists('weather', $config['payload'])) {
+    if (array_key_exists('weather', $config['payload']) && count($config['payload']['weather']) > 0) {
       $return = array_merge($return, array(
         $config['payload']['weather']['condition'],
         $config['payload']['weather']['condition_id'],
