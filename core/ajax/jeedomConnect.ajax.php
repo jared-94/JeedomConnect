@@ -741,7 +741,8 @@ try {
 			JeedomConnect::copyNotifConfig($currentApiKey, $newApiKey);
 			JeedomConnect::copyBackupConfig($currentApiKey, $newApiKey);
 			JeedomConnectWidget::moveCustomData($currentApiKey, $newApiKey);
-			JeedomConnect::copyConfig($currentApiKey, array($newApiKey), true);
+			JeedomConnect::copyConfig($currentApiKey, array($newApiKey));
+			JeedomConnect::removeAllData($currentApiKey);
 
 			// add new apikey in conf => used during ping and/or connection
 			config::save('newApiKey::' . $currentApiKey, $newApiKey, 'JeedomConnect');

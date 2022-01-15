@@ -219,7 +219,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public static function copyConfig($from, $to, $remove_original_data = false) {
+	public static function copyConfig($from, $to) {
 
 		$config_file_model = self::$_config_dir . $from . ".json";
 		if (!file_exists($config_file_model)) {
@@ -247,10 +247,6 @@ class JeedomConnect extends eqLogic {
 					log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
 				}
 			}
-		}
-
-		if ($remove_original_data) {
-			self::removeAllData($from);
 		}
 
 		return true;
