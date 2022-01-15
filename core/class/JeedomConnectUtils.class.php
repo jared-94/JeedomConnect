@@ -530,4 +530,43 @@ class JeedomConnectUtils {
     public static function generateApiKey($nbBytes = 16) {
         return bin2hex(random_bytes($nbBytes));
     }
+
+    /**
+     * 
+     * Copy a folder and his content to another place
+     * 
+     * @param string $src path of the current folder to copy
+     * @param string $dst path with the final folder name where copy has to be done 
+     * @return void
+     */
+    public static function recurse_copy($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while (false !== ($file = readdir($dir))) {
+            if (($file != '.') && ($file != '..')) {
+                if (is_dir($src . '/' . $file)) {
+                    self::recurse_copy($src . '/' . $file, $dst . '/' . $file);
+                } else {
+                    copy($src . '/' . $file, $dst . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
+
+    /**
+     * 
+     * Allow to remove a folder contening files
+     * 
+     * @param string $src path of the current folder to copy
+     * @param string $dst path with the final folder name where copy has to be done 
+     * @return void
+     */
+    public static function delTree($dir) {
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? self::delTree("$dir/$file") : unlink("$dir/$file");
+        }
+        return rmdir($dir);
+    }
 }

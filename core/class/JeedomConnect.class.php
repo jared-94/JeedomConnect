@@ -206,6 +206,7 @@ class JeedomConnect extends eqLogic {
 		$notif_file_new = self::$_notif_dir . $newApiKey . ".json";
 
 		if (file_exists($notif_file)) {
+			log::add('JeedomConnect', 'debug', 'Copying notification config file');
 			copy($notif_file, $notif_file_new);
 		}
 	}
@@ -215,7 +216,8 @@ class JeedomConnect extends eqLogic {
 		$backupDir_new = JeedomConnect::$_backup_dir . $newApiKey;
 
 		if (is_dir($backupDir)) {
-			copy($backupDir, $backupDir_new);
+			log::add('JeedomConnect', 'debug', 'Copying backup config folder');
+			JeedomConnectUtils::recurse_copy($backupDir, $backupDir_new);
 		}
 	}
 
@@ -1010,7 +1012,7 @@ class JeedomConnect extends eqLogic {
 		unlink(self::$_config_dir . $apiKey . ".json");
 		unlink(self::$_config_dir . $apiKey . ".json.generated");
 		unlink(self::$_notif_dir . $apiKey . ".json");
-		rmdir(self::$_backup_dir . $apiKey);
+		JeedomConnectUtils::delTree(self::$_backup_dir . $apiKey);
 
 		$allKey = config::searchKey('customData::' . $apiKey, 'JeedomConnect');
 		foreach ($allKey as $item) {
