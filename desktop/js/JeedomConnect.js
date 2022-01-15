@@ -439,7 +439,8 @@ $('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function 
     fields: [
       { title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent },
       { type: "line" },
-      { title: "Inclure les perso", type: "radios", choices: [{ id: 'yes', name: 'Oui' }, { id: 'no', name: 'Non', selected: 'checked' }] }
+      { title: "Inclure les perso", type: "radios", choices: [{ id: 'yes', name: 'Oui' }, { id: 'no', name: 'Non', selected: 'checked' },] },
+      { type: 'description', text: 'Attention, lors de la recopie vous perdez la configuration présente actuelle sur les équipements "cibles"' }
     ]
   }, function (result) {
     if (result.checkboxes.length === 0) {
