@@ -57,6 +57,9 @@ if (!isConnect('admin')) {
 			<label class='col-xs-3  required' >Actif</label>
 			<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="mod-enable-input" ${value}></div></div></div></li>`;
         items.push(enable);
+      } else if (option.type == "line") {
+        line = `<li style="border-bottom: solid 1px;"></li>`;
+        items.push(line);
       } else if (option.type == "checkboxes") {
 
         checkboxes = `<li><div class='form-group'>

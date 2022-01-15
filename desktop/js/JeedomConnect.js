@@ -438,6 +438,7 @@ $('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function 
     title: "Recopier vers quel(s) appareil(s)",
     fields: [
       { title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent },
+      { type: "line" },
       { title: "Inclure les perso", type: "radios", choices: [{ id: 'yes', name: 'Oui' }, { id: 'no', name: 'Non', selected: 'checked' }] }
     ]
   }, function (result) {
