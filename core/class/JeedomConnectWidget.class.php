@@ -396,19 +396,17 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
-	public static function moveCustomData($oldApiKey, $newApiKey) {
+	public static function copyCustomData($oldApiKey, $newApiKey, $removeOld = false) {
 
 		$customData = config::searchKey('::' . $oldApiKey, 'JeedomConnect');
-		log::add('JeedomConnect', 'debug', ' ++++ customData >> ' . json_encode($customData));
 
 		if (!empty($customData)) {
 			foreach ($customData as $item) {
-				log::add('JeedomConnect', 'debug', ' ******** updating key ' . $item['key']);
 				$newKey = str_replace($oldApiKey, $newApiKey, $item['key']);
-				log::add('JeedomConnect', 'debug', ' ******** updating key - new ' . $newKey);
+				log::add('JeedomConnect', 'debug', ' ******** copying key ' . $item['key'] . ' to ' . $newKey);
 				config::save($newKey, $item['value'], 'JeedomConnect');
-				// config::save('customData::' . $newApiKey . '::' . $item['value']['widgetId'], $item['value'], 'JeedomConnect');
-				config::remove($item['key'], 'JeedomConnect');
+
+				if ($removeOld) config::remove($item['key'], 'JeedomConnect');
 			}
 		}
 	}

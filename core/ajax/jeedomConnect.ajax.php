@@ -740,7 +740,7 @@ try {
 			// copy & remove config files
 			JeedomConnect::copyNotifConfig($currentApiKey, $newApiKey);
 			JeedomConnect::copyBackupConfig($currentApiKey, $newApiKey);
-			JeedomConnectWidget::moveCustomData($currentApiKey, $newApiKey);
+			JeedomConnectWidget::copyCustomData($currentApiKey, $newApiKey, true);
 			JeedomConnect::copyConfig($currentApiKey, array($newApiKey));
 			JeedomConnect::removeAllData($currentApiKey);
 
