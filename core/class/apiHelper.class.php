@@ -2305,6 +2305,9 @@ class apiHelper {
       return;
     }
     try {
+      $user = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
+      log::add('JeedomConnect', 'info', 'Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $user);
+
       $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
       $cmd->execCmd($options);
     } catch (Exception $e) {
@@ -2344,7 +2347,14 @@ class apiHelper {
       );
     }
     try {
-      scenarioExpression::createAndExec('action', 'scenario', $options);
+      $scenario = scenario::byId($id);
+      if (is_object($scenario)) {
+        $user = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
+        log::add('JeedomConnect', 'info', 'Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $user);
+        scenarioExpression::createAndExec('action', 'scenario', $options);
+      } else {
+        throw new Exception("scenarioId " . $id . " does not exist");
+      }
     } catch (Exception $e) {
       log::add('JeedomConnect', 'error', $e->getMessage());
     }
