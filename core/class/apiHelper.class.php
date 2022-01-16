@@ -335,7 +335,7 @@ class apiHelper {
 
           $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
           if ($newConfig != false) {
-            log::add('JeedomConnect', 'debug', "pollingServer send new config : " . json_encode($newConfig));
+            JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
             return array($newConfig);
           }
 
@@ -388,7 +388,8 @@ class apiHelper {
           break;
 
         case 'SET_LOG':
-          log::add('JeedomConnect', $param['level'] ?? 'debug', $param['text'] ?? '');
+          $action = $param['level'] ?? 'debug';
+          JCLog::$action($param['text'] ?? '');
           return null;
           break;
 
@@ -459,26 +460,26 @@ class apiHelper {
     $versionJson = JeedomConnect::getPluginInfo();
 
     if ($eqLogic->getConfiguration('deviceId') == '') {
-      log::add('JeedomConnect', 'info', "Register new device {$param['deviceName']}");
+      JCLog::info("Register new device {$param['deviceName']}");
       $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
     }
     $eqLogic->registerToken($param['token']);
 
     //check registered device
     if ($eqLogic->getConfiguration('deviceId') != $param['deviceId']) {
-      log::add('JeedomConnect', 'warning', "Authentication failed (invalid device)");
+      JCLog::warning("Try to connect to an invalid device (eq already used)");
       return array('type' => 'BAD_DEVICE');
     }
 
     //check if eqLogic is enable
     if (!$eqLogic->getIsEnable()) {
-      log::add('JeedomConnect', 'warning', "Equipment " . $eqLogic->getName() . " disabled");
+      JCLog::warning("Equipment " . $eqLogic->getName() . " is disabled");
       return array('type' => 'EQUIPMENT_DISABLE');
     }
 
     //check version requirement
     if (version_compare($param['appVersion'], $versionJson['require'], "<")) {
-      log::add('JeedomConnect', 'warning', "Failed to connect : bad version requirement");
+      JCLog::warning("Failed to connect : bad version requirement");
       return array(
         'type' => 'APP_VERSION_ERROR',
         'payload' => JeedomConnect::getPluginInfo()
@@ -486,7 +487,7 @@ class apiHelper {
     }
 
     if (version_compare($versionJson['version'], $param['pluginRequire'], "<")) {
-      log::add('JeedomConnect', 'warning', "Failed to connect : bad plugin requirement");
+      JCLog::warning("Failed to connect : bad plugin requirement");
       return array('type' => 'PLUGIN_VERSION_ERROR');
     }
 
@@ -504,13 +505,13 @@ class apiHelper {
 
     //check config content
     if (is_null($config)) {
-      log::add('JeedomConnect', 'warning', "Failed to connect : empty config file");
+      JCLog::warning("Failed to connect : empty config file");
       return array('type' => 'EMPTY_CONFIG_FILE');
     }
 
     //check config format version
     if (!array_key_exists('formatVersion', $config)) {
-      log::add('JeedomConnect', 'warning', "Failed to connect : bad format version");
+      JCLog::warning("Failed to connect : bad format version");
       return array('type' => 'FORMAT_VERSION_ERROR');
     }
 
@@ -578,7 +579,7 @@ class apiHelper {
       throw new Exception("Can't find command [id=" . $param['cmdId'] . "]");
     }
     if (!$cmd->askResponse($answer)) {
-      log::add('JeedomConnect', 'warning', 'issue while reply to ask');
+      JCLog::warning('issue while reply to ask');
     }
 
     // if ASK was sent to other equipment, then we will let them know that an answer was already given
@@ -617,7 +618,7 @@ class apiHelper {
       if (is_object($userOnEquipment)) {
         $userOnEquipmentHash = $userOnEquipment->getHash();
       } else {
-        log::add('JeedomConnect', 'warning', 'No user found on ' . $eqLogic->getName());
+        JCLog::warning('No user found on ' . $eqLogic->getName());
         $userOnEquipmentHash = null;
       }
 
@@ -991,9 +992,9 @@ class apiHelper {
    */
   public static function lookForNewConfig($eqLogic, $prevConfig) {
     $configVersion = $eqLogic->getConfiguration('configVersion');
-    //log::add('JeedomConnect', 'debug',   "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
+    //JCLog::debug(  "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
     if ($configVersion != $prevConfig) {
-      log::add('JeedomConnect', 'debug', "apiHelper : New configuration");
+      JCLog::debug("apiHelper : New configuration");
       return $eqLogic->getGeneratedConfigFile();
     }
     return false;
@@ -1083,7 +1084,7 @@ class apiHelper {
 
   // EDIT FUNCTIONS
   private static function setWidget($widget) {
-    log::add('JeedomConnect', 'debug', 'save widget data');
+    // JCLog::debug('save widget data');
     JeedomConnectWidget::updateWidgetConfig($widget);
   }
 
@@ -1237,7 +1238,7 @@ class apiHelper {
   private static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
-      log::add('JeedomConnect', 'debug', 'save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
+      JCLog::debug('save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
       config::save('customData::' . $apiKey . '::' . $customWidget['widgetId'], json_encode($customWidget), 'JeedomConnect');
     }
     $eqLogic->generateNewConfigVersion();
@@ -1791,7 +1792,7 @@ class apiHelper {
 
     $eventCount = count($events['result']);
     if ($eventCount == 0) {
-      // log::add('JeedomConnect', 'debug', '--- no change - skipped (' . $eventCount . ')');
+      // JCLog::debug('--- no change - skipped (' . $eventCount . ')');
       $data = array(
         array(
           'type' => 'DATETIME',
@@ -1799,10 +1800,10 @@ class apiHelper {
         )
       );
     } elseif ($eventCount < 249) {
-      // log::add('JeedomConnect', 'debug', '--- using cache (' . $eventCount . ')');
+      // JCLog::debug('--- using cache (' . $eventCount . ')');
       $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     } else {
-      // log::add('JeedomConnect', 'debug', '*****  too many items, refresh all (' . $eventCount . ')');
+      // JCLog::debug('*****  too many items, refresh all (' . $eventCount . ')');
       $data = self::getEventsGlobalRefresh($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
     }
 
@@ -1890,7 +1891,7 @@ class apiHelper {
     } else {
       $startTime = date('Y-m-d H:i:s', $options['startTime']);
       $endTime = date('Y-m-d H:i:s', $options['endTime']);
-      log::add('JeedomConnect', 'info', 'Get history from: ' . $startTime . ' to ' . $endTime);
+      JCLog::debug('Get history from: ' . $startTime . ' to ' . $endTime);
       $history = history::all($id, $startTime, $endTime);
     }
 
@@ -1908,7 +1909,7 @@ class apiHelper {
         'value' => $h->getValue()
       ));
     }
-    log::add('JeedomConnect', 'info', 'Send history (' . count($result['payload']['data']) . ' points)');
+    JCLog::debug('Send history (' . count($result['payload']['data']) . ' points)');
     return $result;
   }
 
@@ -1982,7 +1983,7 @@ class apiHelper {
     if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
       $eqLogic->setStatus("battery", $level);
       $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
-      //  log::add('JeedomConnect', 'warning', 'saveBatteryEquipment | SAVING battery saved on equipment page ');
+      //  JCLog::warning('saveBatteryEquipment | SAVING battery saved on equipment page ');
     }
   }
 
@@ -1996,7 +1997,7 @@ class apiHelper {
     $update = update::byLogicalId($pluginId);
 
     if (!is_object($update)) {
-      log::add('JeedomConnect', 'warning', 'doUpdate -- cannot update plugin ' . $pluginId);
+      JCLog::warning('doUpdate -- cannot update plugin ' . $pluginId);
       return false;
     }
 
@@ -2035,7 +2036,7 @@ class apiHelper {
             array_push($pluginUpdateId, $item['pluginId']);
           }
         } catch (Exception $e) {
-          log::add('JeedomConnect', 'warning', 'PLUGIN UPDATE -- exception : ' . $e->getMessage());
+          JCLog::warning('PLUGIN UPDATE -- exception : ' . $e->getMessage());
           $item['message'] = 'Une erreur est survenue. Merci de regarder les logs.';
         }
         array_push($updateArr, $item);
@@ -2078,10 +2079,10 @@ class apiHelper {
 
     $config_file = $eqDir . urlencode($config['name']) . '-' . $backupIndex . '.json';
     try {
-      log::add('JeedomConnect', 'debug', 'Saving backup in file : ' . $config_file);
+      JCLog::debug('Saving backup in file : ' . $config_file);
       file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
     } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+      JCLog::error('Unable to write file : ' . $e->getMessage());
     }
   }
 
@@ -2107,7 +2108,7 @@ class apiHelper {
   private static function restartDaemon($userId, $pluginId) {
     $_plugin = \plugin::byId($pluginId);
     if (is_object($_plugin)) {
-      log::add('JeedomConnect', 'debug', 'DAEMON restart by [' . $userId . '] =>' . $pluginId);
+      JCLog::info('DAEMON restart by [' . $userId . '] =>' . $pluginId);
       $_plugin->deamon_start(true);
       return true;
     }
@@ -2117,7 +2118,7 @@ class apiHelper {
   private static function stopDaemon($userId, $pluginId) {
     $_plugin = \plugin::byId($pluginId);
     if (is_object($_plugin)) {
-      log::add('JeedomConnect', 'debug', 'DAEMON stopped by [' . $userId . '] =>' . $pluginId);
+      JCLog::info('DAEMON stopped by [' . $userId . '] =>' . $pluginId);
       $_plugin->deamon_stop();
       return true;
     }
@@ -2167,7 +2168,7 @@ class apiHelper {
                   break;
               }
             } catch (Exception $e) {
-              log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting dependancy_info -- ' . $e->getMessage());
+              JCLog::warning('HEALTH -- issue while getting dependancy_info -- ' . $e->getMessage());
             }
           }
 
@@ -2212,7 +2213,7 @@ class apiHelper {
                   break;
               }
             } catch (Exception $e) {
-              log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting daemon_info -- ' . $e->getMessage());
+              JCLog::warning('HEALTH -- issue while getting daemon_info -- ' . $e->getMessage());
             }
           }
 
@@ -2233,7 +2234,7 @@ class apiHelper {
                 array_push($healthData, $item);
               }
             } catch (Exception $e) {
-              log::add('JeedomConnect', 'warning', 'HEALTH -- issue while getting health info -- ' . $e->getMessage());
+              JCLog::warning('HEALTH -- issue while getting health info -- ' . $e->getMessage());
             }
           }
 
@@ -2282,7 +2283,7 @@ class apiHelper {
         array_push($jeedomData, $item);
       }
     } else {
-      log::add('JeedomConnect', 'debug', 'HEALTH -- skip');
+      JCLog::debug('HEALTH -- skip');
     }
 
     $result = array(
@@ -2301,17 +2302,17 @@ class apiHelper {
   private static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      log::add('JeedomConnect', 'error', "Can't find command [id=" . $id . "]");
+      JCLog::error("Can't find command [id=" . $id . "]");
       return;
     }
     try {
       $user = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
-      log::add('JeedomConnect', 'info', 'Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $user);
+      JCLog::info('Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $user);
 
       $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
       $cmd->execCmd($options);
     } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', $e->getMessage());
+      JCLog::error($e->getMessage());
     }
   }
 
@@ -2331,7 +2332,7 @@ class apiHelper {
         array_push($payload, $action['value']['payload']);
       }
       JeedomConnectActions::removeActions($actions);
-      log::add('JeedomConnect', 'debug', "send action " . json_encode($payload));
+      JCLog::debug("send action " . json_encode($payload));
     }
 
 
@@ -2350,13 +2351,13 @@ class apiHelper {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
         $user = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
-        log::add('JeedomConnect', 'info', 'Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $user);
+        JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $user);
         scenarioExpression::createAndExec('action', 'scenario', $options);
       } else {
         throw new Exception("scenarioId " . $id . " does not exist");
       }
     } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', $e->getMessage());
+      JCLog::error($e->getMessage());
     }
   }
 
@@ -2365,7 +2366,7 @@ class apiHelper {
       $sc = scenario::byId($id);
       $sc->stop();
     } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', $e->getMessage());
+      JCLog::error($e->getMessage());
     }
   }
 
@@ -2375,7 +2376,7 @@ class apiHelper {
       $sc->setIsActive($active);
       $sc->save();
     } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', $e->getMessage());
+      JCLog::error($e->getMessage());
     }
   }
 
@@ -2401,7 +2402,7 @@ class apiHelper {
         }
       }
     } catch (Exception $e) {
-      log::add('JeedomConnect', 'error', $e->getMessage());
+      JCLog::error($e->getMessage());
     }
 
     return  array(
@@ -2426,8 +2427,8 @@ class apiHelper {
       "type" => "EXCEPTION",
       "payload" => "Error with '" . $type . "' method " . $errMsg
     );
-    log::add('JeedomConnect', 'debug', 'Send ' . json_encode($result));
-    log::add('JeedomConnect', 'error', $result["payload"]);
+    JCLog::debug('Send ' . json_encode($result));
+    JCLog::error($result["payload"]);
 
     return $result;
   }
@@ -2441,7 +2442,7 @@ class apiHelper {
     $filePath = $logRootDir . (($type == 'scenario') ? 'scenarioLog/scenario' . $id . '.log' : $id);
 
     if (!file_exists($filePath)) {
-      log::add('JeedomConnect', 'warning', 'file ' . $filePath . ' does not exist');
+      JCLog::warning('file ' . $filePath . ' does not exist');
       $fileContent = 'pas de log disponible - fichier introuvable';
     } else {
       $fileContent = file_get_contents($filePath);

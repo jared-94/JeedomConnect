@@ -4,6 +4,7 @@
 // require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 require_once __DIR__  . '/JeedomConnectLock.class.php';
+require_once __DIR__  . '/JeedomConnectLogs.class.php';
 
 class JeedomConnectWidget extends config {
 
@@ -14,16 +15,16 @@ class JeedomConnectWidget extends config {
 	}
 
 	public static function incrementIndex() {
-		log::add(self::$_plugin_id, 'debug', 'increment widget index ');
+		JCLog::debug('increment widget index ');
 		$lock = new JeedomConnectLock('Widget_incrementIndex');
 		try {
 			if ($lock->Lock()) {
 				$current = config::byKey('index::max', self::$_plugin_id) ?: '0';
-				log::add(self::$_plugin_id, 'debug', 'current index : ' . $current);
+				JCLog::debug('current index : ' . $current);
 
 				$next = intval($current) + 1;
 				config::save('index::max', strval($next), self::$_plugin_id);
-				log::add(self::$_plugin_id, 'debug', 'incrementIndex done');
+				JCLog::debug('incrementIndex done');
 				return $next;
 			}
 		} finally {
@@ -34,22 +35,22 @@ class JeedomConnectWidget extends config {
 	public static function setConfiguration($_widgetId, $_key, $_value) {
 
 		$currentConf = self::getConfiguration($_widgetId);
-		log::add(self::$_plugin_id, 'debug', ' ## current conf ' . json_encode($currentConf));
+		JCLog::debug(' ## current conf ' . json_encode($currentConf));
 		$conf = utils::setJsonAttr($currentConf, $_key, $_value);
-		log::add(self::$_plugin_id, 'debug', ' ## conf saved ' . json_encode($conf));
+		JCLog::debug(' ## conf saved ' . json_encode($conf));
 		return self::saveConfig($conf, $_widgetId);
 	}
 
 	public static function getConfiguration($_widgetId, $_key = '', $_default = '') {
 
 		$conf = self::byKey('widget::' . $_widgetId, self::$_plugin_id);
-		// log::add(self::$_plugin_id, 'info', ' ##  getConfiguration -- id '. $_widgetId. ' = retrieved : ' . json_encode($conf) ) ;
+		// JCLog::info( ' ##  getConfiguration -- id '. $_widgetId. ' = retrieved : ' . json_encode($conf) ) ;
 		return utils::getJsonAttr($conf, $_key, $_default);
 	}
 
 	public static function getJsonData($_data, $_key = '', $_default = '') {
 
-		// log::add(self::$_plugin_id, 'info', ' ##  getJsonData  -- data received => ' . json_encode($_data) );
+		// JCLog::info( ' ##  getJsonData  -- data received => ' . json_encode($_data) );
 		$conf = json_encode($_data);
 		return utils::getJsonAttr($conf, $_key, $_default);
 	}
@@ -70,13 +71,13 @@ class JeedomConnectWidget extends config {
 	public static function getWidgets($_id = 'all', $_fullConfig = true, $_onlyConfig = false) {
 
 		if ($_id === 'all') {
-			if ($_fullConfig) log::add(self::$_plugin_id, 'debug', 'getWidgets for all widgets with full config');
+			if ($_fullConfig) JCLog::debug('getWidgets for all widgets with full config');
 			$widgets = JeedomConnectWidget::getAllConfigurations();
 		} else {
 			$widgets = array();
 			$tmp = JeedomConnectWidget::getConfiguration($_id, '', null);
 			if (!empty($tmp)) {
-				//log::add(self::$_plugin_id, 'debug', ' tmp result for '.$_id. '>' . json_encode($tmp) . '<' );
+				//JCLog::debug( ' tmp result for '.$_id. '>' . json_encode($tmp) . '<' );
 				$tmp['conf'] = $tmp;
 				array_push($widgets, $tmp);
 			}
@@ -112,7 +113,7 @@ class JeedomConnectWidget extends config {
 				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
 			}
 
-			//log::add(self::$_plugin_id, 'debug', ' final result sent >' . json_encode($widgetArray) );
+			//JCLog::debug( ' final result sent >' . json_encode($widgetArray) );
 		}
 		return $widgetArray;
 	}
@@ -130,13 +131,13 @@ class JeedomConnectWidget extends config {
 	public static function updateImgPath($widgetId, $newPath, $reload = true) {
 		$widgetSettings = self::getConfiguration($widgetId);
 		if (empty($widgetSettings)) {
-			log::add(self::$_plugin_id, 'debug', 'updateImgPath - widgetId ' . $widgetId . ' NOT found');
+			JCLog::debug('updateImgPath - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 
 		$widgetSettings['imgPath'] = $newPath;
 		self::saveConfig($widgetSettings, $widgetId);
-		log::add(self::$_plugin_id, 'debug', 'updateImgPath - img path updated to "' . $newPath . '" for widget id [' . $widgetId . ']');
+		JCLog::debug('updateImgPath - img path updated to "' . $newPath . '" for widget id [' . $widgetId . ']');
 		if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 		return;
 	}
@@ -145,7 +146,7 @@ class JeedomConnectWidget extends config {
 
 		$widgetSettings = self::getConfiguration($widgetId);
 		if (empty($widgetSettings)) {
-			log::add(self::$_plugin_id, 'debug', 'updateConfig - widgetId ' . $widgetId . ' NOT found');
+			JCLog::debug('updateConfig - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 
@@ -154,19 +155,19 @@ class JeedomConnectWidget extends config {
 			$widgetJC[$key] = $value;
 			$widgetSettings['widgetJC'] = json_encode($widgetJC);
 
-			log::add(self::$_plugin_id, 'debug', 'updateConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value);
+			JCLog::debug('updateConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value);
 			self::saveConfig($widgetSettings, $widgetId);
 			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 			return;
 		}
-		log::add(self::$_plugin_id, 'debug', 'updateConfig - key ' . $key . ' NOT found');
+		JCLog::debug('updateConfig - key ' . $key . ' NOT found');
 	}
 
 	public static function updateWidgetConfig($config) {
 		$widgetId = $config['id'];
 		$widgetSettings = self::getConfiguration($widgetId);
 		if (empty($widgetSettings)) {
-			log::add(self::$_plugin_id, 'debug', 'updateWidgetConfig - widgetId ' . $widgetId . ' NOT found');
+			JCLog::debug('updateWidgetConfig - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 		$widgetSettings['widgetJC'] = json_encode($config);
@@ -182,23 +183,23 @@ class JeedomConnectWidget extends config {
 			$cpl = ' [new creation]';
 		}
 
-		log::add(self::$_plugin_id, 'debug', 'saveConfiguration details received for id : ' . $widgetId . $cpl . ' - conf : ' . json_encode($conf));
+		JCLog::debug('saveConfiguration details received for id : ' . $widgetId . $cpl . ' - conf : ' . json_encode($conf));
 		config::save('widget::' . $widgetId, $conf, self::$_plugin_id);
-		log::add(self::$_plugin_id, 'debug', 'saveConfiguration done');
+		JCLog::debug('saveConfiguration done');
 		return $widgetId;
 	}
 
 	public static function removeWidget($idToRemove = '') {
 		if (!$idToRemove) {
-			log::add('JeedomConnect', 'warning', 'Removing widget(s) -- no data received -- abort');
+			JCLog::warning('Removing widget(s) -- no data received -- abort');
 			return;
 		}
 
 		if (is_array($idToRemove)) {
-			log::add('JeedomConnect', 'info', 'Removing widget(s) -- data received : (array) ' . json_encode($idToRemove));
+			JCLog::info('Removing widget(s) -- data received : (array) ' . json_encode($idToRemove));
 			$arrayIdToRemove = $idToRemove;
 		} else {
-			log::add('JeedomConnect', 'info', 'Removing widget -- data received : (int) ' . json_encode($idToRemove));
+			JCLog::info('Removing widget -- data received : (int) ' . json_encode($idToRemove));
 			$arrayIdToRemove = array($idToRemove);
 		}
 
@@ -213,7 +214,7 @@ class JeedomConnectWidget extends config {
 
 		// remove the widget ID inside widgets of a widget (favourite, group, ...)
 		$allWidgets = self::getAllConfigurations();
-		log::add('JeedomConnect', 'info', 'all widget : ' . json_encode($allWidgets));
+		JCLog::info('all widget : ' . json_encode($allWidgets));
 		foreach ($allWidgets as $widget) {
 			$hasChanged = false;
 			$conf = json_decode($widget['conf']['widgetJC'], true);
@@ -226,7 +227,7 @@ class JeedomConnectWidget extends config {
 				foreach ($conf['widgets'] as $index => $obj) {
 
 					if (in_array($obj['id'],  $arrayIdToRemove)) {
-						log::add('JeedomConnect', 'info', 'removing obj id [widgets] : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' . $widget['id']);
+						JCLog::info('removing obj id [widgets] : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' . $widget['id']);
 						unset($conf['widgets'][$index]);
 						$hasChanged = true;
 					}
@@ -238,7 +239,7 @@ class JeedomConnectWidget extends config {
 				foreach ($conf['moreWidgets'] as $index => $obj) {
 
 					if (in_array($obj['id'],  $arrayIdToRemove)) {
-						log::add('JeedomConnect', 'info', 'removing obj id [moreWidgets] : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' . $widget['id']);
+						JCLog::info('removing obj id [moreWidgets] : ' .  $obj['id'] . ' at index ' . $index . ' for parent ' . $widget['id']);
 						unset($conf['moreWidgets'][$index]);
 						$hasChanged = true;
 					}
@@ -258,13 +259,13 @@ class JeedomConnectWidget extends config {
 	}
 
 	public static function removeWidgetConf($idToRemove) {
-		log::add(self::$_plugin_id, 'debug', 'removing widget id : ' . $idToRemove);
+		JCLog::debug('removing widget id : ' . $idToRemove);
 		self::remove($idToRemove, self::$_plugin_id);
 	}
 
 	public static function duplicateWidget($widgetId) {
 
-		log::add(self::$_plugin_id, 'debug', 'duplicating widget id : ' . $widgetId);
+		JCLog::debug('duplicating widget id : ' . $widgetId);
 		$configInit = self::getConfiguration($widgetId);
 
 		$config = json_decode($configInit, true);
@@ -308,7 +309,7 @@ class JeedomConnectWidget extends config {
 					}
 				}
 			} else {
-				log::add(self::$_plugin_id, 'debug', 'Equipment excluded because disable : ' . $eqLogic->getName() . ' [' . $eqLogic->getId() . ']');
+				JCLog::debug('Equipment excluded because disable : ' . $eqLogic->getName() . ' [' . $eqLogic->getId() . ']');
 			}
 		}
 
@@ -316,21 +317,21 @@ class JeedomConnectWidget extends config {
 			return $k == 0;
 		});
 
-		log::add(self::$_plugin_id, 'debug', 'final result count : ' . json_encode($widgetList));
-		log::add(self::$_plugin_id, 'debug', 'onlyUnused   : ' . json_encode(array_keys($onlyUnused)));
-		log::add(self::$_plugin_id, 'debug', 'list of unexisting widget Id : ' . json_encode($unexistingId));
+		JCLog::debug('final result count : ' . json_encode($widgetList));
+		JCLog::debug('onlyUnused   : ' . json_encode(array_keys($onlyUnused)));
+		JCLog::debug('list of unexisting widget Id : ' . json_encode($unexistingId));
 
 		return array('count' => $widgetList, 'unused' => array_keys($onlyUnused), 'unexisting' => $unexistingId);
 	}
 
 	public static function uploadWidgetConf($dataJson) {
-		log::add(self::$_plugin_id, 'debug', 'uploading widgets conf');
+		JCLog::debug('uploading widgets conf');
 
 		try {
 			$allConf = json_decode($dataJson, true);
 
 			foreach ($allConf as $conf) {
-				log::add(self::$_plugin_id, 'debug', ' import key => ' . $conf['key'] . ' // value ==> ' . json_encode($conf['value']));
+				JCLog::debug(' import key => ' . $conf['key'] . ' // value ==> ' . json_encode($conf['value']));
 
 				if (!is_int($conf['value'])) $conf['value'] = json_encode($conf['value']);
 
@@ -339,7 +340,7 @@ class JeedomConnectWidget extends config {
 
 			return true;
 		} catch (Exception $e) {
-			log::add('JeedomConnect', 'error', 'Unable to upload config file : ' . $e->getMessage());
+			JCLog::error('Unable to upload config file : ' . $e->getMessage());
 			throw new Exception("Error avec l'import");
 		}
 	}
@@ -359,7 +360,7 @@ class JeedomConnectWidget extends config {
 		}
 
 		try {
-			log::add('JeedomConnect', 'debug', 'Saving widgets conf file : ' . $export_file);
+			JCLog::debug('Saving widgets conf file : ' . $export_file);
 			$resultFinal = JeedomConnectUtils::addTypeInPayload($result, 'JC_EXPORT_WIDGETS_DATA');
 
 			//saving file
@@ -368,7 +369,7 @@ class JeedomConnectWidget extends config {
 			//return data
 			return $resultFinal;
 		} catch (Exception $e) {
-			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+			JCLog::error('Unable to write file : ' . $e->getMessage());
 		}
 	}
 
@@ -383,7 +384,7 @@ class JeedomConnectWidget extends config {
 		}
 
 		try {
-			log::add('JeedomConnect', 'debug', 'Saving  custom widgets conf file : ' . $export_file);
+			JCLog::debug('Saving  custom widgets conf file : ' . $export_file);
 			$resultFinal = JeedomConnectUtils::addTypeInPayload($result, 'JC_EXPORT_CUSTOM_DATA');
 
 			//saving file
@@ -392,7 +393,7 @@ class JeedomConnectWidget extends config {
 			//return data
 			return $resultFinal;
 		} catch (Exception $e) {
-			log::add('JeedomConnect', 'error', 'Unable to write file : ' . $e->getMessage());
+			JCLog::error('Unable to write file : ' . $e->getMessage());
 		}
 	}
 
@@ -403,7 +404,7 @@ class JeedomConnectWidget extends config {
 	 * @return void
 	 */
 	public static function copyCustomData($oldApiKey, $newApiKey, $removeOld = false) {
-		log::add('JeedomConnect', 'debug', 'Copying custom data from ' . $oldApiKey . ' to ' . json_encode($newApiKey));
+		JCLog::debug('Copying custom data from ' . $oldApiKey . ' to ' . json_encode($newApiKey));
 
 
 		$customData = config::searchKey('customData::' . $oldApiKey, 'JeedomConnect');
@@ -412,7 +413,7 @@ class JeedomConnectWidget extends config {
 			foreach ($customData as $item) {
 				foreach ($newApiKey as $api) {
 					$newKey = str_replace($oldApiKey, $api, $item['key']);
-					log::add('JeedomConnect', 'debug', ' ******** copying key ' . $item['key'] . ' to ' . $newKey);
+					JCLog::debug(' ******** copying key ' . $item['key'] . ' to ' . $newKey);
 					config::save($newKey, $item['value'], 'JeedomConnect');
 				}
 
@@ -428,7 +429,7 @@ class JeedomConnectWidget extends config {
 
 		$widgetSettings = self::getConfiguration($widgetId);
 		if (empty($widgetSettings)) {
-			log::add(self::$_plugin_id, 'debug', 'replaceTextConfig - widgetId ' . $widgetId . ' NOT found');
+			JCLog::debug('replaceTextConfig - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 
@@ -441,7 +442,7 @@ class JeedomConnectWidget extends config {
 			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 			return;
 		} catch (Exception $e) {
-			log::add('JeedomConnect', 'error', 'replaceTextConfig - ' . $e->getMessage());
+			JCLog::error('replaceTextConfig - ' . $e->getMessage());
 		}
 	}
 
@@ -488,7 +489,7 @@ class JeedomConnectWidget extends config {
 					continue;
 				}
 
-				// log::add('JeedomConnect', 'debug', ' cmd name ' . $option['name'] . '  - matching widget data : ' . json_encode($widget[$option['id']]));
+				// JCLog::debug(' cmd name ' . $option['name'] . '  - matching widget data : ' . json_encode($widget[$option['id']]));
 				if ($option['category'] == "cmd") {
 					if (array_key_exists($option['id'], $widget)) {
 						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
@@ -509,7 +510,7 @@ class JeedomConnectWidget extends config {
 			}
 		}
 
-		// log::add('JeedomConnect', 'debug', ' ## all errors :    ' . json_encode($cmdArrayError));
+		// JCLog::debug(' ## all errors :    ' . json_encode($cmdArrayError));
 		return $cmdArrayError;
 	}
 

@@ -23,7 +23,7 @@ class JeedomConnectActions extends config {
 			'apiKey' => $apiKey,
 			'payload' => $action
 		);
-		//log::add(self::$_plugin_id, 'debug', 'add actions' . json_encode($result) ) ;
+		//JCLog::debug('add actions' . json_encode($result) ) ;
 		config::save('action::' . $newId, json_encode($result), self::$_plugin_id);
 	}
 
@@ -39,14 +39,14 @@ class JeedomConnectActions extends config {
 	}
 
 	public static function removeAllActions() {
-		log::add(self::$_plugin_id, 'debug', 'removing all actions');
+		JCLog::debug('removing all actions');
 		return self::removeActions(self::getAllActions());
 	}
 
 
 	public static function removeActions($actions) {
 		foreach ($actions  as $action) {
-			log::add(self::$_plugin_id, 'debug', 'removing actions - ' . $action['key']);
+			JCLog::debug('removing actions - ' . $action['key']);
 			self::remove($action['key'], self::$_plugin_id);
 		}
 

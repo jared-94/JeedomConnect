@@ -100,7 +100,7 @@ class JeedomConnectUtils {
 
     public static function getCmdForGenericType($genericTypes, $eqLogicId = null) {
         $cmds = cmd::byGenericType($genericTypes, $eqLogicId);
-        // log::add('JeedomConnect', 'debug', "found:" . count($cmds));
+        // JCLog::debug("found:" . count($cmds));
 
         $results = array();
         foreach ($cmds as $cmd) {
@@ -122,10 +122,10 @@ class JeedomConnectUtils {
                 'value' => $cmd->getValue(),
                 'icon' => self::getIconAndColor($cmd->getDisplay('icon'))
             );
-            // log::add('JeedomConnect', 'debug', "cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
+            // JCLog::debug("cmd:{$eqLogic->getId()}/{$eqLogic->getName()}-{$cmd->getId()}/{$cmd->getName()}");
         }
 
-        // log::add('JeedomConnect', 'debug', 'temp results:' . count($results) . '-' . json_encode($results));
+        // JCLog::debug('temp results:' . count($results) . '-' . json_encode($results));
         return $results;
     }
 
@@ -182,20 +182,20 @@ class JeedomConnectUtils {
 
             array_push($result, $current);
         }
-        // log::add('JeedomConnect', 'debug', 'temp createAutoWidget:' .  json_encode($result));
+        // JCLog::debug('temp createAutoWidget:' .  json_encode($result));
         return $result;
     }
 
     public static function filterWidgetsWithStrictMode($results, $eqLogicId, $widgetConfig) {
         $isStrict = config::byKey('isStrict', 'JeedomConnect', true);
         foreach ($results as $eqLogicId => $eqLogicConfig) {
-            // log::add('JeedomConnect', 'debug', "checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
+            // JCLog::debug("checking eqLogic {$eqLogicId}/{$eqLogicConfig['name']}");
             $requiredCmdWithGenericTypeInConfig = false;
             $requiredCmdWithGenericTypeFound = false;
             foreach ($widgetConfig['options'] as $option) {
                 if (isset($option['generic_type']) && isset($option['required']) && $option['required'] == true) {
                     $requiredCmdWithGenericTypeInConfig = true;
-                    // log::add('JeedomConnect', 'debug', "checking {$option['generic_type']}");
+                    // JCLog::debug("checking {$option['generic_type']}");
                     $requiredCmdWithGenericTypeFound = false;
                     foreach ($eqLogicConfig['cmds'] as $cmds) {
                         if ($cmds['generic_type'] == $option['generic_type']) {
@@ -204,14 +204,14 @@ class JeedomConnectUtils {
                         }
                     }
                     if ($isStrict && !$requiredCmdWithGenericTypeFound) {
-                        // log::add('JeedomConnect', 'debug', "Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+                        // JCLog::debug("Strict mode and could not find a required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
                         unset($results[$eqLogicId]);
                         break;
                     }
                 }
             }
             if (!$isStrict && $requiredCmdWithGenericTypeInConfig && !$requiredCmdWithGenericTypeFound) {
-                // log::add('JeedomConnect', 'debug', "Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
+                // JCLog::debug("Could not find ANY required cmd with generic type {$option['generic_type']} for eqLogic {$eqLogicId}/{$eqLogicConfig['name']}, removing it from results");
                 unset($results[$eqLogicId]);
             }
         }
@@ -222,7 +222,7 @@ class JeedomConnectUtils {
 
     public static function widgetAlreadyExistWithRequiredCmd($allGeneratedWidgets, $widgetConfig) {
         $allExistingWidgets = JeedomConnectWidget::getWidgets('all', false, true);
-        // log::add('JeedomConnect', 'debug', "All existing widgets currently : " . json_encode($allExistingWidgets));
+        // JCLog::debug("All existing widgets currently : " . json_encode($allExistingWidgets));
 
         $cmdsWithGenType = array();
         foreach ($widgetConfig['options'] as $config) {
@@ -230,27 +230,27 @@ class JeedomConnectUtils {
                 array_push($cmdsWithGenType, $config['id']);
             }
         }
-        // log::add('JeedomConnect', 'debug', "All required Cmds id : " . json_encode($cmdsWithGenType));
+        // JCLog::debug("All required Cmds id : " . json_encode($cmdsWithGenType));
 
         foreach ($allGeneratedWidgets as $key => $generatedWidget) {
             if (count($cmdsWithGenType) == 0) {
-                // log::add('JeedomConnect', 'debug', "no required cmds found -- skipped control");
+                // JCLog::debug("no required cmds found -- skipped control");
                 $generatedWidget['alreadyExist'] = false;
             } else {
-                // log::add('JeedomConnect', 'debug', "will check for generatedWidget " . json_encode($generatedWidget));
+                // JCLog::debug("will check for generatedWidget " . json_encode($generatedWidget));
                 foreach ($allExistingWidgets as $widget) {
                     $allCmdAlreadyUsed = true;
                     foreach ($cmdsWithGenType as $cmd) {
-                        // log::add('JeedomConnect', 'debug', "will check for {$cmd} : generated=>" . ($generatedWidget[$cmd]['id'] ?? 'none') . ' // widget=>' . ($widget[$cmd]['id'] ?? 'none'));
+                        // JCLog::debug("will check for {$cmd} : generated=>" . ($generatedWidget[$cmd]['id'] ?? 'none') . ' // widget=>' . ($widget[$cmd]['id'] ?? 'none'));
                         if (isset($generatedWidget[$cmd]['id']) && $generatedWidget[$cmd]['id'] != ($widget[$cmd]['id'] ?? 'none')) {
                             $allCmdAlreadyUsed = false;
-                            // log::add('JeedomConnect', 'debug', " -- return false !");
+                            // JCLog::debug(" -- return false !");
                             break;
                         }
                     }
                     if ($allCmdAlreadyUsed) {
-                        // log::add('JeedomConnect', 'debug', " -- same id found !!");
-                        // log::add('JeedomConnect', 'debug', " ** generatedWidget already exist with widget id " . $widget['id']);
+                        // JCLog::debug(" -- same id found !!");
+                        // JCLog::debug(" ** generatedWidget already exist with widget id " . $widget['id']);
                         $generatedWidget['alreadyExist'] = true;
                         break;
                     }
@@ -259,7 +259,7 @@ class JeedomConnectUtils {
             }
             $allGeneratedWidgets[$key] = $generatedWidget;
         }
-        // log::add('JeedomConnect', 'debug', "all generated final ==> " . json_encode($allGeneratedWidgets));
+        // JCLog::debug("all generated final ==> " . json_encode($allGeneratedWidgets));
         return $allGeneratedWidgets;
     }
 
@@ -282,7 +282,7 @@ class JeedomConnectUtils {
         $generatedWidgets = JeedomConnectUtils::createAutoWidget($_widget_type, $widgetConfig, $widgetsAvailable);
 
         $result = JeedomConnectUtils::widgetAlreadyExistWithRequiredCmd($generatedWidgets, $widgetConfig);
-        // log::add('JeedomConnect', 'debug', 'generateWidgetWithGenType => ' . count($result) . '-' . json_encode($result));
+        // JCLog::debug('generateWidgetWithGenType => ' . count($result) . '-' . json_encode($result));
 
         return $result;
     }
@@ -358,7 +358,7 @@ class JeedomConnectUtils {
             }
         }
 
-        // log::add('JeedomConnect', 'debug', 'result : ' .  json_encode($linksData));
+        // JCLog::debug('result : ' .  json_encode($linksData));
 
         return $linksData;
     }
@@ -366,7 +366,7 @@ class JeedomConnectUtils {
     public static function getFileContent($path) {
 
         if (!file_exists($path)) {
-            log::add(__CLASS__, 'error', 'File not found  : ' . $path);
+            JCLog::error('File not found  : ' . $path);
             return null;
         }
 
