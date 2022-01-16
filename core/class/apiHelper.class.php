@@ -2350,7 +2350,12 @@ class apiHelper {
     try {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
-        $user = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
+        $user = '';
+        if (key_exists('user_login', $options)) {
+          $user =  ' par l\'utilisateur ' . $options['user_login'];
+          $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
+        }
+
         JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $user);
         scenarioExpression::createAndExec('action', 'scenario', $options);
       } else {
