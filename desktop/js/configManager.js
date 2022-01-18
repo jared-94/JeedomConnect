@@ -300,7 +300,7 @@ function reIndexArray(array) {
 function addBottomTabModal() {
 	getSimpleModal({
 		title: "Ajouter un menu bas", fields: [{ type: "enable", value: true }, { type: "name" },
-		{ type: "icon" }, { type: "swipeUp" }, { type: "swipeDown" }, { type: "action" }]
+		{ type: "icon" }, { type: 'advancedGrid' }, { type: "swipeUp" }, { type: "swipeDown" }, { type: "action" }]
 	}, function (result) {
 		var name = result.name;
 		var icon = result.icon;
@@ -312,6 +312,7 @@ function addBottomTabModal() {
 		var newTab = {};
 		newTab.name = name;
 		newTab.icon = icon;
+		if (result.advancedGrid !== undefined) newTab.advancedGrid = result.advancedGrid;
 		if (result.swipeUp) { newTab.swipeUp = result.swipeUp; }
 		if (result.swipeDown) { newTab.swipeDown = result.swipeDown; }
 		if (result.action) { newTab.action = result.action; }
@@ -342,11 +343,14 @@ function editBottomTabModal(tabId) {
 	getSimpleModal({
 		title: "Editer un menu bas",
 		fields: [{ type: "enable", value: tabToEdit.enable }, { type: "name", value: tabToEdit.name }, { type: "icon", value: tabToEdit.icon },
-		{ type: 'swipeUp', value: tabToEdit.swipeUp }, { type: 'swipeDown', value: tabToEdit.swipeDown }, { type: 'action', value: tabToEdit.action }]
+		{ type: 'advancedGrid', value: tabToEdit.advancedGrid },
+		{ type: 'swipeUp', value: tabToEdit.swipeUp }, { type: 'swipeDown', value: tabToEdit.swipeDown }, { type: 'action', value: tabToEdit.action },
+		]
 	},
 		function (result) {
 			tabToEdit.name = result.name;
 			tabToEdit.icon = result.icon;
+			if (result.advancedGrid !== undefined) tabToEdit.advancedGrid = result.advancedGrid;
 			tabToEdit.swipeUp = result.swipeUp;
 			tabToEdit.swipeDown = result.swipeDown;
 			tabToEdit.action = result.action;
@@ -416,7 +420,7 @@ function deleteBottomTab(tabId) {
 /* TOP TAB FUNCTIONS */
 
 function addTopTabModal() {
-	getSimpleModal({ title: "Ajouter un menu haut", fields: [{ type: "enable", value: true }, { type: "name" }] }, function (result) {
+	getSimpleModal({ title: "Ajouter un menu haut", fields: [{ type: "enable", value: true }, { type: "name" }, { type: 'advancedGrid' }] }, function (result) {
 		var name = result.name;
 		var parentId = $("#topTabParents-select option:selected").attr('value');
 		if (name == '') { return; }
@@ -426,6 +430,7 @@ function addTopTabModal() {
 		var maxIndex = getMaxIndex(tabList);
 		var newTab = {};
 		newTab.name = name;
+		if (result.advancedGrid !== undefined) newTab.advancedGrid = result.advancedGrid;
 		newTab.enable = result.enable;
 		newTab.parentId = parentId && parseInt(parentId);
 		newTab.index = maxIndex + 1;
@@ -449,8 +454,14 @@ function addTopTabModal() {
 
 function editTopTabModal(tabId) {
 	var tabToEdit = configData.payload.sections.find(tab => tab.id == tabId);
-	getSimpleModal({ title: "Editer un menu haut", fields: [{ type: "enable", value: tabToEdit.enable }, { type: "name", value: tabToEdit.name }] }, function (result) {
+	getSimpleModal({
+		title: "Editer un menu haut", fields: [
+			{ type: "enable", value: tabToEdit.enable },
+			{ type: "name", value: tabToEdit.name },
+			{ type: 'advancedGrid', value: tabToEdit.advancedGrid }]
+	}, function (result) {
 		tabToEdit.name = result.name;
+		if (result.advancedGrid !== undefined) tabToEdit.advancedGrid = result.advancedGrid;
 		tabToEdit.enable = result.enable;
 		refreshTopTabContent();
 	});

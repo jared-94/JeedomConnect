@@ -152,6 +152,18 @@ if (!isConnect('admin')) {
           });
         }
 
+      } else if (option.type == "advancedGrid") {
+        swipe = `<li><div class='form-group'>
+			   <label class='col-xs-3' >Mode de grille</label>
+			   <div class='col-xs-9'>
+          <select id="advancedGrid-select">
+            <option value='auto' ${option.value === undefined ? "selected" : ""}>Automatique</option>
+            <option value='standard' ${option.value === false ? "selected" : ""}>Standard</option>
+            <option value='advanced' ${option.value === true ? "selected" : ""}>Avancé</option>
+          </select>
+         </div>
+         </div></li>`;
+        items.push(swipe);
       } else if (option.type == "swipeUp" | option.type == "swipeDown" | option.type == "action") {
         swipe = `<li><div class='form-group'>
 			   <label class='col-xs-3' >${option.type == 'swipeUp' ? "Swipe Up" : ( option.type == 'swipeDown' ? "Swipe Down" : "Action" )}</label>
