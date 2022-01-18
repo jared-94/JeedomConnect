@@ -397,9 +397,13 @@ class JeedomConnectUtils {
     public static function getTimelineFolders() {
         $folders = array("main" => "Principal");
 
+        $custom = array();
         foreach ((timeline::listFolder()) as $folder) {
             if ($folder == 'main') continue;
-            $folders['custom'][$folder] = $folder;
+            array_push($custom, $folder);
+        }
+        if (count($custom) > 0) {
+            $folders['custom'] = $custom;
         }
 
         return $folders;
