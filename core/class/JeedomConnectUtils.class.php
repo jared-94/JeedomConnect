@@ -453,6 +453,7 @@ class JeedomConnectUtils {
                 $return['object'] = is_object($object) ? $object->getName() : 'aucun';
                 $return['name'] = $cmd->getName();
 
+                $return['id'] = $cmd->getId();
                 $return['cmdtype'] = $cmd->getType();
                 $return['plugin'] = $eqLogic->getEqType_name();
                 $return['eqLogic'] = $eqLogic->getName();
@@ -471,6 +472,7 @@ class JeedomConnectUtils {
                 $return['object'] = is_object($object) ? $object->getName() : 'aucun';
 
                 $return['name'] = $scenario->getName();
+                $return['id'] = $scenario->getId();
                 $return['trigger'] =  $event->getOptions('trigger');
                 break;
         }
