@@ -2356,6 +2356,9 @@ class apiHelper {
           $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
         }
 
+        if (!key_exists('action', $options)) $option['action'] = 'start';
+        if (!key_exists('scenario_id', $options)) $option['scenario_id'] = $id;
+
         JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $user);
         scenarioExpression::createAndExec('action', 'scenario', $options);
       } else {
