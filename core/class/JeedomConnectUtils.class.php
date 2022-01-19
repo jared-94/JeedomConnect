@@ -454,6 +454,7 @@ class JeedomConnectUtils {
                 $object = $eqLogic->getObject();
                 $return['object'] = is_object($object) ? $object->getName() : 'aucun';
                 $return['name'] = $cmd->getName();
+                $return['isHistorized'] = $cmd->getIsHistorized() == "1";
 
                 $return['id'] = $cmd->getId();
                 $return['cmdtype'] = $cmd->getType();

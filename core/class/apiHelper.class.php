@@ -1895,14 +1895,10 @@ class apiHelper {
       $history = history::all($id, $startTime, $endTime);
     }
 
-    $cmd = cmd::byId($id);
-    $isHistorized = is_object($cmd) ? $cmd->getIsHistorized() == "1" :  false;
-
     $result = array(
       'type' => 'SET_HISTORY',
       'payload' => array(
         'id' => $id,
-        'isHistorized' => $isHistorized,
         'data' => array()
       )
     );
