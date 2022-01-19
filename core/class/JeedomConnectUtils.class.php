@@ -413,13 +413,15 @@ class JeedomConnectUtils {
      * @param string $folder 
      * @return array
      */
-    public static function getTimelineEvents($folder = 'main') {
+    public static function getTimelineEvents($folder = 'main', $userId = null) {
 
         $return = array();
+        $user = user::byId($userId) ?: null;
+        /** @var array<timeline> $events */
         $events = timeline::byFolder($folder);
         foreach ($events as $event) {
             // hasRight method available with core 4.2
-            if (method_exists($event, 'hasRight') && !$event->hasRight()) {
+            if (method_exists($event, 'hasRight') && !$event->hasRight($user)) {
                 continue;
             }
             $info = self::getTimelineEventDetails($event);

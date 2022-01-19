@@ -399,7 +399,7 @@ class apiHelper {
           break;
 
         case 'GET_TIMELINE_EVENTS':
-          $result = JeedomConnectUtils::getTimelineEvents($param['folder'] ?? 'main');
+          $result = JeedomConnectUtils::getTimelineEvents($param['folder'] ?? 'main', $param['user_id'] ?? null);
           return JeedomConnectUtils::addTypeInPayload($result, 'SET_TIMELINE_EVENTS');
           break;
 
