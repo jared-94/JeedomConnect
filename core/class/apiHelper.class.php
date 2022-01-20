@@ -552,7 +552,7 @@ class apiHelper {
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
-      'editEnabled' => $eqLogic->getConfiguration('editEnabled') == '1',
+      'editEnabled' => $userConnected->getProfils() == 'admin', //$eqLogic->getConfiguration('editEnabled') == '1',
       'getLogAllowed' => $userConnected->getProfils() == "admin",
       'pluginConfig' => self::getPluginConfig($eqLogic, false),
       'cmdInfo' => self::getCmdInfoData($config, false),
