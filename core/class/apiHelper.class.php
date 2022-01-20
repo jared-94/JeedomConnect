@@ -425,11 +425,11 @@ class apiHelper {
           break;
 
         default:
-          return self::raiseException($method, ' [' . $type . '] - method not defined');
+          return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
       }
     } catch (Exception $e) {
-      return self::raiseException($method, ' [' . $type . '] - ' . $e->getMessage());
+      return self::raiseException('[' . $type . '] - ' . $e->getMessage(), $method);
     }
   }
 
@@ -2430,10 +2430,11 @@ class apiHelper {
       self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
   }
 
-  public static function raiseException($type, $errMsg = '') {
+  public static function raiseException($errMsg = '', $method = '') {
+    $txtType = ($method == '') ? '' : "Error with '" . $method . "' method ";
     $result = array(
       "type" => "EXCEPTION",
-      "payload" => "Error with '" . $type . "' method " . $errMsg
+      "payload" => $txtType . $errMsg
     );
     JCLog::debug('Send ' . json_encode($result));
     JCLog::error($result["payload"]);

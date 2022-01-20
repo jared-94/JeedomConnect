@@ -146,6 +146,6 @@ try {
   }
 } catch (Exception $e) {
   // JCLog::error('on sse ' . $e->getMessage());
-  $result = apiHelper::raiseException('SSE', $e->getMessage());
+  $result = apiHelper::raiseException($e->getMessage(), 'SSE');
   sse(json_encode($result));
 }

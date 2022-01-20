@@ -222,7 +222,7 @@ class ConnectLogic implements MessageComponentInterface {
 				return $from->send(json_encode($result));
 			}
 		} catch (\Exception $e) {
-			$from->send(json_encode(\apiHelper::raiseException($msg['type'], '- ' . $e->getMessage())));
+			$from->send(json_encode(\apiHelper::raiseException($e->getMessage(), $msg['type'])));
 		}
 	}
 

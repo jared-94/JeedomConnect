@@ -66,7 +66,7 @@ try {
 
   if ($skipLog) JCLog::debug('[API] HTTP Received ' . $jsonData);
 
-  $result = apiHelper::raiseException($method, '- ' . $e->getMessage());
+  $result = apiHelper::raiseException($e->getMessage(), $method);
   // JCLog::error('[API] Send ' . $method . ' -> ' . json_encode($result));
   $jsonrpc->makeSuccess($result);
 }
