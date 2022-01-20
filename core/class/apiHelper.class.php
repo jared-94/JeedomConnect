@@ -53,18 +53,19 @@ class apiHelper {
           break;
 
         case 'CMD_EXEC':
-          self::execCmd($param['id'], $param['options'] ?? null);
-          return null;
+          $result = self::execCmd($param['id'], $param['options'] ?? null);
+          return $result;
           break;
 
         case 'CMDLIST_EXEC':
-          self::execMultipleCmd($param['cmdList']);
-          return null;
+          // example : used for a light group
+          $result = self::execMultipleCmd($param['cmdList']);
+          return $result;
           break;
 
         case 'SC_EXEC':
-          self::execSc($param['id'], $param['options']);
-          return null;
+          $result = self::execSc($param['id'], $param['options']);
+          return $result;
           break;
 
         case 'SC_STOP':
@@ -2305,21 +2306,46 @@ class apiHelper {
       JCLog::error("Can't find command [id=" . $id . "]");
       return;
     }
-    try {
-      $user = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
-      JCLog::info('Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $user);
 
-      $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
+    $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
+    try {
+
+      if (key_exists('user_id', $options)) {
+        /** @var user $user */
+        $user = user::byId($options['user_id']);
+        if (!$cmd->hasRight($user)) {
+          if ($options['withLog'] ?? true) JCLog::warning('/!\ commande ' . $cmd->getHumanName() . ' interdite pour l\'utilisateur "' . $user->getLogin() . '" - droit limité');
+          if ($options['withLog'] ?? true) {
+            return self::raiseException('Vous n\'avez pas le droit d\'exécuter cette commande ' . $cmd->getHumanName());
+          } else {
+            return false;
+          }
+        }
+      }
+
+      $txtUser = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
+      JCLog::info('Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $txtUser);
+
       $cmd->execCmd($options);
     } catch (Exception $e) {
       JCLog::error($e->getMessage());
     }
+    return null;
   }
 
   private static function execMultipleCmd($cmdList) {
+    $error = array();
     foreach ($cmdList as $cmd) {
-      self::execCmd($cmd['id'], $cmd['options']);
+      $temp = self::execCmd($cmd['id'], array_merge($cmd['options'] ?? array(), array('withLog' => false)));
+      if (!is_null($temp)) array_push($error, $cmd['id']);
     }
+
+    if (count($error) > 0) {
+      $cmdErrorName = JeedomConnectUtils::getCmdName($error, true);
+      return self::raiseException('Vous n\'avez pas le droit d\'exécuter les commandes ' . implode(", ", $cmdErrorName));
+    }
+
+    return null;
   }
 
   private static function getJCActions($apiKey, $withType = true) {
@@ -2350,16 +2376,25 @@ class apiHelper {
     try {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
-        $user = '';
+        $textUser = '';
         if (key_exists('user_login', $options)) {
-          $user =  ' par l\'utilisateur ' . $options['user_login'];
+          $textUser =  ' par l\'utilisateur ' . $options['user_login'];
           $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
+        }
+
+        if (key_exists('user_id', $options)) {
+          /** @var user $user */
+          $user = user::byId($options['user_id']);
+          if (!$scenario->hasRight('x', $user)) {
+            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . ' interdit pour l\'utilisateur "' . $user->getLogin() . '" - droit limité');
+            return self::raiseException('Vous n\'avez pas le droit d\'exécuter ce scenario ' . $scenario->getHumanName());
+          }
         }
 
         if (!key_exists('action', $options)) $options['action'] = 'start';
         if (!key_exists('scenario_id', $options)) $options['scenario_id'] = $id;
 
-        JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $user);
+        JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
         scenarioExpression::createAndExec('action', 'scenario', $options);
       } else {
         throw new Exception("scenarioId " . $id . " does not exist");
@@ -2367,6 +2402,8 @@ class apiHelper {
     } catch (Exception $e) {
       JCLog::error($e->getMessage());
     }
+
+    return null;
   }
 
   private static function stopSc($id) {

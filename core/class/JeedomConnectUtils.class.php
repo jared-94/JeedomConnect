@@ -578,4 +578,22 @@ class JeedomConnectUtils {
         }
         return rmdir($dir);
     }
+
+
+    public static function getCmdName(array $cmdIds, bool $full_name = false): array {
+
+        $result = array();
+        foreach ($cmdIds as $id) {
+            $cmd = cmd::byId($id);
+            if (is_object($cmd)) {
+                if ($full_name) {
+                    array_push($result, $cmd->getHumanName());
+                } else {
+                    array_push($result, $cmd->getName());
+                }
+            }
+        }
+
+        return $result;
+    }
 }
