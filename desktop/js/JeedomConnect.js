@@ -72,8 +72,13 @@ function SortByType(a, b) {
 }
 
 function SortByRoom(a, b) {
-  var aRoom = ('room' in a) ? roomList.find(r => r.id == a.room).name.toLowerCase() : 'AAAucun';
-  var bRoom = ('room' in b) ? roomList.find(r => r.id == b.room).name.toLowerCase() : 'AAAucun';
+
+  var aObj = ('room' in a) ? roomList.find(r => r.id == a.room) || undefined : undefined;
+  var bObj = ('room' in b) ? roomList.find(r => r.id == b.room) || undefined : undefined;
+
+  var aRoom = (aObj != undefined) ? aObj.name.toLowerCase() : 'AAAucun';
+  var bRoom = (bObj != undefined) ? bObj.name.toLowerCase() : 'AAAucun';
+
   return ((aRoom < bRoom) ? -1 : ((aRoom > bRoom) ? 1 : 0));
 }
 
