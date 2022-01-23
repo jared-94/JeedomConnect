@@ -142,7 +142,7 @@ class JeedomConnectWidget extends config {
 		return;
 	}
 
-	public static function updateConfig($widgetId, $key, $value, $reload = true) {
+	public static function updateConfig($widgetId, $key, $value = null, $reload = true) {
 
 		$widgetSettings = self::getConfiguration($widgetId);
 		if (empty($widgetSettings)) {
@@ -152,7 +152,11 @@ class JeedomConnectWidget extends config {
 
 		$widgetJC = json_decode($widgetSettings['widgetJC'], true);
 		if (isset($widgetJC[$key])) {
-			$widgetJC[$key] = $value;
+			if (is_null($value)) {
+				unset($widgetJC[$key]);
+			} else {
+				$widgetJC[$key] = $value;
+			}
 			$widgetSettings['widgetJC'] = json_encode($widgetJC);
 
 			JCLog::debug('updateConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value);
@@ -478,6 +482,7 @@ class JeedomConnectWidget extends config {
 		$widgetParam = JeedomConnect::getWidgetParam(false);
 
 		$cmdArrayError = array();
+		$roomArrayError = array();
 
 		foreach ($widgetsDb as $item) {
 			$widget = json_decode($item['widgetJC'], true);
@@ -508,10 +513,17 @@ class JeedomConnectWidget extends config {
 					}
 				}
 			}
+
+			// checking room
+			if (key_exists('room', $widget)) {
+				$obj = jeeObject::byId($widget['room']);
+				// JCLog::debug("checking room => " . $widget['room'] . " // result :" . json_encode($obj));
+				if ($obj == '') $roomArrayError[] = $widget['id'];
+			}
 		}
 
 		// JCLog::debug(' ## all errors :    ' . json_encode($cmdArrayError));
-		return $cmdArrayError;
+		return array($cmdArrayError, $roomArrayError);
 	}
 
 

@@ -28,6 +28,14 @@ sendVarToJS('userHash', $userHash);
 /** @var array<JeedomConnect> $eqLogics */
 $eqLogics = eqLogic::byType($plugin->getId());
 
+list($widgetInError, $roomInError) = JeedomConnectWidget::checkCmdSetupInWidgets();
+
+foreach ($roomInError as $widgetId) {
+	JCLog::debug("removing room for widget Id " . $widgetId);
+	//remove key room for widget with unexisting room
+	JeedomConnectWidget::updateConfig($widgetId, 'room');
+}
+
 $widgetArray = JeedomConnectWidget::getWidgets();
 
 $jcFilter = $_GET['jcFilter'] ?? '';
@@ -58,8 +66,6 @@ switch ($orderBy) {
 
 $allConfig = JeedomConnect::getWidgetParam();
 $widgetTypeArray = array();
-
-$widgetInError = JeedomConnectWidget::checkCmdSetupInWidgets();
 
 $listWidget = '';
 
