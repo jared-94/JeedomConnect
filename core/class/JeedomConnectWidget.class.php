@@ -100,7 +100,7 @@ class JeedomConnectWidget extends config {
 					$widgetItem['type'] = $widgetJC['type'] ?? 'none';
 					$widgetItem['roomId'] = $widgetJC['room'] ?? '';
 					$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
-					$widgetItem['roomName'] = (!is_null($widgetRoomObjet) && is_object($widgetRoomObjet)) ? ($widgetItem['roomId'] == 'global' ? 'Global' : $widgetRoomObjet->getName()) : 'Aucun';
+					$widgetItem['roomName'] = $widgetItem['roomId'] == 'global' ? 'Global' : (is_object($widgetRoomObjet) ? $widgetRoomObjet->getName() : 'Aucun');
 					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
 				}
 
@@ -515,7 +515,7 @@ class JeedomConnectWidget extends config {
 			}
 
 			// checking room
-			if (key_exists('room', $widget)) {
+			if (key_exists('room', $widget) && $widget['room'] != 'global') {
 				$obj = jeeObject::byId($widget['room']);
 				// JCLog::debug("checking room => " . $widget['room'] . " // result :" . json_encode($obj));
 				if ($obj == '') $roomArrayError[] = $widget['id'];
