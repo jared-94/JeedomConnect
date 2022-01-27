@@ -2522,13 +2522,13 @@ class apiHelper {
     if (isset($infos['isCharging'])) {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
-    if (isset($infos['nextAlarm'])) {
+    if (isset($infos['nextAlarm']) && is_numeric($infos['nextAlarm'])) {
       $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
   }
 
   /**
-   * @param string $oldApiKey 
+   * @param string $oldApiKey
    * @return bool
    */
   public static function isApiKeyRegenerated($oldApiKey) {
@@ -2536,7 +2536,7 @@ class apiHelper {
   }
 
   /**
-   * @param string $oldApiKey 
+   * @param string $oldApiKey
    * @return array
    */
   public static function getApiKeyRegenerated($oldApiKey, $withType = true) {
@@ -2556,11 +2556,11 @@ class apiHelper {
 
 
   /**
-   * 
+   *
    * Allow to update an event on a command
-   * 
-   * @param string $commandId 
-   * @param string $message 
+   *
+   * @param string $commandId
+   * @param string $message
    * @return void
    */
   public static function setEvent($commandId, $message) {
