@@ -121,8 +121,12 @@ try {
       $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp);
 
       foreach ($data as $res) {
-        if (key_exists('payload', $res) && count($res['payload']) > 0) {
-          $sendInfo = true;
+        if (key_exists('payload', $res)) {
+          if (is_array($res['payload']) && count($res['payload']) == 0) {
+            $sendInfo = false;
+          } else {
+            $sendInfo = true;
+          }
           break;
         }
       }
