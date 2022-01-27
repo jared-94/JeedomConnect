@@ -38,6 +38,7 @@ ignore_user_abort(true);
 
 
 $apiKey = init('apiKey');
+/** @var \JeedomConnect */
 $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
 try {
@@ -68,6 +69,7 @@ try {
   $eqLogic->save(true);
 
   while (true) {
+    /** @var \JeedomConnect */
     $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
     if (!is_object($logic)) {

@@ -20,6 +20,7 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
 
 $apiKey = init('apiKey');
+/** @var \JeedomConnect */
 $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
 if (!is_object($eqLogic)) {

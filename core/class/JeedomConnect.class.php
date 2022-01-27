@@ -241,6 +241,7 @@ class JeedomConnect extends eqLogic {
 					JCLog::debug('Copying config file from ' . $from . ' to ' . $item);
 					file_put_contents($config_file_destination, $configFile);
 
+					/** @var JeedomConnect $eqLogic */
 					$eqLogic = eqLogic::byLogicalId($item, 'JeedomConnect');
 					if (!is_object($eqLogic)) {
 						JCLog::debug('no object found');

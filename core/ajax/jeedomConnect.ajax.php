@@ -178,6 +178,7 @@ try {
 				$apiKey = init('apiKey');
 
 				$configJson = $allConf['payload'];
+				/** @var JeedomConnect */
 				$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 				if (!is_object($eqLogic) or $configJson == null) {
 					throw new Exception("Pas d'équipement trouvé");

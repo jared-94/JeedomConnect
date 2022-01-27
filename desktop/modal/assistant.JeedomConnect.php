@@ -18,6 +18,7 @@ if (!isConnect('admin')) {
   throw new Exception('{{401 - Accès non autorisé}}');
 }
 
+/** @var \eqLogic */
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
 

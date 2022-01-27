@@ -108,6 +108,7 @@ class ConnectLogic implements MessageComponentInterface {
 			return;
 		}
 
+		/** @var \JeedomConnect */
 		$eqLogic = \eqLogic::byLogicalId($objectMsg->apiKey, 'JeedomConnect');
 
 		if (!is_object($eqLogic)) {
@@ -234,6 +235,7 @@ class ConnectLogic implements MessageComponentInterface {
 	public function onClose(ConnectionInterface $conn) {
 		// Remove client from lists
 		\JCLog::info("Connection #{$conn->resourceId} ({$conn->apiKey}) has disconnected");
+		/** @var \JeedomConnect */
 		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
 		if (is_object($eqLogic)) {
 			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
@@ -256,6 +258,7 @@ class ConnectLogic implements MessageComponentInterface {
 	 */
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		\JCLog::error("An error has occurred: {$e->getMessage()}");
+		/** @var \JeedomConnect */
 		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
 		if (is_object($eqLogic)) {
 			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
@@ -275,6 +278,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 	public function lookForNewConfig() {
 		foreach ($this->authenticatedClients as $client) {
+			/** @var \JeedomConnect */
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 			if (!is_object($eqLogic)) {
 				\JCLog::warning('eq not found - lookForNewConfig');
@@ -297,6 +301,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 	private function sendActions() {
 		foreach ($this->authenticatedClients as $client) {
+			/** @var \JeedomConnect */
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 			if (!is_object($eqLogic)) {
 				\JCLog::warning('eq not found - sendActions');
@@ -325,6 +330,7 @@ class ConnectLogic implements MessageComponentInterface {
 
 	private function broadcastEvents() {
 		foreach ($this->authenticatedClients as $client) {
+			/** @var \JeedomConnect */
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
 			if (!is_object($eqLogic)) {
 				\JCLog::warning('eq not found - broadcastEvents');
