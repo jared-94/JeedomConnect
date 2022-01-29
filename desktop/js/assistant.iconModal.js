@@ -15,8 +15,9 @@ $('#bt_uploadImg').fileupload({
         var name = data.result.result.filepath.replace(/^.*[\\\/]/, '');
         div = '<div class="divIconSel divImgSel">';
         div += '<div class="cursor iconSel"><img class="img-responsive" source="user" name="' + name + '" src="' + userImgPath + name + '" /></div>';
-        div += '<div class="iconDesc">' + name + '</div>';
-        div += '<a class="btn btn-danger btn-xs bt_removeImg" data-realfilepath="' + userImgPath + name + '"><i class="fas fa-trash"></i> {{Supprimer}}</a>';
+        div += '<div class="iconDesc">' + name;
+        div += '<i class="fas fa-minus-circle bt_removeImg cursor" title="{{Supprimer}}" style="color: red!important;padding-left: 5px;" data-realfilepath="' + userImgPath + name + '"></i>';
+        div += '</div>';
         div += '</div>';
         $("#div_imageGallery[source='user']").append(div);
 
