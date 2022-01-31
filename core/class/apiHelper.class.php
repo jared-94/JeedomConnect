@@ -2063,22 +2063,17 @@ class apiHelper {
 
   // BACKUPS
   private static function setAppConfig($apiKey, $config) {
-    $_backup_dir = __DIR__ . '/../../data/backups/';
+    $_backup_dir = JeedomConnect::$_backup_dir;
     if (!is_dir($_backup_dir)) {
       mkdir($_backup_dir);
     }
+
     $eqDir = $_backup_dir . $apiKey . '/';
     if (!is_dir($eqDir)) {
       mkdir($eqDir);
     }
-    $backupIndex = config::byKey('backupIndex::' . $apiKey, 'JeedomConnect');
-    if (empty($backupIndex)) {
-      $backupIndex = 0;
-    }
-    $backupIndex++;
-    config::save('backupIndex::' . $apiKey, $backupIndex, 'JeedomConnect');
 
-    $config_file = $eqDir . urlencode($config['name']) . '-' . $backupIndex . '.json';
+    $config_file = $eqDir . urlencode($config['name']) . '-' . time() . '.json';
     try {
       JCLog::debug('Saving backup in file : ' . $config_file);
       file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
@@ -2088,10 +2083,11 @@ class apiHelper {
   }
 
   private static function getAppConfig($apiKey, $configId) {
-    $_backup_dir = '/plugins/JeedomConnect/data/backups/';
+    $_backup_dir = JeedomConnect::$_backup_dir;
+
     $eqDir = $_backup_dir . $apiKey;
     $files = self::getFiles($eqDir);
-    $endFile = '-' . $configId . '.json';
+    $endFile = '-' . $configId . '22.json';
     foreach ($files['payload']['files'] as $file) {
       if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
         $config_file = file_get_contents($file['path']);
@@ -2101,7 +2097,7 @@ class apiHelper {
         );
       }
     }
-    return false;
+    return self::raiseException('Le fichier n\'existe plus.');
   }
 
   // JEEDOM & PLUGINS HEALTH
