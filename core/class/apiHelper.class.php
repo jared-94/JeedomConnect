@@ -2087,7 +2087,7 @@ class apiHelper {
 
     $eqDir = $_backup_dir . $apiKey;
     $files = self::getFiles($eqDir);
-    $endFile = '-' . $configId . '22.json';
+    $endFile = '-' . $configId . '.json';
     foreach ($files['payload']['files'] as $file) {
       if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
         $config_file = file_get_contents($file['path']);
