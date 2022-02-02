@@ -2338,7 +2338,7 @@ class apiHelper {
 
     if (count($error) > 0) {
       $cmdErrorName = JeedomConnectUtils::getCmdName($error, true);
-      return self::raiseException('Vous n\'avez pas le droit d\'exécuter les commandes ' . implode(", ", $cmdErrorName));
+      return self::raiseException('Vous n\'avez pas le droit d\'exécuter les commandes ' . implode(", ", $cmdErrorName), '', array("cmd_ids" => $error));
     }
 
     return null;
@@ -2463,12 +2463,17 @@ class apiHelper {
       self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
   }
 
-  public static function raiseException($errMsg = '', $method = '') {
+  public static function raiseException($errMsg = '', $method = '', $detail = null) {
     $txtType = ($method == '') ? '' : "Error with '" . $method . "' method ";
     $result = array(
       "type" => "EXCEPTION",
       "payload" => $txtType . $errMsg
     );
+
+    if (!is_null($detail)) {
+      $result['details'] = $detail;
+    }
+
     JCLog::debug('Send ' . json_encode($result));
     JCLog::error($result["payload"]);
 
