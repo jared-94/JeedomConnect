@@ -2467,11 +2467,13 @@ class apiHelper {
     $txtType = ($method == '') ? '' : "Error with '" . $method . "' method ";
     $result = array(
       "type" => "EXCEPTION",
-      "payload" => $txtType . $errMsg
+      "payload" => array(
+        "message" => $txtType . $errMsg
+      )
     );
 
     if (!is_null($detail)) {
-      $result['details'] = $detail;
+      $result['payload']['details'] = $detail;
     }
 
     JCLog::debug('Send ' . json_encode($result));
