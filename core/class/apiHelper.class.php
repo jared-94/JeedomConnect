@@ -2300,7 +2300,7 @@ class apiHelper {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
       JCLog::error("Can't find command [id=" . $id . "]");
-      return;
+      return self::raiseException("La commande $id n'existe pas");
     }
 
     $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
@@ -2325,6 +2325,7 @@ class apiHelper {
       $cmd->execCmd($options);
     } catch (Exception $e) {
       JCLog::error($e->getMessage());
+      return self::raiseException($e->getMessage());
     }
     return null;
   }
@@ -2393,10 +2394,11 @@ class apiHelper {
         JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
         scenarioExpression::createAndExec('action', 'scenario', $options);
       } else {
-        throw new Exception("scenarioId " . $id . " does not exist");
+        throw new Exception("Le scenario $id n'existe pas");
       }
     } catch (Exception $e) {
       JCLog::error($e->getMessage());
+      return self::raiseException($e->getMessage());
     }
 
     return null;
