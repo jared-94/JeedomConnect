@@ -2479,7 +2479,7 @@ class apiHelper {
     }
 
     JCLog::debug('Send ' . json_encode($result));
-    JCLog::error($result["payload"]);
+    JCLog::error($result["payload"]["message"]);
 
     return $result;
   }
