@@ -2083,7 +2083,8 @@ class apiHelper {
   }
 
   private static function getAppConfig($apiKey, $configId) {
-    $_backup_dir = JeedomConnect::$_backup_dir;
+    // $_backup_dir = JeedomConnect::$_backup_dir;
+    $_backup_dir = '/plugins/JeedomConnect/data/backups/';
 
     $eqDir = $_backup_dir . $apiKey;
     $files = self::getFiles($eqDir);
