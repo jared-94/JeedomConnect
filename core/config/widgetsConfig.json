@@ -5909,6 +5909,16 @@
 			"name": "Evénement",
 			"img": "events.png",
 			"description": "Permet de réaliser la mise à jour d'une commande info",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande info"
+				}
+			],
 			"options": [
 				{
 					"id": "name",
@@ -5942,6 +5952,12 @@
 					"required": false,
 					"category": "img",
 					"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
+				},
+				{
+					"id": "keepLastEvent",
+					"name": "Garder la dernière valeur",
+					"category": "binary",
+					"description": "Conserver la dernière valeur pour ne pas avoir à le retaper"
 				},
 				{
 					"id": "image",
