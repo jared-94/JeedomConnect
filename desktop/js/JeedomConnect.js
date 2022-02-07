@@ -839,6 +839,15 @@ var widgetsList = (function () {
     'url': "plugins/JeedomConnect/core/config/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
+      var availableWidgets = data.widgets.filter(function (item) {
+        if (item.hide !== undefined && item.hide) {
+          return false;
+        }
+        return true;
+      });
+
+      data.widgets = availableWidgets
+
       data.widgets.sort(function (a, b) {
         return a.name.localeCompare(b.name);
       });
