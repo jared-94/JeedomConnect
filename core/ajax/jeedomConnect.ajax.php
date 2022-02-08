@@ -22,7 +22,7 @@ try {
 	include_file('core', 'authentification', 'php');
 
 	if (!isConnect('admin')) {
-		throw new \Exception(__('401 - Accès non autorisé', __FILE__));
+		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
 
 	if (init('action') == 'orderWidget') {
@@ -85,16 +85,16 @@ try {
 	if (init('action') == 'getCmdsForWidgetType') {
 		$widget_type = init('widget_type');
 		$eqLogicId = !is_numeric(init('eqLogic_Id')) ? null : init('eqLogic_Id');
-		log::add('JeedomConnect', 'debug', 'getCmdsForWidgetType:' . $widget_type . ' - for eqLogicId : ' . $eqLogicId);
+		JCLog::debug('getCmdsForWidgetType:' . $widget_type . ' - for eqLogicId : ' . $eqLogicId);
 
 		$results = JeedomConnectUtils::generateWidgetWithGenType($widget_type, $eqLogicId);
-		log::add('JeedomConnect', 'debug', 'final generic result:' . count($results) . '-' . json_encode($results));
+		JCLog::debug('final generic result:' . count($results) . '-' . json_encode($results));
 
 		ajax::success($results);
 	}
 
 	if (init('action') == 'saveWidgetConfig') {
-		log::add('JeedomConnect', 'debug', '-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
+		JCLog::debug('-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
 
 		$id = init('eqId') ?: JeedomConnectWidget::incrementIndex();
 		$newConfWidget = array();
@@ -106,7 +106,8 @@ try {
 		JeedomConnectWidget::saveConfig($newConfWidget, $id);
 
 		if (!is_null(init('eqId'))  && init('eqId') != '') {
-			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			/** @var JeedomConnect $eqLogic */
+			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$eqLogic->checkEqAndUpdateConfig(init('eqId'));
 			}
 		}
@@ -119,12 +120,13 @@ try {
 
 		$scope = init('scope') ?? '';
 		$more = false;
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			if (($scope == 'all') || (($scope == 'enableOnly') && $eqLogic->getIsEnable())) {
-				log::add('JeedomConnect_migration', 'info', 'migrate conf for equipment ' . $eqLogic->getName());
+				JCLog::info('migrate conf for equipment ' . $eqLogic->getName(), '_migration');
 				$eqLogic->moveToNewConfig();
 			} else {
-				log::add('JeedomConnect_migration', 'info', 'configuration for equipement "' . $eqLogic->getName() . '" not migrated because equipement disabled');
+				JCLog::warning('configuration for equipement "' . $eqLogic->getName() . '" not migrated because equipement disabled', '_migration');
 				$more = true;
 			}
 		}
@@ -132,32 +134,84 @@ try {
 		ajax::success(array('more' => $more));
 	}
 
-	if (init('action') == 'exportWidgets') {
-		log::add('JeedomConnect', 'debug', 'ajax -- fx exportWidgets');
-		JeedomConnectWidget::exportWidgetConf();
-		ajax::success();
-	}
+	if (init('action') == 'generateFile') {
+		switch (init('type')) {
+			case 'exportEqConf':
+				$content = JeedomConnect::getWidgetConfigContent(init('apiKey'));
+				$content = JeedomConnectUtils::addTypeInPayload($content, 'JC_EXPORT_EQLOGIC_CONFIG');
+				break;
 
-	if (init('action') == 'exportCustomData') {
-		log::add('JeedomConnect', 'debug', 'ajax -- fx exportCustomData');
-		JeedomConnectWidget::exportWidgetCustomConf();
-		ajax::success();
+			case 'exportWidgets':
+				JCLog::debug('ajax -- fx exportWidgets');
+				$content = JeedomConnectWidget::exportWidgetConf();
+				break;
+
+			case 'exportCustomData':
+				JCLog::debug('ajax -- fx exportCustomData');
+				$content = JeedomConnectWidget::exportWidgetCustomConf();
+				break;
+
+			default:
+				ajax::error('Pas de type d\'export !');
+		}
+
+		ajax::success($content);
 	}
 
 	if (init('action') == 'uploadWidgets') {
-		log::add('JeedomConnect', 'debug', 'ajax -- fx uploadWidgets');
-		try {
-			JeedomConnectWidget::uploadWidgetConf(init('data'));
-			ajax::success("Import avec succès");
-		} catch (Exception $e) {
-			ajax::success($e->getMessage());
+		JCLog::debug('ajax -- fx uploadWidgets');
+
+		$allConf = json_decode(init('data'), true);
+		// JCLog::debug('content file ==> ' . init('data'));
+		$type = $allConf['type'] ?? null;
+		// JCLog::debug('Type ==> ' . $type);
+
+		$import = init('import');
+		// JCLog::debug('Import ==> ' . $import);
+
+		switch ($type) {
+			case 'JC_EXPORT_EQLOGIC_CONFIG':
+				if ($import != 'eqConfig') {
+					throw new Exception("Mauvais fichier de configuration importé");
+				}
+				// JCLog::debug('Starting JC_EXPORT_EQLOGIC_CONFIG import ');
+				$apiKey = init('apiKey');
+
+				$configJson = $allConf['payload'];
+				/** @var JeedomConnect */
+				$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+				if (!is_object($eqLogic) or $configJson == null) {
+					throw new Exception("Pas d'équipement trouvé");
+				} else {
+					$eqLogic->saveConfig($configJson);
+					$eqLogic->setConfiguration('configVersion', $configJson->payload->configVersion);
+					$eqLogic->save(true);
+
+					$eqLogic->getConfig(true, true);
+					$eqLogic->cleanCustomData();
+				}
+				break;
+
+			case 'JC_EXPORT_WIDGETS_DATA':
+			case 'JC_EXPORT_CUSTOM_DATA':
+				if ($import != 'genericConfig') {
+					throw new Exception("Mauvais fichier de configuration importé");
+				}
+				JeedomConnectWidget::uploadWidgetConf($allConf['payload']);
+				break;
+
+			default:
+				throw new Exception("Type d'import inconnu");
 		}
+
+		ajax::success("Import avec succès");
 	}
 
 
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$eqLogic->resetConfigFile();
 			$nbEq++;
 		}
@@ -177,7 +231,8 @@ try {
 
 
 		$widgetsByEquipment = array();
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$item = array();
 
 			$widgetForEq = $eqLogic->getWidgetId();
@@ -187,7 +242,7 @@ try {
 
 			array_push($widgetsByEquipment, $item);
 		}
-		log::add('JeedomConnect', 'debug', 'ajax -- widgetsByEquipment => ' . json_encode($widgetsByEquipment));
+		JCLog::debug('ajax -- widgetsByEquipment => ' . json_encode($widgetsByEquipment));
 
 		$html = '';
 		foreach ($allWidgets as $widget) {
@@ -353,7 +408,7 @@ try {
 
 		foreach ($widgetReceived as $widgetData) {
 			$existingWidget = JeedomConnectWidget::getConfiguration($widgetData['widgetId']);
-			log::add('JeedomConnect', 'debug', 'massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($existingWidget));
+			JCLog::debug('massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($existingWidget));
 
 			$widgetJC = json_decode($existingWidget['widgetJC'], true);
 
@@ -388,38 +443,39 @@ try {
 		$allConfig = (init('all') !== null) && init('all');
 
 		if ($allConfig) {
-			log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig -- ALL widgets will be removed');
+			JCLog::debug('-- manage fx ajax removeWidgetConfig -- ALL widgets will be removed');
 			$allWidgets = JeedomConnectWidget::getAllConfigurations();
 			$nb = 0;
 			foreach ($allWidgets as $widget) {
 				JeedomConnectWidget::removeWidgetConf($widget['key']);
 				$nb++;
 			}
-			log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig -- widget index reinit');
+			JCLog::debug('-- manage fx ajax removeWidgetConfig -- widget index reinit');
 			JeedomConnectWidget::removeWidgetConf('index::max');
 
 			$nbEq = 0;
-			foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			/** @var JeedomConnect $eqLogic */
+			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 				$eqLogic->resetConfigFile();
 				$nbEq++;
 			}
 
 			ajax::success(array('widget' => $nb, 'eqLogic' => $nbEq));
 		} else {
-			log::add('JeedomConnect', 'debug', '-- manage fx ajax removeWidgetConfig for id >' . init('eqId') . '<');
+			JCLog::debug('-- manage fx ajax removeWidgetConfig for id >' . init('eqId') . '<');
 			JeedomConnectWidget::removeWidget(init('eqId'));
 			ajax::success();
 		}
 	}
 
 	if (init('action') == 'duplicateWidgetConfig') {
-		log::add('JeedomConnect', 'debug', '-- manage fx ajax duplicateWidgetConfig for id >' . init('eqId') . '<');
+		JCLog::debug('-- manage fx ajax duplicateWidgetConfig for id >' . init('eqId') . '<');
 		$newId = JeedomConnectWidget::duplicateWidget(init('eqId'));
 		ajax::success(array('duplicateId' => $newId));
 	}
 
 	if (init('action') == 'getWidgetConfig') {
-		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
+		JCLog::debug('-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
 		$widget = JeedomConnectWidget::getWidgets(init('eqId'));
 
 		if ($widget == '') {
@@ -437,11 +493,11 @@ try {
 	}
 
 	if (init('action') == 'getWidgetConfigAll') {
-		log::add('JeedomConnect', 'debug', '-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
+		JCLog::debug('-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
 		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
 
 		if ($widgets == '') {
-			log::add('JeedomConnect', 'warning', 'no widgets found');
+			JCLog::warning('no widgets found');
 			//ajax::error('Erreur - pas d\'équipement trouvé');
 		}
 
@@ -452,7 +508,7 @@ try {
 			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName()));
 		}
 
-		log::add('JeedomConnect', 'debug', 'getWidgetConfigAll ~~ result : ' . json_encode($widgets));
+		JCLog::debug('getWidgetConfigAll ~~ result : ' . json_encode($widgets));
 
 		ajax::success(array('widgets' => $widgets, 'room_details' => $list, 'room_options' => $options));
 	}
@@ -460,18 +516,19 @@ try {
 	if (init('action') == 'getWidgetExistance') {
 		$myId = init('id');
 		$arrayName = array();
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$eqIds = $eqLogic->getWidgetId();
-			log::add('JeedomConnect', 'debug', 'all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
+			JCLog::debug('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
 			if (in_array($myId, $eqIds)) {
-				log::add('JeedomConnect', 'debug', $myId . ' exist in [' . $eqLogic->getName() . ']');
+				JCLog::debug($myId . ' exist in [' . $eqLogic->getName() . ']');
 				array_push($arrayName, $eqLogic->getName());
 			} else {
-				log::add('JeedomConnect', 'debug', $myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
+				JCLog::debug($myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
 			}
 		}
 
-		log::add('JeedomConnect', 'debug', 'ajax -- all name final -- ' . json_encode($arrayName));
+		JCLog::debug('ajax -- all name final -- ' . json_encode($arrayName));
 		ajax::success(array('names' => $arrayName));
 	}
 
@@ -479,7 +536,7 @@ try {
 
 		$stringWithCmdId = cmd::humanReadableToCmd(init('human'));
 		if (strcmp($stringWithCmdId, init('human')) == 0) {
-			log::add('JeedomConnect', 'debug', 'ajax -- fx humanReadableToCmd -- string is the same with humanCmdString and cmdId => ' . $stringWithCmdId);
+			JCLog::debug('ajax -- fx humanReadableToCmd -- string is the same with humanCmdString and cmdId => ' . $stringWithCmdId);
 			// ajax::error('La commande n\'existe pas');
 		}
 		ajax::success($stringWithCmdId);
@@ -489,7 +546,7 @@ try {
 
 		$cmdIdToHuman = cmd::cmdToHumanReadable(init('strWithCmdId'));
 		if (strcmp($cmdIdToHuman, init('strWithCmdId')) == 0) {
-			log::add('JeedomConnect', 'debug', 'ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no cmdId => ' . $cmdIdToHuman);
+			JCLog::debug('ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no cmdId => ' . $cmdIdToHuman);
 			// ajax::error('La commande n\'existe pas');
 		}
 		ajax::success($cmdIdToHuman);
@@ -498,7 +555,8 @@ try {
 	if (init('action') == 'getEquipments') {
 
 		$result = array();
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			$name = $eqLogic->getName();
 			$eqId = $eqLogic->getId();
@@ -513,6 +571,10 @@ try {
 
 		$copy = JeedomConnect::copyConfig($from, $toArray);
 
+		if (init('withCustom', false)) {
+			JeedomConnectWidget::copyCustomData($from, $toArray);
+		}
+
 		ajax::success($copy);
 	}
 
@@ -521,7 +583,8 @@ try {
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config);
-		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		if (!is_object($eqLogic) or $configJson == null) {
 			ajax::error('Erreur');
 		} else {
@@ -537,7 +600,8 @@ try {
 
 	if (init('action') == 'getConfig') {
 		$apiKey = init('apiKey');
-		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		$allConfig = (init('all') !== null) && init('all');
 		$saveGenerated = (init('all') !== null) && init('all');
 		if (!is_object($eqLogic)) {
@@ -551,10 +615,10 @@ try {
 
 	if (init('action') == 'getNotifs') {
 		$apiKey = init('apiKey');
-
-		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		if (!is_object($eqLogic)) {
-			ajax::error('Erreur');
+			ajax::error('Error - no equipment found');
 		} else {
 			$notifs = $eqLogic->getNotifs();
 			ajax::success($notifs);
@@ -566,9 +630,10 @@ try {
 		$apiKey = init('apiKey');
 
 		$configJson = json_decode($config, true);
-		$eqLogic = \eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 		if (!is_object($eqLogic) or $configJson == null) {
-			ajax::error('Erreur');
+			ajax::error('Error - no equipment found');
 		} else {
 			$eqLogic->saveNotifs($configJson);
 			ajax::success();
@@ -578,7 +643,7 @@ try {
 	if (init('action') == 'saveNotifAll') {
 		$cmdList = init('cmdList');
 		if ($cmdList == "") $cmdList = array();
-		log::add('JeedomConnect', 'debug', 'saveNotifAll - info received : ' . json_encode($cmdList));
+		JCLog::debug('saveNotifAll - info received : ' . json_encode($cmdList));
 		config::save('notifAll', json_encode($cmdList), 'JeedomConnect');
 		ajax::success();
 	}
@@ -600,7 +665,8 @@ try {
 
 	if (init('action') == 'removeDevice') {
 		$id = init('id');
-		$eqLogic = \eqLogic::byId($id);
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($id);
 		$eqLogic->removeDevice();
 		ajax::success();
 	}
@@ -644,20 +710,57 @@ try {
 
 	if (init('action') == 'generateQRcode') {
 		$id = init('id');
-		$eqLogic = \eqLogic::byId($id);
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($id);
 		if (!is_object($eqLogic)) {
-			ajax::error('Erreur');
+			ajax::error('Error - no equipment found');
 		} else {
 			$eqLogic->generateQRCode();
 			ajax::success();
 		}
 	}
 
-	throw new \Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
-} catch (\Exception $e) {
+	if (init('action') == 'regenerateApiKey') {
+		$id = init('eqId');
+		$currentApiKey = init('apiKey');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = JeedomConnect::byId($id);
+		if (!is_object($eqLogic)) {
+			ajax::error('Error - no equipment found');
+		} else {
+			// generate new apiKey
+			$newApiKey = JeedomConnectUtils::generateApiKey();
+			JCLog::debug('new api key generated : ' . $newApiKey . ' - previous one was [' . $currentApiKey . ']');
+
+			// save new apiKey
+			$eqLogic->setConfiguration('apiKey', $newApiKey);
+			$eqLogic->setLogicalId($newApiKey);
+
+			// generate new QR Code
+			$eqLogic->generateQRCode();
+
+			//saving all new info
+			$eqLogic->save(true);
+
+			// copy & remove config files
+			JeedomConnect::copyNotifConfig($currentApiKey, $newApiKey);
+			JeedomConnect::copyBackupConfig($currentApiKey, $newApiKey);
+			JeedomConnectWidget::copyCustomData($currentApiKey, array($newApiKey), true);
+			JeedomConnect::copyConfig($currentApiKey, array($newApiKey));
+			JeedomConnect::removeAllData($currentApiKey);
+
+			// add new apikey in conf => used during ping and/or connection
+			config::save('newApiKey::' . $currentApiKey, $newApiKey, 'JeedomConnect');
+
+			ajax::success(array('newapikey' => $newApiKey));
+		}
+	}
+
+	throw new Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
+} catch (Exception $e) {
 	if (function_exists('displayException')) {
 		ajax::error(displayException($e), $e->getCode());
 	} else {
-		ajax::error(displayException($e), $e->getCode());
+		ajax::error($e->getMessage(), $e->getCode());
 	}
 }

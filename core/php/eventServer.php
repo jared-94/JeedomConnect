@@ -38,16 +38,16 @@ ignore_user_abort(true);
 
 
 $apiKey = init('apiKey');
+/** @var \JeedomConnect */
 $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
-if (!is_object($eqLogic)) {
-  log::add('JeedomConnect', 'debug', "Can't find eqLogic");
-  throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
-}
-$id = rand(0, 1000);
-log::add('JeedomConnect', 'debug', "eventServer init client #" . $id);
-
 try {
+  if (!is_object($eqLogic)) {
+    JCLog::debug("Can't find eqLogic");
+    throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
+  }
+  $id = rand(0, 1000);
+  JCLog::debug("eventServer init client #" . $id);
 
 
   $config = $eqLogic->getConfig(true);
@@ -69,9 +69,15 @@ try {
   $eqLogic->save(true);
 
   while (true) {
+    /** @var \JeedomConnect */
     $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
+
+    if (!is_object($logic)) {
+      throw new Exception("EqLogic not found anymore");
+    }
+
     if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
-      log::add('JeedomConnect', 'debug', "eventServer connexion closed for client #" . $id);
+      JCLog::debug("eventServer connexion closed for client #" . $id);
       if ($logic->getConfiguration('sessionId', 0) == $id) {
         $logic->setConfiguration('connected', 0);
         $eqLogic->setConfiguration('appState', 'background');
@@ -86,7 +92,7 @@ try {
 
       $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
       if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
-        log::add('JeedomConnect', 'debug', "eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
+        JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
         $config = $newConfig;
         sse(
           json_encode(array('infos' => array(
@@ -108,7 +114,7 @@ try {
         foreach ($actions as $action) {
           array_push($result['payload'], $action['value']['payload']);
         }
-        log::add('JeedomConnect', 'debug', "send action to #{$id}  " . json_encode(array($result)));
+        JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
         sse(json_encode(array($result)));
         JeedomConnectActions::removeActions($actions);
         sleep(1);
@@ -117,23 +123,27 @@ try {
       $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp);
 
       foreach ($data as $res) {
-        if (count($res['payload']) > 0) {
-          $sendInfo = true;
+        if (key_exists('payload', $res)) {
+          if (is_array($res['payload']) && count($res['payload']) == 0) {
+            $sendInfo = false;
+          } else {
+            $sendInfo = true;
+          }
           break;
         }
       }
 
       if ($sendInfo) {
-        //log::add('JeedomConnect', 'debug', "eventServer send ".json_encode($data));
+        //JCLog::debug("eventServer send ".json_encode($data));
         sse(json_encode($data));
         $step = 0;
-        $lastReadTimestamp = time();
+        $lastReadTimestamp = $data[0]['payload'];
       }
     }
     if (!$sendInfo) {
       $step += 1;
       if ($step == 5) {
-        //log::add('JeedomConnect', 'debug', "eventServer heartbeat to #" . $id);
+        //JCLog::debug("eventServer heartbeat to #" . $id);
         sse(json_encode(array('event' => 'heartbeat')));
         $step = 0;
       }
@@ -141,5 +151,7 @@ try {
     sleep(1);
   }
 } catch (Exception $e) {
-  log::add('JeedomConnect', 'errro', 'on sse ' . $e->getMessage());
+  // JCLog::error('on sse ' . $e->getMessage());
+  $result = apiHelper::raiseException($e->getMessage(), 'SSE');
+  sse(json_encode($result));
 }

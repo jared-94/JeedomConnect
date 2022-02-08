@@ -37,18 +37,26 @@ try {
 
   $skipLog = in_array($method, apiHelper::$_skipLog);
 
-  if (!$skipLog) log::add('JeedomConnect', 'debug', '[API] HTTP Received ' . $jsonData);
+  if (!$skipLog) JCLog::debug('[API] HTTP Received ' . $jsonData);
 
 
   $apiKey = ($method == 'GEOLOC') ? $jsonrpc->getId() : ($params['apiKey'] ?? null);
+  /** @var JeedomConnect $eqLogic */
   $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
-  if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT') {
-    throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
+  if (!is_object($eqLogic) && $method != 'GET_PLUGIN_CONFIG' && $method != 'GET_AVAILABLE_EQUIPEMENT' && $method != 'PING') {
+    $hasNewApiKey = apiHelper::isApiKeyRegenerated($apiKey);
+    if (!$hasNewApiKey) {
+      throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
+    } else {
+      $result = apiHelper::getApiKeyRegenerated($apiKey);
+      JCLog::debug('[API] No answer for ' . $method . ' || Sending new apiKey info -> ' . json_encode($result));
+      $jsonrpc->makeSuccess($result);
+    }
   }
 
   $result = apiHelper::dispatch('API', $method, $eqLogic, $params ?? array(), $apiKey);
-  if (!$skipLog) log::add('JeedomConnect', 'debug', '[API] Send ' . $method . ' -> ' . json_encode($result));
+  if (!$skipLog) JCLog::debug('[API] Send ' . $method . ' -> ' . json_encode($result));
 
   if (is_null($result)) {
     return $jsonrpc->makeSuccess();
@@ -56,9 +64,9 @@ try {
   return $jsonrpc->makeSuccess($result);
 } catch (Exception $e) {
 
-  if ($skipLog) log::add('JeedomConnect', 'debug', '[API] HTTP Received ' . $jsonData);
+  if ($skipLog) JCLog::debug('[API] HTTP Received ' . $jsonData);
 
-  $result = apiHelper::raiseException($method, '- ' . $e->getMessage());
-  // log::add('JeedomConnect', 'error', '[API] Send ' . $method . ' -> ' . json_encode($result));
+  $result = apiHelper::raiseException($e->getMessage(), $method);
+  // JCLog::error('[API] Send ' . $method . ' -> ' . json_encode($result));
   $jsonrpc->makeSuccess($result);
 }

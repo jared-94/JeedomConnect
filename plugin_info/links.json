@@ -34,5 +34,12 @@
         "img": "/var/www/html/plugins/JeedomConnect/data/img/community.png",
         "title": "Aller sur le forum",
         "link": "https://community.jeedom.com/tag/plugin-jeedomconnect"
+    },
+    {
+        "id": "copyright",
+        "index": 6,
+        "img": "/var/www/html/plugins/JeedomConnect/data/img/copyright.png",
+        "title": "Licence",
+        "link": "https://jared-94.github.io/JeedomConnectDoc/fr_FR/license.html"
     }
 ]

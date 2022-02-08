@@ -47,9 +47,10 @@ function JeedomConnect_install() {
 }
 
 function JeedomConnect_update() {
-  log::add('JeedomConnect', 'info', 'Restart daemon');
+  JCLog::info('Restart daemon');
   JeedomConnect::deamon_start();
 
+  /** @var JeedomConnect $eqLogic */
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->updateConfig();
     $eqLogic->generateNewConfigVersion();
@@ -76,6 +77,7 @@ function JeedomConnect_update() {
   }
 
   // FORCE save on all equipments to save new cmd
+  /** @var JeedomConnect $eqLogic */
   foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
     $eqLogic->save();
   }

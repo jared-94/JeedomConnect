@@ -20,27 +20,6 @@ if (!isConnect('admin')) {
 
 ?>
 
-<style>
-  .required:after {
-    content: " *";
-    color: red;
-  }
-
-  #widgetImg {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100px;
-    margin-bottom: 25px;
-    margin-top: 15px;
-  }
-
-  .description {
-    color: var(--al-info-color);
-    font-size: 11px;
-  }
-</style>
-
 <div class="" style="margin:auto; width:800px; height:350px;">
   <div style="display:none;" id="notif-alert"></div>
   <h3 style="margin-left:25px;">Options de la notification</h3><br>

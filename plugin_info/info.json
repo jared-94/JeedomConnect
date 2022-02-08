@@ -12,7 +12,8 @@
 	"changelog_beta": "https://jared-94.github.io/JeedomConnectDoc/fr_FR/changelog_beta",
 	"changelog": "https://jared-94.github.io/JeedomConnectDoc/fr_FR/changelog_beta",
 	"link": {
-		"forum": "https://community.jeedom.com/tag/plugin-jeedomconnect"
+		"forum": "https://community.jeedom.com/tag/plugin-jeedomconnect",
+		"video": "https://youtu.be/PDxdn3EynKo"
 	},
 	"hasOwnDeamon": true,
 	"language": [

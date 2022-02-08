@@ -81,3 +81,35 @@
   cursor: pointer; 
   transition: .3s ease all; 
 } 
+
+.description {
+  color:var(--al-info-color);
+  font-size:11px;
+}
+
+.required:after {
+  content: " *";
+  color: red;
+}
+
+  
+#widgetImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100px;
+  margin-bottom: 25px;
+  margin-top: 15px;
+}
+
+.btn-supp {
+  background-color: var(--al-danger-color) !important;
+}
+
+.borderLef {
+  border-left: 1px solid #ccc;
+}
+
+.italic {
+  font-style: italic;
+}

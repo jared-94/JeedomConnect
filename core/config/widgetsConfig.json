@@ -5903,6 +5903,292 @@
 					]
 				}
 			]
+		},
+		{
+			"type": "event",
+			"name": "Evénement",
+			"img": "events.png",
+			"description": "Permet de réaliser la mise à jour d'une commande info",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "value",
+					"descr": "Valeur de la commande info"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "eventInfo",
+					"name": "Commande à metre à jour",
+					"category": "cmd",
+					"type": "info",
+					"description": "Commande info à mettre à jour"
+				},
+				{
+					"id": "sendImage",
+					"name": "Image Envoyer",
+					"required": false,
+					"category": "img",
+					"description": "Choix de l'icône à utiliser pour le bouton 'envoi'"
+				},
+				{
+					"id": "keepLastEvent",
+					"name": "Garder la dernière valeur",
+					"category": "binary",
+					"description": "Conserver la dernière valeur pour ne pas avoir à le retaper"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "jc",
+			"name": "JC",
+			"hide": true,
+			"img": "jeedomConnect.png",
+			"description": "Permet d'afficher les informations d'un équipement JC",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "position",
+					"name": "Position",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Donne les informations de positions de l'appareil"
+				},
+				{
+					"id": "activity",
+					"name": "Activité",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Indique le type d'activité en cours"
+				},
+				{
+					"id": "battery",
+					"name": "Batterie",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Indique le niveau de batteri"
+				},
+				{
+					"id": "isCharging",
+					"name": "En Charge",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Indique si le téléphonne est en cours de rechargement"
+				},
+				{
+					"id": "isScreenOn",
+					"name": "Etat écran",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Permet de savoir si l'écran du téléphone est allumé"
+				},
+				{
+					"id": "bluetoothConnected",
+					"name": "Etat Bluetooth",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Permet de savoir si le bluetooth est connecté à au moins un appareil"
+				},
+				{
+					"id": "wifiEnabled",
+					"name": "Etat Wifi",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Permet de savoir si le wifi est activé"
+				},
+				{
+					"id": "ipAddress",
+					"name": "Adresse IP",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Retourne l'adresse IP de l'appareil, lorsqu'il est connecté au wifi"
+				},
+				{
+					"id": "ssid",
+					"name": "Nom réseau wifi",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Indique le nom du réseau wifi sur lequel l'appareil est connecté"
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideItem",
+					"name": "Eléments à masquer",
+					"category": "choicesList",
+					"description": "En mode vignette, les éléments cochés sont masqués",
+					"choices": [
+						{
+							"id": "hideTitle",
+							"text": "nom"
+						},
+						{
+							"id": "hideSubTitle",
+							"text": "sous-titre"
+						},
+						{
+							"id": "hideStatus",
+							"text": "statut"
+						},
+						{
+							"id": "hideIcon",
+							"text": "image"
+						}
+					]
+				}
+			]
 		}
 	],
 	"summaries": [

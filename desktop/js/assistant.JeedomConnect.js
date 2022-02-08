@@ -322,6 +322,16 @@ function getSimpleModal(_options, _callback) {
 						result.object = $("#object-select  option:selected").val();
 						result.name = $("#object-select  option:selected").text();
 					}
+					if (_options.fields.find(i => i.type == "advancedGrid")) {
+						let choice = $("#advancedGrid-select option:selected").val();
+						if (choice == 'standard') {
+							result.advancedGrid = false
+						} else if (choice == 'sc') {
+							result.advancedGrid = true
+						} else {
+							result.advancedGrid = undefined
+						}
+					}
 					if (_options.fields.find(i => i.type == "swipeUp")) {
 						let choice = $("#swipeUp-select option:selected").val();
 						if (choice == 'cmd') {

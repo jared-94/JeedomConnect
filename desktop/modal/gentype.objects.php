@@ -21,6 +21,7 @@ $allObjects = jeeObject::buildTree(null, false);
 			<?php
 			$echo = '';
 
+			/** @var array<eqLogic> */
 			$eqLogicsWithNoObject = eqLogic::byObjectId(null);
 			if (count($eqLogicsWithNoObject) > 0) {
 				$echo .= '<div style="display:none" class="objectDisplayCard cursor" data-object_id="none" data-object_name="Aucun" data-object_icon=\'<i class="far blank"></i>\'>';
