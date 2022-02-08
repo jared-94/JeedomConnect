@@ -72,7 +72,7 @@ class JeedomConnectUtils {
             }
         }
 
-        return htmlentities($infoPlugin);
+        return $infoPlugin;
     }
 
     /**
