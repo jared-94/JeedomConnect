@@ -476,7 +476,10 @@ class JeedomConnectUtils {
 
                 $return['name'] = $scenario->getName();
                 $return['id'] = $scenario->getId();
-                $return['trigger'] =  $event->getOptions('trigger');
+
+                $pattern = '/\<(.*)\> /i';
+                $trigger = preg_replace($pattern, '', $event->getOptions('trigger'));
+                $return['trigger'] =  $trigger;
                 break;
         }
         return $return;
