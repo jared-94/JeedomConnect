@@ -1025,7 +1025,8 @@ class apiHelper {
         'eqLogic_id' => $array['eqLogic_id'],
         'unite' => $array['unite'],
         'isHistorized' => $array['isHistorized'],
-        'configuration' => $array['configuration']
+        'configuration' => $array['configuration'],
+        'shortcutAllowed' => ($array['configuration']['actionConfirm'] ?? "0") == "0",
       );
       array_push($result['payload']['cmds'], $cmd);
     }
