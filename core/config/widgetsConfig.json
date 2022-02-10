@@ -100,6 +100,13 @@
 					"category": "ifImgs"
 				},
 				{
+					"id": "autoBackground",
+					"name": "Arrière plan automatique",
+					"description": "Affiche un arrière plan automatique en fonction de l'état de la lumière",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "moreWidgets",
 					"name": "Widgets supplémentaires",
 					"category": "widgets",
@@ -293,6 +300,13 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "autoBackground",
+					"name": "Arrière plan automatique",
+					"description": "Affiche un arrière plan automatique en fonction de l'état de la lumière",
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "moreWidgets",
@@ -498,15 +512,6 @@
 					"generic_type": "POWER"
 				},
 				{
-					"id": "grabberAction",
-					"name": "Mode TV",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other",
-					"description": "Commande Grabber pour les LEDS TV"
-				},
-				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -517,6 +522,13 @@
 					"name": "Images sous conditions",
 					"required": false,
 					"category": "ifImgs"
+				},
+				{
+					"id": "autoBackground",
+					"name": "Arrière plan automatique",
+					"description": "Affiche un arrière plan automatique en fonction de l'état de la lumière",
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "moreWidgets",
@@ -641,6 +653,13 @@
 						"single-light-color"
 					],
 					"description": "Liste des lumières à gérer"
+				},
+				{
+					"id": "autoBackground",
+					"name": "Arrière plan automatique",
+					"description": "Affiche un arrière plan automatique en fonction de l'état de la lumière",
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "autoManOnAction",
