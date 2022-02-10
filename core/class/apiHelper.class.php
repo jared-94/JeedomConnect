@@ -545,6 +545,7 @@ class apiHelper {
     $payload = array(
       'pluginVersion' => $pluginVersion,
       'jeedomName' => config::byKey('name'),
+      'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
@@ -1024,7 +1025,7 @@ class apiHelper {
         'eqLogic_id' => $array['eqLogic_id'],
         'unite' => $array['unite'],
         'isHistorized' => $array['isHistorized'],
-        'configuration' => $array['configuration'],
+        'configuration' => $array['configuration']
       );
       array_push($result['payload']['cmds'], $cmd);
     }
