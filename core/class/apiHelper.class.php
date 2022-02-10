@@ -1026,7 +1026,7 @@ class apiHelper {
         'unite' => $array['unite'],
         'isHistorized' => $array['isHistorized'],
         'configuration' => $array['configuration'],
-        'shortcutAllowed' => ($array['configuration']['actionConfirm'] ?? "0") == "0",
+        'shortcutAllowed' => ($array['configuration']['actionConfirm'] ?? "0") === "0",
       );
       array_push($result['payload']['cmds'], $cmd);
     }
