@@ -821,6 +821,12 @@ class JeedomConnect extends eqLogic {
 		foreach ($this->getNotifs()['notifs'] as $notif) {
 			if ($notif['id'] == $notifId) {
 				unset($notif['name']);
+				// JCLog::info(" add notif setup data // BEFORE ==> " . json_encode($notif));
+				foreach ($notif['actions'] as $key => $value) {
+					$value['name'] = str_replace("'", "&#039;", $value['name']);
+					$notif['actions'][$key] = $value;
+				}
+				// JCLog::info(" add notif setup data // AFTER ==> " . json_encode($notif));
 				$postData["data"]["payload"] = array_merge($postData["data"]["payload"], $notif);
 			}
 		}
@@ -839,11 +845,12 @@ class JeedomConnect extends eqLogic {
 			case "i686":
 				$sendBin = "sendNotif_x32";
 				break;
+			default:
+				JCLog::error("Error while detecting system architecture. " . php_uname("m") . " detected");
+				return;
 		}
-		if ($sendBin == '') {
-			JCLog::info("Error while detecting system architecture. " . php_uname("m") . " detected");
-			return;
-		}
+
+
 		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
 		if (!is_executable($binFile)) {
 			chmod($binFile, 0555);
@@ -852,7 +859,7 @@ class JeedomConnect extends eqLogic {
 		JCLog::info("Send notification with data " . json_encode($postData["data"]));
 		$output = shell_exec($cmd);
 		if (is_null($output) || empty($output)) {
-			JCLog::info("Error while sending notification");
+			JCLog::error("Error while sending notification");
 			return;
 		} else {
 			JCLog::debug("Send output : " . $output);
