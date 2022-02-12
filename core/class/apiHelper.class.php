@@ -561,7 +561,8 @@ class apiHelper {
       'scInfo' => self::getScenarioData($config, false, false),
       'objInfo' => self::getObjectData($config, false),
       'links' => JeedomConnectUtils::getLinks(),
-      'timelineFolders' => $eqLogic->getConfiguration('timelineEnabled', 1) == '1' ?  JeedomConnectUtils::getTimelineFolders() : null
+      // check timelineclass for old jeedom core
+      'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
     );
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
