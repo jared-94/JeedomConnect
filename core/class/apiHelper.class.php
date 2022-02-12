@@ -545,6 +545,7 @@ class apiHelper {
     $payload = array(
       'pluginVersion' => $pluginVersion,
       'jeedomName' => config::byKey('name'),
+      'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
@@ -1025,6 +1026,7 @@ class apiHelper {
         'unite' => $array['unite'],
         'isHistorized' => $array['isHistorized'],
         'configuration' => $array['configuration'],
+        'shortcutAllowed' => ($array['configuration']['actionConfirm'] ?? "0") === "0",
       );
       array_push($result['payload']['cmds'], $cmd);
     }
