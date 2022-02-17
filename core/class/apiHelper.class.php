@@ -2438,7 +2438,7 @@ class apiHelper {
           if (!$item->isDot() && substr($item, 0, 1) != '.') {
             if (!$item->isDir()) {
               array_push($result, array(
-                'path' =>  $item->getPathname(),
+                'path' =>  realpath($item->getPathname()),
                 'timestamp' => $item->getMTime()
               ));
             } else if ($recursive) {
