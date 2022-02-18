@@ -186,6 +186,10 @@ class apiHelper {
           return self::removeFile($param['file']);
           break;
 
+        case 'REMOVE_FILES':
+          return self::removeFiles($param['files']);
+          break;
+
         case 'SET_BATTERY':
           self::saveBatteryEquipment($eqLogic, $param['level']);
           return null;
@@ -2428,8 +2432,8 @@ class apiHelper {
   }
 
   // FILES
-  private static function getFiles($folder, $recursive = false) {
-    $dir = __DIR__ . '/../../../..' . $folder;
+  private static function getFiles($folder, $recursive = false, $isRelativePath = true) {
+    $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
     $result = array();
     try {
       if (is_dir($dir)) {
@@ -2466,7 +2470,16 @@ class apiHelper {
     $pathInfo = pathinfo($file);
     unlink($file);
     return
-      self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
+      self::getFiles(preg_replace('#/+#', '/', $pathInfo['dirname']), true, false);
+  }
+
+  private static function removeFiles($files) {
+    $pathInfo = pathinfo($files[0]);
+    foreach ($files as $file) {
+      unlink($file);
+    }
+    return
+      self::getFiles(preg_replace('#/+#', '/', $pathInfo['dirname']), true, false);
   }
 
   public static function raiseException($errMsg = '', $method = '', $detail = null) {
