@@ -822,9 +822,11 @@ class JeedomConnect extends eqLogic {
 			if ($notif['id'] == $notifId) {
 				unset($notif['name']);
 				// JCLog::info(" add notif setup data // BEFORE ==> " . json_encode($notif));
-				foreach ($notif['actions'] as $key => $value) {
-					$value['name'] = str_replace("'", "&#039;", $value['name']);
-					$notif['actions'][$key] = $value;
+				if (key_exists('actions', $notif)) {
+					foreach ($notif['actions'] as $key => $value) {
+						$value['name'] = str_replace("'", "&#039;", $value['name']);
+						$notif['actions'][$key] = $value;
+					}
 				}
 				// JCLog::info(" add notif setup data // AFTER ==> " . json_encode($notif));
 				$postData["data"]["payload"] = array_merge($postData["data"]["payload"], $notif);
