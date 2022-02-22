@@ -1989,8 +1989,7 @@ class apiHelper {
     $eqLogic->checkAndUpdateCmd('battery', $level);
 
     if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
-      $eqLogic->setStatus("battery", $level);
-      $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+      $eqLogic->batteryStatus($level);
       //  JCLog::warning('saveBatteryEquipment | SAVING battery saved on equipment page ');
     }
   }

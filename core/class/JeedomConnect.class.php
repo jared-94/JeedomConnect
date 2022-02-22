@@ -984,7 +984,9 @@ class JeedomConnect extends eqLogic {
 
 		if ($this->getConfiguration('hideBattery')) {
 			// JCLog::debug( 'hiding battery : -2');
-			$this->setStatus("battery");
+			$this->batteryStatus(100); //force 100 to remove any ongoing warning or danger notification
+			$this->setStatus("battery"); //and for status to null to remove the info
+
 		}
 	}
 
