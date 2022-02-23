@@ -6,8 +6,9 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
-require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
-require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnect.class.php";
+// require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
+// require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
 
 class ConnectLogic implements MessageComponentInterface {
 
@@ -139,7 +140,9 @@ class ConnectLogic implements MessageComponentInterface {
 
 
 			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param ?? array(), $param['apiKey']);
-			\JCLog::debug('[WS] Send CONNECT -> ' . json_encode($connexion));
+			$logs = \JeedomConnectUtils::hideSensitiveData(json_encode($connexion), 'send');
+			\JCLog::debug('[WS] Send CONNECT -> ' . $logs);
+			// \JCLog::debug('[WS] Send CONNECT -> ' . json_encode($connexion));
 			if (
 				isset($connexion['type']) &&
 				in_array($connexion['type'], array(
@@ -196,7 +199,10 @@ class ConnectLogic implements MessageComponentInterface {
 	 * @param string $msg Data received from the client
 	 */
 	public function onMessage(ConnectionInterface $from, $msg) {
-		\JCLog::debug("[WS] Incoming message from #{$from->resourceId} : {$msg}");
+		// \JCLog::debug("[WS] Incoming message from #{$from->resourceId} : {$msg}");
+		$logData = \JeedomConnectUtils::hideSensitiveData($msg, 'receive');
+		\JCLog::debug("[WS] Incoming message from #{$from->resourceId} : {$logData}");
+
 		if ($this->unauthenticatedClients->contains($from)) {
 			// this is a message from an unauthenticated client, check if it contains credentials
 			$this->authenticate($from, $msg);
@@ -218,7 +224,11 @@ class ConnectLogic implements MessageComponentInterface {
 			if (!is_null($result)) {
 				if (isset($msg['messageId'])) $result['messageId'] = $msg['messageId'];
 
-				if (!in_array($msg['type'], \apiHelper::$_skipLog)) \JCLog::debug('[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+				// if (!in_array($msg['type'], \apiHelper::$_skipLog)) \JCLog::debug('[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+				if (!in_array($msg['type'], \apiHelper::$_skipLog)) {
+					$logData = \JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send');
+					\JCLog::debug('[WS] Send ' . $msg['type'] . ' -> ' . $logData);
+				}
 
 				return $from->send(json_encode($result));
 			}
