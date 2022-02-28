@@ -1929,7 +1929,7 @@ function refreshInfoSelect() {
   let infosOptionHtml = '';
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
-  if (widget.variables) {
+  if (widget?.variables) {
     widget.variables.forEach(v => {
       infosOptionHtml += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)">
         <a href="#">#${v.name}#</a></li>`;
