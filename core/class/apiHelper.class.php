@@ -2431,7 +2431,7 @@ class apiHelper {
   }
 
   // FILES
-  private static function getFiles($folder, $recursive = false, $isRelativePath = true) {
+  public static function getFiles($folder, $recursive = false, $isRelativePath = true) {
     $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
     $result = array();
     try {
