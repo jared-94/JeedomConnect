@@ -1720,7 +1720,7 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'goToPage':
-				if (empty($_options['message'])) {
+				if ($_options['message'] == '') {
 					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
 					return;
 				}
