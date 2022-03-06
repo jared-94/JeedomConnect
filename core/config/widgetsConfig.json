@@ -5088,6 +5088,15 @@
 					"description": "URL utilisée lorsque l'appareil est sur le même réseau que Jeedom"
 				},
 				{
+					"id": "urlCmd",
+					"name": "Commande URL",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Commande info contenant l'URL à afficher"
+				},
+				{
 					"id": "headerHide",
 					"name": "Cacher la barre du haut",
 					"required": false,
