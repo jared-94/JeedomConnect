@@ -5076,7 +5076,6 @@
 				{
 					"id": "url",
 					"name": "URL",
-					"required": true,
 					"category": "string",
 					"description": "Entrez ici l'ID d'un design (nombre entier), le mot clé 'dashboard', ou bien une URL de votre choix"
 				},
