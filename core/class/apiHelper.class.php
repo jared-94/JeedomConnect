@@ -187,7 +187,7 @@ class apiHelper {
           break;
 
         case 'REMOVE_FILES':
-          return self::removeFiles($param['files']);
+          return self::removeFiles($param['files'], $param['path']);
           break;
 
         case 'SET_BATTERY':
@@ -2472,13 +2472,14 @@ class apiHelper {
       self::getFiles(preg_replace('#/+#', '/', $pathInfo['dirname']), true, false);
   }
 
-  private static function removeFiles($files) {
-    $pathInfo = pathinfo($files[0]);
+  private static function removeFiles($files, $path = null) {
+    $folder = $path ?? preg_replace('#/+#', '/', pathinfo($files[0])['dirname']);
     foreach ($files as $file) {
       unlink($file);
     }
+
     return
-      self::getFiles(preg_replace('#/+#', '/', $pathInfo['dirname']), true, false);
+      self::getFiles($folder, true, $path != null);
   }
 
   public static function raiseException($errMsg = '', $method = '', $detail = null) {
