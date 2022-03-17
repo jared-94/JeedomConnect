@@ -599,4 +599,40 @@ class JeedomConnectUtils {
 
         return $result;
     }
+
+
+    public static function hideSensitiveData(string $log, string $type): string {
+
+        $defaultSizeKept = 10;
+
+        $keysSensitive = array(
+            "main" => array(
+                "userHash" => $defaultSizeKept
+            ),
+            "pluginConfig" => array(
+                "httpUrl" => 12,
+                "wsAddress" => 12
+            ),
+
+        );
+
+        $logArray = json_decode($log, true);
+        $tab = ($type == 'send') ? 'payload' : 'params';
+
+        foreach ($keysSensitive as $key => $value) {
+
+            foreach ($value as $item => $indice) {
+                $strSearched =  ($logArray[$item] ?? null) ?: ($logArray[$tab][$item] ?? null) ?: ($logArray[$tab][$key][$item] ?? null);
+                if (is_null($strSearched) || empty($strSearched)) continue;
+
+                // JCLog::debug('found key ' . $key . ' + item ' . $item . ' => ' . $strSearched);
+                $sizeValue = strlen($strSearched) - $indice;
+                $newValue = substr_replace($strSearched, str_repeat('*', $sizeValue), $sizeValue * -1);
+
+                // JCLog::debug('  will replace ' . $strSearched . ' , by : ' . $newValue);
+                $log = str_replace(json_encode($strSearched), json_encode($newValue), $log);
+            }
+        }
+        return $log;
+    }
 }

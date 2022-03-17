@@ -20,8 +20,7 @@ header('Content-Type: application/json');
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
-require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
-require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnect.class.php";
 
 $jsonData = file_get_contents("php://input");
 $jsonrpc = new jsonrpc($jsonData);
@@ -37,7 +36,7 @@ try {
 
   $skipLog = in_array($method, apiHelper::$_skipLog);
 
-  if (!$skipLog) JCLog::debug('[API] HTTP Received ' . $jsonData);
+  if (!$skipLog) JCLog::debug('[API] HTTP Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
 
 
   $apiKey = ($method == 'GEOLOC') ? $jsonrpc->getId() : ($params['apiKey'] ?? null);
@@ -56,7 +55,8 @@ try {
   }
 
   $result = apiHelper::dispatch('API', $method, $eqLogic, $params ?? array(), $apiKey);
-  if (!$skipLog) JCLog::debug('[API] Send ' . $method . ' -> ' . json_encode($result));
+  if (!$skipLog) JCLog::debug('[API] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
+
 
   if (is_null($result)) {
     return $jsonrpc->makeSuccess();
@@ -64,7 +64,7 @@ try {
   return $jsonrpc->makeSuccess($result);
 } catch (Exception $e) {
 
-  if ($skipLog) JCLog::debug('[API] HTTP Received ' . $jsonData);
+  if ($skipLog) JCLog::debug('[API] HTTP Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
 
   $result = apiHelper::raiseException($e->getMessage(), $method);
   // JCLog::error('[API] Send ' . $method . ' -> ' . json_encode($result));
