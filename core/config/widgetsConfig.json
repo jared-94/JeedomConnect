@@ -5096,8 +5096,16 @@
 					"description": "Commande info contenant l'URL à afficher"
 				},
 				{
+					"id": "defaultHeight",
+					"name": "Hauteur",
+					"required": false,
+					"category": "string",
+					"description": "Hauteur de la vue en mode carte en grille standard (par défaut 200)",
+					"customizable": true
+				},
+				{
 					"id": "headerHide",
-					"name": "Cacher la barre du haut",
+					"name": "Cacher la barre du haut en vue détail",
 					"required": false,
 					"category": "binary"
 				},
