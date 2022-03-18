@@ -136,30 +136,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -338,30 +314,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -560,30 +512,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -697,30 +625,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -861,30 +765,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -993,30 +873,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -1116,30 +972,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -1376,30 +1208,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -1494,30 +1302,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -1613,30 +1397,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -1732,30 +1492,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -1978,30 +1714,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2203,30 +1915,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2321,30 +2009,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2441,30 +2105,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2558,30 +2198,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2674,30 +2290,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2820,30 +2412,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -2998,30 +2566,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3122,30 +2666,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3240,30 +2760,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3360,30 +2856,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3557,30 +3029,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3681,30 +3129,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3812,30 +3236,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -3932,30 +3332,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4057,30 +3433,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4178,30 +3530,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4337,30 +3665,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4474,30 +3778,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4603,30 +3883,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4725,30 +3981,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4847,30 +4079,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -4991,30 +4199,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -5123,30 +4307,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -5236,30 +4396,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -5498,26 +4634,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -5596,30 +4712,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -5774,30 +4866,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -5883,30 +4951,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -6007,30 +5051,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		},
@@ -6169,30 +5189,6 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
-				},
-				{
-					"id": "hideItem",
-					"name": "Eléments à masquer",
-					"category": "choicesList",
-					"description": "En mode vignette, les éléments cochés sont masqués",
-					"choices": [
-						{
-							"id": "hideTitle",
-							"text": "nom"
-						},
-						{
-							"id": "hideSubTitle",
-							"text": "sous-titre"
-						},
-						{
-							"id": "hideStatus",
-							"text": "statut"
-						},
-						{
-							"id": "hideIcon",
-							"text": "image"
-						}
-					]
 				}
 			]
 		}
