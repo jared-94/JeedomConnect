@@ -662,35 +662,6 @@
 					"customizable": true
 				},
 				{
-					"id": "autoManOnAction",
-					"name": "Gestion ON",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other",
-					"value": "autoManInfo",
-					"description": "Active la gestion automatique"
-				},
-				{
-					"id": "autoManOffAction",
-					"name": "Gestion OFF",
-					"required": false,
-					"category": "cmd",
-					"type": "action",
-					"subtype": "other",
-					"value": "autoManInfo",
-					"description": "Désactive la gestion automatique"
-				},
-				{
-					"id": "autoManInfo",
-					"name": "Gestion auto",
-					"required": false,
-					"category": "cmd",
-					"type": "info",
-					"subtype": "binary",
-					"description": "Gestion automatique des lumières"
-				},
-				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
