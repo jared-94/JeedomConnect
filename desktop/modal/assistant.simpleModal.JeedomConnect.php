@@ -129,12 +129,12 @@ if (!isConnect('admin')) {
         allWidgetsDetail.forEach(item => {
           if (option.choices.includes(item.type)) {
             let name = getWidgetPath(item.id);
-            room = getRoomName(item.room);
-            if (room) {
+            room = getRoomName(item.room) || '';
+            if (room && room != '') {
               name = name + ' (' + room + ')'
             }
 
-            widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name} [${item.id}]</option>`;
+            widget += `<option style="width:150px;" value="${item.id}" name="${name}" data-room="${room}">${name} [${item.id}]</option>`;
           }
         })
         widget += `</select></div></div></div></li>`;
