@@ -4265,6 +4265,13 @@
 					"category": "binary"
 				},
 				{
+					"id": "injectedJavaScript",
+					"name": "Injection JS",
+					"category": "string",
+					"subtype": "multiline",
+					"description": "Injecter du code JavaScript dans la page après son chargement"
+				},
+				{
 					"id": "androidHardwareAccelerationDisabled",
 					"name": "Désactiver l'accélération matérielle",
 					"required": false,

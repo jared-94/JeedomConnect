@@ -1124,10 +1124,15 @@ function refreshAddWidgets() {
       curOption += "</div></div></li>";
 
     } else if (option.category == "string") {
-
       type = (option.subtype != undefined) ? option.subtype : 'text';
-      curOption += `<div class='input-group'>
+      if (option.subtype == "multiline") {
+        curOption += `<div class='input-group'>
+        <div style="display:flex"><textarea style="width:340px;" id="${option.id}-input" value=''></textarea>`;
+      } else {
+        curOption += `<div class='input-group'>
         <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
+      }
+
       if (option.id == 'name') {
         curOption += `
               <div class="dropdown" id="name-select">
