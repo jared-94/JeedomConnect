@@ -4923,6 +4923,13 @@
 					"description": "Si l'image n'est pas statique, temps entre deux chargements (laisser vide sinon)"
 				},
 				{
+					"id": "autoBackground",
+					"name": "Arrière plan automatique",
+					"description": "Affiche un arrière plan automatique en fonction de l'image",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
