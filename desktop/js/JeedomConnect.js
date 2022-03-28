@@ -1497,8 +1497,12 @@ function refreshCmdListOption(optionsJson) {
   cmdCat.sort(function (s, t) {
     return s.index - t.index;
   });
+
+  var tempIndex = 0;
   cmdCat.forEach(item => {
     isDisabled = isJcExpert ? '' : 'disabled';
+
+    item.index = item.index || tempIndex;
     //open the div
     curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;" data-id="${item.id}" data-index="${item.index}">`;
 
@@ -1556,6 +1560,8 @@ function refreshCmdListOption(optionsJson) {
     curOption += `</div>`;
     //// ---  END right part
     curOption += `</div>`;
+
+    tempIndex++;
 
 
   });
