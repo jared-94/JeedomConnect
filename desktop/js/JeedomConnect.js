@@ -546,9 +546,9 @@ $(".btRegenerateApiKey").click(function () {
           });
         }
         else {
-          console.log('btRegenerateApiKey data :', data);
+          // console.log('btRegenerateApiKey data :', data);
           var ApiKey = data.result.newapikey;
-          console.log('new api key', ApiKey);
+          // console.log('new api key', ApiKey);
           $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text(ApiKey)
           $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + ApiKey + '.png');
         }
@@ -1124,10 +1124,15 @@ function refreshAddWidgets() {
       curOption += "</div></div></li>";
 
     } else if (option.category == "string") {
-
       type = (option.subtype != undefined) ? option.subtype : 'text';
-      curOption += `<div class='input-group'>
+      if (option.subtype == "multiline") {
+        curOption += `<div class='input-group'>
+        <div style="display:flex"><textarea style="width:340px;" id="${option.id}-input" value=''></textarea>`;
+      } else {
+        curOption += `<div class='input-group'>
         <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
+      }
+
       if (option.id == 'name') {
         curOption += `
               <div class="dropdown" id="name-select">
@@ -1461,8 +1466,17 @@ function refreshWidgetOption() {
   });
   widgetsCat.forEach(item => {
     var name = getWidgetPath(item.id);
+
+    if (item.roomName) {
+      roomName = (item.roomName == '') ? '' : ' (' + item.roomName + ')';
+    }
+    else {
+      roomNameTmp = getRoomName(item.room || undefined) || '';
+      roomName = (roomNameTmp == '') ? '' : ' (' + roomNameTmp + ')';
+    }
+
     curOption += `<div class='input-group jcWidgetListMovable' data-id="${item.id}">
-          <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}' disabled>
+          <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}${roomName}' disabled>
           <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
           <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidgetOption('${item.id}');"></i>
@@ -1929,7 +1943,7 @@ function refreshInfoSelect() {
   let infosOptionHtml = '';
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
-  if (widget.variables) {
+  if (widget?.variables) {
     widget.variables.forEach(v => {
       infosOptionHtml += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)">
         <a href="#">#${v.name}#</a></li>`;
@@ -1949,7 +1963,7 @@ function refreshInfoSelect() {
 }
 
 function colorDefined(c, id) {
-  console.log('id', id)
+  // console.log('id', id)
   $("#" + id + "-input").val(c.value);
 }
 
@@ -2200,7 +2214,7 @@ function addWidgetOption(choices) {
   var widgets = choices.split(".");
   getSimpleModal({ title: "Choisir un widget", fields: [{ type: "widget", choices: widgets }] }, function (result) {
     var maxIndex = getMaxIndex(widgetsCat);
-    widgetsCat.push({ id: result.widgetId, index: maxIndex + 1 });
+    widgetsCat.push({ id: result.widgetId, index: maxIndex + 1, roomName: result.roomName });
     refreshWidgetOption();
   });
 }

@@ -317,6 +317,7 @@ function getSimpleModal(_options, _callback) {
 						}
 						result.widgetId = $("#mod-widget-input").val();
 						result.widgetName = $("#mod-widget-input option:selected").text();
+						result.roomName = $("#mod-widget-input option:selected").data('room') || '';
 					}
 					if (_options.fields.find(i => i.type == "object")) {
 						result.object = $("#object-select  option:selected").val();

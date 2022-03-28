@@ -186,6 +186,10 @@ class apiHelper {
           return self::removeFile($param['file']);
           break;
 
+        case 'REMOVE_FILES':
+          return self::removeFiles($param['files'], $param['path']);
+          break;
+
         case 'SET_BATTERY':
           self::saveBatteryEquipment($eqLogic, $param['level']);
           return null;
@@ -561,7 +565,8 @@ class apiHelper {
       'scInfo' => self::getScenarioData($config, false, false),
       'objInfo' => self::getObjectData($config, false),
       'links' => JeedomConnectUtils::getLinks(),
-      'timelineFolders' => $eqLogic->getConfiguration('timelineEnabled', 1) == '1' ?  JeedomConnectUtils::getTimelineFolders() : null
+      // check timelineclass for old jeedom core
+      'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
     );
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
@@ -1984,8 +1989,7 @@ class apiHelper {
     $eqLogic->checkAndUpdateCmd('battery', $level);
 
     if (!$eqLogic->getConfiguration('hideBattery') || $eqLogic->getConfiguration('hideBattery', -2) == -2) {
-      $eqLogic->setStatus("battery", $level);
-      $eqLogic->setStatus("batteryDatetime", date('Y-m-d H:i:s'));
+      $eqLogic->batteryStatus($level);
       //  JCLog::warning('saveBatteryEquipment | SAVING battery saved on equipment page ');
     }
   }
@@ -2427,8 +2431,8 @@ class apiHelper {
   }
 
   // FILES
-  private static function getFiles($folder, $recursive = false) {
-    $dir = __DIR__ . '/../../../..' . $folder;
+  public static function getFiles($folder, $recursive = false, $isRelativePath = true) {
+    $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
     $result = array();
     try {
       if (is_dir($dir)) {
@@ -2437,11 +2441,11 @@ class apiHelper {
           if (!$item->isDot() && substr($item, 0, 1) != '.') {
             if (!$item->isDir()) {
               array_push($result, array(
-                'path' =>  $item->getPathname(),
+                'path' =>  realpath($item->getPathname()),
                 'timestamp' => $item->getMTime()
               ));
             } else if ($recursive) {
-              $subFolderFiles = self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $item->getPathname())), true);
+              $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
               $result = array_merge($result, $subFolderFiles['payload']['files']);
             }
           }
@@ -2465,7 +2469,17 @@ class apiHelper {
     $pathInfo = pathinfo($file);
     unlink($file);
     return
-      self::getFiles(str_replace(__DIR__ . '/../../../..', '', preg_replace('#/+#', '/', $pathInfo['dirname'])), true);
+      self::getFiles(preg_replace('#/+#', '/', $pathInfo['dirname']), true, false);
+  }
+
+  private static function removeFiles($files, $path = null) {
+    $folder = $path ?? preg_replace('#/+#', '/', pathinfo($files[0])['dirname']);
+    foreach ($files as $file) {
+      unlink($file);
+    }
+
+    return
+      self::getFiles($folder, true, $path != null);
   }
 
   public static function raiseException($errMsg = '', $method = '', $detail = null) {
