@@ -437,13 +437,8 @@ class JeedomConnect extends eqLogic {
 		$pwd = $this->getConfiguration('pwdAction', null);
 		$jsonConfig['payload']['password'] = $pwd;
 
-		//custom path -- ensure userImgPath doesn't start with / and ends with /
-		$userImgPath =
-			ltrim(config::byKey('userImgPath',   'JeedomConnect'), "/");
-		if (substr($userImgPath, -1) != "/") {
-			$userImgPath .= "/";
-		}
-		$jsonConfig['payload']['userImgPath'] = $userImgPath;
+		//custom path
+		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect');
 
 		//add summary details
 		$objSummary = config::byKey('object:summary');
@@ -1024,6 +1019,19 @@ class JeedomConnect extends eqLogic {
 	public function preRemove() {
 		$apiKey = $this->getConfiguration('apiKey');
 		self::removeAllData($apiKey);
+	}
+
+
+	/**
+	 * ensure userImgPath doesn't start with / and ends with /
+	 */
+	public static function preConfig_userImgPath($value) {
+
+		$userImgPath = ltrim($value, "/");
+		if (substr($userImgPath, -1) != "/") {
+			$userImgPath .= "/";
+		}
+		return $userImgPath;
 	}
 
 	public static function removeAllData($apiKey) {
