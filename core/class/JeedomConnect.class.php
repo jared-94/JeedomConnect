@@ -437,8 +437,13 @@ class JeedomConnect extends eqLogic {
 		$pwd = $this->getConfiguration('pwdAction', null);
 		$jsonConfig['payload']['password'] = $pwd;
 
-		//custom path
-		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect');
+		//custom path -- ensure userImgPath doesn't start with / and ends with /
+		$userImgPath =
+			ltrim(config::byKey('userImgPath',   'JeedomConnect'), "/");
+		if (substr($userImgPath, -1) != "/") {
+			$userImgPath .= "/";
+		}
+		$jsonConfig['payload']['userImgPath'] = $userImgPath;
 
 		//add summary details
 		$objSummary = config::byKey('object:summary');
