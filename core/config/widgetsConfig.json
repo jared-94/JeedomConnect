@@ -4251,6 +4251,13 @@
 					"description": "Commande info contenant l'URL à afficher"
 				},
 				{
+					"id": "gridDisplay",
+					"name": "Afficher dans la grille",
+					"required": false,
+					"category": "binary",
+					"description": "Affiche la page web dans la tuile"
+				},
+				{
 					"id": "defaultHeight",
 					"name": "Hauteur",
 					"required": false,

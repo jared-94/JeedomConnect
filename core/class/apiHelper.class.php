@@ -710,11 +710,12 @@ class apiHelper {
     $payload = array();
 
     foreach ($cmds as $cmd) {
-      $state = $cmd->getCache(array('valueDate', 'value'));
+      $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
       $cmd_info = array(
         'id' => $cmd->getId(),
         'value' => $state['value'],
-        'modified' => strtotime($state['valueDate'])
+        'modified' => strtotime($state['valueDate']),
+        'collectDate' => strtotime($state['collectDate'])
       );
       array_push($payload, $cmd_info);
     }
@@ -1882,7 +1883,8 @@ class apiHelper {
           $cmd_info = array(
             'id' => $event['option']['cmd_id'],
             'value' => $event['option']['value'],
-            'modified' => strtotime($event['option']['valueDate'])
+            'modified' => strtotime($event['option']['valueDate']),
+            'collectDate' => strtotime($event['option']['collectDate'])
           );
           array_push($result_cmd['payload'], $cmd_info);
         }

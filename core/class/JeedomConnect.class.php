@@ -1021,6 +1021,19 @@ class JeedomConnect extends eqLogic {
 		self::removeAllData($apiKey);
 	}
 
+
+	/**
+	 * ensure userImgPath doesn't start with / and ends with /
+	 */
+	public static function preConfig_userImgPath($value) {
+
+		$userImgPath = ltrim($value, "/");
+		if (substr($userImgPath, -1) != "/") {
+			$userImgPath .= "/";
+		}
+		return $userImgPath;
+	}
+
 	public static function removeAllData($apiKey) {
 		unlink(self::$_qr_dir . $apiKey . '.png');
 		unlink(self::$_config_dir . $apiKey . ".json");

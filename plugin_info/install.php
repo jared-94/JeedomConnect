@@ -58,6 +58,12 @@ function JeedomConnect_update() {
 
   if (config::byKey('userImgPath',   'JeedomConnect') == '') {
     config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
+  } else {
+    $userImgPath = ltrim(config::byKey('userImgPath',   'JeedomConnect'), "/");
+    if (substr($userImgPath, -1) != "/") {
+      $userImgPath .= "/";
+    }
+    config::save('userImgPath', $userImgPath, 'JeedomConnect');
   }
 
   if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
