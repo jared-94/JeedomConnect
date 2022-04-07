@@ -4831,6 +4831,18 @@
 					"customizable": true
 				},
 				{
+					"id": "histMinValue",
+					"name": "Valeur min (axe vertival)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string"
+				},
+				{
+					"id": "histMaxValue",
+					"name": "Valeur max (axe vertival)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string"
+				},
+				{
 					"id": "hideTickY",
 					"name": "Masquer légende verticale",
 					"required": false,
