@@ -57,6 +57,12 @@ if (!isConnect('admin')) {
 			<label class='col-xs-3  required' >Actif</label>
 			<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="mod-enable-input" ${value}></div></div></div></li>`;
         items.push(enable);
+      } else if (option.type == "description") {
+        line = `<li><span class="description italic">${option.text}</span></li>`;
+        items.push(line);
+      } else if (option.type == "line") {
+        line = `<li style="border-bottom: solid 1px;"></li>`;
+        items.push(line);
       } else if (option.type == "checkboxes") {
 
         checkboxes = `<li><div class='form-group'>
@@ -72,9 +78,8 @@ if (!isConnect('admin')) {
         radios = `<li><div class='form-group'>
 			<label class='col-xs-3  required' >${option.title}</label>
 			<div class='col-xs-9'><label class='radio-inline'>`;
-        randomId = Date.now();
         option.choices.forEach(item => {
-          radios += `<label><input type="radio" class="radiosSelection" name="radio" style="width:150px;" id="${item.id}" > ${item.name}</label><br/>`;
+          radios += `<label><input type="radio" class="radiosSelection" name="radio" style="width:150px;" id="${item.id}"  ${item.selected || ''}> ${item.name}</label><br/>`;
         });
         radios += `</label></div></div></li>`;
         items.push(radios);
@@ -124,12 +129,12 @@ if (!isConnect('admin')) {
         allWidgetsDetail.forEach(item => {
           if (option.choices.includes(item.type)) {
             let name = getWidgetPath(item.id);
-            room = getRoomName(item.room);
-            if (room) {
+            room = getRoomName(item.room) || '';
+            if (room && room != '') {
               name = name + ' (' + room + ')'
             }
 
-            widget += `<option style="width:150px;" value="${item.id}" name="${name}">${name} [${item.id}]</option>`;
+            widget += `<option style="width:150px;" value="${item.id}" name="${name}" data-room="${room}">${name} [${item.id}]</option>`;
           }
         })
         widget += `</select></div></div></div></li>`;
@@ -147,6 +152,18 @@ if (!isConnect('admin')) {
           });
         }
 
+      } else if (option.type == "advancedGrid") {
+        swipe = `<li><div class='form-group'>
+			   <label class='col-xs-3' >Mode de grille</label>
+			   <div class='col-xs-9'>
+          <select id="advancedGrid-select">
+            <option value='auto' ${option.value === undefined ? "selected" : ""}>Automatique</option>
+            <option value='standard' ${option.value === false ? "selected" : ""}>Standard</option>
+            <option value='advanced' ${option.value === true ? "selected" : ""}>Avancé</option>
+          </select>
+         </div>
+         </div></li>`;
+        items.push(swipe);
       } else if (option.type == "swipeUp" | option.type == "swipeDown" | option.type == "action") {
         swipe = `<li><div class='form-group'>
 			   <label class='col-xs-3' >${option.type == 'swipeUp' ? "Swipe Up" : ( option.type == 'swipeDown' ? "Swipe Down" : "Action" )}</label>

@@ -29,9 +29,9 @@ try {
     );
 
     // Run server
-    log::add('JeedomConnect', 'info', "Listenning on port $port");
+    JCLog::info("Listenning on port $port");
 
     $server->run();
 } catch (\Exception $e) {
-    log::add('JeedomConnect', 'error', 'Daemon crash with following error: ' . $e->getMessage());
+    JCLog::error('Daemon crash with following error: ' . $e->getMessage());
 }

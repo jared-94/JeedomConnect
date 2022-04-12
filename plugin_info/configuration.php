@@ -26,8 +26,8 @@ if (!isConnect()) {
 }
 
 $existOldFormat = false;
+/** @var JeedomConnect $eqLogic */
 foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
-
   $configFile = $eqLogic->getConfig(false);
   if (!is_null($configFile) && !array_key_exists('formatVersion', $configFile)) $existOldFormat = true;
 }
@@ -55,7 +55,7 @@ if (isConnect()) {
   if (isset($_SESSION['user']) && is_object($_SESSION['user'])) {
     $user = user::byId($_SESSION['user']->getId());
     if (is_object($user)) {
-      log::add('JeedomConnect', 'debug', 'user session:' . $user->getHash());
+      // JCLog::debug('user session:' . $user->getHash());
       $userHash = $user->getHash();
     }
   }

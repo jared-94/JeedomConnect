@@ -18,14 +18,23 @@ if (isConnect()) {
 	if (isset($_SESSION['user']) && is_object($_SESSION['user'])) {
 		$user = user::byId($_SESSION['user']->getId());
 		if (is_object($user)) {
-			log::add('JeedomConnect', 'debug', 'user session:' . $user->getHash());
+			// JCLog::debug('user session:' . $user->getHash());
 			$userHash = $user->getHash();
 		}
 	}
 }
 sendVarToJS('userHash', $userHash);
 
+/** @var array<JeedomConnect> $eqLogics */
 $eqLogics = eqLogic::byType($plugin->getId());
+
+list($widgetInError, $roomInError) = JeedomConnectWidget::checkCmdSetupInWidgets();
+
+foreach ($roomInError as $widgetId) {
+	JCLog::debug("removing room for widget Id " . $widgetId);
+	//remove key room for widget with unexisting room
+	JeedomConnectWidget::updateConfig($widgetId, 'room');
+}
 
 $widgetArray = JeedomConnectWidget::getWidgets();
 
@@ -57,8 +66,6 @@ switch ($orderBy) {
 
 $allConfig = JeedomConnect::getWidgetParam();
 $widgetTypeArray = array();
-
-$widgetInError = JeedomConnectWidget::checkCmdSetupInWidgets();
 
 $listWidget = '';
 
@@ -441,15 +448,16 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 							</div>
 
 							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Accès à la timeline}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" checked type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+
+							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Accès Interface web}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="webviewEnabled" type="checkbox" placeholder="{{}}">
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Droits éditer widgets}}</label>
-								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="editEnabled" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 
@@ -493,8 +501,15 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Clé API :}}</label>
-								<div class="col-sm-4">
+								<div class="col-sm-9">
 									<span class="eqLogicAttr label label-info" style="font-size:1em;" data-l1key="configuration" type="text" data-l2key="apiKey"></span>
+
+									<!-- <a class="btn btn-default form-control btRegenerateApiKey roundedRight" style="width:30px"><i class="fas fa-sync"></i></a> -->
+									<a class="btRegenerateApiKey" style="padding-left:10px" title="Regénérer la clé API de cet équipement"><i class="fas fa-sync"></i></a>
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Regénérer la clé API de cet équipement"></i>
+									</sup>
+
 								</div>
 							</div>
 

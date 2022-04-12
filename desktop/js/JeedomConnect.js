@@ -72,8 +72,13 @@ function SortByType(a, b) {
 }
 
 function SortByRoom(a, b) {
-  var aRoom = ('room' in a) ? roomList.find(r => r.id == a.room).name.toLowerCase() : 'AAAucun';
-  var bRoom = ('room' in b) ? roomList.find(r => r.id == b.room).name.toLowerCase() : 'AAAucun';
+
+  var aObj = ('room' in a) ? roomList.find(r => r.id == a.room) || undefined : undefined;
+  var bObj = ('room' in b) ? roomList.find(r => r.id == b.room) || undefined : undefined;
+
+  var aRoom = (aObj != undefined) ? aObj.name.toLowerCase() : 'AAAucun';
+  var bRoom = (bObj != undefined) ? bObj.name.toLowerCase() : 'AAAucun';
+
   return ((aRoom < bRoom) ? -1 : ((aRoom > bRoom) ? 1 : 0));
 }
 
@@ -338,34 +343,65 @@ function openAssistantNotificationModal(id, event) {
   $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + id).dialog('open');
 }
 
+
+function download(filename, text, add_date_time = false) {
+
+  if (add_date_time) {
+    var dt = new Date();
+    var dd = String(dt.getDate()).padStart(2, '0');
+    var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = dt.getFullYear();
+
+    today = yyyy + mm + dd;
+    var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+
+    filename = today + '_' + time + '_' + filename;
+  }
+
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+
+
 $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function () {
-  var dt = new Date();
-  var dd = String(dt.getDate()).padStart(2, '0');
-  var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = dt.getFullYear();
 
-  today = yyyy + mm + dd;
-  var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
+  var apiKeyVal = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
 
-  var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
-  var a = document.createElement("a");
-  //a.href = 'plugins/JeedomConnect/data/configs/' + key + '.json';
-  a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + key + '.json';
-  a.download = key + '_' + today + '_' + time + '.json';
-  a.click();
-  a.remove();
-});
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'generateFile',
+      type: 'exportEqConf',
+      apiKey: apiKeyVal
+    },
+    dataType: 'json',
+    success: function (data) {
+      if (data.state != 'ok') {
+        $('#div_alert').showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else {
+        download(apiKeyVal + '.json', JSON.stringify(data.result), true);
+      }
+    }
+  });
+
+})
+
 
 $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn', function () {
   var apiKey = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
-
-  var dt = new Date();
-  var dd = String(dt.getDate()).padStart(2, '0');
-  var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = dt.getFullYear();
-
-  today = yyyy + mm + dd;
-  var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
 
   $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -384,12 +420,7 @@ $('.jeedomConnect').off('click', '#exportAll-btn').on('click', '#exportAll-btn',
         });
       }
       else {
-        var a = document.createElement("a");
-        //a.href = 'plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
-        a.href = '/core/php/downloadFile.php?apikey=' + userHash + '&pathfile=/var/www/html/plugins/JeedomConnect/data/configs/' + apiKey + '.json.generated';
-        a.download = apiKey + '_' + today + '_' + time + '_GENERATED.json';
-        a.click();
-        a.remove();
+        download(apiKey + '_DEBUG.json', JSON.stringify(data.result), true);
       }
     }
   });
@@ -408,18 +439,28 @@ $('.jeedomConnect').off('click', '#copy-btn').on('click', '#copy-btn', function 
       name: item.name
     };
   });
-  getSimpleModal({ title: "Recopier vers quel(s) appareil(s)", fields: [{ title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent }] }, function (result) {
-
+  getSimpleModal({
+    title: "Recopier vers quel(s) appareil(s)",
+    fields: [
+      { title: "Choix", type: "checkboxes", choices: allJCEquipmentsWithoutCurrent },
+      { type: "line" },
+      { title: "Inclure les perso", type: "radios", choices: [{ id: 'yes', name: 'Oui' }, { id: 'no', name: 'Non', selected: 'checked' },] },
+      { type: 'description', text: 'Attention, lors de la recopie vous perdez la configuration présente actuelle sur les équipements "cibles"' }
+    ]
+  }, function (result) {
+    if (result.checkboxes.length === 0) {
+      throw "Il faut sélectionner au moins un appareil ! ";
+    }
     $.post({
       url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
       data: {
         'action': 'copyConfig',
         'from': from,
-        'to': result.checkboxes
+        'to': result.checkboxes,
+        'withCustom': (result.radio == 'yes')
       },
       dataType: 'json',
       success: function (data) {
-        console.log("copyConfig ajax received : ", data);
         if (data.state != 'ok') {
           $('#div_alert').showAlert({
             message: data.result,
@@ -451,18 +492,22 @@ $("#import-input").change(function () {
         config = e.target.result;
         $.post({
           url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-          data: { 'action': 'saveConfig', 'config': config, 'apiKey': key },
-          success: function (r) {
-            if (JSON.parse(r).state == 'error') {
-              $('#div_alert').showAlert({ message: "Erreur lors de l'importation", level: 'danger' });
-            } else {
-              $('#div_alert').showAlert({ message: 'Configuration importée avec succès', level: 'success' });
-            }
+          data: {
+            action: 'uploadWidgets',
+            import: 'eqConfig',
+            data: config,
+            apiKey: key
           },
+          dataType: 'json',
           error: function (error) {
-            console.log(error);
-            $('#div_alert').showAlert({ message: "Erreur lors de l'importation", level: 'danger' });
-          }
+            $('#div_alert').showAlert({ message: data.result, level: 'danger' });
+          },
+          success: function (data) {
+            var levelType = (data.state != 'ok') ? 'danger' : 'success';
+            $('#div_alert').showAlert({ message: data.result, level: levelType });
+
+          },
+
         });
       };
     })(file);
@@ -471,6 +516,49 @@ $("#import-input").change(function () {
   }
 });
 
+
+$(".btRegenerateApiKey").click(function () {
+  var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
+
+  getSimpleModal({
+    title: "Confirmation",
+    fields: [
+      {
+        type: "string",
+        value: "Avant de réaliser cette opération, assurez-vous que l'application n'est pas lancée sur votre appareil.<br><br>Voulez-vous vraiment regénérer la clé API de cet équipement ?"
+      }]
+  }, function (result) {
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        'action': 'regenerateApiKey',
+        'eqId': $('.eqLogicAttr[data-l1key=id]').value(),
+        'apiKey': $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value()
+      },
+      cache: false,
+      dataType: 'json',
+      async: false,
+      success: function (data) {
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
+        }
+        else {
+          // console.log('btRegenerateApiKey data :', data);
+          var ApiKey = data.result.newapikey;
+          // console.log('new api key', ApiKey);
+          $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text(ApiKey)
+          $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + ApiKey + '.png');
+        }
+      },
+      error: function (error) {
+        console.log("error while regenerating the api key", error)
+      }
+    });
+  });
+})
 
 $("#qrcode-regenerate").click(function () {
   var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
@@ -556,7 +644,6 @@ $('#in_searchWidget').off('keyup').keyup(function () {
 
 $('#bt_resetSearchWidget').on('click', function () {
   $('#in_searchWidget').val('').keyup()
-  updateWidgetCount();
 })
 
 
@@ -752,6 +839,15 @@ var widgetsList = (function () {
     'url': "plugins/JeedomConnect/core/config/widgetsConfig.json",
     'dataType': "json",
     'success': function (data) {
+      var availableWidgets = data.widgets.filter(function (item) {
+        if (item.hide !== undefined && item.hide) {
+          return false;
+        }
+        return true;
+      });
+
+      data.widgets = availableWidgets
+
       data.widgets.sort(function (a, b) {
         return a.name.localeCompare(b.name);
       });
@@ -1028,10 +1124,15 @@ function refreshAddWidgets() {
       curOption += "</div></div></li>";
 
     } else if (option.category == "string") {
-
       type = (option.subtype != undefined) ? option.subtype : 'text';
-      curOption += `<div class='input-group'>
+      if (option.subtype == "multiline") {
+        curOption += `<div class='input-group'>
+        <div style="display:flex"><textarea style="width:340px;" id="${option.id}-input" value=''></textarea>`;
+      } else {
+        curOption += `<div class='input-group'>
         <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
+      }
+
       if (option.id == 'name') {
         curOption += `
               <div class="dropdown" id="name-select">
@@ -1140,8 +1241,8 @@ function refreshAddWidgets() {
           </div>
         </div>
       </div>
-      
-      
+
+
     </div>
     </div></li>`;
     } else if (option.category == "choicesList") {
@@ -1365,8 +1466,17 @@ function refreshWidgetOption() {
   });
   widgetsCat.forEach(item => {
     var name = getWidgetPath(item.id);
+
+    if (item.roomName) {
+      roomName = (item.roomName == '') ? '' : ' (' + item.roomName + ')';
+    }
+    else {
+      roomNameTmp = getRoomName(item.room || undefined) || '';
+      roomName = (roomNameTmp == '') ? '' : ' (' + roomNameTmp + ')';
+    }
+
     curOption += `<div class='input-group jcWidgetListMovable' data-id="${item.id}">
-          <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}' disabled>
+          <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}${roomName}' disabled>
           <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
           <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidgetOption('${item.id}');"></i>
@@ -1387,8 +1497,12 @@ function refreshCmdListOption(optionsJson) {
   cmdCat.sort(function (s, t) {
     return s.index - t.index;
   });
+
+  var tempIndex = 0;
   cmdCat.forEach(item => {
     isDisabled = isJcExpert ? '' : 'disabled';
+
+    item.index = item.index || tempIndex;
     //open the div
     curOption += `<div class='input-group col-lg-12 jcCmdList' style="display:flex;border:0.5px black solid;margin: 0 5px;" data-id="${item.id}" data-index="${item.index}">`;
 
@@ -1446,6 +1560,8 @@ function refreshCmdListOption(optionsJson) {
     curOption += `</div>`;
     //// ---  END right part
     curOption += `</div>`;
+
+    tempIndex++;
 
 
   });
@@ -1803,6 +1919,7 @@ function refreshMoreInfos() {
       id: item.id,
       success: function (data) {
         $("#" + item.id + "-input").val(data);
+        item.human = data;
       }
     });
   });
@@ -1832,7 +1949,7 @@ function refreshInfoSelect() {
   let infosOptionHtml = '';
   var type = $("#widgetsList-select").val();
   var widget = widgetsList.widgets.find(i => i.type == type);
-  if (widget.variables) {
+  if (widget?.variables) {
     widget.variables.forEach(v => {
       infosOptionHtml += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)">
         <a href="#">#${v.name}#</a></li>`;
@@ -1852,7 +1969,7 @@ function refreshInfoSelect() {
 }
 
 function colorDefined(c, id) {
-  console.log('id', id)
+  // console.log('id', id)
   $("#" + id + "-input").val(c.value);
 }
 
@@ -1879,7 +1996,7 @@ function idToHuman(string, infos) {
   if (!match) { return string; }
   match.forEach(item => {
     const info = infos.find(i => i.id == item.replace(/\#/g, ""));
-    if (info && info.human != '') {
+    if (info && info.human != '' && info.human != undefined) {
       result = result.replace(item, info.human);
     }
   });
@@ -1962,6 +2079,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
   $("#imgList-option").html(curOption);
   setCondToHuman('imgList');
+  refreshInfoSelect();
 }
 
 function saveImgOption() {
@@ -2102,7 +2220,7 @@ function addWidgetOption(choices) {
   var widgets = choices.split(".");
   getSimpleModal({ title: "Choisir un widget", fields: [{ type: "widget", choices: widgets }] }, function (result) {
     var maxIndex = getMaxIndex(widgetsCat);
-    widgetsCat.push({ id: result.widgetId, index: maxIndex + 1 });
+    widgetsCat.push({ id: result.widgetId, index: maxIndex + 1, roomName: result.roomName });
     refreshWidgetOption();
   });
 }
@@ -2458,6 +2576,7 @@ function saveWidget() {
       moreInfos.forEach(info => {
         info.name = $("#" + info.id + "-name-input").val();
         info.unit = $("#" + info.id + "-unit-input").val();
+        delete info.human;
         result.moreInfos.push(info);
       });
     }
@@ -2891,19 +3010,6 @@ function getCmdDetail(_params, _callback) {
   $.ajax(paramsAJAX);
 };
 
-
-
-$(document).ready(function () {
-  var widgetSearch = $("#in_searchWidget").val().trim();
-  if (widgetSearch != '') {
-    $('#in_searchWidget').keyup()
-  }
-
-  $('.eqLogicThumbnailContainer').packery();
-
-  updateWidgetCount()
-});
-
 $('#widgetsList-div').on('change', function () {
   updateWidgetCount()
 })
@@ -3041,3 +3147,5 @@ function copyDivToClipboard(myInput, addBacktick = false) {
     $(myInput).html(initialText);
   }
 }
+
+updateWidgetCount();

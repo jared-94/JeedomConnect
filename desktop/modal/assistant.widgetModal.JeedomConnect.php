@@ -21,11 +21,6 @@ if (!isConnect('admin')) {
 ?>
 
 <style>
-	.required:after {
-		content: " *";
-		color: red;
-	}
-
 	#widgetImg {
 		display: block;
 		margin-left: auto;
@@ -33,19 +28,6 @@ if (!isConnect('admin')) {
 		width: 100px;
 		margin-bottom: 25px;
 		margin-top: 15px;
-	}
-
-	.description {
-		color: var(--al-info-color);
-		font-size: 11px;
-	}
-
-	.borderLef {
-		border-left: 1px solid #ccc;
-	}
-
-	.btn-supp {
-		background-color: var(--al-danger-color) !important;
 	}
 </style>
 

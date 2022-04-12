@@ -18,6 +18,7 @@ if (!isConnect('admin')) {
   throw new Exception('{{401 - Accès non autorisé}}');
 }
 
+/** @var \eqLogic */
 $eqLogic = eqLogic::byId(init('eqLogicId'));
 sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
 
@@ -28,9 +29,8 @@ include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'configManager', 'js', 'JeedomConnect');
 include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
 
-$plugin = plugin::byId('JeedomConnect');
-$eqLogics = eqLogic::byType($plugin->getId());
-
+/** @var array<JeedomConnect> $eqLogics */
+$eqLogics = eqLogic::byType('JeedomConnect');
 
 $widgetsConfigJsonFile = file_get_contents('plugins/JeedomConnect/core/config/widgetsConfig.json');
 
@@ -129,7 +129,7 @@ foreach ($summaryConfig as $index => $summary) {
     }
   }
 
-  $summaryAvailOptions .= '<option value="' . $summary['key'] . '" data-key="' . $summary['key'] . '" 
+  $summaryAvailOptions .= '<option value="' . $summary['key'] . '" data-key="' . $summary['key'] . '"
                         data-name="' . $summary['name'] . '" ' . $icon . '
                         >' . $summary['name'] . '</option>';
 }

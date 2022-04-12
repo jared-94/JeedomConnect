@@ -25,6 +25,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
 $alreadyChecked = config::byKey('notifAll', 'JeedomConnect', array());
 
 $txt = '';
+/** @var JeedomConnect $eqLogic */
 foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
   $tmpTxt = '';
   foreach ($eqLogic->getCmd('action') as $cmd) {

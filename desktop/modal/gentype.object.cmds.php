@@ -47,6 +47,7 @@ $object = jeeObject::byId($objectId);
 
 <?php
 $objectId = is_object($object) ? $object->getId() : null;
+/** @var array<eqLogic> */
 $eqLogics = eqLogic::byObjectId($objectId, true, false, null, null, false, true);
 
 usort($eqLogics, function ($a, $b) {

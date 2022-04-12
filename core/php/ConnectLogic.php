@@ -6,8 +6,9 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
-require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
-require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
+require_once dirname(__FILE__) . "/../class/JeedomConnect.class.php";
+// require_once dirname(__FILE__) . "/../class/JeedomConnectActions.class.php";
+// require_once dirname(__FILE__) . "/../class/JeedomConnectWidget.class.php";
 
 class ConnectLogic implements MessageComponentInterface {
 
@@ -52,12 +53,12 @@ class ConnectLogic implements MessageComponentInterface {
 	public function process() {
 		if ($this->hasUnauthenticatedClients) {
 			// Check is there is unauthenticated clients for too long
-			\log::add('JeedomConnect', 'debug', 'Close unauthenticated client');
+			\JCLog::debug('Close unauthenticated client');
 			$current = time();
 			foreach ($this->unauthenticatedClients as $client) {
 				if ($current - $client->openTimestamp > $this->authDelay) {
 					// Client has been connected without authentication for too long, close connection
-					\log::add('JeedomConnect', 'warning', "Close unauthenticated client #{$client->resourceId} from IP: {$client->ip}");
+					\JCLog::warning("Close unauthenticated client #{$client->resourceId} from IP: {$client->ip}");
 					$client->close();
 				}
 			}
@@ -77,7 +78,7 @@ class ConnectLogic implements MessageComponentInterface {
 	private function setAuthenticatedClientsCount() {
 		$this->hasAuthenticatedClients = $this->authenticatedClients->count() > 0;
 		if (!$this->hasAuthenticatedClients) {
-			\log::add('JeedomConnect', 'debug', 'There is no more authenticated client');
+			\JCLog::debug('There is no more authenticated client');
 		}
 	}
 
@@ -87,7 +88,7 @@ class ConnectLogic implements MessageComponentInterface {
 	private function setUnauthenticatedClientsCount() {
 		$this->hasUnauthenticatedClients = $this->unauthenticatedClients->count() > 0;
 		if (!$this->hasUnauthenticatedClients) {
-			\log::add('JeedomConnect', 'debug', 'There is no more unauthenticated client');
+			\JCLog::debug('There is no more unauthenticated client');
 		}
 	}
 
@@ -103,33 +104,45 @@ class ConnectLogic implements MessageComponentInterface {
 		// Parse message
 		$objectMsg = json_decode($msg);
 		if ($objectMsg === null || !property_exists($objectMsg, 'apiKey') || !property_exists($objectMsg, 'userHash') || !property_exists($objectMsg, 'deviceId') || !property_exists($objectMsg, 'token')) {
-			\log::add('JeedomConnect', 'warning', "Authentication failed (invalid message) for client #{$conn->resourceId} from IP: {$conn->ip}");
+			\JCLog::warning("Authentication failed (invalid message) for client #{$conn->resourceId} from IP: {$conn->ip}");
 			$conn->close();
 			return;
 		}
 
+		/** @var \JeedomConnect */
 		$eqLogic = \eqLogic::byLogicalId($objectMsg->apiKey, 'JeedomConnect');
 
 		if (!is_object($eqLogic)) {
 			// Invalid API key
-			\log::add('JeedomConnect', 'warning', "Authentication failed (invalid credentials) for client #{$conn->resourceId} from IP: {$conn->ip}");
-			$result = array('type' => 'BAD_KEY');
-			$conn->send(json_encode($result));
-			$conn->close();
-			return;
+
+			// check if new apiKey has beend generated
+			$hasNewApiKey = \apiHelper::isApiKeyRegenerated($objectMsg->apiKey);
+			if (!$hasNewApiKey) {
+				\JCLog::warning("Authentication failed (invalid credentials) for client #{$conn->resourceId} from IP: {$conn->ip}");
+				$result = array('type' => 'BAD_KEY');
+				$conn->send(json_encode($result));
+				$conn->close();
+				return;
+			} else {
+				$msg = \apiHelper::getApiKeyRegenerated($objectMsg->apiKey);
+				\JCLog::debug('[WS] no answer for CONNECT || Sending new apiKey info-> ' . json_encode($msg));
+				$conn->send(json_encode($msg));
+			}
 		} else {
 			$param = (array) $objectMsg;
 
 			foreach ($this->authenticatedClients as $client) {
 				if ($client->apiKey == $param['apiKey']) {
-					\log::add('JeedomConnect', 'debug', 'Disconnect previous connection client ' . ${$client->resourceId});
+					\JCLog::debug('Disconnect previous connection client ' . ${$client->resourceId});
 					$client->close();
 				}
 			}
 
 
 			$connexion = \apiHelper::dispatch('WS', 'CONNECT', $eqLogic, $param ?? array(), $param['apiKey']);
-			\log::add('JeedomConnect', 'debug', '[WS] Send CONNECT -> ' . json_encode($connexion));
+			$logs = \JeedomConnectUtils::hideSensitiveData(json_encode($connexion), 'send');
+			\JCLog::debug('[WS] Send CONNECT -> ' . $logs);
+			// \JCLog::debug('[WS] Send CONNECT -> ' . json_encode($connexion));
 			if (
 				isset($connexion['type']) &&
 				in_array($connexion['type'], array(
@@ -176,7 +189,7 @@ class ConnectLogic implements MessageComponentInterface {
 		// Add client to unauthenticated clients list for handling his unauthentication
 		$this->unauthenticatedClients->attach($conn);
 		$this->hasUnauthenticatedClients = true;
-		\log::add('JeedomConnect', 'debug', "New connection: #{$conn->resourceId} from IP: {$conn->ip}");
+		\JCLog::debug("New connection: #{$conn->resourceId} from IP: {$conn->ip}");
 	}
 
 	/**
@@ -186,7 +199,10 @@ class ConnectLogic implements MessageComponentInterface {
 	 * @param string $msg Data received from the client
 	 */
 	public function onMessage(ConnectionInterface $from, $msg) {
-		\log::add('JeedomConnect', 'debug', "[WS] Incoming message from #{$from->resourceId} : {$msg}");
+		// \JCLog::debug("[WS] Incoming message from #{$from->resourceId} : {$msg}");
+		$logData = \JeedomConnectUtils::hideSensitiveData($msg, 'receive');
+		\JCLog::debug("[WS] Incoming message from #{$from->resourceId} : {$logData}");
+
 		if ($this->unauthenticatedClients->contains($from)) {
 			// this is a message from an unauthenticated client, check if it contains credentials
 			$this->authenticate($from, $msg);
@@ -208,12 +224,16 @@ class ConnectLogic implements MessageComponentInterface {
 			if (!is_null($result)) {
 				if (isset($msg['messageId'])) $result['messageId'] = $msg['messageId'];
 
-				if (!in_array($msg['type'], \apiHelper::$_skipLog)) \log::add('JeedomConnect', 'debug', '[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+				// if (!in_array($msg['type'], \apiHelper::$_skipLog)) \JCLog::debug('[WS] Send ' . $msg['type'] . ' -> ' . json_encode($result));
+				if (!in_array($msg['type'], \apiHelper::$_skipLog)) {
+					$logData = \JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send');
+					\JCLog::debug('[WS] Send ' . $msg['type'] . ' -> ' . $logData);
+				}
 
 				return $from->send(json_encode($result));
 			}
 		} catch (\Exception $e) {
-			$from->send(json_encode(\apiHelper::raiseException($msg['type'], '- ' . $e->getMessage())));
+			$from->send(json_encode(\apiHelper::raiseException($e->getMessage(), $msg['type'])));
 		}
 	}
 
@@ -224,7 +244,8 @@ class ConnectLogic implements MessageComponentInterface {
 	 */
 	public function onClose(ConnectionInterface $conn) {
 		// Remove client from lists
-		\log::add('JeedomConnect', 'info', "Connection #{$conn->resourceId} ({$conn->apiKey}) has disconnected");
+		\JCLog::info("Connection #{$conn->resourceId} ({$conn->apiKey}) has disconnected");
+		/** @var \JeedomConnect */
 		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
 		if (is_object($eqLogic)) {
 			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
@@ -246,7 +267,8 @@ class ConnectLogic implements MessageComponentInterface {
 	 * @param \Exception $e Exception encountered
 	 */
 	public function onError(ConnectionInterface $conn, \Exception $e) {
-		\log::add('JeedomConnect', 'error', "An error has occurred: {$e->getMessage()}");
+		\JCLog::error("An error has occurred: {$e->getMessage()}");
+		/** @var \JeedomConnect */
 		$eqLogic = \eqLogic::byLogicalId($conn->apiKey, 'JeedomConnect');
 		if (is_object($eqLogic)) {
 			if ($eqLogic->getConfiguration('sessionId', 0) == $conn->sessionId) {
@@ -266,13 +288,19 @@ class ConnectLogic implements MessageComponentInterface {
 
 	public function lookForNewConfig() {
 		foreach ($this->authenticatedClients as $client) {
+			/** @var \JeedomConnect */
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				\JCLog::warning('eq not found - lookForNewConfig');
+				$client->close();
+				continue;
+			}
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
 			$newConfig = \apiHelper::lookForNewConfig($eqLogic, $client->configVersion);
 			if ($newConfig != false) {
-				\log::add('JeedomConnect', 'debug', "send new config to #{$client->resourceId} with api key " . $client->apiKey);
+				\JCLog::debug("send new config to #{$client->resourceId} with api key " . $client->apiKey);
 				$client->configVersion = $newConfig['payload']['configVersion'];
 				$client->send(json_encode(\apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())));
 				$client->send(json_encode(\apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), false, true)));
@@ -283,12 +311,18 @@ class ConnectLogic implements MessageComponentInterface {
 
 	private function sendActions() {
 		foreach ($this->authenticatedClients as $client) {
+			/** @var \JeedomConnect */
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				\JCLog::warning('eq not found - sendActions');
+				$client->close();
+				continue;
+			}
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
 			$actions = \JeedomConnectActions::getAllActions($client->apiKey);
-			//\log::add('JeedomConnect', 'debug', "get action  ".json_encode($actions));
+			//\JCLog::debug("get action  ".json_encode($actions));
 			if (count($actions) > 0) {
 				$result = array(
 					'type' => 'ACTIONS',
@@ -297,7 +331,7 @@ class ConnectLogic implements MessageComponentInterface {
 				foreach ($actions as $action) {
 					array_push($result['payload'], $action['value']['payload']);
 				}
-				\log::add('JeedomConnect', 'debug', "send action to #{$client->resourceId}  " . json_encode($result));
+				\JCLog::debug("send action to #{$client->resourceId}  " . json_encode($result));
 				$client->send(json_encode($result));
 				\JeedomConnectActions::removeActions($actions);
 			}
@@ -306,17 +340,23 @@ class ConnectLogic implements MessageComponentInterface {
 
 	private function broadcastEvents() {
 		foreach ($this->authenticatedClients as $client) {
+			/** @var \JeedomConnect */
 			$eqLogic = \eqLogic::byLogicalId($client->apiKey, 'JeedomConnect');
+			if (!is_object($eqLogic)) {
+				\JCLog::warning('eq not found - broadcastEvents');
+				$client->close();
+				continue;
+			}
 			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
 
 			$eventsRes = \apiHelper::getEventsFull($eqLogic, $client->lastReadTimestamp);
-			$client->lastReadTimestamp = time();
+			$client->lastReadTimestamp = $eventsRes[0]['payload'];
 
 			foreach ($eventsRes as $res) {
-				if (count($res['payload']) > 0) {
-					\log::add('JeedomConnect', 'debug', "Broadcast to {$client->resourceId} : " . json_encode($res));
+				if (key_exists('payload', $res) && is_array($res['payload']) && count($res['payload']) > 0) {
+					\JCLog::debug("Broadcast to {$client->resourceId} : " . json_encode($res));
 					$client->send(json_encode($res));
 				}
 			}
