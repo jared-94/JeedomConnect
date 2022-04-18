@@ -47,6 +47,28 @@ function refreshWidgetDetails() {
 
 }
 
+$.post({
+  url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+  data: {
+    'action': 'getAllJeedomData'
+  },
+  cache: false,
+  dataType: 'json',
+  async: false,
+  success: function (data) {
+    if (data.state != 'ok') {
+      $('#div_alert').showAlert({
+        message: data.result,
+        level: 'danger'
+      });
+      allJeedomData = '';
+    }
+    else {
+      allJeedomData = data.result;
+    }
+  }
+});
+
 
 function sortWidgets() {
   if (jcOrderBy === undefined) jcOrderBy = 'object';
@@ -1915,14 +1937,14 @@ function refreshMoreInfos() {
   });
   $("#moreInfos-div").html(div);
   moreInfos.forEach(item => {
-    getHumanName({
-      id: item.id,
-      success: function (data) {
-        $("#" + item.id + "-input").val(data);
-        item.human = data;
-      }
-    });
-  });
+    cmdHumanName = getHumanNameFromCmdId(item.id);
+    if (cmdHumanName != '') {
+      $("#" + item.id + "-input").val(cmdHumanName);
+      item.human = cmdHumanName;
+    }
+
+  })
+
   refreshImgListOption();
   refreshInfoSelect();
 }
@@ -1960,8 +1982,10 @@ function refreshInfoSelect() {
       <a href="#">${el.title}</a></li>`;
   });
   moreInfos.forEach(i => {
-    infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
+    if (i.human) {
+      infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
       <a href="#">${i.human}</a></li>`;
+    }
   });
   $(".infos-select").html(infosOptionHtml);
 
@@ -2025,7 +2049,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
   options = options.concat(moreInfos);
 
-  if (widget.variables) {
+  if (widget?.variables) {
     widget.variables.forEach(v => {
       options.push({ type: 'var', id: v.name, human: `#${v.name}#` })
     });
@@ -2262,6 +2286,12 @@ function downWidgetOption(id) {
   refreshWidgetOption();
 }
 */
+
+function getHumanNameFromCmdId(cmdId) {
+  myCmd = allJeedomData?.find(i => i.id == cmdId);
+  myHumanName = myCmd?.humanName ? '#' + myCmd.humanName + '#' : '';
+  return myHumanName;
+}
 
 function getHumanName(_params) {
   var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
