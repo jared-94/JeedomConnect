@@ -927,16 +927,13 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-picker").val(options.widget[option.id]);
       } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
-        getHumanName({
-          id: options.widget[option.id].id,
-          error: function (error) { },
-          success: function (data) {
-            $("#" + option.id + "-input").val(data);
-            $("#" + option.id + "-input").attr('title', data);
-            refreshImgListOption();
-            refreshInfoSelect();
-          }
-        });
+        cmdHumanName = getHumanName(options.widget[option.id].id)
+        if (cmdHumanName != '') {
+          $("#" + option.id + "-input").val(data);
+          $("#" + option.id + "-input").attr('title', data);
+          refreshImgListOption();
+          refreshInfoSelect();
+        }
         $("#" + option.id + "-input").attr('cmdType', options.widget[option.id].type);
         $("#" + option.id + "-input").attr('cmdSubType', options.widget[option.id].subType);
         if (options.widget[option.id].type == 'action') {
@@ -1937,7 +1934,7 @@ function refreshMoreInfos() {
   });
   $("#moreInfos-div").html(div);
   moreInfos.forEach(item => {
-    cmdHumanName = getHumanNameFromCmdId(item.id);
+    cmdHumanName = getHumanName(item.id);
     if (cmdHumanName != '') {
       $("#" + item.id + "-input").val(cmdHumanName);
       item.human = cmdHumanName;
@@ -2287,13 +2284,13 @@ function downWidgetOption(id) {
 }
 */
 
-function getHumanNameFromCmdId(cmdId) {
-  myCmd = allJeedomData?.find(i => i.id == cmdId);
+function getHumanName(cmdId) {
+  myCmd = allJeedomData.find(i => i.id == cmdId);
   myHumanName = myCmd?.humanName ? '#' + myCmd.humanName + '#' : '';
   return myHumanName;
 }
 
-function getHumanName(_params) {
+function getHumanName_old(_params) {
   var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
 
   var paramsAJAX = jeedom.private.getParamsAJAX(params);
