@@ -934,6 +934,9 @@ function setWidgetModalData(options) {
           refreshImgListOption();
           refreshInfoSelect();
         }
+        else {
+          $("#" + option.id + "-input").val('#' + options.widget[option.id].id + '#');
+        }
         $("#" + option.id + "-input").attr('cmdType', options.widget[option.id].type);
         $("#" + option.id + "-input").attr('cmdSubType', options.widget[option.id].subType);
         if (options.widget[option.id].type == 'action') {
@@ -1939,7 +1942,9 @@ function refreshMoreInfos() {
       $("#" + item.id + "-input").val(cmdHumanName);
       item.human = cmdHumanName;
     }
-
+    else {
+      $("#" + item.id + "-input").val("#" + item.id + "#");
+    }
   })
 
   refreshImgListOption();
