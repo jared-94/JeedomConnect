@@ -502,7 +502,7 @@ class apiHelper {
 
   private static function hasTwoFactorAuthentification($user) {
 
-    return network::getUserLocation() == 'internal' &&
+    return network::getUserLocation() != 'internal' &&
       $user->getOptions('twoFactorAuthentification', 0) == 1 &&
       $user->getOptions('twoFactorAuthentificationSecret') != '';
   }
