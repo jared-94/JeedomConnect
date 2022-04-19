@@ -43,11 +43,11 @@ class apiHelper {
           break;
 
         case 'CHECK_AUTHENT':
-          return self::checkAuthentication($param['login'], $param['password']);
+          return self::checkAuthentication($param['login'] ?? '', $param['password'] ?? '');
           break;
 
         case 'CHECK_2FA':
-          return self::verifyTwoFactorAuthentification($param['userHash'], $param['password2FA']);
+          return self::verifyTwoFactorAuthentification($param['userHash'] ?? '', $param['password2FA'] ?? '');
           break;
 
         case 'REGISTER_DEVICE':
@@ -467,7 +467,7 @@ class apiHelper {
   // CONNEXION FUNCTIONS
 
 
-  private static function checkAuthentication($login, $password) {
+  private static function checkAuthentication($login = '', $password = '') {
     $returnType = 'SET_AUTHENT';
 
     $payload = array(
@@ -475,16 +475,19 @@ class apiHelper {
       'twoFactorAuthentificationRequired' => false
     );
 
-    if (!isset($login) || !isset($password) || $login == '' || $password == '') {
+    if ($login == '' || $password == '') {
       return self::raiseException(__('L\'identifiant ou le mot de passe ne peuvent pas être vide', __FILE__));
     }
 
     $user = user::connect($login, $password);
 
-    if (!is_object($user) || $user->getEnable() != 1) {
+    if (!is_object($user)) {
       return self::raiseException(__('Echec lors de l\'authentification', __FILE__));
     }
 
+    if ($user->getEnable() != 1) {
+      return self::raiseException(__('L\'utilisateur n\'est pas actif', __FILE__));
+    }
 
     if (network::getUserLocation() != 'internal' &&  $user->getOptions('localOnly', 0) == 1) {
       return self::raiseException(__('Connexion distante interdite', __FILE__));
