@@ -607,7 +607,8 @@ class JeedomConnectUtils {
 
         $keysSensitive = array(
             "main" => array(
-                "userHash" => $defaultSizeKept
+                "userHash" => $defaultSizeKept,
+                "password" => 0
             ),
             "pluginConfig" => array(
                 "httpUrl" => 12,
