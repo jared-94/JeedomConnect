@@ -47,27 +47,28 @@ function refreshWidgetDetails() {
 
 }
 
-$.post({
-  url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-  data: {
-    'action': 'getAllJeedomData'
-  },
-  cache: false,
-  dataType: 'json',
-  async: false,
-  success: function (data) {
-    if (data.state != 'ok') {
-      $('#div_alert').showAlert({
-        message: data.result,
-        level: 'danger'
-      });
-      allJeedomData = '';
+if (typeof allJeedomData === 'undefined') {
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      'action': 'getAllJeedomData'
+    },
+    cache: false,
+    dataType: 'json',
+    async: true,
+    success: function (data) {
+      if (data.state != 'ok') {
+        $('#div_alert').showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else {
+        allJeedomData = data.result;
+      }
     }
-    else {
-      allJeedomData = data.result;
-    }
-  }
-});
+  });
+}
 
 
 function sortWidgets() {
