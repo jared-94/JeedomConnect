@@ -42,6 +42,14 @@ class apiHelper {
           return null;
           break;
 
+        case 'CHECK_AUTHENT':
+          return self::checkAuthentication($param['login'], $param['password']);
+          break;
+
+        case 'CHECK_2FA':
+          return self::verifyTwoFactorAuthentification($param['userHash'], $param['password2FA']);
+          break;
+
         case 'REGISTER_DEVICE':
           $rdk = self::registerUser($eqLogic, $param['userHash'], $param['rdk']);
           return $rdk;
@@ -457,6 +465,59 @@ class apiHelper {
   }
 
   // CONNEXION FUNCTIONS
+
+
+  private static function checkAuthentication($login, $password) {
+    $returnType = 'SET_AUTHENT';
+
+    $payload = array(
+      'userHash' => null,
+      'twoFactorAuthentificationRequired' => false
+    );
+
+    if (!isset($login) || !isset($password) || $login == '' || $password == '') {
+      return self::raiseException(__('L\'identifiant ou le mot de passe ne peuvent pas être vide', __FILE__));
+    }
+
+    $user = user::connect($login, $password);
+
+    if (!is_object($user) || $user->getEnable() != 1) {
+      return self::raiseException(__('Echec lors de l\'authentification', __FILE__));
+    }
+
+
+    if (network::getUserLocation() != 'internal' &&  $user->getOptions('localOnly', 0) == 1) {
+      return self::raiseException(__('Connexion distante interdite', __FILE__));
+    }
+
+    $payload['userHash'] = $user->getHash();
+    $payload['twoFactorAuthentificationRequired'] = self::hasTwoFactorAuthentification($user);
+
+    return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+
+  private static function hasTwoFactorAuthentification($user) {
+
+    return network::getUserLocation() == 'internal' &&
+      $user->getOptions('twoFactorAuthentification', 0) == 1 &&
+      $user->getOptions('twoFactorAuthentificationSecret') != '';
+  }
+
+  private static function verifyTwoFactorAuthentification($userHash, $password2FA = '') {
+    $returnType = 'SET_2FA';
+
+    $payload = array(
+      'authorized' => false
+    );
+
+    $user = user::byHash($userHash);
+    $payload['authorized'] =  (trim($password2FA) != '' && is_object($user) && $user->validateTwoFactorCode($password2FA));
+
+    return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+
   /**
    * @param JeedomConnect $eqLogic a JeedomConnect eqLogic
    */
