@@ -929,8 +929,8 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
         cmdHumanName = getHumanName(options.widget[option.id].id)
         if (cmdHumanName != '') {
-          $("#" + option.id + "-input").val(data);
-          $("#" + option.id + "-input").attr('title', data);
+          $("#" + option.id + "-input").val(cmdHumanName);
+          $("#" + option.id + "-input").attr('title', cmdHumanName);
           refreshImgListOption();
           refreshInfoSelect();
         }
