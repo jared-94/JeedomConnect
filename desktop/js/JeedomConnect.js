@@ -3182,3 +3182,8 @@ function copyDivToClipboard(myInput, addBacktick = false) {
 }
 
 updateWidgetCount();
+
+
+if ($('#in_searchWidget').val() != '') {
+  $('#in_searchWidget').keyup();
+}
