@@ -48,7 +48,8 @@ try {
     'GET_AVAILABLE_EQUIPEMENT',
     'PING',
     'CHECK_AUTHENT',
-    'CHECK_2FA'
+    'CHECK_USER',
+    'VERIF_2FA'
   );
   if (!is_object($eqLogic) && !in_array($method, $noEqLogicRequired)) {
     $hasNewApiKey = apiHelper::isApiKeyRegenerated($apiKey);

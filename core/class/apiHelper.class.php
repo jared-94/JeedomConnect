@@ -46,7 +46,11 @@ class apiHelper {
           return self::checkAuthentication($param['login'] ?? '', $param['password'] ?? '');
           break;
 
-        case 'CHECK_2FA':
+        case 'CHECK_USER':
+          return self::checkUser($param['userHash'] ?? '');
+          break;
+
+        case 'VERIF_2FA':
           return self::verifyTwoFactorAuthentification($param['userHash'] ?? '', $param['password2FA'] ?? '');
           break;
 
@@ -471,8 +475,7 @@ class apiHelper {
     $returnType = 'SET_AUTHENT';
 
     $payload = array(
-      'userHash' => null,
-      'twoFactorAuthentificationRequired' => false
+      'userHash' => null
     );
 
     if ($login == '' || $password == '') {
@@ -480,6 +483,24 @@ class apiHelper {
     }
 
     $user = user::connect($login, $password);
+
+    if (!is_object($user)) {
+      return self::raiseException(__('Echec lors de l\'authentification', __FILE__));
+    }
+
+    $payload['userHash'] = $user->getHash();
+
+    return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function checkUser($userHash) {
+    $returnType = 'SET_CHECK_USER';
+
+    $payload = array(
+      '2FARequired' => false
+    );
+
+    $user = user::byHash($userHash);
 
     if (!is_object($user)) {
       return self::raiseException(__('Echec lors de l\'authentification', __FILE__));
@@ -493,12 +514,10 @@ class apiHelper {
       return self::raiseException(__('Connexion distante interdite', __FILE__));
     }
 
-    $payload['userHash'] = $user->getHash();
     $payload['twoFactorAuthentificationRequired'] = self::hasTwoFactorAuthentification($user);
 
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
-
 
   private static function hasTwoFactorAuthentification($user) {
 
