@@ -471,6 +471,13 @@ class apiHelper {
   // CONNEXION FUNCTIONS
 
 
+  /**
+   * Check if the login and password provided are correct, and match an existing user
+   *
+   * @param string $login
+   * @param string $password
+   * @return array
+   */
   private static function checkAuthentication($login = '', $password = '') {
     $returnType = 'SET_AUTHENT';
 
@@ -493,6 +500,15 @@ class apiHelper {
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
+  /**
+   * Check if the user linked to the userHash provided is :
+   *   - enabled
+   *   - allowed for external connection (if it is)
+   *   - required a two factor authentication
+   *
+   * @param string $userHash
+   * @return array
+   */
   private static function checkUser($userHash) {
     $returnType = 'SET_CHECK_USER';
 
@@ -519,6 +535,12 @@ class apiHelper {
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
+  /**
+   * Define if a two factor authentication is required
+   *
+   * @param user $user
+   * @return boolean
+   */
   private static function hasTwoFactorAuthentification($user) {
 
     return network::getUserLocation() != 'internal' &&
@@ -526,6 +548,13 @@ class apiHelper {
       $user->getOptions('twoFactorAuthentificationSecret') != '';
   }
 
+  /**
+   * Verify if the 2FA code is available for a specific user
+   *
+   * @param string $userHash
+   * @param string $password2FA
+   * @return array
+   */
   private static function verifyTwoFactorAuthentification($userHash, $password2FA = '') {
     $returnType = 'SET_2FA';
 
@@ -541,7 +570,12 @@ class apiHelper {
 
 
   /**
+   * Make all the primaries checks to control if the connection can be done
+   *
    * @param JeedomConnect $eqLogic a JeedomConnect eqLogic
+   * @param array $param
+   * @param boolean $withType
+   * @return array
    */
   private static function checkConnexion($eqLogic, $param, $withType = true) {
 
@@ -2567,6 +2601,14 @@ class apiHelper {
       self::getFiles($folder, true, $path != null);
   }
 
+  /**
+   * Raised an exception message
+   *
+   * @param string $errMsg
+   * @param string $method
+   * @param mixed $detail
+   * @return array
+   */
   public static function raiseException($errMsg = '', $method = '', $detail = null) {
     $txtType = ($method == '') ? '' : "Error with '" . $method . "' method ";
     $result = array(
