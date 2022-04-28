@@ -52,6 +52,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'DETACH_EQUIPEMENT':
+          $result = self::detachEquipement($param['eqId']);
+          return $result;
+          break;
+
         case 'CMD_EXEC':
           $result = self::execCmd($param['id'], $param['options'] ?? null);
           return $result;
@@ -642,6 +647,14 @@ class apiHelper {
     }
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function detachEquipement($eqId) {
+    $eq = eqLogic::byLogicalId($eqId, 'JeedomConnect');
+    if (is_object($eq)) {
+      $eq->removeDevice();
+    }
+    return null;
   }
 
 
