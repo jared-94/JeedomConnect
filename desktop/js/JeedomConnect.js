@@ -47,27 +47,28 @@ function refreshWidgetDetails() {
 
 }
 
-$.post({
-  url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-  data: {
-    'action': 'getAllJeedomData'
-  },
-  cache: false,
-  dataType: 'json',
-  async: false,
-  success: function (data) {
-    if (data.state != 'ok') {
-      $('#div_alert').showAlert({
-        message: data.result,
-        level: 'danger'
-      });
-      allJeedomData = '';
+if (typeof allJeedomData === 'undefined') {
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      'action': 'getAllJeedomData'
+    },
+    cache: false,
+    dataType: 'json',
+    async: true,
+    success: function (data) {
+      if (data.state != 'ok') {
+        $('#div_alert').showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else {
+        allJeedomData = data.result;
+      }
     }
-    else {
-      allJeedomData = data.result;
-    }
-  }
-});
+  });
+}
 
 
 function sortWidgets() {
@@ -929,8 +930,8 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
         cmdHumanName = getHumanName(options.widget[option.id].id)
         if (cmdHumanName != '') {
-          $("#" + option.id + "-input").val(data);
-          $("#" + option.id + "-input").attr('title', data);
+          $("#" + option.id + "-input").val(cmdHumanName);
+          $("#" + option.id + "-input").attr('title', cmdHumanName);
           refreshImgListOption();
           refreshInfoSelect();
         }
@@ -3181,3 +3182,8 @@ function copyDivToClipboard(myInput, addBacktick = false) {
 }
 
 updateWidgetCount();
+
+
+if ($('#in_searchWidget').val() != '') {
+  $('#in_searchWidget').keyup();
+}

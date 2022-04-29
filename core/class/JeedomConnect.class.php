@@ -796,28 +796,14 @@ class JeedomConnect extends eqLogic {
 			JCLog::info("No token defined. Please connect your device first");
 			return;
 		}
+
 		$postData = array(
 			'to' => $this->getConfiguration('token')
 		);
 		if ($this->getConfiguration('platformOs') == 'android') {
 			$postData['priority'] = 'high';
-		} else {
-			$postData = array_merge($postData, array(
-				"mutable_content" => true,
-				"content_available" => true,
-				"collapse_key" => "type_a",
-				"apns" => array(
-					"payload" => array(
-						"aps" => array(
-							"contentAvailable" => true,
-						)
-					)
-				)
-			));
 		}
 
-		$data["payload"]["time"] = time();
-		$postData["data"] = $data;
 		foreach ($this->getNotifs()['notifs'] as $notif) {
 			if ($notif['id'] == $notifId) {
 				unset($notif['name']);
@@ -829,9 +815,19 @@ class JeedomConnect extends eqLogic {
 					}
 				}
 				// JCLog::info(" add notif setup data // AFTER ==> " . json_encode($notif));
-				$postData["data"]["payload"] = array_merge($postData["data"]["payload"], $notif);
+				$data["payload"] = array_merge($data["payload"], $notif);
 			}
 		}
+		$data["payload"]["time"] = time();
+		if ($data["type"] == "DISPLAY_NOTIF") {
+			$data = JeedomConnectUtils::getNotifData($data, $this);
+		}
+		$postData["data"] = $data;
+
+		if ($this->getConfiguration('platformOs') == 'ios' && $data["type"] == "DISPLAY_NOTIF") {
+			$postData = JeedomConnectUtils::getIosPostData($postData, $data);
+		}
+
 
 		$sendBin = '';
 		switch (php_uname("m")) {

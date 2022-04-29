@@ -64,6 +64,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'DETACH_EQUIPEMENT':
+          $result = self::detachEquipement($param['eqId']);
+          return $result;
+          break;
+
         case 'CMD_EXEC':
           $result = self::execCmd($param['id'], $param['options'] ?? null);
           return $result;
@@ -470,7 +475,6 @@ class apiHelper {
 
   // CONNEXION FUNCTIONS
 
-
   /**
    * Check if the login and password provided are correct, and match an existing user
    *
@@ -482,7 +486,8 @@ class apiHelper {
     $returnType = 'SET_AUTHENT';
 
     $payload = array(
-      'userHash' => null
+      'userHash' => null,
+      'userProfil' => null
     );
 
     if ($login == '' || $password == '') {
@@ -496,6 +501,7 @@ class apiHelper {
     }
 
     $payload['userHash'] = $user->getHash();
+    $payload['userProfil'] = $user->getProfils();
 
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
@@ -513,7 +519,7 @@ class apiHelper {
     $returnType = 'SET_CHECK_USER';
 
     $payload = array(
-      '2FARequired' => false
+      'twoFactorAuthentificationRequired' => false
     );
 
     $user = user::byHash($userHash);
@@ -759,6 +765,14 @@ class apiHelper {
     }
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function detachEquipement($eqId) {
+    $eq = eqLogic::byLogicalId($eqId, 'JeedomConnect');
+    if (is_object($eq)) {
+      $eq->removeDevice();
+    }
+    return null;
   }
 
 
