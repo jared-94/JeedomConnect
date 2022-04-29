@@ -575,7 +575,6 @@ class apiHelper {
   }
 
 
-
   /**
    * Make all the primaries checks to control if the connection can be done
    *
@@ -2616,6 +2615,14 @@ class apiHelper {
       self::getFiles($folder, true, $path != null);
   }
 
+  /**
+   * Raised an exception message
+   *
+   * @param string $errMsg
+   * @param string $method
+   * @param mixed $detail
+   * @return array
+   */
   public static function raiseException($errMsg = '', $method = '', $detail = null) {
     $txtType = ($method == '') ? '' : "Error with '" . $method . "' method ";
     $result = array(
