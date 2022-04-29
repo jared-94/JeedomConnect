@@ -771,8 +771,8 @@ class JeedomConnectUtils {
     public static function getIosPostData($postData, $data) {
         //clean body and title cause html not supported in native notif
         $display_options = array(
-            "title" => $data['payload']["title"] == $data['payload']["message"] ? "" : trim(preg_replace('/ +/', ' ', preg_replace('/[^A-Za-z0-9 ]/', ' ', urldecode(html_entity_decode(strip_tags($data['payload']["title"])))))),
-            "body" => trim(preg_replace('/ +/', ' ', preg_replace('/[^A-Za-z0-9 ]/', ' ', urldecode(html_entity_decode(strip_tags($data['payload']["message"]))))))
+            "title" => $data['payload']["title"] == $data['payload']["message"] ? "" : trim(urldecode(html_entity_decode(strip_tags($data['payload']["title"])))),
+            "body" => trim((urldecode(html_entity_decode(strip_tags($data['payload']["message"])))))
         );
 
         $display_options["ios"] = array(
