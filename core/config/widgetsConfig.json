@@ -5088,6 +5088,303 @@
 			]
 		},
 		{
+			"type": "media-player",
+			"name": "Lecteur multimedia",
+			"img": "media.png",
+			"description": "Gère un équipement multimedia",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				},
+				{
+					"name": "statusText",
+					"descr": "Statut 'Eteint' ou 'Allumé'"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "onAction",
+					"name": "Action ON",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
+				},
+				{
+					"id": "offAction",
+					"name": "Action OFF",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat du lecteur (binaire)"
+				},
+				{
+					"id": "playAction",
+					"name": "Lecture",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "pauseAction",
+					"name": "Pause",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "playInfo",
+					"name": "Info lecture",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de la lecture en cours (binaire)"
+				},
+				{
+					"id": "nextAction",
+					"name": "Suivant",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "previousAction",
+					"name": "Précédent",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "stopAction",
+					"name": "Stop",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other"
+				},
+				{
+					"id": "muteAction",
+					"name": "Muet",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "muteInfo"
+				},
+				{
+					"id": "unmuteAction",
+					"name": "Non muet",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "muteInfo"
+				},
+				{
+					"id": "muteInfo",
+					"name": "Etat muet",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary"
+				},
+				{
+					"id": "volumeAction",
+					"name": "Volume",
+					"category": "cmd",
+					"type": "action",
+					"value": "volumeInfo",
+					"subtype": "slider"
+				},
+				{
+					"id": "volumeInfo",
+					"name": "Etat volume",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "shuffleAction",
+					"name": "Aléatoire",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "shuffleInfo"
+				},
+				{
+					"id": "unshuffleAction",
+					"name": "Non aléatoire",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "shuffleInfo"
+				},
+				{
+					"id": "shuffleInfo",
+					"name": "Etat aléatoire",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary"
+				},
+				{
+					"id": "repeatAction",
+					"name": "Répéter",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "repeatInfo"
+				},
+				{
+					"id": "unrepeatAction",
+					"name": "Non répéter",
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "repeatInfo"
+				},
+				{
+					"id": "repeatInfo",
+					"name": "Etat répéter",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary"
+				},
+				{
+					"id": "artistInfo",
+					"name": "Artiste",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string"
+				},
+				{
+					"id": "albumInfo",
+					"name": "Album",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string"
+				},
+				{
+					"id": "titleInfo",
+					"name": "Titre",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string"
+				},
+				{
+					"id": "pictureInfo",
+					"name": "Jaquette",
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string"
+				},
+				{
+					"id": "actionInfo",
+					"name": "Info action",
+					"required": false,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "string",
+					"description": "Etat actuel de l'action en cours"
+				},
+				{
+					"id": "actions",
+					"name": "Actions",
+					"required": false,
+					"description": "Liste d'actions supplémentaires (playlist, synchro player...)",
+					"category": "cmdList",
+					"options": {
+						"type": "action",
+						"subtype": "other",
+						"hasIcon": false,
+						"hasImage": true,
+						"hasName": true
+					}
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "autoBackground",
+					"name": "Arrière plan automatique",
+					"description": "Affiche un arrière plan automatique en fonction de l'état du lecteur",
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "classicView",
+					"name": "Vue classique",
+					"description": "Utilise la vue classique Jeedom Connect",
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "moreWidgets",
+					"name": "Widgets supplémentaires",
+					"category": "widgets",
+					"description": "Widgets supplémentaires affichés dans la vue détails"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
 			"type": "jc",
 			"name": "JC",
 			"hide": true,
