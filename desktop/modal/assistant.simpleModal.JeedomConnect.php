@@ -119,6 +119,12 @@ if (!isConnect('admin')) {
 			<label class='col-xs-3  required' >Développé par défaut</label>
 			<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="mod-expanded-input" ${value}></div></div></div></li>`;
         items.push(expanded);
+      } else if (option.type == "color") {
+        var colorValue = option ? option.value || '' : '';
+        expanded = `<li><div class='form-group'>
+			<label class='col-xs-3  required' >${option.title}</label>
+			<div class='col-xs-9'><div class='input-group'><input type="color" id="mod-color-input" value='${colorValue}' onchange="colorDefined(this)"></div></div></div></li>`;
+        items.push(expanded);
       } else if (option.type == "widget") {
         widget = `<li><div class='form-group'>
 			<label class='col-xs-3  required' >Widget</label>

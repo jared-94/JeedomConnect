@@ -311,6 +311,9 @@ function getSimpleModal(_options, _callback) {
 					if (_options.fields.find(i => i.type == "expanded")) {
 						result.expanded = $("#mod-expanded-input").is(':checked');
 					}
+					if (_options.fields.find(i => i.type == "color")) {
+						result[_options.fields.find(i => i.type == "color").id] = $("#mod-color-input").val();
+					}
 					if (_options.fields.find(i => i.type == "widget")) {
 						if ($("#mod-widget-input").val() == undefined) {
 							throw 'Choix obligatoire';
