@@ -4771,6 +4771,23 @@
 					"customizable": true
 				},
 				{
+					"id": "histChartType",
+					"name": "Type de graphique",
+					"required": false,
+					"customizable": true,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "line",
+							"name": "Ligne"
+						},
+						{
+							"id": "bar",
+							"name": "Barre"
+						}
+					]
+				},
+				{
 					"id": "interpolation",
 					"name": "Interpolation",
 					"required": false,
