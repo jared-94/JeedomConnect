@@ -5146,7 +5146,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande ON"
+					"description": "Commande ON",
+					"generic_type": "MEDIA_ON"
 				},
 				{
 					"id": "offAction",
@@ -5155,7 +5156,8 @@
 					"type": "action",
 					"subtype": "other",
 					"value": "statusInfo",
-					"description": "Commande OFF"
+					"description": "Commande OFF",
+					"generic_type": "MEDIA_OFF"
 				},
 				{
 					"id": "statusInfo",
@@ -5170,14 +5172,16 @@
 					"name": "Lecture",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "MEDIA_RESUME"
 				},
 				{
 					"id": "pauseAction",
 					"name": "Pause",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "MEDIA_PAUSE"
 				},
 				{
 					"id": "playInfo",
@@ -5185,28 +5189,32 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lecture en cours (binaire)"
+					"description": "Etat de la lecture en cours (binaire)",
+					"generic_type": "MEDIA_STATE"
 				},
 				{
 					"id": "nextAction",
 					"name": "Suivant",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "MEDIA_NEXT"
 				},
 				{
 					"id": "previousAction",
 					"name": "Précédent",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "MEDIA_PREVIOUS"
 				},
 				{
 					"id": "stopAction",
 					"name": "Stop",
 					"category": "cmd",
 					"type": "action",
-					"subtype": "other"
+					"subtype": "other",
+					"generic_type": "MEDIA_STOP"
 				},
 				{
 					"id": "muteAction",
@@ -5214,7 +5222,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"value": "muteInfo"
+					"value": "muteInfo",
+					"generic_type": "MEDIA_MUTE"
 				},
 				{
 					"id": "unmuteAction",
@@ -5222,7 +5231,8 @@
 					"category": "cmd",
 					"type": "action",
 					"subtype": "other",
-					"value": "muteInfo"
+					"value": "muteInfo",
+					"generic_type": "MEDIA_UNMUTE"
 				},
 				{
 					"id": "muteInfo",
@@ -5237,14 +5247,16 @@
 					"category": "cmd",
 					"type": "action",
 					"value": "volumeInfo",
-					"subtype": "slider"
+					"subtype": "slider",
+					"generic_type": "SET_VOLUME"
 				},
 				{
 					"id": "volumeInfo",
 					"name": "Etat volume",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "numeric"
+					"subtype": "numeric",
+					"generic_type": "VOLUME"
 				},
 				{
 					"id": "shuffleAction",
@@ -5297,21 +5309,24 @@
 					"name": "Artiste",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "string"
+					"subtype": "string",
+					"generic_type": "MEDIA_ARTIST"
 				},
 				{
 					"id": "albumInfo",
 					"name": "Album",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "string"
+					"subtype": "string",
+					"generic_type": "MEDIA_ALBUM"
 				},
 				{
 					"id": "titleInfo",
 					"name": "Titre",
 					"category": "cmd",
 					"type": "info",
-					"subtype": "string"
+					"subtype": "string",
+					"generic_type": "MEDIA_TITLE"
 				},
 				{
 					"id": "pictureInfo",
