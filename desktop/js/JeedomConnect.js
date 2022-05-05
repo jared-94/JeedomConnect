@@ -47,6 +47,29 @@ function refreshWidgetDetails() {
 
 }
 
+if (typeof allJeedomData === 'undefined') {
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      'action': 'getAllJeedomData'
+    },
+    cache: false,
+    dataType: 'json',
+    async: true,
+    success: function (data) {
+      if (data.state != 'ok') {
+        $('#div_alert').showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else {
+        allJeedomData = data.result;
+      }
+    }
+  });
+}
+
 
 function sortWidgets() {
   if (jcOrderBy === undefined) jcOrderBy = 'object';
@@ -905,16 +928,16 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-picker").val(options.widget[option.id]);
       } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
-        getHumanName({
-          id: options.widget[option.id].id,
-          error: function (error) { },
-          success: function (data) {
-            $("#" + option.id + "-input").val(data);
-            $("#" + option.id + "-input").attr('title', data);
-            refreshImgListOption();
-            refreshInfoSelect();
-          }
-        });
+        cmdHumanName = getHumanName(options.widget[option.id].id)
+        if (cmdHumanName != '') {
+          $("#" + option.id + "-input").val(cmdHumanName);
+          $("#" + option.id + "-input").attr('title', cmdHumanName);
+          refreshImgListOption();
+          refreshInfoSelect();
+        }
+        else {
+          $("#" + option.id + "-input").val('#' + options.widget[option.id].id + '#');
+        }
         $("#" + option.id + "-input").attr('cmdType', options.widget[option.id].type);
         $("#" + option.id + "-input").attr('cmdSubType', options.widget[option.id].subType);
         if (options.widget[option.id].type == 'action') {
@@ -1915,14 +1938,16 @@ function refreshMoreInfos() {
   });
   $("#moreInfos-div").html(div);
   moreInfos.forEach(item => {
-    getHumanName({
-      id: item.id,
-      success: function (data) {
-        $("#" + item.id + "-input").val(data);
-        item.human = data;
-      }
-    });
-  });
+    cmdHumanName = getHumanName(item.id);
+    if (cmdHumanName != '') {
+      $("#" + item.id + "-input").val(cmdHumanName);
+      item.human = cmdHumanName;
+    }
+    else {
+      $("#" + item.id + "-input").val("#" + item.id + "#");
+    }
+  })
+
   refreshImgListOption();
   refreshInfoSelect();
 }
@@ -1960,8 +1985,10 @@ function refreshInfoSelect() {
       <a href="#">${el.title}</a></li>`;
   });
   moreInfos.forEach(i => {
-    infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
+    if (i.human) {
+      infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
       <a href="#">${i.human}</a></li>`;
+    }
   });
   $(".infos-select").html(infosOptionHtml);
 
@@ -2025,7 +2052,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
   options = options.concat(moreInfos);
 
-  if (widget.variables) {
+  if (widget?.variables) {
     widget.variables.forEach(v => {
       options.push({ type: 'var', id: v.name, human: `#${v.name}#` })
     });
@@ -2263,7 +2290,13 @@ function downWidgetOption(id) {
 }
 */
 
-function getHumanName(_params) {
+function getHumanName(cmdId) {
+  myCmd = allJeedomData.find(i => i.id == cmdId);
+  myHumanName = myCmd?.humanName ? '#' + myCmd.humanName + '#' : '';
+  return myHumanName;
+}
+
+function getHumanName_old(_params) {
   var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
 
   var paramsAJAX = jeedom.private.getParamsAJAX(params);
@@ -3149,3 +3182,8 @@ function copyDivToClipboard(myInput, addBacktick = false) {
 }
 
 updateWidgetCount();
+
+
+if ($('#in_searchWidget').val() != '') {
+  $('#in_searchWidget').keyup();
+}

@@ -637,7 +637,7 @@ function deleteRoom(roomId) {
 /* GROUPS */
 
 function addGroupModal() {
-	getSimpleModal({ title: "Ajouter un groupe", fields: [{ type: "enable", value: true }, { type: "name", required: false }, { type: "expanded", value: false }] }, function (result) {
+	getSimpleModal({ title: "Ajouter un groupe", fields: [{ type: "enable", value: true }, { type: "name", required: false }, { type: "expanded", value: false }, { type: 'color', title: "Couleur du titre", id: 'titleColor' }] }, function (result) {
 		var name = result.name;
 		var parentId = $("#widgetsParents-select option:selected").attr('value');
 		var rootElmts = getRootObjects(parentId);
@@ -647,6 +647,7 @@ function addGroupModal() {
 		newGroup.name = name;
 		newGroup.expanded = result.expanded;
 		newGroup.enable = result.enable;
+		newGroup.titleColor = result.titleColor;
 		newGroup.parentId = parentId && parseInt(parentId);
 		newGroup.index = maxIndex + 1;
 		var maxGroupId = getMaxId(configData.payload.groups, 999000)
@@ -660,9 +661,10 @@ function addGroupModal() {
 
 function editGroupModal(groupId) {
 	var groupToEdit = configData.payload.groups.find(g => g.id == groupId);
-	getSimpleModal({ title: "Editer un groupe", fields: [{ type: "enable", value: groupToEdit.enable }, { type: "name", value: groupToEdit.name }, { type: "expanded", value: groupToEdit.expanded }] }, function (result) {
+	getSimpleModal({ title: "Editer un groupe", fields: [{ type: "enable", value: groupToEdit.enable }, { type: "name", value: groupToEdit.name }, { type: "expanded", value: groupToEdit.expanded }, { type: 'color', title: "Couleur du titre", id: 'titleColor', value: groupToEdit.titleColor }] }, function (result) {
 		groupToEdit.name = result.name;
 		groupToEdit.expanded = result.expanded;
+		groupToEdit.titleColor = result.titleColor;
 		groupToEdit.enable = result.enable;
 		refreshWidgetsContent();
 	});

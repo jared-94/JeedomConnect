@@ -520,6 +520,16 @@ class JeedomConnectWidget extends config {
 				// JCLog::debug("checking room => " . $widget['room'] . " // result :" . json_encode($obj));
 				if ($obj == '') $roomArrayError[] = $widget['id'];
 			}
+
+			// checking moreInfos
+			if (key_exists('moreInfos', $widget)) {
+				foreach ($widget['moreInfos'] as $info) {
+					$cmdWidgetId = $info['id'] ?: null;
+					if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+						$cmdArrayError[] = $widget['id'];
+					}
+				}
+			}
 		}
 
 		// JCLog::debug(' ## all errors :    ' . json_encode($cmdArrayError));

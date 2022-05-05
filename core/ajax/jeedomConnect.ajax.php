@@ -671,6 +671,29 @@ try {
 		ajax::success();
 	}
 
+	if (init('action') == 'getAllJeedomData') {
+
+		// $result = apiHelper::getFullJeedomData();
+		$result = array();
+		foreach (cmd::all() as $item) {
+			$array = utils::o2a($item);
+			$cmd = array(
+				'id' => $array['id'],
+				'name' => $array['name'],
+				'humanName' => $item->getHumanName(),
+				'type' => $array['type'],
+				'subType' => $array['subType'],
+				'eqLogic_id' => $array['eqLogic_id'],
+				'unite' => $array['unite'],
+				'isHistorized' => $array['isHistorized'],
+				'configuration' => $array['configuration'],
+				'shortcutAllowed' => ($array['configuration']['actionConfirm'] ?? "0") === "0",
+			);
+			array_push($result, $cmd);
+		}
+		ajax::success($result);
+	}
+
 	if (init('action') == 'getCmd') {
 		$id = init('id');
 		if ($id == '') throw new Exception("id est obligatoire");
