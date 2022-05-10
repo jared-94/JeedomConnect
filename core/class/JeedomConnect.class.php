@@ -1730,7 +1730,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'goToPage':
 				if ($_options['message'] == '') {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1744,7 +1744,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'toaster':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1760,7 +1760,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'launchApp':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1776,7 +1776,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'shellExec':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1814,7 +1814,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'play_sound':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1830,12 +1830,12 @@ class JeedomConnectCmd extends cmd {
 
 			case 'tts':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if (!empty($_options['title'])) {
 					if (((string)(int)$_options['title'] !== $_options['title']) || (intval($_options['title']) < 0 || intval($_options['title']) > 100)) {
-						JCLog::error('Field "' . $this->getDisplay('title_placeholder', 'Titre') . '" has to contain integer between 0 to 100');
+						JCLog::error('Field "' . $this->getDisplay('title_placeholder', 'Titre') . '" has to contain integer between 0 to 100 [cmdId : ' . $this->getId() . ']');
 						return;
 					}
 				}
@@ -1858,15 +1858,15 @@ class JeedomConnectCmd extends cmd {
 
 			case 'update_pref_app':
 				if (empty($_options['title'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if ($_options['title'] == 'none') {
-					JCLog::error('Please select an action for cmd "' . $this->getName() . '" ... ');
+					JCLog::error('Please select an action for cmd "' . $this->getName() . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if (empty($_options['message']) && $_options['message'] != '0') {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 
@@ -1906,11 +1906,11 @@ class JeedomConnectCmd extends cmd {
 
 			case 'send_sms':
 				if (empty($_options['title'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 
