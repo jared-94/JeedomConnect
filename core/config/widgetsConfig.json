@@ -3489,6 +3489,12 @@
 					"description": "Etat de la commande"
 				},
 				{
+					"id": "statusText",
+					"name": "Texte statut",
+					"category": "string",
+					"description": "Change la valeur du texte affichée. Utiliser #value# pour la valeur de la commande"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
