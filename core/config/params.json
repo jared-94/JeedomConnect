@@ -106,6 +106,14 @@
                 "order": 4
             },
             {
+                "logicalId": "faceDetected",
+                "name": "Visage présent",
+                "type": "info",
+                "subtype": "binary",
+                "isVisible": 1,
+                "order": 5
+            },
+            {
                 "logicalId": "launchApp",
                 "name": "Lancer App",
                 "type": "action",
