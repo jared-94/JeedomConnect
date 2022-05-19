@@ -72,7 +72,7 @@
                 "subtype": "message",
                 "isVisible": 0,
                 "configuration": {
-                    "listValueToCreate": "themeColor;darkMode;tracking;updateData;jcService"
+                    "listValueToCreate": "themeColor;darkMode;tracking;rtspServer;updateData;jcService"
                 },
                 "order": 10,
                 "display": {
@@ -239,6 +239,7 @@
         "themeColor": "Couleur thème",
         "darkMode": "Activer mode sombre",
         "tracking": "Activer le tracking",
+        "rtspServer": "Activer le serveur de streaming",
         "updateData": "Recharger les données",
         "jcService": "Service JC"
     }
