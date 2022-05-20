@@ -5342,6 +5342,13 @@
 					"subtype": "string"
 				},
 				{
+					"id": "picturePath",
+					"name": "Jaquette",
+					"category": "string",
+					"type": "info",
+					"subtype": "string"
+				},
+				{
 					"id": "actionInfo",
 					"name": "Info action",
 					"required": false,
