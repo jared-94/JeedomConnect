@@ -853,7 +853,7 @@ class JeedomConnect extends eqLogic {
 		if (!is_executable($binFile)) {
 			chmod($binFile, 0555);
 		}
-		$cmd = $binFile . " -data='" . json_encode($postData) . "' 2>&1";
+		$cmd = $binFile . " -data='" . json_encode($postData, JSON_HEX_APOS) . "' 2>&1";
 		JCLog::info("Send notification with data " . json_encode($postData["data"]));
 		$output = shell_exec($cmd);
 		if (is_null($output) || empty($output)) {
@@ -1707,8 +1707,8 @@ class JeedomConnectCmd extends cmd {
 					'type' => 'DISPLAY_NOTIF',
 					'payload' => array(
 						'cmdId' => $_options['orignalCmdId'] ?? $this->getId(),
-						'title' => str_replace("'", "&#039;", $myData['title']),
-						'message' => str_replace("'", "&#039;", $myData['args']['message'] ?? $_options['message']),
+						'title' => $myData['title'],
+						'message' => $myData['args']['message'] ?? $_options['message'],
 						'answer' => $_options['answer'] ?? null,
 						'timeout' => $_options['timeout'] ?? null,
 						'notificationId' => $_options['notificationId'] ?? round(microtime(true) * 10000),
@@ -1730,7 +1730,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'goToPage':
 				if ($_options['message'] == '') {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1744,12 +1744,12 @@ class JeedomConnectCmd extends cmd {
 
 			case 'toaster':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
 					'action' => 'toaster',
-					'message' => str_replace("'", "&#039;", $_options['message'])
+					'message' => $_options['message']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
@@ -1760,7 +1760,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'launchApp':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1776,7 +1776,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'shellExec':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1814,7 +1814,7 @@ class JeedomConnectCmd extends cmd {
 
 			case 'play_sound':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
@@ -1830,18 +1830,18 @@ class JeedomConnectCmd extends cmd {
 
 			case 'tts':
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if (!empty($_options['title'])) {
 					if (((string)(int)$_options['title'] !== $_options['title']) || (intval($_options['title']) < 0 || intval($_options['title']) > 100)) {
-						JCLog::error('Field "' . $this->getDisplay('title_placeholder', 'Titre') . '" has to contain integer between 0 to 100');
+						JCLog::error('Field "' . $this->getDisplay('title_placeholder', 'Titre') . '" has to contain integer between 0 to 100 [cmdId : ' . $this->getId() . ']');
 						return;
 					}
 				}
 				$payload = array(
 					'action' => 'tts',
-					'message' => str_replace("'", "&#039;", $_options['message']),
+					'message' => $_options['message'],
 					'volume' => $_options['title']
 				);
 				if ($eqLogic->isConnected()) {
@@ -1858,15 +1858,15 @@ class JeedomConnectCmd extends cmd {
 
 			case 'update_pref_app':
 				if (empty($_options['title'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if ($_options['title'] == 'none') {
-					JCLog::error('Please select an action for cmd "' . $this->getName() . '" ... ');
+					JCLog::error('Please select an action for cmd "' . $this->getName() . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if (empty($_options['message']) && $_options['message'] != '0') {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 
@@ -1906,11 +1906,11 @@ class JeedomConnectCmd extends cmd {
 
 			case 'send_sms':
 				if (empty($_options['title'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" ... ');
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 

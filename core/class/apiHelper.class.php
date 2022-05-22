@@ -404,6 +404,11 @@ class apiHelper {
           return null;
           break;
 
+        case 'SET_FACE_DETECTED':
+          self::setFaceDetected($eqLogic, $param);
+          return null;
+          break;
+
         case 'GET_INSTALL_DETAILS':
           $result = JeedomConnectUtils::getInstallDetails();
           return JeedomConnectUtils::addTypeInPayload(htmlentities($result), 'SET_INSTALL_DETAILS');
@@ -2688,6 +2693,10 @@ class apiHelper {
     if (isset($infos['nextAlarm']) && is_numeric($infos['nextAlarm'])) {
       $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
     }
+  }
+
+  private static function setFaceDetected($eqLogic, $infos) {
+    $eqLogic->checkAndUpdateCmd('faceDetected', $infos['value']);
   }
 
   /**

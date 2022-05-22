@@ -410,7 +410,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param string $folder 
+     * @param string $folder
      * @return array
      */
     public static function getTimelineEvents($folder = 'main', $userId = null) {
@@ -433,7 +433,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param timelime $event 
+     * @param timelime $event
      * @return array
      */
     public static function getTimelineEventDetails($event) {
@@ -486,7 +486,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param string $plugin 
+     * @param string $plugin
      * @return array
      */
     public static function getJeedomMessages($plugin = '') {
@@ -505,7 +505,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param string|null $messageId 
+     * @param string|null $messageId
      * @return array|Exception
      */
     public static function removeJeedomMessage($messageId = null) {
@@ -522,8 +522,8 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param array $payload 
-     * @param string $type 
+     * @param array $payload
+     * @param string $type
      * @return array
      */
     public static function addTypeInPayload($payload, $type) {
@@ -536,7 +536,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param int $nbBytes 
+     * @param int $nbBytes
      * @return string
      */
     public static function generateApiKey($nbBytes = 16) {
@@ -544,11 +544,11 @@ class JeedomConnectUtils {
     }
 
     /**
-     * 
+     *
      * Copy a folder and his content to another place
-     * 
+     *
      * @param string $src path of the current folder to copy
-     * @param string $dst path with the final folder name where copy has to be done 
+     * @param string $dst path with the final folder name where copy has to be done
      * @return void
      */
     public static function recurse_copy($src, $dst) {
@@ -567,11 +567,11 @@ class JeedomConnectUtils {
     }
 
     /**
-     * 
+     *
      * Allow to remove a folder contening files
-     * 
+     *
      * @param string $src path of the current folder to copy
-     * @param string $dst path with the final folder name where copy has to be done 
+     * @param string $dst path with the final folder name where copy has to be done
      * @return void
      */
     public static function delTree($dir) {
@@ -628,7 +628,7 @@ class JeedomConnectUtils {
 
                 // JCLog::debug('found key ' . $key . ' + item ' . $item . ' => ' . $strSearched);
                 $sizeValue = strlen($strSearched) - $indice;
-                $newValue = substr_replace($strSearched, str_repeat('*', $sizeValue), $sizeValue * -1);
+                $newValue = $sizeValue >= 0 ? substr_replace($strSearched, str_repeat('*', $sizeValue), $sizeValue * -1) : $strSearched;
 
                 // JCLog::debug('  will replace ' . $strSearched . ' , by : ' . $newValue);
                 $log = str_replace(json_encode($strSearched), json_encode($newValue), $log);
@@ -772,7 +772,7 @@ class JeedomConnectUtils {
         //clean body and title cause html not supported in native notif
         $display_options = array(
             "title" => $data['payload']["title"] == $data['payload']["message"] ? "" : trim(urldecode(html_entity_decode(strip_tags($data['payload']["title"])))),
-            "body" => trim((urldecode(html_entity_decode(strip_tags($data['payload']["message"])))))
+            "body" => trim(urldecode(html_entity_decode(strip_tags($data['payload']["message"]), ENT_QUOTES)))
         );
 
         $display_options["ios"] = array(
