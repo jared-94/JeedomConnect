@@ -262,7 +262,7 @@ class JeedomConnect extends eqLogic {
 		$customData = config::searchKey('customData::' . $apiKey . '::', 'JeedomConnect');
 
 		if (!empty($customData)) {
-			$config = $this->getConfig();
+			$config = $this->getConfig(true);
 
 			foreach ($customData as $item) {
 				$search = array_search($item['value']['widgetId'], array_column($config['payload']['widgets'], 'widgetId'));
