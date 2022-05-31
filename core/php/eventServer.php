@@ -86,10 +86,24 @@ try {
       die();
     }
 
+    $actions = JeedomConnectActions::getAllActions($apiKey);
+    if (count($actions) > 0) {
+      $result = array(
+        'type' => 'ACTIONS',
+        'payload' => array()
+      );
+      foreach ($actions as $action) {
+        array_push($result['payload'], $action['value']['payload']);
+      }
+      JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
+      sse(json_encode(array($result)));
+      JeedomConnectActions::removeActions($actions);
+      sleep(1);
+    }
+
     $sendInfo = false;
 
     if ($logic->getConfiguration('appState') == 'active') {
-
       $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
       if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
         JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
@@ -103,21 +117,6 @@ try {
         );
         sse(json_encode(array($newConfig)));
         //sleep(1);
-      }
-
-      $actions = JeedomConnectActions::getAllActions($apiKey);
-      if (count($actions) > 0) {
-        $result = array(
-          'type' => 'ACTIONS',
-          'payload' => array()
-        );
-        foreach ($actions as $action) {
-          array_push($result['payload'], $action['value']['payload']);
-        }
-        JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
-        sse(json_encode(array($result)));
-        JeedomConnectActions::removeActions($actions);
-        sleep(1);
       }
 
       $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp);

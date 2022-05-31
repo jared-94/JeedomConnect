@@ -318,9 +318,6 @@ class ConnectLogic implements MessageComponentInterface {
 				$client->close();
 				continue;
 			}
-			if ($eqLogic->getConfiguration('appState', '') != 'active') {
-				continue;
-			}
 			$actions = \JeedomConnectActions::getAllActions($client->apiKey);
 			//\JCLog::debug("get action  ".json_encode($actions));
 			if (count($actions) > 0) {

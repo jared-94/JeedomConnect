@@ -1630,11 +1630,10 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function isConnected() {
-		$url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
-		if ($this->getConfiguration('useWs', 0) == 0 && (strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
+		if ($this->getConfiguration('useWs', 0) == 0 && $this->getConfiguration('polling', 0) == 1) {
 			return time() - $this->getConfiguration('lastSeen', 0) < 3;
 		} else {
-			return $this->getConfiguration('appState', 0) == 'active';
+			return $this->getConfiguration('connected', 0) == 1;
 		}
 	}
 }
