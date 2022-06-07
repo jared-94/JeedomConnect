@@ -451,6 +451,11 @@ class apiHelper {
           return null;
           break;
 
+        case 'SET_WEBSOCKET':
+          $result = self::setWebsocket($eqLogic, $param['value']);
+          return $result;
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -2697,6 +2702,17 @@ class apiHelper {
 
   private static function setFaceDetected($eqLogic, $infos) {
     $eqLogic->checkAndUpdateCmd('faceDetected', $infos['value']);
+  }
+
+  private static function setWebsocket($eqLogic, $value) {
+    $eqLogic->setConfiguration('useWs', $value ? '1' : '0');
+    $eqLogic->save(true);
+    return array(
+      "type" => "GET_WEBSOCKET",
+      "payload" => array(
+        "useWs" => $value ? '1' : '0'
+      )
+    );
   }
 
   /**
