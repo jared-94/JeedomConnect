@@ -3205,9 +3205,6 @@ function disableCheckbox() {
   var useWs = $('.eqLogicAttr[data-l1key=configuration][data-l2key=useWs]');
   var polling = $('.eqLogicAttr[data-l1key=configuration][data-l2key=polling]');
 
-  console.log('ws checked : ' + useWs.prop("checked"));
-  console.log('poll checked : ' + polling.prop("checked"));
-
   polling.attr('disabled', false);
   useWs.attr('disabled', false);
 
