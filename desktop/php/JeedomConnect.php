@@ -377,6 +377,17 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 							</div>
 
 							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Activer le polling}}
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Cette option est plus que recommandée si vous utilisez les DNS Jeedom.<br/>(incompatible avec l'option websocket)"></i>
+									</sup>
+								</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+
+							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
 								<div class="col-sm-7">
 									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userId">

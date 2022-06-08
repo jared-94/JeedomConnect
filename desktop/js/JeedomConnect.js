@@ -3187,3 +3187,39 @@ updateWidgetCount();
 if ($('#in_searchWidget').val() != '') {
   $('#in_searchWidget').keyup();
 }
+
+
+$('.eqLogicAttr[data-l1key=configuration][data-l2key=polling]').on('change', function () {
+
+  disableCheckbox()
+
+});
+
+$('.eqLogicAttr[data-l1key=configuration][data-l2key=useWs]').on('change', function () {
+
+  disableCheckbox()
+
+});
+
+function disableCheckbox() {
+  var useWs = $('.eqLogicAttr[data-l1key=configuration][data-l2key=useWs]');
+  var polling = $('.eqLogicAttr[data-l1key=configuration][data-l2key=polling]');
+
+  console.log('ws checked : ' + useWs.prop("checked"));
+  console.log('poll checked : ' + polling.prop("checked"));
+
+  polling.attr('disabled', false);
+  useWs.attr('disabled', false);
+
+  if (useWs.prop("checked")) {
+    polling.prop("checked", false);
+    polling.attr('disabled', true);
+  }
+  else {
+    if (polling.prop("checked")) {
+      useWs.prop("checked", false);
+      useWs.attr('disabled', true);
+    }
+  }
+
+}

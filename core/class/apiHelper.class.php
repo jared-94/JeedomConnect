@@ -684,6 +684,7 @@ class apiHelper {
       'jeedomName' => config::byKey('name'),
       'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
+      'polling' => $eqLogic->getConfiguration('polling', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
       'userName' => $userConnected->getLogin(),
