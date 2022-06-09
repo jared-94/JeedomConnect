@@ -456,6 +456,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_POLLING':
+          $result = self::setPolling($eqLogic, $param['value']);
+          return $result;
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -656,7 +661,6 @@ class apiHelper {
     if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
-    $eqLogic->setConfiguration('polling', $param['polling'] ?? '0');
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');
@@ -2712,6 +2716,17 @@ class apiHelper {
       "type" => "GET_WEBSOCKET",
       "payload" => array(
         "useWs" => $value ? '1' : '0'
+      )
+    );
+  }
+
+  private static function setPolling($eqLogic, $value) {
+    $eqLogic->setConfiguration('polling', $value ? '1' : '0');
+    $eqLogic->save(true);
+    return array(
+      "type" => "GET_POLLING",
+      "payload" => array(
+        "polling" => $value ? '1' : '0'
       )
     );
   }
