@@ -379,6 +379,9 @@ function getSimpleModal(_options, _callback) {
 		closeOnEscape: false,
 		open: function () {
 			if (_options.hideCloseButton) $(".ui-dialog-titlebar-close").hide();
+		},
+		close: function () {
+			if (_options.hideCloseButton) $(".ui-dialog-titlebar-close").show();
 		}
 	});
 
