@@ -207,8 +207,8 @@ $displayWarning = config::byKey('displayWarning', 'JeedomConnect', 0) < 3;
 							<?php if ($displayWarning) { ?>
 								<span class="displayJCWarning">
 									Pour chacun des sujets que vous partagez sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
-									afin de vous aider le plus facilement et rapidement possible, merci de <u><strong>systématiquement</strong></u> partagez les informations
-									de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de cette page !
+									afin de vous aider le plus facilement et rapidement possible, merci de <u><strong>systématiquement</strong></u> partager les informations
+									de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de la page principale de JC !
 									<br /><br />
 									Ces informations nous permettent de savoir quelle version vous utilisez afin de mieux répondre à votre demande.
 
