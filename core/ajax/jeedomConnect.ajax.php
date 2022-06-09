@@ -743,6 +743,12 @@ try {
 		}
 	}
 
+	if (init('action') == 'incrementWarning') {
+		$displayWarningConfig = config::byKey('displayWarning', 'JeedomConnect', 0);
+		config::save('displayWarning', $displayWarningConfig + 1, 'JeedomConnect');
+	}
+
+
 	if (init('action') == 'regenerateApiKey') {
 		$id = init('eqId');
 		$currentApiKey = init('apiKey');

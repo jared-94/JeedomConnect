@@ -244,12 +244,12 @@ function getSimpleModal(_options, _callback) {
 	if (!isset(_options)) {
 		return;
 	}
-	$("#simpleModal").dialog('destroy').remove();
+	$("#simpleModal3").dialog('destroy').remove();
 
-	if ($("#simpleModal").length == 0) {
+	if ($("#simpleModal3").length == 0) {
 		var iWidth = (_options.width === undefined) ? 430 : _options.width;
-		$('body').append('<div id="simpleModal"></div>');
-		$("#simpleModal").dialog({
+		$('body').append('<div id="simpleModal3"></div>');
+		$("#simpleModal3").dialog({
 			title: _options.title,
 			closeText: '',
 			autoOpen: false,
@@ -260,7 +260,7 @@ function getSimpleModal(_options, _callback) {
 		jQuery.ajaxSetup({
 			async: false
 		});
-		$('#simpleModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.simpleModal.JeedomConnect');
+		$('#simpleModal3').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.simpleModal.JeedomConnect');
 		jQuery.ajaxSetup({
 			async: true
 		});
@@ -373,13 +373,26 @@ function getSimpleModal(_options, _callback) {
 			}
 		}
 	}
-	$("#simpleModal").dialog({
+	$("#simpleModal3").dialog({
 		title: _options.title,
-		buttons: (_options.buttons === undefined) ? genericButton : _options.buttons
+		buttons: (_options.buttons === undefined) ? genericButton : _options.buttons,
+		closeOnEscape: false,
+		open: function () {
+			if (_options.hideCloseButton) $(".ui-dialog-titlebar-close").hide();
+		}
 	});
 
-	$('#simpleModal').dialog('open');
-	$('#simpleModal').keydown(function (e) {
+	$('#simpleModal3').dialog('open');
+
+	if (_options.hideActionButton) {
+
+		$(".ui-dialog-buttonset").hide();
+		setTimeout(function () {
+			$(".ui-dialog-buttonset").show();// or fade, css display however you'd like.
+		}, 10000);
+	}
+
+	$('#simpleModal3').keydown(function (e) {
 		if (e.which == 13) {
 			$('#saveSimple').click();
 			return false;

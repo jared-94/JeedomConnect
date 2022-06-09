@@ -3220,3 +3220,43 @@ function disableCheckbox() {
   }
 
 }
+
+function displayJCWarning() {
+
+  getSimpleModal({
+    title: "Important - JeedomConnect - A lire",
+    width: 0.5 * $(window).width(),
+    hideCloseButton: true,
+    hideActionButton: true,
+    fields: [{
+      type: "string",
+      value: $('.displayJCWarning').html()
+    }],
+    buttons: {
+      "J'ai lu et bien compris": function () {
+        JCwarningAlreadyDisplayed = true;
+        $.post({
+          url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+          data: {
+            'action': 'incrementWarning'
+          },
+          cache: false,
+          dataType: 'json',
+          async: true,
+        });
+        $(this).dialog("close");
+      }
+    }
+  }, function (result) { });
+
+
+};
+
+
+$(document).ready(
+  function () {
+    if ($(".displayJCWarning").length != 0 && (typeof JCwarningAlreadyDisplayed === 'undefined')) {
+      displayJCWarning();
+    }
+  }
+);

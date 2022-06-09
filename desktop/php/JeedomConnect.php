@@ -130,6 +130,8 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 
 $infoPlugin = JeedomConnectUtils::getInstallDetails();
 
+$displayWarning = config::byKey('displayWarning', 'JeedomConnect', 0) < 3;
+
 ?>
 
 <div class="row row-overflow">
@@ -202,6 +204,16 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 						<br>
 						<span>{{Infos}}</span>
 						<div style="display:none">
+							<?php if ($displayWarning) { ?>
+								<span class="displayJCWarning">
+									Pour chacun des sujets que vous partagez sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
+									afin de vous aider le plus facilement et rapidement possible, merci de <u><strong>systématiquement</strong></u> partagez les informations
+									de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de cette page !
+									<br /><br />
+									Ces informations nous permettent de savoir quelle version vous utilisez afin de mieux répondre à votre demande.
+
+								</span>
+							<?php } ?>
 							<span class="txtInfoPlugin">
 								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
 								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
