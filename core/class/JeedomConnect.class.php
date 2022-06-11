@@ -1718,7 +1718,18 @@ class JeedomConnectCmd extends cmd {
 				if (isset($_options["files"]) || isset($myData["files"])) {
 					$files = array();
 					$arrayMerge = array_merge($_options["files"] ?? array(), $myData["files"] ?? array());
+					$tmpCount = 0;
 					foreach ($arrayMerge as $file) {
+						if (substr($file, 0, 4) === "http") {
+							$contentType = get_headers($file, 1)['Content-Type'];
+							$ext = self::getExtension($contentType);
+							$tmp = $_data_dir . 'notif_' . $this->getId() . '_' . $tmpCount . $ext;
+							unlink($tmp);
+							$cmd = 'curl ' . $file . ' -o ' . $tmp;
+							shell_exec($cmd);
+							$file = $tmp;
+							$tmpCount++;
+						}
 						if (realpath($file)) array_push($files, realpath($file));
 					}
 					$data['payload']['files'] = $files;
@@ -1988,6 +1999,15 @@ class JeedomConnectCmd extends cmd {
 			}
 		}
 		return array('title' => $titre, 'args' => $args, 'files' => $files);
+	}
+
+	public function getExtension($contentType) {
+		$mimes = '{".png":["image\/png","image\/x-png"],".gif":["image/gif"],".jpeg":["image/jpeg","image/pjpeg"],".mp4":["video\/mp4"],".mpeg":["video\/mpeg"],".mov":["video\/quicktime"],".avi":["video\/x-msvideo","video\/msvideo","video\/avi","application\/x-troff-msvideo"],".movie":["video\/x-sgi-movie"],".txt":["text\/plain"],".mp3":["audio\/mpeg","audio\/mpg","audio\/mpeg3","audio\/mp3"]}';
+		$mimes = json_decode($mimes, true);
+		foreach ($mimes as $key => $value) {
+			if(array_search($contentType, $value) !== false) return $key;
+		}
+		return '';
 	}
 
 	public static function arg2arrayCustom($data) {
