@@ -202,8 +202,18 @@ class JeedomConnect extends eqLogic {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
 
-		JeedomConnectUtils::recurse_copy(realpath(self::$_config_dir), self::$_backup_dir . 'configs');
-		JeedomConnectUtils::recurse_copy(realpath(self::$_notif_dir), self::$_backup_dir . 'notifs');
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getLogicalId();
+
+			$bkpDir = self::$_backup_dir . $apiKey;
+			if (!is_dir($bkpDir))  @mkdir($bkpDir, 0755, true);
+
+			$configFile = realpath(self::$_config_dir) . '/' . $apiKey . '.json';
+			if (file_exists($configFile)) copy($configFile, $bkpDir . '/config-' . $apiKey . '.json');
+
+			$notifFile = realpath(self::$_notif_dir) . '/' . $apiKey . '.json';
+			if (file_exists($notifFile)) copy($notifFile, $bkpDir . '/notif-' . $apiKey . '.json');
+		}
 	}
 
 	public static function copyNotifConfig($oldApiKey, $newApiKey) {
