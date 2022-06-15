@@ -209,7 +209,11 @@ class JeedomConnect extends eqLogic {
 			if (!is_dir($bkpDir))  @mkdir($bkpDir, 0755, true);
 
 			$configFile = realpath(self::$_config_dir) . '/' . $apiKey . '.json';
-			if (file_exists($configFile)) copy($configFile, $bkpDir . '/config-' . $apiKey . '.json');
+			if (file_exists($configFile)) {
+				$configFileContent = file_get_contents($configFile);
+				$content = JeedomConnectUtils::addTypeInPayload(json_decode($configFileContent), 'JC_EXPORT_EQLOGIC_CONFIG');
+				file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
+			}
 
 			$notifFile = realpath(self::$_notif_dir) . '/' . $apiKey . '.json';
 			if (file_exists($notifFile)) copy($notifFile, $bkpDir . '/notif-' . $apiKey . '.json');
