@@ -857,16 +857,39 @@ class apiHelper {
 
     foreach ($cmds as $cmd) {
       $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+
       $cmd_info = array(
         'id' => $cmd->getId(),
         'value' => $state['value'],
         'modified' => strtotime($state['valueDate']),
-        'collectDate' => strtotime($state['collectDate'])
+        'collectDate' => strtotime($state['collectDate']),
+        'history' => self::getHistoryValueInfo($cmd->getId())
       );
       array_push($payload, $cmd_info);
     }
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function getHistoryValueInfo($cmdId) {
+
+    $cmd = cmd::byId($cmdId);
+
+    if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
+      $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
+      $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
+
+      $averageHistoryValue = round($historyStatistique['avg'], 1);
+      $minHistoryValue = round($historyStatistique['min'], 1);
+      $maxHistoryValue = round($historyStatistique['max'], 1);
+    }
+
+
+    return array(
+      'averageValue' => $averageHistoryValue ?? 0,
+      'minValue' => $minHistoryValue ?? 0,
+      'maxValue' => $maxHistoryValue ?? 0,
+    );
   }
 
   // SCENARIO FUNCTIONS
@@ -2030,7 +2053,8 @@ class apiHelper {
             'id' => $event['option']['cmd_id'],
             'value' => $event['option']['value'],
             'modified' => strtotime($event['option']['valueDate']),
-            'collectDate' => strtotime($event['option']['collectDate'])
+            'collectDate' => strtotime($event['option']['collectDate']),
+            'history' => self::getHistoryValueInfo($event['option']['cmd_id'])
           );
           array_push($result_cmd['payload'], $cmd_info);
         }
