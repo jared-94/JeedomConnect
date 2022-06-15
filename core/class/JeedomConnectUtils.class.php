@@ -551,14 +551,16 @@ class JeedomConnectUtils {
      * @param string $dst path with the final folder name where copy has to be done
      * @return void
      */
-    public static function recurse_copy($src, $dst) {
+    public static function recurse_copy($src, $dst, $ext = '*') {
         $dir = opendir($src);
-        @mkdir($dst);
+        @mkdir($dst, 0755, true);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
                 if (is_dir($src . '/' . $file)) {
                     self::recurse_copy($src . '/' . $file, $dst . '/' . $file);
                 } else {
+                    $fileInfo = pathinfo($file);
+                    if ($ext != '*' && $fileInfo['extension'] != $ext) continue;
                     copy($src . '/' . $file, $dst . '/' . $file);
                 }
             }

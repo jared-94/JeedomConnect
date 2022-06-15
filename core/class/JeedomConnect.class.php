@@ -201,6 +201,9 @@ class JeedomConnect extends eqLogic {
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
+
+		JeedomConnectUtils::recurse_copy(realpath(self::$_config_dir), self::$_backup_dir . 'configs');
+		JeedomConnectUtils::recurse_copy(realpath(self::$_notif_dir), self::$_backup_dir . 'notifs');
 	}
 
 	public static function copyNotifConfig($oldApiKey, $newApiKey) {
