@@ -82,6 +82,10 @@ function JeedomConnect_update() {
     JeedomConnect::migrationAllNotif();
   }
 
+  if (config::byKey('migration::appPref',   'JeedomConnect') == '') {
+    JeedomConnect::migrateAppPref();
+  }
+
   // FORCE save on all equipments to save new cmd
   /** @var JeedomConnect $eqLogic */
   foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {

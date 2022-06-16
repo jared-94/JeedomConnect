@@ -830,4 +830,38 @@ class JeedomConnectUtils {
 
         return $postData;
     }
+
+    public static function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return substr($haystack, 0, $length) === $needle;
+    }
+
+
+    public static function getFiles($folder, $recursive = false, $isRelativePath = true, $prefixe = null) {
+        $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
+        $result = array();
+        try {
+            if (is_dir($dir)) {
+                $dh = new DirectoryIterator($dir);
+                foreach ($dh as $item) {
+                    if (!$item->isDot() && substr($item, 0, 1) != '.') {
+                        if (!$item->isDir()) {
+                            if ($prefixe != null && !self::startsWith($item->getBasename(), $prefixe)) continue;
+                            array_push($result, array(
+                                'path' =>  realpath($item->getPathname()),
+                                'timestamp' => $item->getMTime()
+                            ));
+                        } else if ($recursive) {
+                            $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
+                            $result = array_merge($result, $subFolderFiles['payload']['files']);
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            JCLog::error($e->getMessage());
+        }
+
+        return  $result;
+    }
 }

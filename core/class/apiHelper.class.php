@@ -196,7 +196,7 @@ class apiHelper {
           break;
 
         case 'GET_FILES':
-          return self::getFiles($param['folder'], $param['recursive']);
+          return self::getFiles($param['folder'], $param['recursive'], true, $param['prefixe'] ?? null);
           break;
 
         case 'REMOVE_FILE':
@@ -2251,7 +2251,7 @@ class apiHelper {
       mkdir($eqDir);
     }
 
-    $config_file = $eqDir . urlencode($config['name']) . '-' . time() . '.json';
+    $config_file = $eqDir . urlencode('appPref-' . $config['name']) . '-' . time() . '.json';
     try {
       JCLog::debug('Saving backup in file : ' . $config_file);
       file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
@@ -2261,21 +2261,18 @@ class apiHelper {
   }
 
   private static function getAppConfig($apiKey, $configId) {
-    // $_backup_dir = JeedomConnect::$_backup_dir;
-    $_backup_dir = '/plugins/JeedomConnect/data/backups/';
 
-    $eqDir = $_backup_dir . $apiKey;
-    $files = self::getFiles($eqDir);
-    $endFile = '-' . $configId . '.json';
-    foreach ($files['payload']['files'] as $file) {
-      if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
-        $config_file = file_get_contents($file['path']);
-        return array(
-          'type' => 'SET_APP_CONFIG',
-          'payload' => array('config' => json_decode($config_file))
-        );
-      }
+    $searchFor = realpath(JeedomConnect::$_backup_dir) . '/' . $apiKey . '/appPref-*-' . $configId . '.json';
+
+    $matches = glob($searchFor);
+    if (is_array($matches) && count($matches) > 0) {
+      $config_file = file_get_contents($matches[0]);
+      return array(
+        'type' => 'SET_APP_CONFIG',
+        'payload' => array('config' => json_decode($config_file))
+      );
     }
+
     return self::raiseException('Le fichier n\'existe plus.');
   }
 
@@ -2603,29 +2600,9 @@ class apiHelper {
   }
 
   // FILES
-  public static function getFiles($folder, $recursive = false, $isRelativePath = true) {
+  public static function getFiles($folder, $recursive = false, $isRelativePath = true, $prefixe = null) {
     $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
-    $result = array();
-    try {
-      if (is_dir($dir)) {
-        $dh = new DirectoryIterator($dir);
-        foreach ($dh as $item) {
-          if (!$item->isDot() && substr($item, 0, 1) != '.') {
-            if (!$item->isDir()) {
-              array_push($result, array(
-                'path' =>  realpath($item->getPathname()),
-                'timestamp' => $item->getMTime()
-              ));
-            } else if ($recursive) {
-              $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
-              $result = array_merge($result, $subFolderFiles['payload']['files']);
-            }
-          }
-        }
-      }
-    } catch (Exception $e) {
-      JCLog::error($e->getMessage());
-    }
+    $result = JeedomConnectUtils::getFiles($folder, $recursive, $isRelativePath, $prefixe);
 
     return  array(
       'type' => 'SET_FILES',

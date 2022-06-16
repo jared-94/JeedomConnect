@@ -210,8 +210,8 @@ class JeedomConnect extends eqLogic {
 
 			$configFile = realpath(self::$_config_dir) . '/' . $apiKey . '.json';
 			if (file_exists($configFile)) {
-				$configFileContent = file_get_contents($configFile);
-				$content = JeedomConnectUtils::addTypeInPayload(json_decode($configFileContent), 'JC_EXPORT_EQLOGIC_CONFIG');
+				$configFileContent = JeedomConnectUtils::getFileContent($configFile);
+				$content = JeedomConnectUtils::addTypeInPayload($configFileContent, 'JC_EXPORT_EQLOGIC_CONFIG');
 				file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
 			}
 
@@ -1547,6 +1547,24 @@ class JeedomConnect extends eqLogic {
 		config::save('migration::notifAll', 'done', 'JeedomConnect');
 	}
 
+
+	public static function migrateAppPref() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getLogicalId();
+
+			$bkpDir = self::$_backup_dir . $apiKey;
+			if (!is_dir($bkpDir)) continue;
+
+			$files = JeedomConnectUtils::getFiles(realpath($bkpDir), false, false);
+			foreach ($files as $item) {
+				$fileInfo = pathinfo($item['path']);
+				rename($item['path'], $bkpDir . '/appPref-' . $fileInfo['basename']);
+			}
+		}
+
+		config::save('migration::appPref', 'done', 'JeedomConnect');
+	}
 
 	public static function migrateCustomData() {
 		/** @var JeedomConnect $eqLogic */
