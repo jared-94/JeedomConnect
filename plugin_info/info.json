@@ -23,7 +23,8 @@
 		"data/img",
 		"data/img/user_files",
 		"data/configs",
-		"data/backups"
+		"data/backups",
+		"tmp"
 	],
 	"compatibility": [
 		"miniplus",

@@ -682,6 +682,7 @@ class apiHelper {
     $returnType = 'WELCOME';
 
     $config = $eqLogic->getGeneratedConfigFile();
+    $notifsConfig =  $eqLogic->getNotifs();
 
     $payload = array(
       'pluginVersion' => $pluginVersion,
@@ -694,6 +695,7 @@ class apiHelper {
       'userName' => $userConnected->getLogin(),
       'userProfil' => $userConnected->getProfils(),
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
+      'notifsVersion' => $notifsConfig['idCounter'],
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
       'editEnabled' => $userConnected->getProfils() == 'admin', //$eqLogic->getConfiguration('editEnabled') == '1',
@@ -773,6 +775,7 @@ class apiHelper {
           'name' => $eqLogic->getName(),
           'enable' => $eqLogic->getIsEnable(),
           'useWs' => $eqLogic->getConfiguration('useWs', 0),
+          'polling' => $eqLogic->getConfiguration('polling', 0),
           'deviceName' => $eqLogic->getConfiguration('deviceName', null),
           'deviceId' => $eqLogic->getConfiguration('deviceId', null)
         ));
@@ -1102,6 +1105,7 @@ class apiHelper {
 
     $payload =  array(
       'useWs' => is_object($eqLogic) ?  $eqLogic->getConfiguration('useWs', 0) : 0,
+      'polling' => is_object($eqLogic) ?  $eqLogic->getConfiguration('polling', 0) : 0,
       'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
       'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
