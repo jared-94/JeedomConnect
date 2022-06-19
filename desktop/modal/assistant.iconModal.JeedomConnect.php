@@ -59,13 +59,6 @@ function get_all_files($dir, $includeSubDir = false) {
     </li>
     <li role="presentation"><a href="#user" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-image"></i> {{Images Persos}}</a></li>
   <?php } ?>
-  <?php if (init('withColors') == "1") { ?>
-    <li role="presentation" <?php if (init('withIcon') != "1") {
-                              echo 'class="active"';
-                            } ?>>
-      <a href="#gradients" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-image"></i> {{Couleurs}}</a>
-    </li>
-  <?php } ?>
 </ul>
 
 <div class="tab-content" style="overflow-y:scroll;">
