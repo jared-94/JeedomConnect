@@ -115,7 +115,7 @@ try {
             'objInfo' => apiHelper::getObjectData($config, false)
           )))
         );
-        sse(json_encode(array($newConfig)));
+        sse(json_encode(array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig)));
         //sleep(1);
       }
 

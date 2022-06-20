@@ -358,7 +358,7 @@ class apiHelper {
           $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
           if ($newConfig != false) {
             JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-            return array($newConfig);
+            return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
           }
 
           $actions = self::getJCActions($apiKey);

@@ -304,7 +304,7 @@ class ConnectLogic implements MessageComponentInterface {
 				$client->configVersion = $newConfig['payload']['configVersion'];
 				$client->send(json_encode(\apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())));
 				$client->send(json_encode(\apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), false, true)));
-				$client->send(json_encode($newConfig));
+				$client->send(json_encode(array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig)));
 			}
 		}
 	}
