@@ -853,7 +853,7 @@ class JeedomConnectUtils {
                             ));
                         } else if ($recursive) {
                             $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
-                            $result = array_merge($result, $subFolderFiles['payload']['files']);
+                            $result = array_merge($result, $subFolderFiles);
                         }
                     }
                 }
