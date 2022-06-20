@@ -313,8 +313,8 @@ class apiHelper {
           break;
 
         case 'SET_APP_CONFIG':
-          self::setAppConfig($apiKey, $param['config']);
-          return null;
+          $result = self::setAppConfig($apiKey, $param['config']);
+          return $result;
           break;
 
         case 'GET_APP_CONFIG':
@@ -2259,8 +2259,12 @@ class apiHelper {
     try {
       JCLog::debug('Saving backup in file : ' . $config_file);
       file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+      return array(
+        'type' => 'GET_APP_CONFIG'
+      );
     } catch (Exception $e) {
       JCLog::error('Unable to write file : ' . $e->getMessage());
+      return self::raiseException('Unable to write file : ' . $e->getMessage());
     }
   }
 
