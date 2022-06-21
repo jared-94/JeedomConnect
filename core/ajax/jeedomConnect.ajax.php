@@ -744,8 +744,10 @@ try {
 	}
 
 	if (init('action') == 'incrementWarning') {
-		$displayWarningConfig = config::byKey('displayWarning', 'JeedomConnect', 0);
-		config::save('displayWarning', $displayWarningConfig + 1, 'JeedomConnect');
+		$displayWarningConfig = config::byKey('displayWarning', 'JeedomConnect');
+		$warningData = ($displayWarningConfig == '' ? '' : $displayWarningConfig . ";") . date('Y-m-d');
+		config::save('displayWarning', $warningData, 'JeedomConnect');
+
 		ajax::success();
 	}
 

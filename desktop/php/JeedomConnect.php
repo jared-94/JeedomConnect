@@ -130,7 +130,10 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 
 $infoPlugin = JeedomConnectUtils::getInstallDetails();
 
-$displayWarning = config::byKey('displayWarning', 'JeedomConnect', 0) < 3;
+$displayWarningConf = config::byKey('displayWarning', 'JeedomConnect');
+$warningAlreadyDisplayedToday = strpos($displayWarningConf, strval(date('Y-m-d'))) !== false;
+$countAlreadyPass = count(explode(';', $displayWarningConf));
+$displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 ?>
 

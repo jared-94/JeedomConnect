@@ -83,8 +83,8 @@ function sortWidgets() {
 }
 
 function SortByName(a, b) {
-  var aName = a.name.toLowerCase();
-  var bName = b.name.toLowerCase();
+  var aName = a.name?.toLowerCase();
+  var bName = b.name?.toLowerCase();
   return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
@@ -3222,6 +3222,64 @@ function disableCheckbox() {
 }
 
 function displayJCWarning() {
+  var color = [
+    'background-color: green !important;',
+    'background-color: red !important;',
+    'background-color: rgb(27,161,242)!important;',
+    'background-color: orange !important;'
+  ];
+  shuffle(color);
+
+  var varButton = [
+    {
+      text: "Ok mais j'ai pas lu",
+      open: function () {
+        $(this).attr('style', color[0]);
+      },
+      click: function () {
+        warningResponse($(this), false);
+      }
+    },
+    {
+      text: "Je clique sans lire",
+      open: function () {
+        $(this).attr('style', color[1]);
+      },
+      click: function () {
+        warningResponse($(this), false);
+      }
+    },
+    {
+      text: "J'ai lu et je le ferai. Promis juré",
+      open: function () {
+        $(this).attr('style', color[2]);
+      },
+      click: function () {
+        $.post({
+          url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+          data: {
+            'action': 'incrementWarning'
+          },
+          cache: false,
+          dataType: 'json',
+          async: true,
+        });
+        warningResponse($(this), true);
+      }
+    },
+    {
+      text: "J'ai jamais besoin d'aide je suis trop balaise",
+      open: function () {
+        $(this).attr('style', color[3]);
+      },
+      click: function () {
+        warningResponse($(this), false);
+      }
+    }
+  ];
+
+
+  shuffle(varButton);
 
   getSimpleModal({
     title: "Important - JeedomConnect - A lire",
@@ -3232,25 +3290,40 @@ function displayJCWarning() {
       type: "string",
       value: $('.displayJCWarning').html()
     }],
-    buttons: {
-      "J'ai lu et bien compris": function () {
-        JCwarningAlreadyDisplayed = true;
-        $.post({
-          url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-          data: {
-            'action': 'incrementWarning'
-          },
-          cache: false,
-          dataType: 'json',
-          async: true,
-        });
-        $(this).dialog("close");
-      }
-    }
+    buttons: varButton
   }, function (result) { });
 
 
 };
+
+
+function shuffle(array) {
+  let currentIndex = array.length, randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function warningResponse(elt, good) {
+  JCwarningAlreadyDisplayed = true;
+  $(elt).dialog("close");
+  $.fn.showAlert({
+    message: good ? 'Merci. On compte sur toi !' : 'Mauvais réponse ... on se revoit bientot !',
+    level: good ? 'success' : 'warning'
+  });
+  $(".displayJCWarning").remove();
+}
 
 
 $(document).ready(
