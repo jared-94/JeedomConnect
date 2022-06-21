@@ -132,14 +132,46 @@ $.post({
 $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '.widgetDisplayCard', function () {
 
   var eqId = $(this).attr('data-widget_id');
-  editWidgetModal(eqId, true, true, true);
+  editWidgetModal(eqId, true, true, true, true);
 
 })
 
+async function getUsedByEquipement(eqId) {
+  const result = await $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'getWidgetExistance',
+      id: eqId
+    },
+    cache: false,
+    dataType: 'json',
+    async: false,
+  });
 
-function editWidgetModal(widgetId, removeAction, exit, duplicate) {
+  if (result.state != 'ok') {
+    $('#div_alert').showAlert({
+      message: result.result,
+      level: 'danger'
+    });
+  }
+
+  return result;
+}
+
+
+async function editWidgetModal(widgetId, removeAction, exit, duplicate, checkEquipment) {
+
+  if (checkEquipment) {
+
+    var mesEquipments = await getUsedByEquipement(widgetId);
+    var inEquipments = mesEquipments.result.names;
+  }
+  else {
+    var inEquipments = undefined;
+  }
+
   var widgetToEdit = allWidgetsDetail.find(w => w.id == widgetId);
-  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate }, function (result) {
+  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate, inEquipments: inEquipments }, function (result) {
     refreshWidgetDetails();
     if (!exit) refreshWidgetsContent();
   });
@@ -173,6 +205,18 @@ function getWidgetModal(_options, _callback) {
     });
   }
   setWidgetModalData(_options);
+
+  if (_options.inEquipments !== undefined && _options.inEquipments != '') {
+
+    $('#widgetInclusion').html('<span id="widgetExistInEquipement" style="display:none">' + _options.inEquipments.join(', ') + '</span>');
+    $('#widgetInclusion').append('Utilisé dans :<br/><ul>');
+
+    $.each(_options.inEquipments, function (index, value) {
+      $("#widgetInclusion").append('<li>' + value + '</li>');
+    });
+    $("#widgetInclusion").append('<ul>');
+    $('#widgetInclusion').css('display', 'block');
+  }
 
   if (_options.removeAction != true) {
     $('.widgetMenu .removeWidget').hide();
@@ -2745,85 +2789,66 @@ function removeWidget(itemId) {
     var widgetId = itemId;
   }
 
-  $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-      action: 'getWidgetExistance',
-      id: widgetId
-    },
-    cache: false,
-    dataType: 'json',
-    async: false,
-    success: function (data) {
-      if (data.state != 'ok') {
-        $('#div_alert').showAlert({
-          message: data.result,
-          level: 'danger'
-        });
-      }
-      else {
-        var allName = data.result.names;
 
-        var msg = '';
-        if (allName.length == 0 || allName == '' || allName == undefined) {
-          msg = '(Ce widget n\'est utilisé dans aucun équipement)';
+  var allName = $('#widgetExistInEquipement').text();
+
+  var msg = '';
+  if (allName.length == 0 || allName == '' || allName == undefined) {
+    msg = '(Ce widget n\'est utilisé dans aucun équipement)';
+  }
+  else {
+    var count = (allName.match(/,/g) || []).length;
+    if (count == 0) {
+      var eq = 'de l\'équipement';
+    }
+    else {
+      var eq = 'des équipements';
+    }
+
+    msg = warning + '  La suppression retirera ce widget ' + eq + ' suivant : ' + allName + '  ' + warning;
+  }
+
+  getSimpleModal({
+    title: "Confirmation", fields: [{
+      type: "string",
+      value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
+    }]
+  }, function (result) {
+    $('#widget-alert').hideAlert();
+    widgetId = $("#widgetOptions").attr('widget-id');
+
+    $.ajax({
+      type: "POST",
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        action: "removeWidgetConfig",
+        eqId: widgetId
+      },
+      dataType: 'json',
+      error: function (error) {
+        $('#div_alert').showAlert({ message: error.message, level: 'danger' });
+      },
+      success: function (data) {
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
         }
         else {
-          if (allName.length == 1) {
-            var eq = 'de l\'équipement';
-          }
-          else {
-            var eq = 'des équipements';
-          }
-
-          msg = warning + '  La suppression retirera ce widget ' + eq + ' suivant : ' + allName.join(', ') + '  ' + warning;
-        }
-
-        getSimpleModal({
-          title: "Confirmation", fields: [{
-            type: "string",
-            value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
-          }]
-        }, function (result) {
-          $('#widget-alert').hideAlert();
-          widgetId = $("#widgetOptions").attr('widget-id');
-
-          $.ajax({
-            type: "POST",
-            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-            data: {
-              action: "removeWidgetConfig",
-              eqId: widgetId
-            },
-            dataType: 'json',
-            error: function (error) {
-              $('#div_alert').showAlert({ message: error.message, level: 'danger' });
-            },
-            success: function (data) {
-              if (data.state != 'ok') {
-                $('#div_alert').showAlert({
-                  message: data.result,
-                  level: 'danger'
-                });
-              }
-              else {
-                var vars = getUrlVars()
-                var url = 'index.php?'
-                for (var i in vars) {
-                  if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-                    url += i + '=' + vars[i].replace('#', '') + '&'
-                  }
-                }
-                modifyWithoutSave = false
-                url += '&saveSuccessFull=1'
-                loadPage(url)
-              }
+          var vars = getUrlVars()
+          var url = 'index.php?'
+          for (var i in vars) {
+            if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
+              url += i + '=' + vars[i].replace('#', '') + '&'
             }
-          })
-        });
-
+          }
+          modifyWithoutSave = false
+          url += '&saveSuccessFull=1'
+          loadPage(url)
+        }
       }
-    }
+    })
   });
 
 }
