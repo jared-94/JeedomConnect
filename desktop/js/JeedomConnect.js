@@ -214,7 +214,7 @@ function getWidgetModal(_options, _callback) {
     $.each(_options.inEquipments, function (index, value) {
       $("#widgetInclusion").append('<li>' + value + '</li>');
     });
-    $("#widgetInclusion").append('<ul>');
+    $("#widgetInclusion").append('</ul>');
     $('#widgetInclusion').css('display', 'block');
   }
 
