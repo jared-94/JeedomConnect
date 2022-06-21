@@ -83,9 +83,9 @@ foreach ($widgetArray as $widget) {
 
 	$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
-	if (in_array($id, $widgetInError) || $widgetName == 'inconnu') {
+	if (in_array($id, $widgetInError) || $widgetName == 'inconnu' || trim($widgetName) == '') {
 		$hasError = 'hasError';
-		$tooltip = ($widgetName == 'inconnu') ? 'Nom du widget à modifier' : 'Commandes orphelines';
+		$tooltip = ($widgetName == 'inconnu' || trim($widgetName) == '') ? 'Nom du widget à modifier' : 'Commandes orphelines';
 		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="' . $tooltip . '"></i>';
 		$hasErrorPage =  true;
 	}
