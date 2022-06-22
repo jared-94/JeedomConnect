@@ -366,7 +366,7 @@ class apiHelper {
             return array($actions);
           }
 
-          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp']);
+          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
           return $result;
 
           // TODO : target solution
@@ -1966,11 +1966,20 @@ class apiHelper {
   /**
    * @param JeedomConnect $eqLogic
    */
-  public static function getEventsFull($eqLogic, $lastReadTimestamp) {
+  public static function getEventsFull($eqLogic, $lastReadTimestamp, $lastHistoricReadTimestamp) {
 
     $config = $eqLogic->getGeneratedConfigFile();
 
     $events = event::changes($lastReadTimestamp);
+
+    // Refresh cmds that need historic data every 5 mins - custumizable param ?
+    if (time() - $lastHistoricReadTimestamp > 5 * 60) {
+      $lastHistoricReadTimestamp = time();
+      $cmdsToAdd = self::getHistoricEvents($config);
+      if (count($cmdsToAdd) > 0) {
+        $events['result'] = array_merge($events['result'], $cmdsToAdd);
+      }
+    }
 
     $eventCount = count($events['result']);
     if ($eventCount == 0) {
@@ -1979,25 +1988,85 @@ class apiHelper {
         array(
           'type' => 'DATETIME',
           'payload' => $events['datetime']
+        ),
+        array(
+          'type' => 'HIST_DATETIME',
+          'payload' => $lastHistoricReadTimestamp
         )
       );
     } elseif ($eventCount < 249) {
       // JCLog::debug('--- using cache (' . $eventCount . ')');
-      $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1, $lastHistoricReadTimestamp);
     } else {
       // JCLog::debug('*****  too many items, refresh all (' . $eventCount . ')');
-      $data = self::getEventsGlobalRefresh($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      $data = self::getEventsGlobalRefresh($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1, $lastHistoricReadTimestamp);
     }
 
     return $data;
   }
 
+  private static function getHistoricEvents($config) {
+    $result = array();
 
-  private static function getEventsGlobalRefresh($events, $config, $scAll = false) {
+    foreach ($config['payload']['widgets'] as $widget) {
+      $name = $widget['name'];
+      $subtitle = $widget['subtitle'];
+      foreach ($widget as $item => $value) {
+        if (is_array($value)) {
+          if (array_key_exists('type', $value)) {
+            if ($value['type'] == 'info') {
+              if (self::hasHistoricFunction($value['id'], $name) || self::hasHistoricFunction($value['id'], $subtitle)) {
+                $cmd = cmd::byId($value['id']);
+                $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+                array_push($result, array(
+                  'name' => 'cmd::update',
+                  'option' => array_merge(array(
+                    'cmd_id' => $value['id']
+                  ), $state)
+                ));
+              }
+            }
+          }
+          if ($item == 'moreInfos') {
+            foreach ($value as $i => $info) {
+              if (self::hasHistoricFunction($info['id'], $name) || self::hasHistoricFunction($info['id'], $subtitle)) {
+                $cmd = cmd::byId($info['id']);
+                $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+                array_push($result, array(
+                  'name' => 'cmd::update',
+                  'option' => array_merge(array(
+                    'cmd_id' => $info['id']
+                  ), $state)
+                ));
+              }
+            }
+          }
+        }
+      }
+    }
+    return $result;
+  }
+
+  private static function hasHistoricFunction($id, $string) {
+    $match = array("average(#$id#)", "min(#$id#)", "max(#$id#)", "collect(#$id#)");
+    foreach ($match as $key) {
+      if (strpos($string, $key) !== FALSE) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  private static function getEventsGlobalRefresh($events, $config, $scAll = false, $histDatetime) {
     $result = array(
       array(
         'type' => 'DATETIME',
         'payload' => $events['datetime']
+      ),
+      array(
+        'type' => 'HIST_DATETIME',
+        'payload' => $histDatetime
       ),
       array(
         'type' => 'CMD_INFO',
@@ -2014,10 +2083,14 @@ class apiHelper {
     return $result;
   }
 
-  private static function getEventsFromCache($events, $config, $scAll = false) {
+  private static function getEventsFromCache($events, $config, $scAll = false, $histDatetime) {
     $result_datetime = array(
       'type' => 'DATETIME',
       'payload' => $events['datetime']
+    );
+    $result_histDatetime = array(
+      'type' => 'HIST_DATETIME',
+      'payload' => $histDatetime
     );
     $result_cmd = array(
       'type' => 'CMD_INFO',
@@ -2064,7 +2137,7 @@ class apiHelper {
         }
       }
     }
-    return array($result_datetime, $result_cmd, $result_sc, $result_obj);
+    return array($result_datetime, $result_histDatetime, $result_cmd, $result_sc, $result_obj);
   }
 
   //HISTORY

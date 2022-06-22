@@ -52,6 +52,7 @@ try {
 
   $config = $eqLogic->getConfig(true);
   $lastReadTimestamp = time();
+  $lastHistoricReadTimestamp = time();
   $step = 0;
 
   sse(
@@ -119,7 +120,7 @@ try {
         //sleep(1);
       }
 
-      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp);
+      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp, $lastHistoricReadTimestamp);
 
       foreach ($data as $res) {
         if (key_exists('payload', $res)) {
@@ -137,6 +138,7 @@ try {
         sse(json_encode($data));
         $step = 0;
         $lastReadTimestamp = $data[0]['payload'];
+        $lastHistoricReadTimestamp = $data[1]['payload'];
       }
     }
     if (!$sendInfo) {
