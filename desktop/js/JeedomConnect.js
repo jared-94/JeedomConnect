@@ -3248,8 +3248,8 @@ function disableCheckbox() {
 
 function displayJCWarning() {
   var color = [
-    'background-color: green !important;',
-    'background-color: red !important;',
+    'background-color: #fc59cc !important;',
+    'background-color: #933ed6 !important;',
     'background-color: rgb(27,161,242)!important;',
     'background-color: orange !important;'
   ];
