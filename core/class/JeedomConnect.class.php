@@ -1097,23 +1097,24 @@ class JeedomConnect extends eqLogic {
 				if (isset($cmdData["isHistorized"])) {
 					$cmd->setIsHistorized($cmdData["isHistorized"]);
 				}
+
+				if (isset($cmdData["generic_type"])) {
+					$cmd->setGeneric_type($cmdData["generic_type"]);
+				}
+
+				if (isset($cmdData["unite"])) {
+					$cmd->setUnite($cmdData["unite"]);
+				}
+
+				if (isset($cmdData["order"])) {
+					$cmd->setOrder($cmdData["order"]);
+				}
 			}
+
 			$cmd->setName(__($cmdData["name"], __FILE__));
 
 			$cmd->setType($cmdData["type"]);
 			$cmd->setSubType($cmdData["subtype"]);
-
-			if (isset($cmdData["generic_type"])) {
-				$cmd->setGeneric_type($cmdData["generic_type"]);
-			}
-
-			if (isset($cmdData["unite"])) {
-				$cmd->setUnite($cmdData["unite"]);
-			}
-
-			if (isset($cmdData["order"])) {
-				$cmd->setOrder($cmdData["order"]);
-			}
 
 			if (isset($cmdData['configuration'])) {
 				foreach ($cmdData['configuration'] as $key => $value) {
