@@ -46,7 +46,8 @@ class JeedomConnectUtils {
         }
 
 
-        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/>';
+        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
         /** @var array<JeedomConnect> $eqLogics */
@@ -863,5 +864,15 @@ class JeedomConnectUtils {
         }
 
         return  $result;
+    }
+
+
+    public static function hasDNSConnexion() {
+        $url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
+        if ((strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
+            return true;
+        }
+
+        return false;
     }
 }
