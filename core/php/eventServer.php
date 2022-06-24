@@ -52,6 +52,7 @@ try {
 
   $config = $eqLogic->getConfig(true);
   $lastReadTimestamp = time();
+  $lastHistoricReadTimestamp = time();
   $step = 0;
 
   sse(
@@ -86,10 +87,24 @@ try {
       die();
     }
 
+    $actions = JeedomConnectActions::getAllActions($apiKey);
+    if (count($actions) > 0) {
+      $result = array(
+        'type' => 'ACTIONS',
+        'payload' => array()
+      );
+      foreach ($actions as $action) {
+        array_push($result['payload'], $action['value']['payload']);
+      }
+      JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
+      sse(json_encode(array($result)));
+      JeedomConnectActions::removeActions($actions);
+      sleep(1);
+    }
+
     $sendInfo = false;
 
     if ($logic->getConfiguration('appState') == 'active') {
-
       $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
       if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
         JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
@@ -101,26 +116,11 @@ try {
             'objInfo' => apiHelper::getObjectData($config, false)
           )))
         );
-        sse(json_encode(array($newConfig)));
+        sse(json_encode(array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig)));
         //sleep(1);
       }
 
-      $actions = JeedomConnectActions::getAllActions($apiKey);
-      if (count($actions) > 0) {
-        $result = array(
-          'type' => 'ACTIONS',
-          'payload' => array()
-        );
-        foreach ($actions as $action) {
-          array_push($result['payload'], $action['value']['payload']);
-        }
-        JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
-        sse(json_encode(array($result)));
-        JeedomConnectActions::removeActions($actions);
-        sleep(1);
-      }
-
-      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp);
+      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp, $lastHistoricReadTimestamp);
 
       foreach ($data as $res) {
         if (key_exists('payload', $res)) {
@@ -138,6 +138,7 @@ try {
         sse(json_encode($data));
         $step = 0;
         $lastReadTimestamp = $data[0]['payload'];
+        $lastHistoricReadTimestamp = $data[1]['payload'];
       }
     }
     if (!$sendInfo) {

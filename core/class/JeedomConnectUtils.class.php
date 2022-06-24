@@ -46,7 +46,8 @@ class JeedomConnectUtils {
         }
 
 
-        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/>';
+        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
         /** @var array<JeedomConnect> $eqLogics */
@@ -551,14 +552,16 @@ class JeedomConnectUtils {
      * @param string $dst path with the final folder name where copy has to be done
      * @return void
      */
-    public static function recurse_copy($src, $dst) {
+    public static function recurse_copy($src, $dst, $ext = '*') {
         $dir = opendir($src);
-        @mkdir($dst);
+        @mkdir($dst, 0755, true);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
                 if (is_dir($src . '/' . $file)) {
                     self::recurse_copy($src . '/' . $file, $dst . '/' . $file);
                 } else {
+                    $fileInfo = pathinfo($file);
+                    if ($ext != '*' && $fileInfo['extension'] != $ext) continue;
                     copy($src . '/' . $file, $dst . '/' . $file);
                 }
             }
@@ -827,5 +830,49 @@ class JeedomConnectUtils {
         ));
 
         return $postData;
+    }
+
+    public static function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return substr($haystack, 0, $length) === $needle;
+    }
+
+
+    public static function getFiles($folder, $recursive = false, $isRelativePath = true, $prefixe = null) {
+        $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
+        $result = array();
+        try {
+            if (is_dir($dir)) {
+                $dh = new DirectoryIterator($dir);
+                foreach ($dh as $item) {
+                    if (!$item->isDot() && substr($item, 0, 1) != '.') {
+                        if (!$item->isDir()) {
+                            if ($prefixe != null && !self::startsWith($item->getBasename(), $prefixe)) continue;
+                            array_push($result, array(
+                                'path' =>  realpath($item->getPathname()),
+                                'timestamp' => $item->getMTime()
+                            ));
+                        } else if ($recursive) {
+                            $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
+                            $result = array_merge($result, $subFolderFiles);
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            JCLog::error($e->getMessage());
+        }
+
+        return  $result;
+    }
+
+
+    public static function hasDNSConnexion() {
+        $url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
+        if ((strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
+            return true;
+        }
+
+        return false;
     }
 }

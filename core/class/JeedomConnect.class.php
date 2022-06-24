@@ -201,6 +201,23 @@ class JeedomConnect extends eqLogic {
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
+
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getLogicalId();
+
+			$bkpDir = self::$_backup_dir . $apiKey;
+			if (!is_dir($bkpDir))  @mkdir($bkpDir, 0755, true);
+
+			$configFile = realpath(self::$_config_dir) . '/' . $apiKey . '.json';
+			if (file_exists($configFile)) {
+				$configFileContent = JeedomConnectUtils::getFileContent($configFile);
+				$content = JeedomConnectUtils::addTypeInPayload($configFileContent, 'JC_EXPORT_EQLOGIC_CONFIG');
+				file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
+			}
+
+			$notifFile = realpath(self::$_notif_dir) . '/' . $apiKey . '.json';
+			if (file_exists($notifFile)) copy($notifFile, $bkpDir . '/notif-' . $apiKey . '.json');
+		}
 	}
 
 	public static function copyNotifConfig($oldApiKey, $newApiKey) {
@@ -262,7 +279,7 @@ class JeedomConnect extends eqLogic {
 		$customData = config::searchKey('customData::' . $apiKey . '::', 'JeedomConnect');
 
 		if (!empty($customData)) {
-			$config = $this->getConfig();
+			$config = $this->getConfig(true);
 
 			foreach ($customData as $item) {
 				$search = array_search($item['value']['widgetId'], array_column($config['payload']['widgets'], 'widgetId'));
@@ -729,6 +746,7 @@ class JeedomConnect extends eqLogic {
 
 		$connectData = array(
 			'useWs' => $this->getConfiguration('useWs', 0),
+			'polling' => $this->getConfiguration('polling', 0),
 			'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
 			'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
 			'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
@@ -1079,23 +1097,24 @@ class JeedomConnect extends eqLogic {
 				if (isset($cmdData["isHistorized"])) {
 					$cmd->setIsHistorized($cmdData["isHistorized"]);
 				}
+
+				if (isset($cmdData["generic_type"])) {
+					$cmd->setGeneric_type($cmdData["generic_type"]);
+				}
+
+				if (isset($cmdData["unite"])) {
+					$cmd->setUnite($cmdData["unite"]);
+				}
+
+				if (isset($cmdData["order"])) {
+					$cmd->setOrder($cmdData["order"]);
+				}
 			}
+
 			$cmd->setName(__($cmdData["name"], __FILE__));
 
 			$cmd->setType($cmdData["type"]);
 			$cmd->setSubType($cmdData["subtype"]);
-
-			if (isset($cmdData["generic_type"])) {
-				$cmd->setGeneric_type($cmdData["generic_type"]);
-			}
-
-			if (isset($cmdData["unite"])) {
-				$cmd->setUnite($cmdData["unite"]);
-			}
-
-			if (isset($cmdData["order"])) {
-				$cmd->setOrder($cmdData["order"]);
-			}
 
 			if (isset($cmdData['configuration'])) {
 				foreach ($cmdData['configuration'] as $key => $value) {
@@ -1531,6 +1550,24 @@ class JeedomConnect extends eqLogic {
 	}
 
 
+	public static function migrateAppPref() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			$apiKey = $eqLogic->getLogicalId();
+
+			$bkpDir = self::$_backup_dir . $apiKey;
+			if (!is_dir($bkpDir)) continue;
+
+			$files = JeedomConnectUtils::getFiles(realpath($bkpDir), false, false);
+			foreach ($files as $item) {
+				$fileInfo = pathinfo($item['path']);
+				rename($item['path'], $bkpDir . '/appPref-' . $fileInfo['basename']);
+			}
+		}
+
+		config::save('migration::appPref', 'done', 'JeedomConnect');
+	}
+
 	public static function migrateCustomData() {
 		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
@@ -1630,11 +1667,10 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function isConnected() {
-		$url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
-		if ($this->getConfiguration('useWs', 0) == 0 && (strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
+		if ($this->getConfiguration('useWs', 0) == 0 && $this->getConfiguration('polling', 0) == 1) {
 			return time() - $this->getConfiguration('lastSeen', 0) < 3;
 		} else {
-			return $this->getConfiguration('appState', 0) == 'active';
+			return $this->getConfiguration('connected', 0) == 1;
 		}
 	}
 }

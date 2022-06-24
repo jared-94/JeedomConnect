@@ -375,10 +375,26 @@ function getSimpleModal(_options, _callback) {
 	}
 	$("#simpleModal").dialog({
 		title: _options.title,
-		buttons: (_options.buttons === undefined) ? genericButton : _options.buttons
+		buttons: (_options.buttons === undefined) ? genericButton : _options.buttons,
+		closeOnEscape: false,
+		open: function () {
+			if (_options.hideCloseButton) $(".ui-dialog-titlebar-close").hide();
+		},
+		close: function () {
+			if (_options.hideCloseButton) $(".ui-dialog-titlebar-close").show();
+		}
 	});
 
 	$('#simpleModal').dialog('open');
+
+	if (_options.hideActionButton) {
+
+		$(".ui-dialog-buttonset").hide();
+		setTimeout(function () {
+			$(".ui-dialog-buttonset").show();// or fade, css display however you'd like.
+		}, 10000);
+	}
+
 	$('#simpleModal').keydown(function (e) {
 		if (e.which == 13) {
 			$('#saveSimple').click();

@@ -196,7 +196,7 @@ class apiHelper {
           break;
 
         case 'GET_FILES':
-          return self::getFiles($param['folder'], $param['recursive']);
+          return self::getFiles($param['folder'], $param['recursive'], true, $param['prefixe'] ?? null);
           break;
 
         case 'REMOVE_FILE':
@@ -313,8 +313,8 @@ class apiHelper {
           break;
 
         case 'SET_APP_CONFIG':
-          self::setAppConfig($apiKey, $param['config']);
-          return null;
+          $result = self::setAppConfig($apiKey, $param['config']);
+          return $result;
           break;
 
         case 'GET_APP_CONFIG':
@@ -358,7 +358,7 @@ class apiHelper {
           $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
           if ($newConfig != false) {
             JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-            return array($newConfig);
+            return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
           }
 
           $actions = self::getJCActions($apiKey);
@@ -366,7 +366,7 @@ class apiHelper {
             return array($actions);
           }
 
-          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp']);
+          $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
           return $result;
 
           // TODO : target solution
@@ -449,6 +449,16 @@ class apiHelper {
         case 'SET_EVENT':
           self::setEvent($param['commandId'], $param['message']);
           return null;
+          break;
+
+        case 'SET_WEBSOCKET':
+          $result = self::setWebsocket($eqLogic, $param['value']);
+          return $result;
+          break;
+
+        case 'SET_POLLING':
+          $result = self::setPolling($eqLogic, $param['value']);
+          return $result;
           break;
 
         default:
@@ -651,7 +661,6 @@ class apiHelper {
     if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
-    $eqLogic->setConfiguration('polling', $param['polling'] ?? '0');
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');
@@ -673,17 +682,20 @@ class apiHelper {
     $returnType = 'WELCOME';
 
     $config = $eqLogic->getGeneratedConfigFile();
+    $notifsConfig =  $eqLogic->getNotifs();
 
     $payload = array(
       'pluginVersion' => $pluginVersion,
       'jeedomName' => config::byKey('name'),
       'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
+      'polling' => $eqLogic->getConfiguration('polling', 0),
       'userHash' => $userConnected->getHash(),
       'userId' => $userConnected->getId(),
       'userName' => $userConnected->getLogin(),
       'userProfil' => $userConnected->getProfils(),
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
+      'notifsVersion' => $notifsConfig['idCounter'],
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
       'editEnabled' => $userConnected->getProfils() == 'admin', //$eqLogic->getConfiguration('editEnabled') == '1',
@@ -763,6 +775,7 @@ class apiHelper {
           'name' => $eqLogic->getName(),
           'enable' => $eqLogic->getIsEnable(),
           'useWs' => $eqLogic->getConfiguration('useWs', 0),
+          'polling' => $eqLogic->getConfiguration('polling', 0),
           'deviceName' => $eqLogic->getConfiguration('deviceName', null),
           'deviceId' => $eqLogic->getConfiguration('deviceId', null)
         ));
@@ -847,16 +860,39 @@ class apiHelper {
 
     foreach ($cmds as $cmd) {
       $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+
       $cmd_info = array(
         'id' => $cmd->getId(),
         'value' => $state['value'],
         'modified' => strtotime($state['valueDate']),
-        'collectDate' => strtotime($state['collectDate'])
+        'collectDate' => strtotime($state['collectDate']),
+        'history' => self::getHistoryValueInfo($cmd->getId())
       );
       array_push($payload, $cmd_info);
     }
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function getHistoryValueInfo($cmdId) {
+
+    $cmd = cmd::byId($cmdId);
+
+    if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
+      $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
+      $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
+
+      $averageHistoryValue = round($historyStatistique['avg'], 1);
+      $minHistoryValue = round($historyStatistique['min'], 1);
+      $maxHistoryValue = round($historyStatistique['max'], 1);
+    }
+
+
+    return array(
+      'averageValue' => $averageHistoryValue ?? 0,
+      'minValue' => $minHistoryValue ?? 0,
+      'maxValue' => $maxHistoryValue ?? 0,
+    );
   }
 
   // SCENARIO FUNCTIONS
@@ -1069,6 +1105,7 @@ class apiHelper {
 
     $payload =  array(
       'useWs' => is_object($eqLogic) ?  $eqLogic->getConfiguration('useWs', 0) : 0,
+      'polling' => is_object($eqLogic) ?  $eqLogic->getConfiguration('polling', 0) : 0,
       'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
       'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
       'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
@@ -1929,11 +1966,20 @@ class apiHelper {
   /**
    * @param JeedomConnect $eqLogic
    */
-  public static function getEventsFull($eqLogic, $lastReadTimestamp) {
+  public static function getEventsFull($eqLogic, $lastReadTimestamp, $lastHistoricReadTimestamp) {
 
     $config = $eqLogic->getGeneratedConfigFile();
 
     $events = event::changes($lastReadTimestamp);
+
+    // Refresh cmds that need historic data every 5 mins - custumizable param ?
+    if (time() - $lastHistoricReadTimestamp > 5 * 60) {
+      $lastHistoricReadTimestamp = time();
+      $cmdsToAdd = self::getHistoricEvents($config);
+      if (count($cmdsToAdd) > 0) {
+        $events['result'] = array_merge($events['result'], $cmdsToAdd);
+      }
+    }
 
     $eventCount = count($events['result']);
     if ($eventCount == 0) {
@@ -1942,25 +1988,85 @@ class apiHelper {
         array(
           'type' => 'DATETIME',
           'payload' => $events['datetime']
+        ),
+        array(
+          'type' => 'HIST_DATETIME',
+          'payload' => $lastHistoricReadTimestamp
         )
       );
     } elseif ($eventCount < 249) {
       // JCLog::debug('--- using cache (' . $eventCount . ')');
-      $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      $data = self::getEventsFromCache($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1, $lastHistoricReadTimestamp);
     } else {
       // JCLog::debug('*****  too many items, refresh all (' . $eventCount . ')');
-      $data = self::getEventsGlobalRefresh($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1);
+      $data = self::getEventsGlobalRefresh($events, $config, $eqLogic->getConfiguration('scAll', 0) == 1, $lastHistoricReadTimestamp);
     }
 
     return $data;
   }
 
+  private static function getHistoricEvents($config) {
+    $result = array();
 
-  private static function getEventsGlobalRefresh($events, $config, $scAll = false) {
+    foreach ($config['payload']['widgets'] as $widget) {
+      $name = $widget['name'];
+      $subtitle = $widget['subtitle'];
+      foreach ($widget as $item => $value) {
+        if (is_array($value)) {
+          if (array_key_exists('type', $value)) {
+            if ($value['type'] == 'info') {
+              if (self::hasHistoricFunction($value['id'], $name) || self::hasHistoricFunction($value['id'], $subtitle)) {
+                $cmd = cmd::byId($value['id']);
+                $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+                array_push($result, array(
+                  'name' => 'cmd::update',
+                  'option' => array_merge(array(
+                    'cmd_id' => $value['id']
+                  ), $state)
+                ));
+              }
+            }
+          }
+          if ($item == 'moreInfos') {
+            foreach ($value as $i => $info) {
+              if (self::hasHistoricFunction($info['id'], $name) || self::hasHistoricFunction($info['id'], $subtitle)) {
+                $cmd = cmd::byId($info['id']);
+                $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+                array_push($result, array(
+                  'name' => 'cmd::update',
+                  'option' => array_merge(array(
+                    'cmd_id' => $info['id']
+                  ), $state)
+                ));
+              }
+            }
+          }
+        }
+      }
+    }
+    return $result;
+  }
+
+  private static function hasHistoricFunction($id, $string) {
+    $match = array("average(#$id#)", "min(#$id#)", "max(#$id#)", "collect(#$id#)");
+    foreach ($match as $key) {
+      if (strpos($string, $key) !== FALSE) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  private static function getEventsGlobalRefresh($events, $config, $scAll = false, $histDatetime) {
     $result = array(
       array(
         'type' => 'DATETIME',
         'payload' => $events['datetime']
+      ),
+      array(
+        'type' => 'HIST_DATETIME',
+        'payload' => $histDatetime
       ),
       array(
         'type' => 'CMD_INFO',
@@ -1977,10 +2083,14 @@ class apiHelper {
     return $result;
   }
 
-  private static function getEventsFromCache($events, $config, $scAll = false) {
+  private static function getEventsFromCache($events, $config, $scAll = false, $histDatetime) {
     $result_datetime = array(
       'type' => 'DATETIME',
       'payload' => $events['datetime']
+    );
+    $result_histDatetime = array(
+      'type' => 'HIST_DATETIME',
+      'payload' => $histDatetime
     );
     $result_cmd = array(
       'type' => 'CMD_INFO',
@@ -2020,13 +2130,14 @@ class apiHelper {
             'id' => $event['option']['cmd_id'],
             'value' => $event['option']['value'],
             'modified' => strtotime($event['option']['valueDate']),
-            'collectDate' => strtotime($event['option']['collectDate'])
+            'collectDate' => strtotime($event['option']['collectDate']),
+            'history' => self::getHistoryValueInfo($event['option']['cmd_id'])
           );
           array_push($result_cmd['payload'], $cmd_info);
         }
       }
     }
-    return array($result_datetime, $result_cmd, $result_sc, $result_obj);
+    return array($result_datetime, $result_histDatetime, $result_cmd, $result_sc, $result_obj);
   }
 
   //HISTORY
@@ -2217,31 +2328,32 @@ class apiHelper {
       mkdir($eqDir);
     }
 
-    $config_file = $eqDir . urlencode($config['name']) . '-' . time() . '.json';
+    $config_file = $eqDir . urlencode('appPref-' . $config['name']) . '-' . time() . '.json';
     try {
       JCLog::debug('Saving backup in file : ' . $config_file);
       file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+      return array(
+        'type' => 'GET_APP_CONFIG'
+      );
     } catch (Exception $e) {
       JCLog::error('Unable to write file : ' . $e->getMessage());
+      return self::raiseException('Unable to write file : ' . $e->getMessage());
     }
   }
 
   private static function getAppConfig($apiKey, $configId) {
-    // $_backup_dir = JeedomConnect::$_backup_dir;
-    $_backup_dir = '/plugins/JeedomConnect/data/backups/';
 
-    $eqDir = $_backup_dir . $apiKey;
-    $files = self::getFiles($eqDir);
-    $endFile = '-' . $configId . '.json';
-    foreach ($files['payload']['files'] as $file) {
-      if (substr_compare($file['path'], $endFile, -strlen($endFile)) === 0) {
-        $config_file = file_get_contents($file['path']);
-        return array(
-          'type' => 'SET_APP_CONFIG',
-          'payload' => array('config' => json_decode($config_file))
-        );
-      }
+    $searchFor = realpath(JeedomConnect::$_backup_dir) . '/' . $apiKey . '/appPref-*-' . $configId . '.json';
+
+    $matches = glob($searchFor);
+    if (is_array($matches) && count($matches) > 0) {
+      $config_file = file_get_contents($matches[0]);
+      return array(
+        'type' => 'SET_APP_CONFIG',
+        'payload' => array('config' => json_decode($config_file))
+      );
     }
+
     return self::raiseException('Le fichier n\'existe plus.');
   }
 
@@ -2569,29 +2681,9 @@ class apiHelper {
   }
 
   // FILES
-  public static function getFiles($folder, $recursive = false, $isRelativePath = true) {
+  public static function getFiles($folder, $recursive = false, $isRelativePath = true, $prefixe = null) {
     $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
-    $result = array();
-    try {
-      if (is_dir($dir)) {
-        $dh = new DirectoryIterator($dir);
-        foreach ($dh as $item) {
-          if (!$item->isDot() && substr($item, 0, 1) != '.') {
-            if (!$item->isDir()) {
-              array_push($result, array(
-                'path' =>  realpath($item->getPathname()),
-                'timestamp' => $item->getMTime()
-              ));
-            } else if ($recursive) {
-              $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
-              $result = array_merge($result, $subFolderFiles['payload']['files']);
-            }
-          }
-        }
-      }
-    } catch (Exception $e) {
-      JCLog::error($e->getMessage());
-    }
+    $result = JeedomConnectUtils::getFiles($folder, $recursive, $isRelativePath, $prefixe);
 
     return  array(
       'type' => 'SET_FILES',
@@ -2697,6 +2789,28 @@ class apiHelper {
 
   private static function setFaceDetected($eqLogic, $infos) {
     $eqLogic->checkAndUpdateCmd('faceDetected', $infos['value']);
+  }
+
+  private static function setWebsocket($eqLogic, $value) {
+    $eqLogic->setConfiguration('useWs', $value ? '1' : '0');
+    $eqLogic->save(true);
+    return array(
+      "type" => "GET_WEBSOCKET",
+      "payload" => array(
+        "useWs" => $value ? '1' : '0'
+      )
+    );
+  }
+
+  private static function setPolling($eqLogic, $value) {
+    $eqLogic->setConfiguration('polling', $value ? '1' : '0');
+    $eqLogic->save(true);
+    return array(
+      "type" => "GET_POLLING",
+      "payload" => array(
+        "polling" => $value ? '1' : '0'
+      )
+    );
   }
 
   /**

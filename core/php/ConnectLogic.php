@@ -162,6 +162,7 @@ class ConnectLogic implements MessageComponentInterface {
 			$conn->sessionId = rand(0, 1000);
 			$conn->configVersion = $config['payload']['configVersion'];
 			$conn->lastReadTimestamp = time();
+			$conn->lastHistoricReadTimestamp = time();
 			$this->authenticatedClients->attach($conn);
 			$this->hasAuthenticatedClients = true;
 
@@ -304,7 +305,7 @@ class ConnectLogic implements MessageComponentInterface {
 				$client->configVersion = $newConfig['payload']['configVersion'];
 				$client->send(json_encode(\apiHelper::getCmdInfoData($eqLogic->getGeneratedConfigFile())));
 				$client->send(json_encode(\apiHelper::getScenarioData($eqLogic->getGeneratedConfigFile(), false, true)));
-				$client->send(json_encode($newConfig));
+				$client->send(json_encode(array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig)));
 			}
 		}
 	}
@@ -316,9 +317,6 @@ class ConnectLogic implements MessageComponentInterface {
 			if (!is_object($eqLogic)) {
 				\JCLog::warning('eq not found - sendActions');
 				$client->close();
-				continue;
-			}
-			if ($eqLogic->getConfiguration('appState', '') != 'active') {
 				continue;
 			}
 			$actions = \JeedomConnectActions::getAllActions($client->apiKey);
@@ -351,8 +349,9 @@ class ConnectLogic implements MessageComponentInterface {
 				continue;
 			}
 
-			$eventsRes = \apiHelper::getEventsFull($eqLogic, $client->lastReadTimestamp);
+			$eventsRes = \apiHelper::getEventsFull($eqLogic, $client->lastReadTimestamp, $client->lastHistoricReadTimestamp);
 			$client->lastReadTimestamp = $eventsRes[0]['payload'];
+			$client->lastHistoricReadTimestamp = $eventsRes[1]['payload'];
 
 			foreach ($eventsRes as $res) {
 				if (key_exists('payload', $res) && is_array($res['payload']) && count($res['payload']) > 0) {
