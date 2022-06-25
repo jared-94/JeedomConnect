@@ -63,13 +63,16 @@ class JeedomConnectUtils {
             $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
             $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
 
+            $osVersionConfig = $eqLogic->getConfiguration('osVersion');
+            $osVersion = $osVersionConfig != '' ? ' [os : ' . $osVersionConfig . ']'  : '';
+
             $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
 
             $infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
             if ($platform == '' && $versionApp == '') {
                 $infoPlugin .= ' : non enregistré<br/>';
             } else {
-                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
+                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $osVersion . $cpl . '<br/>';
             }
         }
 

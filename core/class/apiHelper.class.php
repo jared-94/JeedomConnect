@@ -669,6 +669,7 @@ class apiHelper {
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');
+    $eqLogic->setConfiguration('osVersion', $param['osVersion'] ?? '');
     $eqLogic->save(true);
 
     return self::getWelcomeMsg($eqLogic, $userConnected, $versionJson['version'], $withType);
