@@ -95,6 +95,11 @@ class apiHelper {
           return null;
           break;
 
+        case 'QUERY_INTERACT':
+          $result = self::queryInteract($param['query'], $param['options']);
+          return $result;
+          break;
+
         case 'GET_PLUGIN_CONFIG':
           $conf = self::getPluginConfig($eqLogic);
           return $conf;
@@ -2680,9 +2685,25 @@ class apiHelper {
     }
   }
 
+  // INTERACTION
+  public static function queryInteract($query, $options) {
+    $param = array();
+    if (isset($options['reply_cmd'])) {
+      $reply_cmd = cmd::byId($options['reply_cmd']);
+      if (is_object($reply_cmd)) {
+        $param['reply_cmd'] = $reply_cmd;
+        $param['force_reply_cmd'] = 1;
+      }
+    }
+    $result = interactQuery::tryToReply($query, $param);
+    return  array(
+      'type' => 'QUERY_ANSWER',
+      'payload' => $result
+    );
+  }
+
   // FILES
   public static function getFiles($folder, $recursive = false, $isRelativePath = true, $prefixe = null) {
-    $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
     $result = JeedomConnectUtils::getFiles($folder, $recursive, $isRelativePath, $prefixe);
 
     return  array(
