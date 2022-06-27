@@ -878,4 +878,25 @@ class JeedomConnectUtils {
 
         return false;
     }
+
+    /**
+     * Add a task on jeedom crontab every monday to check if daemon is required
+     *
+     * @return void
+     */
+    public static function addCronCheckDaemon() {
+        $cron = cron::byClassAndFunction('JeedomConnect', 'checkDaemon');
+        if (!is_object($cron)) {
+            $cron = new cron();
+            $cron->setClass('JeedomConnect');
+            $cron->setFunction('checkDaemon');
+        }
+        $cron->setEnable(1);
+        $cron->setDeamon(0);
+        $cron->setSchedule('0 0 * * 1');
+        $cron->setTimeout(5);
+        $cron->save();
+
+        JeedomConnect::checkDaemon();
+    }
 }
