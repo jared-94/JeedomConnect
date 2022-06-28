@@ -222,7 +222,7 @@ class JeedomConnect extends eqLogic {
 			$plugin = plugin::byId('JeedomConnect');
 			$daemon_info = $plugin->deamon_info();
 			$msg = ($daemon_info['state'] == 'ok') ?
-				"Il semblerait que le démon du plugin JC soit actif alors que tu n'en as pas besoin puisqu'aucun de tes équipements n'utilisent la connexion par websocket.
+				"Il semblerait que le démon du plugin JC soit actif alors que tu n'en as pas besoin puisqu'aucun de tes équipements n'utilise la connexion par websocket.
 			 Tu peux donc le stopper." : '';
 			$msg .= $daemon_info['auto'] ? ' Tu peux également désactiver la gestion automatique du démon.' : '';
 
