@@ -49,8 +49,6 @@ function JeedomConnect_install() {
 }
 
 function JeedomConnect_update() {
-  JCLog::info('Restart daemon');
-  JeedomConnect::deamon_start();
 
   /** @var JeedomConnect $eqLogic */
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
