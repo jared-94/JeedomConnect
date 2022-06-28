@@ -198,6 +198,41 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+	/**
+	 * Check if websocket is acitvated at least on one equipment, if not and if daemon is started
+	 * then displays a message in jeedom console to let the user know that the daemon seems not required
+	 * for his current need, and that this functionnality can be disabled. 
+	 *
+	 * @return void
+	 */
+	public static function checkDaemon() {
+		/**
+		 * @param JeedomConnect $eqLogic
+		 */
+		$daemonRequired = false;
+		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+			if ($eqLogic->getConfiguration('useWs', false)) {
+				$daemonRequired = true;
+				break;
+			}
+		}
+
+		if (!$daemonRequired) {
+			JCLog::warning("le démon n'est pas nécessaire !");
+			$plugin = plugin::byId('JeedomConnect');
+			$daemon_info = $plugin->deamon_info();
+			$msg = ($daemon_info['state'] == 'ok') ?
+				"Il semblerait que le démon du plugin JC soit actif alors que tu n'en as pas besoin puisqu'aucun de tes équipements n'utilisent la connexion par websocket.
+			 Tu peux donc le stopper." : '';
+			$msg .= $daemon_info['auto'] ? ' Tu peux également désactiver la gestion automatique du démon.' : '';
+
+			if ($msg != '') message::add('JeedomConnect',  $msg);
+		}
+
+		return;
+	}
+
+
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
