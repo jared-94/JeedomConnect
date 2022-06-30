@@ -44,11 +44,11 @@ function JeedomConnect_install() {
 
   $pluginInfo = JeedomConnect::getPluginInfo();
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
+
+  JeedomConnectUtils::addCronCheckDaemon();
 }
 
 function JeedomConnect_update() {
-  JCLog::info('Restart daemon');
-  JeedomConnect::deamon_start();
 
   /** @var JeedomConnect $eqLogic */
   foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
@@ -82,6 +82,10 @@ function JeedomConnect_update() {
     JeedomConnect::migrationAllNotif();
   }
 
+  if (config::byKey('migration::appPref',   'JeedomConnect') == '') {
+    JeedomConnect::migrateAppPref();
+  }
+
   // FORCE save on all equipments to save new cmd
   /** @var JeedomConnect $eqLogic */
   foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
@@ -90,7 +94,18 @@ function JeedomConnect_update() {
 
   $pluginInfo = JeedomConnect::getPluginInfo();
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
+
+  JeedomConnectUtils::addCronCheckDaemon();
 }
 
 function JeedomConnect_remove() {
+  try {
+    $crons = cron::searchClassAndFunction('JeedomConnect', 'checkDaemon');
+    if (is_array($crons)) {
+      foreach ($crons as $cron) {
+        $cron->remove();
+      }
+    }
+  } catch (Exception $e) {
+  }
 }

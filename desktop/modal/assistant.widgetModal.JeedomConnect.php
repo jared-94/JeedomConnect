@@ -62,6 +62,7 @@ if (!isConnect('admin')) {
 				<img id="widgetImg" />
 				<div class="alert alert-info" id="widgetDescription"></div>
 				<div class="alert alert-info" id="widgetVariables"></div>
+				<div class="alert alert-info" id="widgetInclusion" style="display:none;"></div>
 			</div>
 		</div>
 

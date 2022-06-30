@@ -72,7 +72,7 @@
                 "subtype": "message",
                 "isVisible": 0,
                 "configuration": {
-                    "listValueToCreate": "themeColor;darkMode;tracking;updateData;jcService"
+                    "listValueToCreate": "themeColor;darkMode;tracking;rtspServer;updateData;jcService"
                 },
                 "order": 10,
                 "display": {
@@ -104,6 +104,14 @@
                 "subtype": "binary",
                 "isVisible": 1,
                 "order": 4
+            },
+            {
+                "logicalId": "faceDetected",
+                "name": "Visage présent",
+                "type": "info",
+                "subtype": "binary",
+                "isVisible": 1,
+                "order": 5
             },
             {
                 "logicalId": "launchApp",
@@ -231,6 +239,7 @@
         "themeColor": "Couleur thème",
         "darkMode": "Activer mode sombre",
         "tracking": "Activer le tracking",
+        "rtspServer": "Activer le serveur de streaming",
         "updateData": "Recharger les données",
         "jcService": "Service JC"
     }

@@ -83,9 +83,10 @@ foreach ($widgetArray as $widget) {
 
 	$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
-	if (in_array($id, $widgetInError)) {
+	if (in_array($id, $widgetInError) || $widgetName == 'inconnu' || trim($widgetName) == '') {
 		$hasError = 'hasError';
-		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="Commandes orphelines"></i>';
+		$tooltip = ($widgetName == 'inconnu' || trim($widgetName) == '') ? 'Nom du widget à modifier' : 'Commandes orphelines';
+		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="' . $tooltip . '"></i>';
 		$hasErrorPage =  true;
 	}
 
@@ -129,6 +130,11 @@ $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelect
 
 
 $infoPlugin = JeedomConnectUtils::getInstallDetails();
+
+$displayWarningConf = config::byKey('displayWarning', 'JeedomConnect');
+$warningAlreadyDisplayedToday = strpos($displayWarningConf, strval(date('Y-m-d'))) !== false;
+$countAlreadyPass = count(explode(';', $displayWarningConf));
+$displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 ?>
 
@@ -202,6 +208,16 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 						<br>
 						<span>{{Infos}}</span>
 						<div style="display:none">
+							<?php if ($displayWarning) { ?>
+								<span class="displayJCWarning">
+									Pour chacun des sujets que vous partagez sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
+									afin de vous aider le plus facilement et rapidement possible, merci de <u><strong>systématiquement</strong></u> partager les informations
+									de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de la page principale de JeedomConnect (JC pour les intimes) !
+									<br /><br />
+									Ces informations nous permettent de savoir quelle version vous utilisez afin de mieux répondre à votre demande.
+
+								</span>
+							<?php } ?>
 							<span class="txtInfoPlugin">
 								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
 								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
@@ -373,6 +389,17 @@ $infoPlugin = JeedomConnectUtils::getInstallDetails();
 								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Activer le polling}}
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Cette option est plus que recommandée si vous utilisez les DNS Jeedom.<br/>(incompatible avec l'option websocket)"></i>
+									</sup>
+								</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 

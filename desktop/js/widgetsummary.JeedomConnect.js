@@ -152,7 +152,7 @@ $('#widgetSummaryModal').off('click', '.removeWidget').on('click', '.removeWidge
 $('#table_JcWidgetSummary').off('click', '.bt_openWidget').on('click', '.bt_openWidget', function () {
 
     var eqId = $(this).closest('.tr_object').data('widget_id');
-    editWidgetModal(eqId, false, false, false);
+    editWidgetModal(eqId, false, false, false, true);
     $(this).closest('.tr_object').attr('data-updated', true);
     $('#bt_updateWidgetSummary').css('display', 'block');
 

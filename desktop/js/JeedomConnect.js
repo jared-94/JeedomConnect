@@ -47,6 +47,29 @@ function refreshWidgetDetails() {
 
 }
 
+if (typeof allJeedomData === 'undefined') {
+  $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      'action': 'getAllJeedomData'
+    },
+    cache: false,
+    dataType: 'json',
+    async: true,
+    success: function (data) {
+      if (data.state != 'ok') {
+        $('#div_alert').showAlert({
+          message: data.result,
+          level: 'danger'
+        });
+      }
+      else {
+        allJeedomData = data.result;
+      }
+    }
+  });
+}
+
 
 function sortWidgets() {
   if (jcOrderBy === undefined) jcOrderBy = 'object';
@@ -60,8 +83,8 @@ function sortWidgets() {
 }
 
 function SortByName(a, b) {
-  var aName = a.name.toLowerCase();
-  var bName = b.name.toLowerCase();
+  var aName = a.name?.toLowerCase();
+  var bName = b.name?.toLowerCase();
   return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
@@ -109,14 +132,46 @@ $.post({
 $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '.widgetDisplayCard', function () {
 
   var eqId = $(this).attr('data-widget_id');
-  editWidgetModal(eqId, true, true, true);
+  editWidgetModal(eqId, true, true, true, true);
 
 })
 
+async function getUsedByEquipement(eqId) {
+  const result = await $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: {
+      action: 'getWidgetExistance',
+      id: eqId
+    },
+    cache: false,
+    dataType: 'json',
+    async: false,
+  });
 
-function editWidgetModal(widgetId, removeAction, exit, duplicate) {
+  if (result.state != 'ok') {
+    $('#div_alert').showAlert({
+      message: result.result,
+      level: 'danger'
+    });
+  }
+
+  return result;
+}
+
+
+async function editWidgetModal(widgetId, removeAction, exit, duplicate, checkEquipment) {
+
+  if (checkEquipment) {
+
+    var mesEquipments = await getUsedByEquipement(widgetId);
+    var inEquipments = mesEquipments.result.names;
+  }
+  else {
+    var inEquipments = undefined;
+  }
+
   var widgetToEdit = allWidgetsDetail.find(w => w.id == widgetId);
-  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate }, function (result) {
+  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate, inEquipments: inEquipments }, function (result) {
     refreshWidgetDetails();
     if (!exit) refreshWidgetsContent();
   });
@@ -150,6 +205,18 @@ function getWidgetModal(_options, _callback) {
     });
   }
   setWidgetModalData(_options);
+
+  if (_options.inEquipments !== undefined && _options.inEquipments != '') {
+
+    $('#widgetInclusion').html('<span id="widgetExistInEquipement" style="display:none">' + _options.inEquipments.join(', ') + '</span>');
+    $('#widgetInclusion').append('Utilisé dans :<br/><ul>');
+
+    $.each(_options.inEquipments, function (index, value) {
+      $("#widgetInclusion").append('<li>' + value + '</li>');
+    });
+    $("#widgetInclusion").append('</ul>');
+    $('#widgetInclusion').css('display', 'block');
+  }
 
   if (_options.removeAction != true) {
     $('.widgetMenu .removeWidget').hide();
@@ -905,16 +972,16 @@ function setWidgetModalData(options) {
         $("#" + option.id + "-picker").val(options.widget[option.id]);
       } else if (option.category == "cmd" & options.widget[option.id] !== undefined) {
         $("#" + option.id + "-input").attr('cmdId', options.widget[option.id].id);
-        getHumanName({
-          id: options.widget[option.id].id,
-          error: function (error) { },
-          success: function (data) {
-            $("#" + option.id + "-input").val(data);
-            $("#" + option.id + "-input").attr('title', data);
-            refreshImgListOption();
-            refreshInfoSelect();
-          }
-        });
+        cmdHumanName = getHumanName(options.widget[option.id].id)
+        if (cmdHumanName != '') {
+          $("#" + option.id + "-input").val(cmdHumanName);
+          $("#" + option.id + "-input").attr('title', cmdHumanName);
+          refreshImgListOption();
+          refreshInfoSelect();
+        }
+        else {
+          $("#" + option.id + "-input").val('#' + options.widget[option.id].id + '#');
+        }
         $("#" + option.id + "-input").attr('cmdType', options.widget[option.id].type);
         $("#" + option.id + "-input").attr('cmdSubType', options.widget[option.id].subType);
         if (options.widget[option.id].type == 'action') {
@@ -1915,14 +1982,16 @@ function refreshMoreInfos() {
   });
   $("#moreInfos-div").html(div);
   moreInfos.forEach(item => {
-    getHumanName({
-      id: item.id,
-      success: function (data) {
-        $("#" + item.id + "-input").val(data);
-        item.human = data;
-      }
-    });
-  });
+    cmdHumanName = getHumanName(item.id);
+    if (cmdHumanName != '') {
+      $("#" + item.id + "-input").val(cmdHumanName);
+      item.human = cmdHumanName;
+    }
+    else {
+      $("#" + item.id + "-input").val("#" + item.id + "#");
+    }
+  })
+
   refreshImgListOption();
   refreshInfoSelect();
 }
@@ -1960,8 +2029,10 @@ function refreshInfoSelect() {
       <a href="#">${el.title}</a></li>`;
   });
   moreInfos.forEach(i => {
-    infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
+    if (i.human) {
+      infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
       <a href="#">${i.human}</a></li>`;
+    }
   });
   $(".infos-select").html(infosOptionHtml);
 
@@ -2025,7 +2096,7 @@ function refreshImgListOption(dataType = 'widget') {
   });
   options = options.concat(moreInfos);
 
-  if (widget.variables) {
+  if (widget?.variables) {
     widget.variables.forEach(v => {
       options.push({ type: 'var', id: v.name, human: `#${v.name}#` })
     });
@@ -2263,7 +2334,13 @@ function downWidgetOption(id) {
 }
 */
 
-function getHumanName(_params) {
+function getHumanName(cmdId) {
+  myCmd = allJeedomData.find(i => i.id == cmdId);
+  myHumanName = myCmd?.humanName ? '#' + myCmd.humanName + '#' : '';
+  return myHumanName;
+}
+
+function getHumanName_old(_params) {
   var params = $.extend({}, jeedom.private.default_params, {}, _params || {});
 
   var paramsAJAX = jeedom.private.getParamsAJAX(params);
@@ -2712,85 +2789,66 @@ function removeWidget(itemId) {
     var widgetId = itemId;
   }
 
-  $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-      action: 'getWidgetExistance',
-      id: widgetId
-    },
-    cache: false,
-    dataType: 'json',
-    async: false,
-    success: function (data) {
-      if (data.state != 'ok') {
-        $('#div_alert').showAlert({
-          message: data.result,
-          level: 'danger'
-        });
-      }
-      else {
-        var allName = data.result.names;
 
-        var msg = '';
-        if (allName.length == 0 || allName == '' || allName == undefined) {
-          msg = '(Ce widget n\'est utilisé dans aucun équipement)';
+  var allName = $('#widgetExistInEquipement').text();
+
+  var msg = '';
+  if (allName.length == 0 || allName == '' || allName == undefined) {
+    msg = '(Ce widget n\'est utilisé dans aucun équipement)';
+  }
+  else {
+    var count = (allName.match(/,/g) || []).length;
+    if (count == 0) {
+      var eq = 'de l\'équipement';
+    }
+    else {
+      var eq = 'des équipements';
+    }
+
+    msg = warning + '  La suppression retirera ce widget ' + eq + ' suivant : ' + allName + '  ' + warning;
+  }
+
+  getSimpleModal({
+    title: "Confirmation", fields: [{
+      type: "string",
+      value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
+    }]
+  }, function (result) {
+    $('#widget-alert').hideAlert();
+    widgetId = $("#widgetOptions").attr('widget-id');
+
+    $.ajax({
+      type: "POST",
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        action: "removeWidgetConfig",
+        eqId: widgetId
+      },
+      dataType: 'json',
+      error: function (error) {
+        $('#div_alert').showAlert({ message: error.message, level: 'danger' });
+      },
+      success: function (data) {
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
         }
         else {
-          if (allName.length == 1) {
-            var eq = 'de l\'équipement';
-          }
-          else {
-            var eq = 'des équipements';
-          }
-
-          msg = warning + '  La suppression retirera ce widget ' + eq + ' suivant : ' + allName.join(', ') + '  ' + warning;
-        }
-
-        getSimpleModal({
-          title: "Confirmation", fields: [{
-            type: "string",
-            value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
-          }]
-        }, function (result) {
-          $('#widget-alert').hideAlert();
-          widgetId = $("#widgetOptions").attr('widget-id');
-
-          $.ajax({
-            type: "POST",
-            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-            data: {
-              action: "removeWidgetConfig",
-              eqId: widgetId
-            },
-            dataType: 'json',
-            error: function (error) {
-              $('#div_alert').showAlert({ message: error.message, level: 'danger' });
-            },
-            success: function (data) {
-              if (data.state != 'ok') {
-                $('#div_alert').showAlert({
-                  message: data.result,
-                  level: 'danger'
-                });
-              }
-              else {
-                var vars = getUrlVars()
-                var url = 'index.php?'
-                for (var i in vars) {
-                  if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
-                    url += i + '=' + vars[i].replace('#', '') + '&'
-                  }
-                }
-                modifyWithoutSave = false
-                url += '&saveSuccessFull=1'
-                loadPage(url)
-              }
+          var vars = getUrlVars()
+          var url = 'index.php?'
+          for (var i in vars) {
+            if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
+              url += i + '=' + vars[i].replace('#', '') + '&'
             }
-          })
-        });
-
+          }
+          modifyWithoutSave = false
+          url += '&saveSuccessFull=1'
+          loadPage(url)
+        }
       }
-    }
+    })
   });
 
 }
@@ -3149,3 +3207,154 @@ function copyDivToClipboard(myInput, addBacktick = false) {
 }
 
 updateWidgetCount();
+
+
+if ($('#in_searchWidget').val() != '') {
+  $('#in_searchWidget').keyup();
+}
+
+
+$('.eqLogicAttr[data-l1key=configuration][data-l2key=polling]').on('change', function () {
+
+  disableCheckbox()
+
+});
+
+$('.eqLogicAttr[data-l1key=configuration][data-l2key=useWs]').on('change', function () {
+
+  disableCheckbox()
+
+});
+
+function disableCheckbox() {
+  var useWs = $('.eqLogicAttr[data-l1key=configuration][data-l2key=useWs]');
+  var polling = $('.eqLogicAttr[data-l1key=configuration][data-l2key=polling]');
+
+  polling.attr('disabled', false);
+  useWs.attr('disabled', false);
+
+  if (useWs.prop("checked")) {
+    polling.prop("checked", false);
+    polling.attr('disabled', true);
+  }
+  else {
+    if (polling.prop("checked")) {
+      useWs.prop("checked", false);
+      useWs.attr('disabled', true);
+    }
+  }
+
+}
+
+function displayJCWarning() {
+  var color = [
+    'background-color: #fc59cc !important;',
+    'background-color: #933ed6 !important;',
+    'background-color: rgb(27,161,242)!important;',
+    'background-color: orange !important;'
+  ];
+  shuffle(color);
+
+  var varButton = [
+    {
+      text: "Ok mais j'ai pas lu",
+      open: function () {
+        $(this).attr('style', color[0]);
+      },
+      click: function () {
+        warningResponse($(this), false);
+      }
+    },
+    {
+      text: "Je clique sans lire",
+      open: function () {
+        $(this).attr('style', color[1]);
+      },
+      click: function () {
+        warningResponse($(this), false);
+      }
+    },
+    {
+      text: "J'ai lu et je le ferai. Promis juré",
+      open: function () {
+        $(this).attr('style', color[2]);
+      },
+      click: function () {
+        $.post({
+          url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+          data: {
+            'action': 'incrementWarning'
+          },
+          cache: false,
+          dataType: 'json',
+          async: true,
+        });
+        warningResponse($(this), true);
+      }
+    },
+    {
+      text: "J'ai jamais besoin d'aide je suis trop balaise",
+      open: function () {
+        $(this).attr('style', color[3]);
+      },
+      click: function () {
+        warningResponse($(this), false);
+      }
+    }
+  ];
+
+
+  shuffle(varButton);
+
+  getSimpleModal({
+    title: "Important - JeedomConnect - A lire",
+    width: 0.5 * $(window).width(),
+    hideCloseButton: true,
+    hideActionButton: true,
+    fields: [{
+      type: "string",
+      value: $('.displayJCWarning').html()
+    }],
+    buttons: varButton
+  }, function (result) { });
+
+
+};
+
+
+function shuffle(array) {
+  let currentIndex = array.length, randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function warningResponse(elt, good) {
+  JCwarningAlreadyDisplayed = true;
+  $(elt).dialog("close");
+  $.fn.showAlert({
+    message: good ? 'Merci. On compte sur toi !' : 'Mauvais réponse ... on se revoit bientot !',
+    level: good ? 'success' : 'warning'
+  });
+  $(".displayJCWarning").remove();
+}
+
+
+$(document).ready(
+  function () {
+    if ($(".displayJCWarning").length != 0 && (typeof JCwarningAlreadyDisplayed === 'undefined')) {
+      displayJCWarning();
+    }
+  }
+);

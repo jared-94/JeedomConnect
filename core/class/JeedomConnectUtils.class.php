@@ -46,7 +46,8 @@ class JeedomConnectUtils {
         }
 
 
-        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/><br/>';
+        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/>';
+        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
         /** @var array<JeedomConnect> $eqLogics */
@@ -62,13 +63,16 @@ class JeedomConnectUtils {
             $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
             $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
 
+            $osVersionConfig = $eqLogic->getConfiguration('osVersion');
+            $osVersion = $osVersionConfig != '' ? ' [os : ' . $osVersionConfig . ']'  : '';
+
             $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
 
             $infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
             if ($platform == '' && $versionApp == '') {
                 $infoPlugin .= ' : non enregistré<br/>';
             } else {
-                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $cpl . '<br/>';
+                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $osVersion . $cpl . '<br/>';
             }
         }
 
@@ -410,7 +414,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param string $folder 
+     * @param string $folder
      * @return array
      */
     public static function getTimelineEvents($folder = 'main', $userId = null) {
@@ -433,7 +437,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param timelime $event 
+     * @param timelime $event
      * @return array
      */
     public static function getTimelineEventDetails($event) {
@@ -486,7 +490,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param string $plugin 
+     * @param string $plugin
      * @return array
      */
     public static function getJeedomMessages($plugin = '') {
@@ -505,7 +509,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param string|null $messageId 
+     * @param string|null $messageId
      * @return array|Exception
      */
     public static function removeJeedomMessage($messageId = null) {
@@ -522,8 +526,8 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param array $payload 
-     * @param string $type 
+     * @param array $payload
+     * @param string $type
      * @return array
      */
     public static function addTypeInPayload($payload, $type) {
@@ -536,7 +540,7 @@ class JeedomConnectUtils {
     }
 
     /**
-     * @param int $nbBytes 
+     * @param int $nbBytes
      * @return string
      */
     public static function generateApiKey($nbBytes = 16) {
@@ -544,21 +548,23 @@ class JeedomConnectUtils {
     }
 
     /**
-     * 
+     *
      * Copy a folder and his content to another place
-     * 
+     *
      * @param string $src path of the current folder to copy
-     * @param string $dst path with the final folder name where copy has to be done 
+     * @param string $dst path with the final folder name where copy has to be done
      * @return void
      */
-    public static function recurse_copy($src, $dst) {
+    public static function recurse_copy($src, $dst, $ext = '*') {
         $dir = opendir($src);
-        @mkdir($dst);
+        @mkdir($dst, 0755, true);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
                 if (is_dir($src . '/' . $file)) {
                     self::recurse_copy($src . '/' . $file, $dst . '/' . $file);
                 } else {
+                    $fileInfo = pathinfo($file);
+                    if ($ext != '*' && $fileInfo['extension'] != $ext) continue;
                     copy($src . '/' . $file, $dst . '/' . $file);
                 }
             }
@@ -567,11 +573,11 @@ class JeedomConnectUtils {
     }
 
     /**
-     * 
+     *
      * Allow to remove a folder contening files
-     * 
+     *
      * @param string $src path of the current folder to copy
-     * @param string $dst path with the final folder name where copy has to be done 
+     * @param string $dst path with the final folder name where copy has to be done
      * @return void
      */
     public static function delTree($dir) {
@@ -607,7 +613,8 @@ class JeedomConnectUtils {
 
         $keysSensitive = array(
             "main" => array(
-                "userHash" => $defaultSizeKept
+                "userHash" => $defaultSizeKept,
+                "password" => 0
             ),
             "pluginConfig" => array(
                 "httpUrl" => 12,
@@ -627,12 +634,269 @@ class JeedomConnectUtils {
 
                 // JCLog::debug('found key ' . $key . ' + item ' . $item . ' => ' . $strSearched);
                 $sizeValue = strlen($strSearched) - $indice;
-                $newValue = substr_replace($strSearched, str_repeat('*', $sizeValue), $sizeValue * -1);
+                $newValue = $sizeValue >= 0 ? substr_replace($strSearched, str_repeat('*', $sizeValue), $sizeValue * -1) : $strSearched;
 
                 // JCLog::debug('  will replace ' . $strSearched . ' , by : ' . $newValue);
                 $log = str_replace(json_encode($strSearched), json_encode($newValue), $log);
             }
         }
         return $log;
+    }
+
+    private static function isImgFile($extension) {
+        return in_array($extension, array('gif', 'jpeg', 'jpg', 'png'));
+    }
+
+    private static function isVideoFile($extension) {
+        return in_array($extension, array('avi', 'mpeg', 'mpg', 'mkv', 'mp4', 'mpe'));
+    }
+
+    public static function getNotifData($data, $eqLogic) {
+        // title and body
+        if (($data['payload']['title'] == '' && $data['payload']['message'] == '') ||
+            ($data['payload']['title'] == '[Jeedom] Message de test')
+        ) {
+            $data['payload']['title'] = '<span style="color: #4caf50;"><b>Message test</b></span> &#128576;';
+            $data['payload']['message'] = '&#127881; Tout est <span style="color: #ffffff; background-color: #9c27b0"><i>personnalisable</i></span> dans <a href="https://jared-94.github.io/JeedomConnectDoc/fr_FR/index">Jeedom Connect</a> ! &#127881;';
+            if (!isset($data['payload']['actions'])) {
+                $data['payload']['actions'] = array(
+                    array(
+                        "name" => "Yeah !",
+                        "id" => "test",
+                        "type" => "cancel"
+                    )
+                );
+            }
+            if (empty($data['payload']['image'])) {
+                $data['payload']['image'] = array("source" => "jc", "name" => "favorites.png");
+            }
+        }
+
+        if (!is_null($data['payload']['answer']) &&  empty($data['payload']['title'])) {
+            $data['payload']['title'] = "Question de " . config::byKey('name', 'core', 'Jeedom');
+        }
+
+        // files url
+        if (isset($data["payload"]["files"])) {
+            $httpUrl = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
+            $userHash = user::byId($eqLogic->getConfiguration('userId'))->getHash();
+
+            foreach ($data["payload"]["files"] as &$file) {
+                $extension = pathinfo($file, PATHINFO_EXTENSION);
+                $filePath = $httpUrl . "/core/php/downloadFile.php?apikey=" . $userHash . "&pathfile=" . $file;
+                if (self::isImgFile($extension) || self::isVideoFile($extension)) {
+                    $filePath .= "&t=" . round(microtime(true) * 10000);
+                }
+                $file = $filePath;
+            }
+            unset($file);
+        }
+
+        // iOS category
+        if ($eqLogic->getConfiguration('platformOs') == 'ios') {
+            // actionsData
+            $actionsData = array();
+            //Notifs actions
+            if (isset($data['payload']['actions']) && count($data['payload']['actions']) > 0 &&  is_null($data['payload']['answer'])) {
+                foreach ($data['payload']['actions'] as $action) {
+                    array_push($actionsData, array(
+                        "id" => $action["id"],
+                        "title" => $action["name"],
+                        "type" => $action["type"]
+                    ));
+                }
+            }
+            //Ask actions
+            if (!is_null($data['payload']['answer']) && count($data['payload']['answer']) > 0) {
+                $actionsData = array(array(
+                    "title" => "Répondre",
+                    "id" => $data['payload']["cmdId"],
+                    "input" => true,
+                    "type" => "askReply"
+                ));
+                foreach ($data['payload']['answer'] as $action) {
+                    array_push($actionsData, array(
+                        "id" => $action,
+                        "title" => $action,
+                        "type" => "askReply"
+                    ));
+                }
+            }
+
+            //Actions navigate to page
+            if ($data['payload']["options"] != null && isset($data['payload']["options"]["gotoPageId"])) {
+                $pageId = intval($data['payload']["options"]["gotoPageId"]);
+                $config = $eqLogic->getConfig(true);
+                $actionName = "";
+                $tabIndex = array_search($pageId, array_column($config['payload']["tabs"], "id"));
+                if ($tabIndex !== false) {
+                    $actionName = "Page " . $config['payload']["tabs"][$tabIndex]["name"];
+                } else {
+                    $sectionIndex = array_search($pageId, array_column($config['payload']["sections"], "id"));
+                    if ($sectionIndex !== false) {
+                        $actionName = "Page " . $config['payload']["sections"][$sectionIndex]["name"];
+                    } else {
+                        $roomIndex = array_search($pageId, array_column($config['payload']["rooms"], "id"));
+                        if ($roomIndex !== false) {
+                            $actionName = "Page " . $config['payload']["rooms"][$roomIndex]["name"];
+                        }
+                    }
+                }
+                if ($actionName != "") {
+                    array_push($actionsData, array(
+                        "id" => 'gotoPageId',
+                        "title" => $actionName,
+                        "foreground" => true
+                    ));
+                }
+            }
+
+            if ($data['payload']["options"] != null && isset($data['payload']["options"]["gotoWidgetId"])) {
+                $config = $eqLogic->getGeneratedConfigFile();
+                $widgetId = $data['payload']["options"]["gotoWidgetId"];
+                $widgetIndex = array_search($widgetId, array_column($config['payload']["widgets"], "widgetId"));
+                if ($widgetIndex !== false) {
+                    array_push($actionsData, array(
+                        "id" => 'gotoWidgetId',
+                        "title" => "Widget " .  $config['payload']["widgets"][$widgetIndex]["name"],
+                        "foreground" => true
+                    ));
+                }
+            }
+
+            $data["payload"]["category"] = array(array(
+                "id" => $data['payload']["id"],
+                "actions" => $actionsData
+            ));
+        }
+
+
+        return $data;
+    }
+
+    public static function getIosPostData($postData, $data) {
+        //clean body and title cause html not supported in native notif
+        $display_options = array(
+            "title" => $data['payload']["title"] == $data['payload']["message"] ? "" : trim(urldecode(html_entity_decode(strip_tags($data['payload']["title"])))),
+            "body" => trim(urldecode(html_entity_decode(strip_tags($data['payload']["message"]), ENT_QUOTES)))
+        );
+
+        $display_options["ios"] = array(
+            "categoryId" => $data['payload']["id"],
+            "timestamp" => $data['payload']["time"] * 1000,
+            "sound" => "default"
+        );
+
+        if ($data['payload']["critical"] == true) {
+            $display_options["ios"]["critical"] = true;
+            if ($data['payload']["criticalVolume"] != null) {
+                $display_options["ios"]["criticalVolume"] = $data['payload']["criticalVolume"];
+            } else {
+                $display_options["ios"]["criticalVolume"] = 0.9;
+            }
+        }
+
+        if (isset($data["payload"]["files"]) && count($data["payload"]["files"]) > 0) {
+            $attachments = [];
+            foreach ($data["payload"]["files"] as $url) {
+                array_push($attachments, array(
+                    "url" => $url
+                ));
+            }
+            $display_options["ios"]["attachments"] = $attachments;
+        }
+
+        $display_options["data"] = array(
+            "extraData" => json_encode(array(
+                "actions" => $data['payload']["category"][0]["actions"],
+                "notificationId" => $data['payload']["id"],
+                "otherAskCmdId" => $data['payload']["otherAskCmdId"],
+                "options" => $data['payload']["options"]
+            ))
+        );
+
+        $postData = array_merge($postData, array(
+            "notification" => array(
+                "title" => "title",
+                "body" => "body",
+                "display_options" => $display_options
+            ),
+            "mutable_content" => true,
+            "content_available" => true,
+            "apns" => array(
+                "payload" => array(
+                    "aps" => array(
+                        "mutable_content" => true
+                    )
+                )
+            )
+        ));
+
+        return $postData;
+    }
+
+    public static function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return substr($haystack, 0, $length) === $needle;
+    }
+
+
+    public static function getFiles($folder, $recursive = false, $isRelativePath = true, $prefixe = null) {
+        $dir = $isRelativePath ? __DIR__ . '/../../../..' . $folder : $folder;
+        $result = array();
+        try {
+            if (is_dir($dir)) {
+                $dh = new DirectoryIterator($dir);
+                foreach ($dh as $item) {
+                    if (!$item->isDot() && substr($item, 0, 1) != '.') {
+                        if (!$item->isDir()) {
+                            if ($prefixe != null && !self::startsWith($item->getBasename(), $prefixe)) continue;
+                            array_push($result, array(
+                                'path' =>  realpath($item->getPathname()),
+                                'timestamp' => $item->getMTime()
+                            ));
+                        } else if ($recursive) {
+                            $subFolderFiles = self::getFiles(realpath($item->getPathname()), true, false);
+                            $result = array_merge($result, $subFolderFiles);
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            JCLog::error($e->getMessage());
+        }
+
+        return  $result;
+    }
+
+
+    public static function hasDNSConnexion() {
+        $url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
+        if ((strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Add a task on jeedom crontab every monday to check if daemon is required
+     *
+     * @return void
+     */
+    public static function addCronCheckDaemon() {
+        $cron = cron::byClassAndFunction('JeedomConnect', 'checkDaemon');
+        if (!is_object($cron)) {
+            $cron = new cron();
+            $cron->setClass('JeedomConnect');
+            $cron->setFunction('checkDaemon');
+        }
+        $cron->setEnable(1);
+        $cron->setDeamon(0);
+        $cron->setSchedule('0 0 * * 1');
+        $cron->setTimeout(5);
+        $cron->save();
+
+        JeedomConnect::checkDaemon();
     }
 }
