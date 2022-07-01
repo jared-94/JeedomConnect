@@ -96,7 +96,7 @@ class apiHelper {
           break;
 
         case 'QUERY_INTERACT':
-          $result = self::queryInteract($param['query'], $param['options']);
+          $result = self::queryInteract($param['query'], $param['options'], $param['keywordIndex']);
           return $result;
           break;
 
@@ -2687,7 +2687,7 @@ class apiHelper {
   }
 
   // INTERACTION
-  public static function queryInteract($query, $options) {
+  public static function queryInteract($query, $options, $keywordIndex) {
     $param = array();
     if (isset($options['reply_cmd'])) {
       $reply_cmd = cmd::byId($options['reply_cmd']);
@@ -2699,7 +2699,7 @@ class apiHelper {
     $result = interactQuery::tryToReply($query, $param);
     return  array(
       'type' => 'QUERY_ANSWER',
-      'payload' => $result
+      'payload' => array_merge($result, array('keywordIndex' => $keywordIndex))
     );
   }
 
