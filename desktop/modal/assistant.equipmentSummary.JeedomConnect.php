@@ -21,7 +21,6 @@ if (!isConnect()) {
 
 require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
-
 ?>
 
 <div id="alert_JcEquipmentSummary"></div>
@@ -32,39 +31,39 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
     <tr>
       <th>{{ID}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Actif}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="input-text">{{Nom équipement}}</th>
       <th data-sorter="text">{{Appareil}}</th>
       <th data-sorter="select-text">{{Pièce}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Websocket}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="useWs" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="useWs" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="useWs" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="useWs" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="checkbox" data-filter="false">{{Polling}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="polling" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="polling" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="polling" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="polling" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="checkbox" data-filter="false">{{Scenario}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="scenariosEnabled" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="scenariosEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="scenariosEnabled" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="scenariosEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="checkbox" data-filter="false">{{Timeline}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="timelineEnabled" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="timelineEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="timelineEnabled" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="timelineEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="checkbox" data-filter="false">{{WebView}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="webviewEnabled" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="webviewEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="webviewEnabled" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="webviewEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="checkbox" data-filter="false">{{Altitude}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="checkbox" data-filter="false">{{Batterie}}
-        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-check"></i>
-        </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-times"></i></a>
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="select-text">{{Utilisateur}}</th>
       <th data-sorter="false" data-filter="false">&nbsp;</th> <!-- info qr code -->
@@ -80,7 +79,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
     foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
 
       // **********    ID    ****************
-      $html .= '<tr class="tr_object" data-widget_id="' . $eqLogic->getId() . '" >';
+      $html .= '<tr class="tr_object" data-equipment_id="' . $eqLogic->getId() . '" >';
       $html .= '<td style="width:40px;"><span class="label label-info objectAttr objectAttrSelect" data-l1key="eqId" style="cursor: pointer !important;">' . $eqLogic->getId() . '</span></td>';
 
       // **********    Enable    ****************
@@ -89,7 +88,8 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
       // **********    Name    ****************
       $eqName =  $eqLogic->getName();
-      $html .= '<td style="width:40px;"><input type="text" class="objectAttr" data-l1key="name" value="' . $eqName . '" /></td>';
+      // item span dont display, only usefull here to use the filter option which is not available on input for text
+      $html .= '<td style="width:40px;"><span class="eqJcName" style="display:none">' . $eqName . '</span><input type="text" class="objectAttr" data-l1key="name" value="' . $eqName . '" /></td>';
 
       // **********    deviceName    ****************
       $platform = ($eqLogic->getConfiguration('platformOs') == '') ? ''

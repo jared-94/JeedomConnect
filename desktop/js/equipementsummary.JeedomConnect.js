@@ -42,7 +42,7 @@ $('#equipmentSummaryModal').off('click', '#bt_removeJcEquipmentSummary').on('cli
                     else {
                         searchIDs.forEach(function (item) {
                             console.log(item);
-                            $('.tr_object[data-widget_id=' + item + ']').remove();
+                            $('.tr_object[data-equipment_id=' + item + ']').remove();
                         });
                         $('#equipmentSummaryModal').attr('data-has-changes', true);
                     }
@@ -110,11 +110,17 @@ $('#bt_saveJcEquipmentSummary').off('click').on('click', function () {
 
 
 $("#table_JcEquipmentSummary").on('change', ' .objectAttr', function () {
-    $(this).closest('.tr_object').attr('data-changed', true);
-    $(this).closest('.tr_object').find('span[data-l1key=eqId]')
+    var id = $(this).closest('.tr_object').attr('data-equipment_id');
+    updateToBeDone(id);
+});
+
+function updateToBeDone(eqId) {
+    $tr = $('.tr_object[data-equipment_id=' + eqId + ']');
+    $tr.attr('data-changed', true);
+    $tr.find('span[data-l1key=eqId]')
         .removeClass('label-info')
         .addClass('label-warning');
-});
+}
 
 
 $('#equipmentSummaryModal').off('click', '.removeEquipment').on('click', '.removeEquipment', function () {
@@ -150,7 +156,7 @@ $(document).ready(function () {
     $("#table_JcEquipmentSummary").tablesorter({
         widthFixed: false,
         sortLocaleCompare: true,
-        sortList: [[2, 0], [3, 0]],
+        sortList: [[4, 0], [2, 0]], //first room, then name
         theme: 'bootstrap',
         headerTemplate: '{content} {icon}',
         widgets: ["zebra", "filter", "uitheme", 'stickyHeaders'],
@@ -169,7 +175,7 @@ $('#table_JcEquipmentSummary').off('click', '.jcMassAction').on('click', '.jcMas
 
     $('#table_JcEquipmentSummary > tbody  > tr').each(function (index, tr) {
 
-        id = $(this).data('widget_id');
+        id = $(this).data('equipment_id');
 
         maCell = $(this).find('td input[data-l1key=' + type + ']')
         currentState = maCell.is(':checked');
@@ -177,10 +183,12 @@ $('#table_JcEquipmentSummary').off('click', '.jcMassAction').on('click', '.jcMas
         if (currentState && !checked) {
             // console.log(id + " => on décoche !");
             maCell.prop('checked', false);
+            updateToBeDone(id);
         }
         else if (!currentState && checked) {
             // console.log(id + " => on coche !");
             maCell.prop('checked', true);
+            updateToBeDone(id);
         }
         /*
         else do nothing => ((currentState && checked) || (!currentState && !checked)) {
@@ -215,4 +223,8 @@ $('#table_JcEquipmentSummary').on('mouseleave', '.qrcode-panel', function (e) {
     // Reset the z-index and hide the image tooltip
     $('#equipmentSummaryModal').css('z-index', '1');
     $(".qrCodeModal-content").css('display', 'none');
+});
+
+$("#table_JcEquipmentSummary").on('change keyup', 'input[data-l1key=name]', function () {
+    $(this).siblings('.eqJcName').text($(this).val());
 });
