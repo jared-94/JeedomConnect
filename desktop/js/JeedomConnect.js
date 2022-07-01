@@ -347,6 +347,22 @@ $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function (
   $('#widgetSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
+$('.eqLogicAction[data-action=showEquipmentSummary]').off('click').on('click', function () {
+  $('body').append('<div id="equipmentSummaryModal"></div>');
+  $('#equipmentSummaryModal').dialog({
+    title: "{{Synthèse des équipements JC}}",
+    autoOpen: false,
+    modal: true,
+    closeText: '',
+    width: 0.9 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    closeOnEscape: false,
+    // open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+    close: function (ev, ui) { check_before_closing(); }
+  });
+  $('#equipmentSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.equipmentSummary.JeedomConnect').dialog('open');
+})
+
 $('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function () {
   $('body').append('<div id="notifAllModal"></div>');
   $('#notifAllModal').dialog({

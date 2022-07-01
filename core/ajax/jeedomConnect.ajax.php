@@ -402,6 +402,46 @@ try {
 		ajax::success($html);
 	}
 
+	if (init('action') == 'removeEquipmentConfig') {
+
+		$equipmentReceived = init('eqIds');
+		foreach ($equipmentReceived as $id) {
+			$eqLogic = eqLogic::byId($id);
+			JCLog::debug("removing equipment " . $eqLogic->getName() . " [" . $id . "]");
+			if (is_object($eqLogic)) $eqLogic->remove();
+		}
+		ajax::success();
+	}
+	if (init('action') == 'updateEquipmentMass') {
+
+		$equipmentReceived = init('equipementsObj');
+
+		foreach ($equipmentReceived as $eqData) {
+			// JCLog::debug("data eq received => " . json_encode($eqData));
+
+			/** @var JeedomConnect $eqLogic */
+			$eqLogic = eqLogic::byId($eqData['eqId']);
+			if (!is_object($eqLogic)) break;
+
+			$eqLogic->setName($eqData['name']);
+			$eqLogic->setObject_id($eqData['roomId']);
+			$eqLogic->setIsEnable($eqData['isEnable']);
+
+			$eqLogic->setConfiguration('polling', $eqData['polling']);
+			$eqLogic->setConfiguration('useWs', $eqData['useWs']);
+			$eqLogic->setConfiguration('userId', $eqData['userId']);
+			$eqLogic->setConfiguration('scenariosEnabled', $eqData['scenariosEnabled']);
+			$eqLogic->setConfiguration('timelineEnabled', $eqData['timelineEnabled']);
+			$eqLogic->setConfiguration('webviewEnabled', $eqData['webviewEnabled']);
+			$eqLogic->setConfiguration('addAltitude', $eqData['addAltitude']);
+			$eqLogic->setConfiguration('hideBattery', $eqData['hideBattery']);
+
+			$eqLogic->save();
+		}
+
+		ajax::success();
+	}
+
 	if (init('action') == 'updateWidgetMass') {
 
 		$widgetReceived = init('widgetsObj');

@@ -165,7 +165,12 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
 						<i class="fas fa-tasks"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
+						<span style="color:var(--txt-color)">{{Synthèse wdigets}}</span>
+					</div>
+					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
+						<i class="fas fa-tasks"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Synthèse equipments JC}}</span>
 					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
 						<i class="fas fa-comment-dots"></i>
