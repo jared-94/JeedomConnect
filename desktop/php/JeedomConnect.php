@@ -138,6 +138,8 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 ?>
 
+<link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
+
 <div class="row row-overflow">
 	<!-- Page d'accueil du plugin -->
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
@@ -168,7 +170,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 						<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
 					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
-						<i class="fas fa-tasks"></i>
+						<i class="mdi mdi-devices"></i>
 						<br>
 						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
 					</div>

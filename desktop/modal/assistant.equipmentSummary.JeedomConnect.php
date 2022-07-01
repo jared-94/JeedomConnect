@@ -21,6 +21,7 @@ if (!isConnect()) {
 
 require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
+
 ?>
 
 <div id="alert_JcEquipmentSummary"></div>
