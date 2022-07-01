@@ -228,3 +228,23 @@ $('#table_JcEquipmentSummary').on('mouseleave', '.qrcode-panel', function (e) {
 $("#table_JcEquipmentSummary").on('change keyup', 'input[data-l1key=name]', function () {
     $(this).siblings('.eqJcName').text($(this).val());
 });
+
+$("#table_JcEquipmentSummary").on('click', '.checkJcConnexionOption', function () {
+    var useWs = $(this).closest('.tr_object').find('input[data-l1key=useWs]');
+    var polling = $(this).closest('.tr_object').find('input[data-l1key=polling]');
+
+    polling.attr('disabled', false);
+    useWs.attr('disabled', false);
+
+    if (useWs.prop("checked")) {
+        polling.prop("checked", false);
+        polling.attr('disabled', true);
+    }
+    else {
+        if (polling.prop("checked")) {
+            useWs.prop("checked", false);
+            useWs.attr('disabled', true);
+        }
+    }
+
+});

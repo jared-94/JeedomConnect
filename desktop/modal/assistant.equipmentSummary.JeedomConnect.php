@@ -115,12 +115,13 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
 
       // **********    Websocket    ****************
-      $wsEnable = $eqLogic->getConfiguration('useWs', false) ? 'checked' : '';
-      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $wsEnable . ' data-l1key="useWs" /></td>';
-
       // **********    Polling    ****************
-      $pollingEnable = $eqLogic->getConfiguration('polling', false) ? 'checked' : '';
-      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $pollingEnable . ' data-l1key="polling" /></td>';
+      $wsEnable = $eqLogic->getConfiguration('useWs', false) ? 'checked' : '';
+      $pollingEnable =  (!$wsEnable && $eqLogic->getConfiguration('polling', false)) ? 'checked' : '';
+      $wsForbidden = (!$wsEnable && $pollingEnable)  ? ' disabled="disabled"' : '';
+      $pollingForbidden = $wsEnable ? ' disabled="disabled"' : '';
+      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr checkJcConnexionOption" ' . $wsEnable . ' data-l1key="useWs" ' . $wsForbidden . '/></td>';
+      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr checkJcConnexionOption" ' . $pollingEnable . ' data-l1key="polling" ' . $pollingForbidden . '/></td>';
 
       // **********    scenariosEnabled    ****************
       $scenariosEnabled = $eqLogic->getConfiguration('scenariosEnabled', false) ? 'checked' : '';
