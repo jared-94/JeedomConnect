@@ -35,7 +35,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-check"></i>
         </a><a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
-      <th data-sorter="text">{{Nom équipement}}</th>
+      <th data-sorter="input-text">{{Nom équipement}}</th>
       <th data-sorter="text">{{Appareil}}</th>
       <th data-sorter="select-text">{{Pièce}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Websocket}}

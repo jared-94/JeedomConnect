@@ -204,7 +204,6 @@ $('#table_JcEquipmentSummary').on('mouseenter', '.qrcode-panel', function (e) {
     // make sure it's greater than the rest of thumbnail items
     // Set the position and display the image tooltip
 
-    $(this).css('z-index', '15');
     $('#equipmentSummaryModal').css('z-index', '15');
     $(".qrCodeModal-content").css({ 'top': y, 'left': x, 'display': 'block' });
 
@@ -215,6 +214,5 @@ $('#table_JcEquipmentSummary').on('mouseleave', '.qrcode-panel', function (e) {
 
     // Reset the z-index and hide the image tooltip
     $('#equipmentSummaryModal').css('z-index', '1');
-    $(this).css('z-index', '1');
     $(".qrCodeModal-content").css('display', 'none');
 });

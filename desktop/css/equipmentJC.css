@@ -4,6 +4,7 @@
     position: relative;
     float: left;
     margin: 0px 5px;
+    z-index: 1;
 }
 
 /* Modal Content */
