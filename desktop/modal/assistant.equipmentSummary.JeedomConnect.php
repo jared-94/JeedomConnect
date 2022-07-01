@@ -30,6 +30,13 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 <table id="table_JcEquipmentSummary" class="table table-bordered table-condensed tablesorter stickyHead">
   <thead>
     <tr>
+      <th colspan="5" data-sorter="false" data-filter="false">&nbsp;</th>
+      <th colspan="2" data-sorter="false" data-filter="false" class="text-center">Connexion</th>
+      <th colspan="4" data-sorter="false" data-filter="false" class="text-center">Accès à</th>
+      <th data-sorter="false" data-filter="false" class="text-center">Masquer</th>
+      <th data-sorter="false" data-filter="false">&nbsp;</th>
+    </tr>
+    <tr>
       <th>{{ID}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Actif}}
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="isEnable" style="width:22px;"><i class="fas fa-check"></i></a>
