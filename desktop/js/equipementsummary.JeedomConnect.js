@@ -274,6 +274,6 @@ $("#table_JcEquipmentSummary").on('click', '.selectBox', function () {
 
 function getMultiCheckboxOptionTitle(nb) {
     var needPlurial = (nb > 1) ? 's' : '';
-    var titleSelect = (nb == 0) ? 'Selectionnez une option' : (nb + ' option' + needPlurial + ' sélectionnée' + needPlurial);
+    var titleSelect = (nb == 0) ? 'Selectionnez une commande' : (nb + ' commande' + needPlurial + ' sélectionnée' + needPlurial);
     return titleSelect;
 }

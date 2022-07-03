@@ -74,7 +74,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="select-text">{{Utilisateur}}</th>
-      <th data-sorter="false" data-filter="false">&nbsp;</th> <!-- info qr code -->
+      <th data-sorter="false" data-filter="false">QrCode</th> <!-- info qr code -->
       <th data-sorter="false" data-filter="false">Notifier tous</th> <!-- info qr code -->
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>
@@ -93,7 +93,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
       // **********    Enable    ****************
       $eqEnable = $eqLogic->getIsEnable() ? 'checked' : '';
-      $html .= '<td align="center" style="width:50px;"><input type="checkbox" class="objectAttr" ' . $eqEnable . ' data-l1key="isEnable" /></td>';
+      $html .= '<td align="center" style="width:60px;"><input type="checkbox" class="objectAttr" ' . $eqEnable . ' data-l1key="isEnable" /></td>';
 
       // **********    Name    ****************
       $eqName =  $eqLogic->getName();
@@ -199,8 +199,8 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       }
 
       $needPlurial = ($cmdCount > 1) ? 's' : '';
-      $titleSelect = ($cmdCount == 0) ? 'Selectionnez une option' : $cmdCount . ' option' . $needPlurial . ' sélectionnée' . $needPlurial;
-      $html .= '<td>
+      $titleSelect = ($cmdCount == 0) ? 'Selectionnez une commande' : $cmdCount . ' commande' . $needPlurial . ' sélectionnée' . $needPlurial;
+      $html .= '<td style="width:200px;">
       <div class="multiselect">
         <div class="selectBox">
           <select>
