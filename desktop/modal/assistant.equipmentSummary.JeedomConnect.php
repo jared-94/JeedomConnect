@@ -34,7 +34,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       <th colspan="2" data-sorter="false" data-filter="false" class="text-center">Connexion</th>
       <th colspan="4" data-sorter="false" data-filter="false" class="text-center">Accès à</th>
       <th data-sorter="false" data-filter="false" class="text-center">Masquer</th>
-      <th data-sorter="false" data-filter="false">&nbsp;</th>
+      <th colspan="4" data-sorter="false" data-filter="false">&nbsp;</th>
     </tr>
     <tr>
       <th>{{ID}}</th>
@@ -75,6 +75,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       </th>
       <th data-sorter="select-text">{{Utilisateur}}</th>
       <th data-sorter="false" data-filter="false">&nbsp;</th> <!-- info qr code -->
+      <th data-sorter="false" data-filter="false">Notifier tous</th> <!-- info qr code -->
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>
   </thead>
@@ -179,6 +180,41 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       } else {
         $html .= '<td style="width:40px;" data-img="" data-apiKey="' . $apiKey . '" data-name="' . $eqName . '"><i class="fas fa-ban"></i></td>';
       }
+
+
+      // **********    Notif All    ****************
+      $alreadyChecked = config::byKey('notifAll', 'JeedomConnect', array());
+      $cmdCount = 0;
+      $tmpCheckbox = '';
+      /** @var JeedomConnect $eqLogic */
+      foreach ($eqLogic->getCmd('action') as $cmd) {
+        if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
+          if ($cmd->getLogicalId() == 'notifall') continue;
+
+          $checked = in_array($cmd->getId(), $alreadyChecked) ? 'checked' : '';
+          $cmdCount += in_array($cmd->getId(), $alreadyChecked) ? 1 : 0;
+          $cmdId =  $cmd->getId();
+          $tmpCheckbox .= '<label for="' . $cmdId . '"><input type="checkbox" class="objectAttr"  data-l1key="NotifAll" data-l2key="' . $cmdId . '" value="' . $cmdId . '"  ' . $checked . '/> ' . $cmd->getName() . ' [' . $cmdId . ']</label>';
+        }
+      }
+
+      $needPlurial = ($cmdCount > 1) ? 's' : '';
+      $titleSelect = ($cmdCount == 0) ? 'Selectionnez une option' : $cmdCount . ' option' . $needPlurial . ' sélectionnée' . $needPlurial;
+      $html .= '<td>
+      <div class="multiselect">
+        <div class="selectBox">
+          <select>
+            <option>' . $titleSelect . '</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div class="checkboxes">';
+
+      $html .= $tmpCheckbox;
+
+      $html .= '</div>
+              </div>
+            </td>';
 
       // **********    Delete    ****************
       $html .= '<td align="center" style="width:75px;"><input type="checkbox" class="removeEquipment" data-eqId="' . $eqLogic->getId() . '"/></td>';

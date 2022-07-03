@@ -416,6 +416,7 @@ try {
 
 		$equipmentReceived = init('equipementsObj');
 
+		$allNotif = config::byKey('notifAll', 'JeedomConnect', array());
 		foreach ($equipmentReceived as $eqData) {
 			// JCLog::debug("data eq received => " . json_encode($eqData));
 
@@ -437,7 +438,18 @@ try {
 			$eqLogic->setConfiguration('hideBattery', $eqData['hideBattery']);
 
 			$eqLogic->save();
+
+			foreach ($eqData['NotifAll'] as $id => $value) {
+				$id = strval($id);
+				if ($value == 0) {
+					$allNotif = array_diff($allNotif, array($id));
+				} elseif ($value == 1) {
+					if (!in_array($id, $allNotif)) $allNotif[] = $id;
+				}
+			}
 		}
+
+		config::save('notifAll', json_encode($allNotif), 'JeedomConnect');
 
 		ajax::success();
 	}

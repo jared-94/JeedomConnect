@@ -248,3 +248,18 @@ $("#table_JcEquipmentSummary").on('click', '.checkJcConnexionOption', function (
     }
 
 });
+
+
+$("#table_JcEquipmentSummary").on('click', '.selectBox', function () {
+
+    $checkboxes = $(this).parent('.multiselect').find('.checkboxes')
+    $(".checkboxes").not($checkboxes).hide();
+
+    var hide = $checkboxes.css('display') == 'none';
+
+    if (hide) {
+        $checkboxes.css('display', "block");
+    } else {
+        $checkboxes.css('display', "none");
+    }
+});
