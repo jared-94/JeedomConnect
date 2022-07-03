@@ -105,7 +105,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
         : (
           ($eqLogic->getConfiguration('platformOs') == 'ios') ? ' <i class="fab fa-apple"></i>' : ' <i class="fab fa-android"></i>'
         );
-      $html .= '<td style="width:250px;"><span class="label" data-l1key="deviceName" title="' . $eqLogic->getConfiguration('platformOs') . '">' . $eqLogic->getConfiguration('deviceName') .  '</span>' . $platform . '</td>';
+      $html .= '<td style="width:200px;"><span class="label" data-l1key="deviceName" title="' . $eqLogic->getConfiguration('platformOs') . '">' . $eqLogic->getConfiguration('deviceName') .  '</span>' . $platform . '</td>';
 
       // **********    ROOM    ****************
       $currentRoom = $eqLogic->getObject_id();
@@ -199,8 +199,8 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       }
 
       $needPlurial = ($cmdCount > 1) ? 's' : '';
-      $titleSelect = ($cmdCount == 0) ? 'Selectionnez une commande' : $cmdCount . ' commande' . $needPlurial . ' sélectionnée' . $needPlurial;
-      $html .= '<td style="width:200px;">
+      $titleSelect = ($cmdCount == 0) ? 'Sélectionnez une commande' : $cmdCount . ' commande' . $needPlurial . ' sélectionnée' . $needPlurial;
+      $html .= '<td style="width:250px;">
       <div class="multiselect">
         <div class="selectBox">
           <select>
