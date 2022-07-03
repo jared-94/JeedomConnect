@@ -250,6 +250,14 @@ $("#table_JcEquipmentSummary").on('click', '.checkJcConnexionOption', function (
 });
 
 
+$("#table_JcEquipmentSummary").on('click', 'input.objectAttr[data-l1key=NotifAll]', function () {
+    var nbChecked = $(this).closest('.checkboxes').find('.objectAttr:checked').length;
+    var newTitle = getMultiCheckboxOptionTitle(nbChecked);
+
+    $(this).parents('.multiselect').find('.titleOption').text(newTitle);
+
+});
+
 $("#table_JcEquipmentSummary").on('click', '.selectBox', function () {
 
     $checkboxes = $(this).parent('.multiselect').find('.checkboxes')
@@ -263,3 +271,9 @@ $("#table_JcEquipmentSummary").on('click', '.selectBox', function () {
         $checkboxes.css('display', "none");
     }
 });
+
+function getMultiCheckboxOptionTitle(nb) {
+    var needPlurial = (nb > 1) ? 's' : '';
+    var titleSelect = (nb == 0) ? 'Selectionnez une option' : (nb + ' option' + needPlurial + ' sélectionnée' + needPlurial);
+    return titleSelect;
+}

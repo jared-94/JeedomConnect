@@ -204,7 +204,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       <div class="multiselect">
         <div class="selectBox">
           <select>
-            <option>' . $titleSelect . '</option>
+            <option class="titleOption">' . $titleSelect . '</option>
           </select>
           <div class="overSelect"></div>
         </div>
