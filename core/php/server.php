@@ -18,8 +18,11 @@ try {
 
 
     // Create socket server
-    // $server = IoServer::factory(new HttpServer(new WsServer($connectLogic)), $port);
-    $server = IoServer::factory(new HttpServer(new WsServer($connectLogic)), $port, '[::]');
+    if (config::byKey('ipv6', 'JeedomConnect', false)) {
+        $server = IoServer::factory(new HttpServer(new WsServer($connectLogic)), $port, '[::]');
+    } else {
+        $server = IoServer::factory(new HttpServer(new WsServer($connectLogic)), $port);
+    }
 
     // Add the periodic processing
     $server->loop->addPeriodicTimer(
