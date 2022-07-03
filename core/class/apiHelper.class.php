@@ -891,6 +891,15 @@ class apiHelper {
       $averageHistoryValue = round($historyStatistique['avg'], 1);
       $minHistoryValue = round($historyStatistique['min'], 1);
       $maxHistoryValue = round($historyStatistique['max'], 1);
+
+      $tendanceData = $cmd->getTendance($startHist, date('Y-m-d H:i:s'));
+      if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
+        $tendance = "up";
+      } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
+        $tendance = "down";
+      } else {
+        $tendance = "stable";
+      }
     }
 
 
@@ -898,6 +907,7 @@ class apiHelper {
       'averageValue' => $averageHistoryValue ?? 0,
       'minValue' => $minHistoryValue ?? 0,
       'maxValue' => $maxHistoryValue ?? 0,
+      'tendance' => $tendance ?? null,
     );
   }
 
@@ -2054,7 +2064,7 @@ class apiHelper {
   }
 
   private static function hasHistoricFunction($id, $string) {
-    $match = array("average(#$id#)", "min(#$id#)", "max(#$id#)", "collect(#$id#)");
+    $match = array("average(#$id#)", "min(#$id#)", "max(#$id#)", "collect(#$id#)", "tendance(#$id#)");
     foreach ($match as $key) {
       if (strpos($string, $key) !== FALSE) {
         return true;
