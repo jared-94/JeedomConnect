@@ -316,3 +316,4 @@ sendVarToJS('userHash', $userHash);
 </form>
 
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
