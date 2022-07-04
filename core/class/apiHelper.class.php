@@ -2026,7 +2026,7 @@ class apiHelper {
 
     foreach ($config['payload']['widgets'] as $widget) {
       $name = $widget['name'];
-      $subtitle = $widget['subtitle'];
+      $subtitle = $widget['subtitle'] ?? '';
       foreach ($widget as $item => $value) {
         if (is_array($value)) {
           if (array_key_exists('type', $value)) {
