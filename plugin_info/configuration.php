@@ -92,16 +92,6 @@ sendVarToJS('userHash', $userHash);
   </div>
   <fieldset>
     <div class="form-group">
-      <label class="col-lg-6 control-label">{{Connexion IPV6}}
-        <sup>
-          <i class="fas fa-question-circle floatright" title="Protocole de connexion en IPV6"></i>
-        </sup>
-      </label>
-      <div class="col-lg-3">
-        <input type="checkbox" class="configKey" data-l1key="ipv6" />
-      </div>
-    </div>
-    <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse http externe}}</label>
       <div class="col-lg-3">
         <input class="configKey form-control" type="string" data-l1key="httpUrl" placeholder="<?php echo network::getNetworkAccess('external'); ?>" />
@@ -115,6 +105,16 @@ sendVarToJS('userHash', $userHash);
     </div>
     <div class="alert alert-info" style="text-align:center;">
       La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
+    </div>
+    <div class="form-group">
+      <label class="col-lg-6 control-label">{{Connexion IPV6}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Protocole de connexion en IPV6"></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="ipv6" />
+      </div>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
