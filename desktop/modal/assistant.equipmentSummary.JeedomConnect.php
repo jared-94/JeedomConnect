@@ -219,7 +219,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       // **********    Delete    ****************
       $html .= '<td align="center" style="width:75px;"><input type="checkbox" class="removeEquipment" data-eqId="' . $eqLogic->getId() . '"/></td>';
 
-      $html .= ($ids == 'all') ? '</tr>' : '';
+      $html .=  '</tr>';
     }
     echo $html;
 
