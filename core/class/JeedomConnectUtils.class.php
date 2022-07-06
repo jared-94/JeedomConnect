@@ -869,7 +869,11 @@ class JeedomConnectUtils {
         return  $result;
     }
 
-
+    /**
+     * Return if the connexion uses a jeedom DNS 
+     *
+     * @return boolean
+     */
     public static function hasDNSConnexion() {
         $url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
         if ((strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {

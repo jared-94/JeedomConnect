@@ -117,6 +117,16 @@ sendVarToJS('userHash', $userHash);
       La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
     </div>
     <div class="form-group">
+      <label class="col-lg-6 control-label">{{Connexion IPV6}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Protocole de connexion en IPV6"></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="ipv6" />
+      </div>
+    </div>
+    <div class="form-group">
       <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
       <div class="col-lg-1">
         <input class="configKey form-control" type="number" data-l1key="port" placeholder="8090" />
@@ -316,3 +326,4 @@ sendVarToJS('userHash', $userHash);
 </form>
 
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>

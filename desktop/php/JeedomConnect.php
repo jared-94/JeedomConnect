@@ -138,6 +138,8 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 ?>
 
+<link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
+
 <div class="row row-overflow">
 	<!-- Page d'accueil du plugin -->
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
@@ -165,7 +167,12 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
 						<i class="fas fa-tasks"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
+						<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
+					</div>
+					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
+						<i class="mdi mdi-devices"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
 					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
 						<i class="fas fa-comment-dots"></i>
@@ -628,6 +635,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js'); ?>

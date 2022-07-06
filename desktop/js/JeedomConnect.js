@@ -347,6 +347,22 @@ $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function (
   $('#widgetSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetSummary.JeedomConnect').dialog('open');
 })
 
+$('.eqLogicAction[data-action=showEquipmentSummary]').off('click').on('click', function () {
+  $('body').append('<div id="equipmentSummaryModal"></div>');
+  $('#equipmentSummaryModal').dialog({
+    title: "{{Synthèse des équipements JC}}",
+    autoOpen: false,
+    modal: true,
+    closeText: '',
+    width: 0.9 * $(window).width(),
+    height: 0.8 * $(window).height(),
+    closeOnEscape: false,
+    // open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+    close: function (ev, ui) { check_before_closing(); }
+  });
+  $('#equipmentSummaryModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.equipmentSummary.JeedomConnect').dialog('open');
+})
+
 $('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function () {
   $('body').append('<div id="notifAllModal"></div>');
   $('#notifAllModal').dialog({
@@ -409,35 +425,6 @@ function openAssistantNotificationModal(id, event) {
   $('#md_modal').dialog({ title: "{{Configuration des notifications}}" });
   $('#md_modal').load('index.php?v=d&plugin=JeedomConnect&modal=notifs.JeedomConnect&eqLogicId=' + id).dialog('open');
 }
-
-
-function download(filename, text, add_date_time = false) {
-
-  if (add_date_time) {
-    var dt = new Date();
-    var dd = String(dt.getDate()).padStart(2, '0');
-    var mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = dt.getFullYear();
-
-    today = yyyy + mm + dd;
-    var time = dt.getHours() + '' + dt.getMinutes() + '' + dt.getSeconds() + '';
-
-    filename = today + '_' + time + '_' + filename;
-  }
-
-  var element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  element.setAttribute('download', filename);
-
-  element.style.display = 'none';
-  document.body.appendChild(element);
-
-  element.click();
-
-  document.body.removeChild(element);
-}
-
-
 
 $('.jeedomConnect').off('click', '#export-btn').on('click', '#export-btn', function () {
 
