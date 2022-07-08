@@ -122,8 +122,13 @@ if (!isConnect('admin')) {
       } else if (option.type == "color") {
         var colorValue = option ? option.value || '' : '';
         expanded = `<li><div class='form-group'>
-			<label class='col-xs-3  required' >${option.title}</label>
-			<div class='col-xs-9'><div class='input-group'><input type="color" id="mod-color-input" value='${colorValue}' onchange="colorDefined(this)"></div></div></div></li>`;
+            <label class='col-xs-3  required' >${option.title}</label>
+            <div class='col-xs-9'>
+              <div class='input-group'>
+                <input type="color" id="mod-color-input" value='${colorValue}' class="inputJCColor changeJCColor">
+              </div>
+            </div>
+          </div></li>`;
         items.push(expanded);
       } else if (option.type == "widget") {
         widget = `<li><div class='form-group'>

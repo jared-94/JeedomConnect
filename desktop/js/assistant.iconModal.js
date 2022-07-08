@@ -59,9 +59,6 @@ $('#mod_selectIcon').off('click', '.divIconSel').on('click', '.divIconSel', func
     $(this).closest('.divIconSel').addClass('iconSelected');
 });
 
-function iconColorDefined(c) {
-    $("#mod-color-input").val(c.value);
-}
 
 function setIconParams() {
     $("#icon-params-div").show();

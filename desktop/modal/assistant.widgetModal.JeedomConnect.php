@@ -38,10 +38,10 @@ if (!isConnect('admin')) {
 	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
 		<span class="input-group-btn">
 			<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-			<a class="btn btn-sm btn-default roundedLeft duplicateWidget" onclick="duplicateWidget()"><i class="far fa-copy"></i> {{Dupliquer}}
-			</a><a class="btn btn-sm btn-success saveWidget" onclick="saveWidget()"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
-			</a><a class="btn btn-sm btn-warning hideWidget" onclick="hideWidget()"><i class="fas fa-times"></i> {{Annuler}}
-			</a><a class="btn btn-sm btn-danger roundedRight removeWidget" onclick="removeWidget()"><i class="fas fa-minus-circle"></i> {{Supprimer}}
+			<a class="btn btn-sm btn-default roundedLeft duplicateWidget"><i class="far fa-copy"></i> {{Dupliquer}}
+			</a><a class="btn btn-sm btn-success saveWidget"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
+			</a><a class="btn btn-sm btn-warning hideWidget"><i class="fas fa-times"></i> {{Annuler}}
+			</a><a class="btn btn-sm btn-danger roundedRight removeWidget"><i class="fas fa-minus-circle"></i> {{Supprimer}}
 			</a>
 		</span>
 	</div>
@@ -49,7 +49,7 @@ if (!isConnect('admin')) {
 		<div class="col-xs-2">
 			<div class="form-group">
 				<h3>Choix du widget</h3>
-				<select name="widgetsList" id="widgetsList-select" onchange="refreshAddWidgets();">
+				<select name="widgetsList" id="widgetsList-select">
 				</select>
 			</div>
 			<div class="form-group autoFillWidgetCmds" style="display: none;">

@@ -96,10 +96,12 @@ if (!isConnect('admin')) {
     var colorValue = notif ? notif.color || '' : '';
     var colorHtml = `<li><div class='form-group'>
     <label class='col-xs-3 ' >Couleur</label>
-    <div class='col-xs-9'>
-      <div class='input-group'><input style="width:200px;" id="mod-color-input" value='${colorValue}'>
-      <input type="color" id="mod-color-picker" value='${colorValue}' onchange="colorDefined(this)">
-      </div></div>
+      <div class='col-xs-9'>
+        <div class='input-group'>
+          <input style="width:200px;" id="mod-color-input" class="inputJCColor" value='${colorValue}'>
+          <input type="color" id="mod-color-picker" value='${colorValue}' class="changeJCColor">
+        </div>
+      </div>
     </div></li>`;
     items.push(colorHtml);
 
@@ -161,10 +163,6 @@ if (!isConnect('admin')) {
 
   function removeImage() {
     $("#icon-div").empty();
-  }
-
-  function colorDefined(c) {
-    $("#mod-color-input").val(c.value);
   }
 
   function addCmd() {

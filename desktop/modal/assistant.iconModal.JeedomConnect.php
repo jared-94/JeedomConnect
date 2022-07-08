@@ -230,8 +230,8 @@ function get_all_files($dir, $includeSubDir = false) {
   <div class="col-sm-5">
     <div id="icon-params-div" class="input-group col-sm-12" style="display:none">
       <label style="float:left; margin-top:5px">Couleur :</label>
-      <input class="form-control roundedLeft" style="width : 100px;margin-left:10px;" type="color" id="mod-color-picker" value='' onchange="iconColorDefined(this)">
-      <input class="form-control roundedRight" style="width : 100px;" id="mod-color-input" value=''>
+      <input class="form-control roundedLeft changeJCColor" style="width : 100px;margin-left:10px;" type="color" id="mod-color-picker" value=''>
+      <input class="form-control roundedRight inputJCColor" style="width : 100px;" id="mod-color-input" value=''>
     </div>
     <div id="img-params-div" class="checkbox-group col-sm-5" style="display:none">
       <label style="float:left">Noir et blanc :</label>
