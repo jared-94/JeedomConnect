@@ -2707,6 +2707,10 @@ class apiHelper {
         $param['force_reply_cmd'] = 1;
       }
     }
+    if (isset($options['user_login'])) {
+      $param['profile'] = $options['user_login'];
+    }
+    $param['plugin'] = 'JeedomConnect';
     $result = interactQuery::tryToReply($query, $param);
     return  array(
       'type' => 'QUERY_ANSWER',
