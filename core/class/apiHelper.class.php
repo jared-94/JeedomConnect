@@ -81,6 +81,7 @@ class apiHelper {
           break;
 
         case 'SC_EXEC':
+          $param['options']['tags'] = ($param['options']['tags'] ?? '') . ' eqId=' . $eqLogic->getId();
           $result = self::execSc($param['id'], $param['options']);
           return $result;
           break;
