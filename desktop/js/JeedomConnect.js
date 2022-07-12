@@ -1960,7 +1960,7 @@ function refreshMoreInfos() {
     div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
           <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled>
           <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
-          <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" value='${item.name}'>
+          <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" title='${item.name}' value='${item.name}'>
           <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
           <input style="width:80px;position:absolute; margin-left:175px;" id="${item.id}-unit-input" value='${unit}'>
           <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-left:265px;cursor:grab!important;" aria-hidden="true"></i>
@@ -1972,6 +1972,7 @@ function refreshMoreInfos() {
     cmdHumanName = getHumanName(item.id);
     if (cmdHumanName != '') {
       $("#" + item.id + "-input").val(cmdHumanName);
+      $("#" + item.id + "-input").attr('title', cmdHumanName);
       item.human = cmdHumanName;
     }
     else {
@@ -2043,7 +2044,9 @@ function refreshStrings() {
   $('input[cmdType="info"]').each((i, el) => {
     infoCmd.push({ id: $("input[id=" + el.id + "]").attr('cmdid'), human: el.title });
   });
-  $("#name-input").val(idToHuman($("#name-input").val(), infoCmd));
+  var nameInput = idToHuman($("#name-input").val(), infoCmd);
+  $("#name-input").val(nameInput);
+  $("#name-input").attr('title', nameInput);
   $("#subtitle-input-value").val(idToHuman($("#subtitle-input-value").val(), infoCmd));
 }
 
