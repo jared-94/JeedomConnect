@@ -2588,7 +2588,7 @@ class apiHelper {
           if ($options['withLog'] ?? true) {
             return self::raiseException('Vous n\'avez pas le droit d\'exécuter cette commande ' . $cmd->getHumanName());
           } else {
-            return false;
+            return "unauthorized";
           }
         }
       }
@@ -2605,15 +2605,35 @@ class apiHelper {
   }
 
   private static function execMultipleCmd($cmdList) {
+    $unauthorized = array();
     $error = array();
     foreach ($cmdList as $cmd) {
       $temp = self::execCmd($cmd['id'], array_merge($cmd['options'] ?? array(), array('withLog' => false)));
+      if ($temp == 'unauthorized') {
+        array_push($unauthorized, $cmd['id']);
+        continue;
+      }
       if (!is_null($temp)) array_push($error, $cmd['id']);
+    }
+
+    $exception = '';
+    $errorIds = array();
+    if (count($unauthorized) > 0) {
+      $cmdUnauthorizedName = JeedomConnectUtils::getCmdName($unauthorized, true);
+      $command = (count($unauthorized) == 1) ? 'la commande' : 'les commandes';
+      $exception .= 'Vous n\'avez pas le droit d\'exécuter ' . $command . ' ' . implode(", ", $cmdUnauthorizedName) . '. ';
+      $errorIds = array_merge($errorIds, $unauthorized);
     }
 
     if (count($error) > 0) {
       $cmdErrorName = JeedomConnectUtils::getCmdName($error, true);
-      return self::raiseException('Vous n\'avez pas le droit d\'exécuter les commandes ' . implode(", ", $cmdErrorName), '', array("cmd_ids" => $error));
+      $cmdName = implode(", ", $cmdErrorName);
+      $exception .= (count($error) == 1) ? "La commande $cmdName n'a pas pu être exécutée. " : "Les commandes $cmdName n'ont pas pu être exécutées. ";
+      $errorIds = array_merge($errorIds, $error);
+    }
+
+    if ($exception != '') {
+      return self::raiseException($exception, '', array("cmd_ids" => $errorIds));
     }
 
     return null;
