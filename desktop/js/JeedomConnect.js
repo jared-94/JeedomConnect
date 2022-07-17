@@ -2279,7 +2279,7 @@ function downImgOption(id) {
 
 function addWidgetOption(choices) {
   var widgets = choices.split(".");
-  getSimpleModal({ title: "Choisir un widget", fields: [{ type: "widget", choices: widgets }] }, function (result) {
+  getSimpleModal({ title: "Choisir un widget", fields: [{ type: "widget", choices: widgets, typeFilter: true }] }, function (result) {
     var maxIndex = getMaxIndex(widgetsCat);
     widgetsCat.push({ id: result.widgetId, index: maxIndex + 1, roomName: result.roomName });
     refreshWidgetOption();

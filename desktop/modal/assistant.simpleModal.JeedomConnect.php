@@ -126,12 +126,9 @@ if (!isConnect('admin')) {
 			<div class='col-xs-9'><div class='input-group'><input type="color" id="mod-color-input" value='${colorValue}' onchange="colorDefined(this)"></div></div></div></li>`;
         items.push(expanded);
       } else if (option.type == "widget") {
-        widget = `<li><div class='form-group'>
-			<label class='col-xs-3  required' >Widget</label>
-			<div class='col-xs-9'><div class='input-group'>
-			<select style="width:250px;" id="mod-widget-input">`
+        var widgetTmp = '<option class="JCWidgetOption" >Select</option>';
+        var widgetType = []
 
-        // configData.payload.widgets.forEach(item => {
         allWidgetsDetail.forEach(item => {
           if (option.choices.includes(item.type)) {
             let name = getWidgetPath(item.id);
@@ -140,10 +137,37 @@ if (!isConnect('admin')) {
               name = name + ' (' + room + ')'
             }
 
-            widget += `<option style="width:150px;" value="${item.id}" name="${name}" data-room="${room}">${name} [${item.id}]</option>`;
+            widgetTmp += `<option class="JCWidgetOption" style="width:150px;" value="${item.id}" data-type="${item.type}" name="${name}" data-room="${room}">${name} [${item.id}]</option>`;
+            widgetType.push(item.type);
           }
         })
-        widget += `</select></div></div></div></li>`;
+
+        var optionSelect = '<option value="none" selected>Tous</option>';
+        widgetsList.widgets.forEach(item => {
+          if (option.choices.includes(item.type) && widgetType.includes(item.type)) {
+            optionSelect += `<option value="${item.type}">${item.name}</option>`;
+          }
+        })
+
+        widget = `<li>`;
+        if (option.typeFilter) {
+          widget += `<div class='form-group'>
+            <label class='col-xs-3' >Type</label>
+            <div class='col-xs-9'><div class='input-group'>
+            <select style="width:250px;" class="refreshWidgetType" data-select="mod-widget-input">`
+          widget += optionSelect;
+          widget += `</select></div></div></div>`;
+        }
+
+
+        widget += `<div class='form-group'>
+			<label class='col-xs-3  required' >Widget</label>
+			<div class='col-xs-9'><div class='input-group'>
+			<select style="width:250px;" id="mod-widget-input">`
+        widget += widgetTmp;
+        widget += `</select></div></div></div>`;
+
+        widget += `</li>`;
         items.push(widget);
       } else if (option.type == "object") {
         $("#object-li").css("display", "block");
@@ -211,6 +235,19 @@ if (!isConnect('admin')) {
     refreshSwipe("action");
 
   }
+
+  $("body").on('change', '.refreshWidgetType', function(e) {
+
+    var typeSelected = this.value;
+
+    $('.JCWidgetOption').show();
+    if (typeSelected != 'none') {
+      $('#' + $(this).data('select') + ' option').not("[data-type=" + typeSelected + "]").hide();
+      $('#' + $(this).data('select')).prop("selectedIndex", 0).val();
+    }
+
+
+  });
 
   function refreshSwipe(type) {
     if ($("#" + type + "-cmd-input").attr('cmdId') != '') {
