@@ -1238,8 +1238,12 @@ function refreshAddWidgets() {
       }
       curOption += `</div></div></div></li>`;
     } else if (option.category == "img") {
+
+      var withImg = (option.options?.hasImage != 'false') ? 1 : 0;
+      var withIcon = (option.options?.hasIcon != 'false') ? 1 : 0;
+
       curOption += `
-              <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-check-square">
+              <a class="btn btn-success roundedRight" onclick="imagePicker(this, ${withIcon}, ${withImg})"><i class="fas fa-check-square">
               </i> Choisir </a>
               <a data-id="icon-div-${option.id}" id="icon-div-${option.id}" onclick="removeImage(this)"></a>
               </div></div></li>`;
@@ -1345,10 +1349,10 @@ function refreshAddWidgets() {
 }
 
 
-function imagePicker(elm) {
+function imagePicker(elm, withIcon, withImg) {
   var newElt = $(elm).nextAll("a[data-id^='icon-']:first");
 
-  getIconModal({ title: "Choisir une icône ou une image", withIcon: "1", withImg: "1", icon: htmlToIcon(newElt.children().first()), elt: newElt }, (result, _params) => {
+  getIconModal({ title: "Choisir une icône ou une image", withIcon: withIcon, withImg: withImg, icon: htmlToIcon(newElt.children().first()), elt: newElt }, (result, _params) => {
     $(_params.elt).html(iconToHtml(result));
   });
 }
@@ -1599,10 +1603,13 @@ function refreshCmdListOption(optionsJson) {
     curOption += `</div>`;
 
     if (options.hasIcon | options.hasImage) {
+      var withImg = (options?.hasImage != 'false') ? 1 : 0;
+      var withIcon = (options?.hasIcon != 'false') ? 1 : 0;
+
       curOption += `<div class="col-lg-12 form-group">`;
       curOption += `
               <div>
-                      <a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-check-square">
+                      <a class="btn btn-success roundedRight" onclick="imagePicker(this, ${withIcon}, ${withImg})"><i class="fas fa-check-square">
                       </i> Icône </a>
                       <a class="jcCmdListOptions" data-id="icon-${item.id}" data-index="${item.index}" onclick="removeImage(this)">${iconToHtml(item.image)}</a>
               </div>`;

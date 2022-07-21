@@ -1151,8 +1151,11 @@ function refreshAddSummaries(_options) {
 			curOption += `</div></div></div></li>`;
 		}
 		else if (option.category == "img") {
+			var withImg = (option.options?.hasImage != 'false') ? 1 : 0;
+			var withIcon = (option.options?.hasIcon != 'false') ? 1 : 0;
+
 			curOption += `
-				<a class="btn btn-success roundedRight" onclick="imagePicker(this)"><i class="fas fa-check-square">
+				<a class="btn btn-success roundedRight" onclick="imagePicker(this, ${withIcon}, ${withImg})"><i class="fas fa-check-square">
 				</i> Choisir </a>
 				<a data-id="icon-div-${option.id}" id="icon-div-${option.id}" onclick="removeImage(this)"></a>
 				</div></div></li>`;
