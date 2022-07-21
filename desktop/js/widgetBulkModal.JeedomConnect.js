@@ -18,7 +18,7 @@ $('.alreadyExist').attr('style', function (i, s) {
 
 function refreshAddWidgetBulk() {
     $('.alreadyExist').hide();
-    widgetsCat = [];
+    widgetsOption = [];
     cmdCat = [];
     imgCat = [];
     var type = $("#widgetBulkList-select").val();
@@ -396,4 +396,9 @@ $("body").on('change', '.needRefresh', function () {
             }
         });
     }
+});
+
+
+$('body').off('click', '.removeParent').on('click', '.removeParent', function () {
+    $(this).parent().remove();
 });

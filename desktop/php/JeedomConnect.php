@@ -128,7 +128,6 @@ foreach ($widgetTypeArray as $key => $value) {
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
-
 $infoPlugin = JeedomConnectUtils::getInstallDetails();
 
 $displayWarningConf = config::byKey('displayWarning', 'JeedomConnect');
@@ -283,7 +282,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 					</select>
 				</span>
 				<span>{{Filtre}}
-					<select id="widgetTypeSelect" style="width:auto">
+					<select id="widgetTypeSelect" class="JC" style="width:auto">
 						<?php
 						echo $typeSelection;
 						?>

@@ -1,3 +1,14 @@
+/**
+ * **** COLOR PICKUP 
+ * update input when color selected
+ */
+
+$("body").on('change', '.changeJCColor', function () {
+    $(this).siblings('.inputJCColor').val($(this).val());
+});
+
+//---------------------------------
+
 function download(filename, text, add_date_time = false) {
 
     if (add_date_time) {
@@ -218,6 +229,36 @@ function idToHuman(string, infos) {
     return result;
 }
 
-$("body").on('change', '.changeJCColor', function () {
-    $(this).siblings('.inputJCColor').val($(this).val());
-});
+
+function getCmdDetail(_params, _callback) {
+    if (typeof _params.alert == 'undefined') {
+        _params.alert = '#div_alert';
+    }
+    var paramsRequired = ['id'];
+    var paramsSpecifics = {
+        global: false,
+        success: function (result) {
+
+            if ('function' == typeof (_callback)) {
+                _callback(result, _params);
+            }
+
+        }
+    };
+
+    try {
+        jeedom.private.checkParamsRequired(_params || {}, paramsRequired);
+    } catch (e) {
+        (_params.error || paramsSpecifics.error || jeedom.private.default_params.error)(e);
+        $(_params.alert).showAlert({ message: e.message, level: 'danger' });
+        return;
+    }
+    var params = $.extend({}, jeedom.private.default_params, paramsSpecifics, _params || {});
+    var paramsAJAX = jeedom.private.getParamsAJAX(params);
+    paramsAJAX.url = 'core/ajax/cmd.ajax.php';
+    paramsAJAX.data = {
+        action: 'getCmd',
+        id: _params.id,
+    };
+    $.ajax(paramsAJAX);
+};

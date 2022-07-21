@@ -20,22 +20,6 @@ if (!isConnect('admin')) {
 
 ?>
 
-<style>
-	.required:after {
-		content: " *";
-		color: red;
-	}
-
-	#widgetImg {
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-		width: 100px;
-		margin-bottom: 25px;
-		margin-top: 15px;
-	}
-</style>
-
 <link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
 
 <div>
@@ -91,6 +75,7 @@ if (!isConnect('admin')) {
 
 </div>
 
-<?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php //include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); 
+?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'widgetBulkModal.JeedomConnect', 'js', 'JeedomConnect'); ?>

@@ -252,7 +252,7 @@ function setWidgetModalData(options) {
                     $("#subtitle-select").show();
                 }
             } else if (option.category == "widgets" & options.widget[option.id] !== undefined) {
-                widgetsCat = options.widget[option.id];
+                widgetsOption = options.widget[option.id];
                 refreshWidgetOption();
             } else if (option.category == "cmdList" & options.widget[option.id] !== undefined) {
                 cmdCat = options.widget[option.id];
@@ -280,7 +280,7 @@ $('#widgetsList-select').change(function () {
 
 
 function refreshAddWidgets() {
-    widgetsCat = [];
+    widgetsOption = [];
     cmdCat = [];
     imgCat = [];
     moreInfos = [];
@@ -395,7 +395,8 @@ function refreshAddWidgets() {
                 curOption += `
               <div class="dropdown" id="name-select">
               <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-              <i class="fas fa-plus-square"></i> </a>
+                <i class="fas fa-plus-square"></i>
+              </a>
               <ul class="dropdown-menu infos-select" input="${option.id}-input">`;
                 if (widget.variables) {
                     widget.variables.forEach(v => {
@@ -748,3 +749,695 @@ function getCmdOptions(item) {
 
 
 }
+
+
+function selectCmd(name, type, subtype, value) {
+    var cmd = { type: type }
+    if (subtype != 'undefined') {
+        cmd = { type: type, subType: subtype }
+    }
+    var obj = $('#room-input option:selected').val();
+    obj = (obj == 'none') ? '' : obj;
+
+    jeedom.cmd.getSelectModal({
+        object: {
+            id: obj
+        },
+        cmd: cmd
+    }, function (result) {
+        refreshCmdData(name, result.cmd.id, value);
+    })
+}
+
+function refreshWidgetOption() {
+    curOption = "";
+    widgetsOption.sort(function (s, t) {
+        return s.index - t.index;
+    });
+    widgetsOption.forEach(item => {
+        var name = getWidgetPath(item.id);
+
+        if (item.roomName) {
+            roomName = (item.roomName == '') ? '' : ' (' + item.roomName + ')';
+        }
+        else {
+            roomNameTmp = getRoomName(item.room || undefined) || '';
+            roomName = (roomNameTmp == '') ? '' : ' (' + roomNameTmp + ')';
+        }
+
+        curOption += `<div class='input-group jcWidgetListMovable' data-id="${item.id}">
+          <input style="width:240px;" class='input-sm form-control roundedLeft' title="id=${item.id}" id="${item.id}-input" value='${name}${roomName}' disabled>
+          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
+
+          <!-- <i class="mdi mdi-arrow-up-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidgetOption('${item.id}');"></i>
+		      <i class="mdi mdi-arrow-down-circle" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="downWidgetOption('${item.id}');"></i> -->
+
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;" aria-hidden="true" onclick="deleteWidgetOption('${item.id}');"></i></li>
+          </div>`;
+    });
+    $("#widget-option").html(curOption);
+}
+
+function saveCmdList() {
+    cmdCat.forEach(item => {
+        item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-' + item.id + '"][data-index="' + item.index + '"]').children().first());
+        item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+
+        item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+
+        item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+
+        item['options'] = {};
+        if (item.subtype == 'message') {
+            item['options']['title'] = $('.jcCmdListOptions[data-id="title-' + item.id + '"][data-index="' + item.index + '"]').val();
+            item['options']['message'] = $('.jcCmdListOptions[data-id="message-' + item.id + '"][data-index="' + item.index + '"]').val();
+        }
+        else if (item.subtype == 'select') {
+            item['options'][item.subtype] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
+        }
+        else {
+            item['options'][item.subtype] = $('.jcCmdListOptions[data-id="' + item.subtype + '-' + item.id + '"][data-index="' + item.index + '"]').val();
+        }
+
+    });
+}
+
+
+function addCmdOption(optionsJson) {
+    saveCmdList();
+    var options = JSON.parse(optionsJson);
+    var cmd = {};
+    if (options.type) {
+        cmd = { type: options.type }
+    }
+    if (options.subtype) {
+        cmd = { type: options.type, subType: options.subtype }
+    }
+    jeedom.cmd.getSelectModal({ cmd: cmd }, function (result) {
+        var name = result.human.replace(/#/g, '');
+        name = name.split('[');
+        name = name[name.length - 1].replace(/]/g, '');
+        var maxIndex = getMaxIndex(cmdCat);
+        cmdCat.push({ id: result.cmd.id, name: name, index: maxIndex + 1, subtype: result.cmd.subType });
+        refreshCmdListOption(optionsJson);
+    })
+}
+
+
+
+function deleteCmdOption(elm, optionsJson) {
+    saveCmdList();
+
+    var id = $(elm).data('id');
+    var currentIndex = $(elm).data('index');
+
+    var cmdToDelete = cmdCat.find(i => i.id == id && i.index == currentIndex);
+    var index = cmdCat.indexOf(cmdToDelete);
+    cmdCat.forEach(item => {
+        if (item.index > cmdToDelete.index) {
+            item.index = item.index - 1;
+        }
+    });
+    cmdCat.splice(index, 1);
+    refreshCmdListOption(optionsJson);
+}
+
+
+//More Infos
+
+function refreshMoreInfos() {
+    let div = '';
+    moreInfos.forEach((item, i) => {
+        item.index = i;
+        var unit = item.unit || '';
+        div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
+          <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled>
+          <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
+          <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" title='${item.name}' value='${item.name}'>
+          <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
+          <input style="width:80px;position:absolute; margin-left:175px;" id="${item.id}-unit-input" value='${unit}'>
+          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-left:265px;cursor:grab!important;" aria-hidden="true"></i>
+          <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:5px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
+          </div>`;
+    });
+    $("#moreInfos-div").html(div);
+    moreInfos.forEach(item => {
+        cmdHumanName = getHumanName(item.id);
+        if (cmdHumanName != '') {
+            $("#" + item.id + "-input").val(cmdHumanName);
+            $("#" + item.id + "-input").attr('title', cmdHumanName);
+            item.human = cmdHumanName;
+        }
+        else {
+            $("#" + item.id + "-input").val("#" + item.id + "#");
+        }
+    })
+
+    refreshImgListOption();
+    refreshInfoSelect();
+}
+
+
+function addMoreCmd() {
+    jeedom.cmd.getSelectModal({ cmd: { type: 'info' } }, function (result) {
+        getCmdDetail({ id: result.cmd.id, human: result.human }, function (result, _param) {
+            moreInfos.push({ type: 'cmd', id: result.id, human: _param.human, name: result.name, unit: result.unite });
+            saveImgOption();
+            refreshMoreInfos();
+        })
+    });
+}
+
+function deleteMoreInfo(id) {
+    var infoToDelete = moreInfos.find(i => i.id == id);
+    var index = moreInfos.indexOf(infoToDelete);
+    moreInfos.splice(index, 1);
+    refreshMoreInfos();
+}
+
+
+// Infos select
+function refreshInfoSelect() {
+    let infosOptionHtml = '';
+    var type = $("#widgetsList-select").val();
+    var widget = widgetsList.widgets.find(i => i.type == type);
+    if (widget?.variables) {
+        widget.variables.forEach(v => {
+            infosOptionHtml += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)">
+        <a href="#">#${v.name}#</a></li>`;
+        });
+    }
+    $('input[cmdType="info"]').each((i, el) => {
+        infosOptionHtml += `<li info="${$("input[id=" + el.id + "]").attr('cmdid')}" onclick="infoSelected('${el.title}', this)">
+      <a href="#">${el.title}</a></li>`;
+    });
+    moreInfos.forEach(i => {
+        if (i.human) {
+            infosOptionHtml += `<li info="${i.id}" onclick="infoSelected('${i.human}', this)">
+      <a href="#">${i.human}</a></li>`;
+        }
+    });
+    $(".infos-select").html(infosOptionHtml);
+
+    refreshStrings();
+}
+
+function saveImgOption() {
+    imgCat.forEach(item => {
+        item.image = htmlToIcon($("#icon-div-" + item.index).children().first());
+        item.condition = $("#imglist-cond-" + item.index).val();
+    });
+}
+
+
+function deleteImgOption(id) {
+    saveImgOption();
+    var imgToDelete = imgCat.find(i => i.index == id);
+    var index = imgCat.indexOf(imgToDelete);
+    imgCat.splice(index, 1);
+    imgCat.forEach(item => {
+        if (item.index > imgToDelete.index) {
+            item.index = item.index - 1;
+        }
+    });
+    refreshImgListOption();
+}
+
+
+
+function addWidgetOption(choices) {
+    var widgets = choices.split(".");
+    getSimpleModal({ title: "Choisir un widget", fields: [{ type: "widget", choices: widgets, typeFilter: true }] }, function (result) {
+        var maxIndex = getMaxIndex(widgetsOption);
+        widgetsOption.push({ id: result.widgetId, index: maxIndex + 1, roomName: result.roomName });
+        refreshWidgetOption();
+    });
+}
+
+function deleteWidgetOption(id) {
+    var widgetToDelete = widgetsOption.find(i => i.id == id);
+    var index = widgetsOption.indexOf(widgetToDelete);
+    widgetsOption.forEach(item => {
+        if (item.index > widgetToDelete.index) {
+            item.index = item.index - 1;
+        }
+    });
+    widgetsOption.splice(index, 1);
+    refreshWidgetOption();
+}
+
+
+
+
+
+function loadSortable(elt) {
+
+    if (elt == 'imgList' || elt == 'all') {
+        $("#imgList-option").sortable({
+            axis: "y", cursor: "move", items: ".jcImgListMovable", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true,
+            start: function () { saveImgOption(); },
+            update: function (event, ui) {
+                $('#imgList-option > .jcImgListMovable').each((i, el) => {
+                    var imgId = $(el).data('id');
+                    var imgToMove = imgCat.find(i => i.index == parseInt(imgId));
+                    imgToMove.index = i;
+                }
+                );
+                refreshImgListOption();
+
+            }
+        });
+    }
+
+    if (elt == 'widgetList' || elt == 'all') {
+        $("#widget-option").sortable({
+            axis: "y", cursor: "move", items: ".jcWidgetListMovable", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true,
+            update: function (event, ui) {
+                $('#widget-option > .jcWidgetListMovable').each((i, el) => {
+                    var widgetId = $(el).data('id');
+                    var widgetToMove = widgetsOption.find(i => i.id == parseInt(widgetId));
+                    widgetToMove.index = i;
+                }
+                );
+                refreshWidgetOption();
+
+            }
+        });
+    }
+
+    if (elt == 'cmdList' || elt == 'all') {
+        $("#cmdList-option").sortable({
+            axis: "y", cursor: "move", items: ".jcCmdList", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true,
+            start: function () { saveCmdList(); },
+            update: function (event, ui) {
+                $('#cmdList-option > .jcCmdList').each((i, el) => {
+                    var cmdId = $(el).data('id');
+                    var cmdIndex = $(el).data('index');
+
+                    var cmdToMove = cmdCat.find(i => i.id == parseInt(cmdId) && i.index == cmdIndex);
+                    cmdToMove.index = i;
+                }
+                );
+                var opt = $("#cmdList-option").data('cmd-options');
+                refreshCmdListOption(JSON.stringify(opt));
+
+            }
+        });
+    }
+
+    if (elt == 'moreInfos' || elt == 'all') {
+        $("#moreInfos-div").sortable({
+            axis: "y", cursor: "move", items: ".moreInfosItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true,
+            update: function (event, ui) {
+                moreInfos = [];
+                $('#moreInfos-div > .moreInfosItem').each((i, el) => {
+                    info = {};
+                    info.id = $(el).data('id');
+                    info.human = $(el).find("#" + info.id + "-input").val();
+                    info.name = $(el).find("#" + info.id + "-name-input").val();
+                    info.unit = $(el).find("#" + info.id + "-unit-input").val();
+                    info.index = i;
+                    moreInfos.push(info);
+                }
+                );
+                refreshMoreInfos();
+            }
+        });
+
+    }
+
+}
+
+
+
+
+
+
+
+/**
+ * *************
+ * SAVING WIDGET
+ * *************
+ */
+
+$(".widgetMenu .saveWidget").click(function () {
+    $('#widget-alert').hideAlert();
+
+    try {
+
+        var result = {};
+        var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+        let infoCmd = moreInfos.slice();
+
+        $('input[cmdType="info"]').each((i, el) => {
+            infoCmd.push({ id: $("input[id=" + el.id + "]").attr('cmdid'), human: el.title });
+        });
+
+        widgetConfig.options.forEach(option => {
+            if (option.category == "cmd") {
+                if ($("#" + option.id + "-input").attr('cmdId') == '' & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+
+                if ($("#" + option.id + "-input").attr('cmdId') != '') {
+                    result[option.id] = {};
+                    result[option.id].id = $("#" + option.id + "-input").attr('cmdId');
+                    result[option.id].type = $("#" + option.id + "-input").attr('cmdType');
+                    result[option.id].subType = $("#" + option.id + "-input").attr('cmdSubType');
+                    result[option.id].minValue = $("#" + option.id + "-minInput").val() != '' ? $("#" + option.id + "-minInput").val() : undefined;
+                    result[option.id].maxValue = $("#" + option.id + "-maxInput").val() != '' ? $("#" + option.id + "-maxInput").val() : undefined;
+                    result[option.id].step = $("#" + option.id + "-stepInput").val() != '' ? $("#" + option.id + "-stepInput").val() : undefined;
+                    result[option.id].unit = $("#" + option.id + "-unitInput").val() != '' ? $("#" + option.id + "-unitInput").val() : undefined;
+                    result[option.id].invert = $("#invert-" + option.id).is(':checked') || undefined;
+                    result[option.id].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
+                    result[option.id].secure = $("#secure-" + option.id).is(':checked') || undefined;
+                    result[option.id].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
+                    Object.keys(result[option.id]).forEach(key => result[option.id][key] === undefined ? delete result[option.id][key] : {});
+                }
+                else {
+                    result[option.id] = undefined;
+                }
+            }
+            else if (option.category == "scenario") {
+
+                if ($("#" + option.id + "-input").attr('scId') == '' & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+
+                if ($("#" + option.id + "-input").attr('scId') != '') {
+                    result[option.id] = $("#" + option.id + "-input").attr('scId');
+
+                    result['options'] = {};
+                    result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
+                    result['options']['action'] = 'start';
+                    if ($('#tags-scenario-input').val() != '') {
+                        getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
+                            result['options']['tags'] = data;
+                        });
+                    }
+                    result['options'].confirm = $("#confirm-" + option.id).is(':checked') || undefined;
+                    result['options'].secure = $("#secure-" + option.id).is(':checked') || undefined;
+                    result['options'].pwd = $("#pwd-" + option.id).is(':checked') || undefined;
+
+                }
+            }
+            else if (option.category == "string") {
+                if ($("#" + option.id + "-input").val() == '' & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+                result[option.id] = parseString($("#" + option.id + "-input").val(), infoCmd);
+            }
+            else if (option.category == "binary") {
+                result[option.id] = $("#" + option.id + "-input").is(':checked');
+            }
+            else if (option.category == "color") {
+                result[option.id] = $("#" + option.id + "-input").val();
+            }
+            else if (option.category == "stringList") {
+                if ($("#" + option.id + "-input").val() == 'none' & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+
+                if ($("#" + option.id + "-input").val() != 'none') {
+                    if (option.id == 'subtitle') {
+                        result[option.id] = parseString($("#subtitle-input-value").val(), infoCmd);
+                    }
+                    else {
+                        result[option.id] = $("#" + option.id + "-input").val();
+                    }
+                }
+                else {
+                    result[option.id] = undefined;
+                }
+            }
+            else if (option.category == "widgets") {
+                if (widgetsOption.length == 0 & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+                result[option.id] = widgetsOption;
+            }
+            else if (option.category == "cmdList") {
+                if (cmdCat.length == 0 & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+
+                // ---- Start cmdCat.forEach
+                cmdCat.forEach(item => {
+                    if (option.options.hasImage | option.options.hasIcon) {
+                        item.image = htmlToIcon($('.jcCmdListOptions[data-id="icon-' + item.id + '"][data-index="' + item.index + '"]').children().first());
+                        if (item.image == {}) { delete item.image; }
+                    }
+                    if (option.options.type == 'action') {
+                        item['confirm'] = $('.jcCmdListOptions[data-id="confirm-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                        item['secure'] = $('.jcCmdListOptions[data-id="secure-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                        item['pwd'] = $('.jcCmdListOptions[data-id="pwd-' + item.id + '"][data-index="' + item.index + '"]').is(':checked') || undefined;
+                        item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
+
+                        if (item.subtype != undefined && item.subtype != 'other') {
+                            var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
+
+                            item['options'] = {};
+
+                            if (item.subtype == 'select') {
+                                item['options']['select'] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
+                            }
+                            else {
+
+                                var currentArray = optionsForSubtype[item.subtype];
+                                currentArray.forEach(key => {
+                                    var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
+                                    if (tmpData != '') {
+                                        getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
+                                            item['options'][_params.subtype] = result;
+                                        });
+                                    }
+                                    else {
+                                        item['options'][key] = '';
+                                    }
+                                });
+
+                            }
+
+                        }
+                    }
+                });
+                // ---- END cmdCat.forEach
+                result[option.id] = cmdCat;
+
+            }
+            else if (option.category == "ifImgs") {
+                if (imgCat.length == 0 & option.required) {
+                    throw 'La commande ' + option.name + ' est obligatoire';
+                }
+
+                imgCat.forEach(item => {
+                    item.image = htmlToIcon($("#icon-div-" + item.index).children().first());
+                    getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $("#imglist-cond-" + item.index).val() }, function (result, _params) {
+                        item.condition = result;
+                    });
+                });
+
+                result[option.id] = imgCat;
+            }
+            else if (option.category == "img") {
+                let icon = htmlToIcon($("#icon-div-" + option.id).children().first());
+                if (icon.source == undefined & option.required) {
+                    throw "L'image est obligatoire";
+                }
+                result[option.id] = icon.source != undefined ? icon : undefined;
+            }
+            else if (option.category == "choicesList") {
+                option.choices.forEach(v => {
+                    result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
+                });
+            }
+        });
+
+        // ----- END forEach ----
+
+        result.type = $("#widgetsList-select").val();
+        widgetType = $("#widgetsList-select").val();
+        result.blockDetail = $("#blockDetail-input").is(':checked');
+
+        widgetEnable = $('#enable-input').is(":checked");
+        result.enable = widgetEnable;
+
+        widgetRoom = $('#room-input :selected').val();
+        widgetRoomName = $('#room-input :selected').text();
+        if (widgetRoom != 'none') {
+            if (widgetRoom == 'global') {
+                result.room = 'global';
+            }
+            else {
+                result.room = parseInt(widgetRoom);
+            }
+        }
+
+
+        if (moreInfos.length > 0) {
+            result.moreInfos = [];
+            moreInfos.forEach(info => {
+                info.name = $("#" + info.id + "-name-input").val();
+                info.unit = $("#" + info.id + "-unit-input").val();
+                delete info.human;
+                result.moreInfos.push(info);
+            });
+        }
+        toSave = JSON.stringify(result)
+
+        widgetImg = $("#widgetImg").attr("src");
+
+        widgetName = $("#name-input").val();
+        widgetId = $("#widgetOptions").attr('widget-id');
+
+
+        if (toSave !== null) {
+            $.ajax({
+                type: "POST",
+                url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                data: {
+                    action: "saveWidgetConfig",
+                    eqId: widgetId,
+                    widgetJC: toSave,
+                    imgPath: widgetImg
+                },
+                dataType: 'json',
+                error: function (error) {
+                    $('#div_alert').showAlert({ message: error.message, level: 'danger' });
+                },
+                success: function (data) {
+                    if (data.state != 'ok') {
+                        $('#div_alert').showAlert({
+                            message: data.result,
+                            level: 'danger'
+                        });
+                    }
+                    else {
+                        if ($('.widgetMenu .saveWidget').attr('exit-attr') == 'true') {
+                            var vars = getUrlVars()
+                            var url = 'index.php?'
+                            delete vars['id']
+                            delete vars['saveSuccessFull']
+                            delete vars['removeSuccessFull']
+                            vars['saveSuccessFull'] = "1";
+
+                            url = getCustomParamUrl(url, vars);
+                            modifyWithoutSave = false
+                            loadPage(url)
+                        }
+                        else {
+
+                            if ($("#selWidgetDetail").length > 0) {
+                                refreshWidgetDetails();
+                                refreshWidgetsContent();
+
+                                //if it's a new widget
+                                if (widgetId == undefined || widgetId == '') {
+
+                                    if (widgetRoomName != '') widgetRoomName = ' (' + widgetRoomName.replace(/(?:^[\s\u00a0]+)|(?:[\s\u00a0]+$)/g, '') + ')';
+                                    widgetId = parseInt(data.result.id);
+                                    $('#selWidgetDetail')
+                                        .append($("<option></option>")
+                                            .attr("value", widgetId)
+                                            .attr("data-widget-id", widgetId)
+                                            .attr("data-type", widgetType)
+                                            .text(widgetName + widgetRoomName));
+                                }
+                                else {  //if it's just an update
+                                    $("#selWidgetDetail option[data-widget-id=" + widgetId + "]").text(widgetName);
+                                }
+                            }
+                            $("#widgetModal").dialog('destroy').remove();
+                        }
+                    }
+                }
+            })
+
+        }
+    } catch (error) {
+        $('#widget-alert').showAlert({ message: error, level: 'danger' });
+        console.error(error);
+    }
+
+});
+
+//------------------------ END SAVE WIDGET
+
+$(".widgetMenu .removeWidget").click(function () {
+    var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
+
+    var allName = $('#widgetExistInEquipement').text();
+
+    var msg = '';
+    if (allName.length == 0 || allName == '' || allName == undefined) {
+        msg = '(Ce widget n\'est utilisé dans aucun équipement)';
+    }
+    else {
+        var count = (allName.match(/,/g) || []).length;
+        var eq = (count == 0) ? 'de l\'équipement' : 'des équipements';
+        msg = warning + '  La suppression retirera ce widget ' + eq + ' suivant : ' + allName + '  ' + warning;
+    }
+
+    getSimpleModal({
+        title: "Confirmation", fields: [{
+            type: "string",
+            value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
+        }]
+    }, function (result) {
+        $('#widget-alert').hideAlert();
+        widgetId = $("#widgetOptions").attr('widget-id');
+
+        $.ajax({
+            type: "POST",
+            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+            data: {
+                action: "removeWidgetConfig",
+                eqId: widgetId
+            },
+            dataType: 'json',
+            error: function (error) {
+                $('#div_alert').showAlert({ message: error.message, level: 'danger' });
+            },
+            success: function (data) {
+                if (data.state != 'ok') {
+                    $('#div_alert').showAlert({
+                        message: data.result,
+                        level: 'danger'
+                    });
+                }
+                else {
+                    var vars = getUrlVars()
+                    var url = 'index.php?'
+                    for (var i in vars) {
+                        if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
+                            url += i + '=' + vars[i].replace('#', '') + '&'
+                        }
+                    }
+                    modifyWithoutSave = false
+                    url += '&saveSuccessFull=1'
+                    loadPage(url)
+                }
+            }
+        })
+    });
+
+});
+
+
+$(".widgetMenu .hideWidget").click(function () {
+    $("#widgetModal").dialog('destroy').remove();
+});
+
+$(".widgetMenu .duplicateWidget").click(function () {
+
+    $('#widget-alert').hideAlert();
+
+    $('#widgetOptions').attr('widget-id', '');
+
+    $(this).hide()
+    $('.widgetMenu .removeWidget').hide()
+    showAutoFillWidgetCmds();
+    $('#widget-alert').showAlert({ message: 'Vous êtes sur le widget dupliqué, réalisez (ou non) vos modifications. Dans tous les cas, pensez à sauvegarder !', level: 'success' });
+    // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
+
+});
