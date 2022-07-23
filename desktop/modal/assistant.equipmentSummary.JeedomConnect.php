@@ -245,5 +245,6 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
 <?php include_file('desktop', 'equipementsummary.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'equipmentJC', 'css', 'JeedomConnect'); ?>
 <?php include_file('desktop/common', 'utils', 'js'); ?>

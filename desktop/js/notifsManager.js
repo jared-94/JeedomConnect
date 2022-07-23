@@ -200,38 +200,6 @@ function deleteChannelTab(channelId) {
 
 /* NOTIFICATIONS */
 
-
-/*
-function upNotif(notifId) {
-	var notifToMove = notifData.notifs.find(i => i.id == notifId);
-	  var notifIndex = notifToMove.index;
-  if (notifIndex == 0) {
-		console.log("can't move this notif");
-		return;
-	}
-	var otherElmt = notifData.notifs.find(e => e.index == notifIndex - 1);
-	notifToMove.index = notifIndex - 1;
-	otherElmt.index = notifIndex;
-
-	refreshNotifsTabData();
-}
-
-function downNotif(notifId) {
-	var notifToMove = notifData.notifs.find(i => i.id == notifId);
-	  var notifIndex = notifToMove.index;
-
-	if (notifIndex == getMaxIndex(notifData.notifs)) {
-		console.log("can't move this notif");
-		return;
-	}
-	var otherElmt = notifData.notifs.find(e => e.index == notifIndex + 1);
-	notifToMove.index = notifIndex + 1;
-  otherElmt.index = notifIndex;
-
-	refreshNotifsTabData();
-}
-*/
-
 function deleteNotif(notifId) {
 	getSimpleModal({ title: "Confirmation", fields: [{ type: "string", value: "Voulez-vous supprimer cette notification ?" }] }, function (result) {
 		var notifToDelete = notifData.notifs.find(i => i.id == notifId);

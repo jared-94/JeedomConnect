@@ -1,5 +1,5 @@
 body {
-    margin-top:40px;
+  margin-top: 40px;
 }
 
 .tab {
@@ -38,20 +38,20 @@ body {
   /* margin-left:270px; */
   padding: 0px 12px;
   width: 1000px;
-  height:auto;
+  height: auto;
 }
 
-.rightContent{
-	float: left;
-	width: 30%;
-	margin-left:auto;
-	margin-right: auto;
-	margin-top:30px;
+.rightContent {
+  float: left;
+  width: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
 }
 
-.leftContent{
-	float: left;
-	width:70%;
+.leftContent {
+  float: left;
+  width: 70%;
 }
 
 
@@ -60,24 +60,25 @@ body {
   list-style-type: none;
   padding-left: 0;
   margin: 0;
-  width:400px;
+  width: 400px;
 }
 
 .tabsUL li {
-	display: flex;
-	align-items:center;
+  display: flex;
+  align-items: center;
 }
 
 .tabsUL a {
   border: 1px solid #ddd;
-  margin-top: -1px; /* Prevent double borders */
+  margin-top: -1px;
+  /* Prevent double borders */
   background-color: var(--form-bg-color);
   padding: 12px;
   text-decoration: none;
   font-size: 18px;
   color: black;
   display: block;
-  width:200px;
+  width: 200px;
 }
 
 .tabsSubUL {
@@ -85,24 +86,25 @@ body {
   list-style-type: none;
   padding-left: 30;
   margin: 0;
-  width:500px;
+  width: 500px;
 }
 
 .tabsSubUL li {
-	display: flex;
-	align-items:center;
+  display: flex;
+  align-items: center;
 }
 
 .tabsSubUL a {
   border: 1px solid #ddd;
-  margin-top: -1px; /* Prevent double borders */
+  margin-top: -1px;
+  /* Prevent double borders */
   background-color: var(--form-bg-color);
   padding: 12px;
   text-decoration: none;
   font-size: 18px;
   color: black;
   display: block;
-  width:320px;
+  width: 320px;
 }
 
 .tabsLargeUL {
@@ -110,27 +112,42 @@ body {
   list-style-type: none;
   padding-left: 0;
   margin: 0;
-  width:500px;
+  width: 500px;
 }
 
 .tabsLargeUL li {
-	display: flex;
-	align-items:center;
+  display: flex;
+  align-items: center;
 }
 
 .tabsLargeUL a {
   border: 1px solid #ddd;
-  margin-top: -1px; /* Prevent double borders */
+  margin-top: -1px;
+  /* Prevent double borders */
   background-color: var(--form-bg-color);
   padding: 12px;
   text-decoration: none;
   font-size: 18px;
   color: black;
   display: block;
-  width:350px;
+  width: 350px;
 }
 
 .imgList {
-	width:30px;
-	margin-right:10px;
+  width: 30px;
+  margin-right: 10px;
+}
+
+.required:after {
+  content: " *";
+  color: red;
+}
+
+#widgetImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100px;
+  margin-bottom: 25px;
+  margin-top: 15px;
 }

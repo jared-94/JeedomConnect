@@ -128,7 +128,6 @@ foreach ($widgetTypeArray as $key => $value) {
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
-
 $infoPlugin = JeedomConnectUtils::getInstallDetails();
 
 $displayWarningConf = config::byKey('displayWarning', 'JeedomConnect');
@@ -276,14 +275,14 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 			<div class="pull-right">
 				<span style="margin-right:10px">{{Trie}}
-					<select id="widgetOrder" onchange="updateOrderWidget()" style="width:100px">
+					<select id="widgetOrder" class="updateOrderWidget" style="width:100px">
 						<?php
 						echo $optionsOrderBy;
 						?>
 					</select>
 				</span>
 				<span>{{Filtre}}
-					<select id="widgetTypeSelect" style="width:auto">
+					<select id="widgetTypeSelect" class="JC" style="width:auto">
 						<?php
 						echo $typeSelection;
 						?>
@@ -395,7 +394,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 
@@ -406,7 +405,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 									</sup>
 								</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 
@@ -635,7 +634,9 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'widget.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'eqLogic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js'); ?>
