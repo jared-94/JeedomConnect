@@ -81,6 +81,7 @@ class apiHelper {
           break;
 
         case 'SC_EXEC':
+          $param['options']['tags'] = ($param['options']['tags'] ?? '') . ' eqId=' . $eqLogic->getId();
           $result = self::execSc($param['id'], $param['options']);
           return $result;
           break;
@@ -2726,6 +2727,10 @@ class apiHelper {
         $param['force_reply_cmd'] = 1;
       }
     }
+    if (isset($options['user_login'])) {
+      $param['profile'] = $options['user_login'];
+    }
+    $param['plugin'] = 'JeedomConnect';
     $result = interactQuery::tryToReply($query, $param);
     return  array(
       'type' => 'QUERY_ANSWER',
