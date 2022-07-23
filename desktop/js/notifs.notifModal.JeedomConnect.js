@@ -18,8 +18,10 @@ function setNotifModalData(options) {
         var channelsHtml = `<li><div class='form-group'>
     <label class='col-xs-3 required'>Canal</label>
     <div class='col-xs-9'><div class='input-group'><select style="width:150px;" id="mod-channel-input" value=''>`;
-        notifData.channels.forEach(item => {
-            channelsHtml += `<option value="${item.id}">${item.name}</option>`;
+        $('ul#channelsUL li').each(function (i, obj) {
+            var itemName = $(this).find('a').text();
+            var itemId = $(this).find('a').data('id');
+            channelsHtml += `<option value="${itemId}">${itemName}</option>`;
         });
         channelsHtml += `</select></div></div></div></li>`;
         items.push(channelsHtml);
