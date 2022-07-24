@@ -413,7 +413,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 									<?php
 									if ($hasDNSConnexion) {
 									?>
-										<br /><span class="description">Il semblerait que vous utilisez les DNS Jeedom.<br />Dans ce cas, pour le bon fonctionnement de l'application, l'activation du polling est recommandée/nécessaire.</span>
+										<br /><span class="description">L'utilisation des DNS Jeedom semble apparaître dans votre configuration.<br />Si c'est bien le cas, pour le bon fonctionnement de l'application, l'activation du polling est recommandée/nécessaire.</span>
 									<?php
 									}
 									?>
