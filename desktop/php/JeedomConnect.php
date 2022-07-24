@@ -135,6 +135,10 @@ $warningAlreadyDisplayedToday = strpos($displayWarningConf, strval(date('Y-m-d')
 $countAlreadyPass = count(explode(';', $displayWarningConf));
 $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
+$hasDNSConnexion = JeedomConnectUtils::hasDNSConnexion();
+$pollingDefault = $hasDNSConnexion ? 'checked' : '';
+$wsDisable = $hasDNSConnexion ? 'disabled' : '';
+
 ?>
 
 <link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
@@ -394,7 +398,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}" <?= $wsDisable ?>>
 								</div>
 							</div>
 
@@ -405,7 +409,14 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 									</sup>
 								</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}" <?= $pollingDefault ?>>
+									<?php
+									if ($hasDNSConnexion) {
+									?>
+										<br /><span class="description">Il semblerait que vous utilisez les DNS Jeedom.<br />Dans ce cas, pour le bon fonctionnement de l'application, l'activation du polling est recommandée/nécessaire.</span>
+									<?php
+									}
+									?>
 								</div>
 							</div>
 
