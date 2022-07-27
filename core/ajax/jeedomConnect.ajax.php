@@ -827,7 +827,7 @@ try {
 				'lat' => $data[0],
 				'lon' => $data[1],
 				'lastSeen' => $cmd->getCollectDate(),
-				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/droid.png')
+				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png')
 			);
 		}
 		ajax::success($result);

@@ -523,7 +523,11 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 
 							<legend><i class="fas fa-map-marked-alt"></i>{{Informations Position}}</legend>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Ajouter données à la position}}</label>
+								<label class="col-sm-3 control-label">{{Ajouter données à la position}}
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Consulter la documentation pour connaitre le détail des données ajoutées."></i>
+									</sup>
+								</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
 								</div>
@@ -535,13 +539,14 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Personnaliser l'icone}}</label>
+								<label class="col-sm-3 control-label">{{Personnaliser le repère}}</label>
 								<div class="col-sm-7">
 									<a class="btn btn-success roundedRight imagePicker"><i class="fas fa-check-square">
 										</i> Choisir </a>
-									<a data-id="icon-div" class="removeImage"></a>
+									<a data-id="icon-div" class="removeImage">
+										<img class="customImg" src='' style="width:25px;" />
 									</a>
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="customImg" type="text" placeholder="{{}}" value="">
+									<input class="eqLogicAttr form-control removeImage" data-l1key="configuration" data-l2key="customImg" type="text" placeholder="{{}}" value="" style="display:none">
 								</div>
 							</div>
 
