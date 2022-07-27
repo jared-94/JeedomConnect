@@ -695,6 +695,18 @@ $('.eqLogicAction[data-action=addWidgetBulk]').off('click').on('click', function
   $('#widgetModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.widgetBulkModal.JeedomConnect').dialog('open');
 })
 
+$('.eqLogicAction[data-action=showMaps]').off('click').on('click', function () {
+  $("#widgetModal").dialog('destroy').remove();
+  $('body').append('<div id="mapsModal"></div>');
+  $('#mapsModal').dialog({
+    title: "{{Localisation}}",
+    width: 700,
+    height: 750, //0.8 * $(window).height(),
+    modal: true,
+    closeText: ''
+  });
+  $('#mapsModal').load('index.php?v=d&plugin=JeedomConnect&modal=position.JeedomConnect').dialog('open');
+})
 
 $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function () {
   // $('.pluginInfo').toggle("slide", { direction: "right" }, 1000);

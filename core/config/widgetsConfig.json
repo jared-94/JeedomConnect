@@ -4439,7 +4439,7 @@
 		{
 			"type": "group-geoloc",
 			"name": "Groupe de géolocalisation",
-			"img": "groupLight.png",
+			"img": "groupGeo.png",
 			"description": "Permet d'afficher plusieurs géolocalisation sur une seule et même carte",
 			"variables": [
 				{

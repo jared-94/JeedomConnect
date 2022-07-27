@@ -1,34 +1,14 @@
 $("#notifsUL").sortable({
-	axis: "y", cursor: "move", items: ".notifItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true,
-	update: function (event, ui) {
-		$('#notifsUL > .notifItem').each((i, el) => {
-			var notifId = $(el).data('id');
-			var notifToMove = notifData.notifs.find(i => i.id == notifId);
-			notifToMove.index = i;
-		}
-		);
-	}
+	axis: "y", cursor: "move", items: ".notifItem", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true
 });
 
+$('.tablinks').on('click', function () {
+	$(".tabcontent").css('display', 'none');
 
-function openTab(evt, tabName) {
-	if (tabName == "channelsTab") {
-		//refreshBottomTabData();
-	} else if (tabName == "notifsTab") {
-		//refreshWidgetData();
-	}
-	var i, tabcontent, tablinks;
-	tabcontent = document.getElementsByClassName("tabcontent");
-	for (i = 0; i < tabcontent.length; i++) {
-		tabcontent[i].style.display = "none";
-	}
-	tablinks = document.getElementsByClassName("tablinks");
-	for (i = 0; i < tablinks.length; i++) {
-		tablinks[i].className = tablinks[i].className.replace(" active", "");
-	}
-	document.getElementById(tabName).style.display = "block";
-	evt.currentTarget.className += " active";
-}
+	var toShow = $(this).data('link');
+	$("#" + toShow).css('display', 'block');
+});
+
 
 function getIconModal(_options, _callback) {
 	$("#mod_selectIcon").dialog('destroy').remove();
@@ -264,3 +244,211 @@ function getNotifModal(_options, _callback) {
 	});
 	$('#notifModal').dialog('open');
 };
+
+
+
+/////////////////  FROM NOTIF MANAGER
+
+var notifData;
+
+$.post({
+	url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+	data: {
+		'action': 'getNotifs',
+		'apiKey': apiKey
+	},
+	cache: false,
+	success: function (config) {
+		notifData = json_decode(config).result;
+		idCounter = notifData.idCounter
+		initData();
+	}
+});
+
+
+
+function initData() {
+	$('ul#channelsUL').empty
+	$('ul#notifsUL').empty
+	$(".tablinks:first").click()
+	refreshChannelTabData();
+	refreshNotifsTabData();
+}
+
+function refreshChannelTabData() {
+	var items = [];
+	$.each(notifData.channels, function (key, val) {
+		itemHtml = createElementNotifChannel({ id: val.id, name: val.name }, 'channel', false);
+		items.push(itemHtml);
+	});
+	$("#channelsUL").html(items.join(""));
+}
+
+function refreshNotifsTabData() {
+	notifs = notifData.notifs.sort(function (s, t) {
+		return s.index - t.index;
+	});
+	var items = [];
+	$.each(notifs, function (key, val) {
+		itemHtml = createElementNotifChannel(val);
+		items.push(itemHtml);
+	});
+	$("#notifsUL").html(items.join(""));
+}
+
+
+function createElementNotifChannel(item, type = 'notif', movable = true) {
+
+	var editClass = (type == 'notif') ? 'editNotif' : 'editChannel';
+
+	var isDefault = (item.id == 'default' || item.id == 'defaultNotif')
+
+	var itemHtml = `<li class="notifItem" ><a class="${editClass}" data-id="${item.id}" data-object='${JSON.stringify(item)}'>${item.name}</a>`;
+	if (movable && !isDefault) {
+		itemHtml += '<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;"></i>';
+	}
+	if (!isDefault) {
+		itemHtml += '<i class="mdi mdi-minus-circle deleteItem" style="color:rgb(185, 58, 62);font-size:24px;margin-left:5px;"></i>';
+	}
+	itemHtml += '</li>';
+
+	return itemHtml;
+}
+
+
+function incrementIdCounter() {
+	idCounter += 1;
+}
+
+function save() {
+
+	// saving channel
+	channels = []
+	$('ul#channelsUL li').each(function (i, obj) {
+		item = $(this).find('a').data('object');
+		channels.push(item);
+	});
+
+	// saving notifications
+	notifications = []
+	$('ul#notifsUL li').each(function (i, obj) {
+		item = $(this).find('a').data('object');
+		item.index = i
+		notifications.push(item);
+
+	});
+
+	var notifDataFinal = {}
+	notifDataFinal.idCounter = idCounter
+	notifDataFinal.channels = channels
+	notifDataFinal.notifs = notifications
+	console.log('notifDataFinal', notifDataFinal)
+
+
+	$.post({
+		url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+		data: {
+			'action': 'saveNotifs',
+			'config': JSON.stringify(notifDataFinal),
+			'apiKey': apiKey
+		},
+		success: function () {
+			$('#jc-assistant').showAlert({ message: 'Configuration des notifications sauvegardée', level: 'success' });
+		},
+		error: function (error) {
+			console.log(error);
+			$('#jc-assistant').showAlert({ message: 'Erreur lors de la sauvegarde', level: 'danger' });
+		}
+	});
+
+}
+
+function resetConfig() {
+	getSimpleModal({ title: "Confirmation", fields: [{ type: "string", value: "La configuration va être remise à zéro. Voulez-vous continuer ?" }] }, function (result) {
+		idCounter = 0;
+		notifData = {
+			'idCounter': idCounter,
+			'channels': [
+				{
+					'id': 'default',
+					'name': 'Défaut'
+				}
+			],
+			'notifs': [
+				{
+					'id': 'defaultNotif',
+					'name': 'Notification',
+					'channel': 'default',
+					'index': 0
+				}
+			]
+		};
+		initData();
+	});
+}
+
+/* CHANNELS TAB FUNCTIONS */
+
+function addChannelTabModal() {
+	getSimpleModal({ title: "Ajouter un canal", fields: [{ type: "name" }] }, function (result) {
+		var newName = result.name;
+		if (newName == '') return;
+
+		var newId = 'channel-' + idCounter
+		var newElt = createElementNotifChannel({ id: newId, name: newName }, 'channel', false);
+		$('#channelsUL').append(newElt);
+		$('#channelsUL editChannel[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
+
+		incrementIdCounter();
+	});
+}
+
+$('body').off('click', '.editChannel').on('click', '.editChannel', function () {
+	//no change on the default channel
+	if ($(this).data('id') == 'default') return;
+
+	$(this).addClass('notifToUpdate');
+
+	getSimpleModal({ title: "Editer un canal", fields: [{ type: "name", value: $(this).text() }] }, function (result) {
+		$('.notifToUpdate').text(result.name);
+		$('.notifToUpdate').attr('data-object', JSON.stringify(result));
+		$('.notifToUpdate').removeClass('notifToUpdate');
+	});
+});
+
+/* Remove channel or notif item */
+
+$('body').off('click', '.deleteItem').on('click', '.deleteItem', function () {
+	$(this).parents('li').remove();
+});
+
+
+/* NOTIFICATIONS */
+
+function addNotifModal() {
+	getNotifModal({ title: "Ajouter une notification" }, function (result) {
+		var newName = result.name;
+		if (newName == '') return;
+
+		var newId = 'notif-' + idCounter
+		var newElt = createElementNotifChannel({ id: newId, name: newName });
+		$('#notifsUL').append(newElt);
+
+		incrementIdCounter();
+
+		$('#notifsUL editNotif[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
+	});
+}
+
+$('body').off('click', '.editNotif').on('click', '.editNotif', function () {
+
+	var notifToEdit = $(this).data('object');
+	$(this).addClass('notifToUpdate');
+
+	getNotifModal({ title: "Editer une notification", notif: notifToEdit }, function (result) {
+		$('.notifToUpdate').text(result.name);
+		$('.notifToUpdate').attr('data-object', JSON.stringify(result));
+		$('.notifToUpdate').removeClass('notifToUpdate');
+
+	});
+})

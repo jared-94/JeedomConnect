@@ -281,3 +281,14 @@ $("#removeDevice").click(function () {
 $('.eqLogicAttr[data-l1key=name]').change(function () {
     $('.eqNameQrCode').text($('.eqLogicAttr[data-l1key=name]').val());
 })
+
+$("body").on('click', '.imagePicker', function () {
+    var newElt = $(this).nextAll("a[data-id^='icon-']:first");
+
+    getIconModal({ title: "Choisir une icône ou une image", withIcon: "0", withImg: "1", icon: htmlToIcon(newElt.children().first()), elt: newElt }, (result, _params) => {
+
+        $(_params.elt).html(iconToHtml(result));
+        var imgPath = $(_params.elt).find('img').attr('src');
+        $(this).nextAll(".eqLogicAttr[data-l1key=configuration][data-l2key=customImg]:first").value(imgPath);
+    });
+});
