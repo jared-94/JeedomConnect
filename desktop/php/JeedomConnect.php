@@ -192,11 +192,19 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 						<span style="color:var(--txt-color)">{{Config types génériques}}</span>
 					</div>
 					<!-- End Generic Types -->
+
+					<div class="cursor eqLogicAction " data-action="showMaps" style="color:rgb(27,161,242);">
+						<i class="fas fa-map-marked-alt"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Maps}}</span>
+					</div>
+
 					<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 						<i class="fas fa-wrench"></i>
 						<br>
 						<span>{{Configuration}}</span>
 					</div>
+
 					<?php if ($hasErrorPage) { ?>
 						<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
 							<i class="fas fa-exclamation-circle"></i>
@@ -506,13 +514,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Ajouter données à la position}}</label>
-								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
-								</div>
-							</div>
-
-							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Masquer la batterie sur page Equipement Jeedom}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="hideBattery" type="checkbox">
@@ -520,16 +521,30 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							</div>
 
 
-							<legend><i class="fa fa-bug"></i> {{Partager le fichier de configuration}}</legend>
+							<legend><i class="fas fa-map-marked-alt"></i>{{Informations Position}}</legend>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
-								<div class="col-sm-7 input-group" style="display:inline-flex;">
-									<span class="input-group-btn">
-										<a class="btn btn-default" id="exportAll-btn"><i class="fa fa-file-export"></i> {{Partager}}</a>
-										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
-									</span>
+								<label class="col-sm-3 control-label">{{Ajouter données à la position}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Afficher la position sur la carte globale}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="displayPosition" type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Personnaliser l'icone}}</label>
+								<div class="col-sm-7">
+									<a class="btn btn-success roundedRight imagePicker"><i class="fas fa-check-square">
+										</i> Choisir </a>
+									<a data-id="icon-div" class="removeImage"></a>
+									</a>
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="customImg" type="text" placeholder="{{}}" value="">
+								</div>
+							</div>
+
 
 						</div>
 
@@ -581,6 +596,17 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 											<li>La connexion websocket de cet équipement</li>
 										</ul>
 									</div>
+								</div>
+							</div>
+
+							<legend><i class="fa fa-bug"></i> {{Partager le fichier de configuration}}</legend>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
+								<div class="col-sm-7 input-group" style="display:inline-flex;">
+									<span class="input-group-btn">
+										<a class="btn btn-default" id="exportAll-btn"><i class="fa fa-file-export"></i> {{Partager}}</a>
+										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
+									</span>
 								</div>
 							</div>
 						</div>

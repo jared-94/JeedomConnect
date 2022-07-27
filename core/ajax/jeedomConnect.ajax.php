@@ -804,6 +804,34 @@ try {
 	}
 
 
+	if (init('action') == 'getAllPositions') {
+		$result = array();
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			if ($eqLogic->getConfiguration('displayPosition', 0) == 0) continue;
+
+			/** @var cmd $cmd */
+			$cmd = $eqLogic->getCmd(null, 'position');
+			if (!is_object($cmd)) continue;
+			JCLog::debug("position cmd/id => " . $cmd->getId());
+
+			/** @var string $position */
+			$position = $cmd->execCmd();
+			if ($position == "") continue;
+
+			$data = explode(',', $position);
+			if (count($data) < 2) continue;
+			$result[] = array(
+				'name' => $eqLogic->getName(),
+				'lat' => $data[0],
+				'lon' => $data[1],
+				'lastSeen' => $cmd->getCollectDate(),
+				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/droid.png')
+			);
+		}
+		ajax::success($result);
+	}
+
 	if (init('action') == 'regenerateApiKey') {
 		$id = init('eqId');
 		$currentApiKey = init('apiKey');
