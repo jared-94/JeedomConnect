@@ -435,6 +435,7 @@ try {
 			$eqLogic->setConfiguration('timelineEnabled', $eqData['timelineEnabled']);
 			$eqLogic->setConfiguration('webviewEnabled', $eqData['webviewEnabled']);
 			$eqLogic->setConfiguration('addAltitude', $eqData['addAltitude']);
+			$eqLogic->setConfiguration('displayPosition', $eqData['displayPosition']);
 			$eqLogic->setConfiguration('hideBattery', $eqData['hideBattery']);
 
 			$eqLogic->save();
