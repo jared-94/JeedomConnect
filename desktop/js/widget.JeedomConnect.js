@@ -416,7 +416,7 @@ function refreshAddWidgets() {
          </div></div></li>`;
         } else if (option.category == "stringList") {
             var classSub = (option.id == "subtitle") ? "subtitleSelected" : "";
-            curOption += '<div class="input-group"><select style="width:340px;" id="${option.id}-input" class="' + classSub + '">';
+            curOption += '<div class="input-group"><select style="width:340px;" id="' + option.id + '-input" class="' + classSub + '">';
             if (!required) {
                 curOption += `<option value="none">Aucun</option>`;
             }
