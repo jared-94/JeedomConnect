@@ -71,7 +71,7 @@ function setImgParams() {
 }
 
 //searching
-$('#in_searchIconSelector').on('keyup', function () {
+$('body').on('keyup', '#in_searchIconSelector', function () {
 
     var search = $(this).value()
     if (search.length == 1) {
@@ -144,8 +144,8 @@ $('#mod_selectIcon ul li a').click(function () {
 
 $(function () {
     var buttonSet = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('.ui-dialog-buttonpane')
-    buttonSet.find('#mySearch').remove()
     var mySearch = $('.ui-dialog[aria-describedby="mod_selectIcon"]').find('#mySearch')
+    buttonSet.find('#mySearch').remove()
     buttonSet.append(mySearch)
     if (selectedIcon.source == 0) {
         $('#mod_selectIcon ul li a').first().click();
