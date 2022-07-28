@@ -84,7 +84,7 @@ function getHtmlPopUp(name, lastSeen, latlon) {
             <table  style="font-size:14px">
                 <tr style="background-color:transparent!important"><td><b>Maj : </b></td><td style="padding-left:5px">${lastSeen}</td></tr>
                 <tr style="background-color:transparent!important"><td><b>Position : </b></td><td style="padding-left:5px"><a href="${urlNav}" target="_blank">${latlon}</a></td></tr>
-                <tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Le rejoindre !</a></td></tr>
+                <tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Y aller !</a></td></tr>
             </table>`;
 
     return html;
