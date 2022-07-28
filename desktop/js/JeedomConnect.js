@@ -826,7 +826,7 @@ $('#widgetTypeSelect').on('change', function () {
     $('.widgetDisplayCard').not("[data-widget_type=" + typeSelected + "]").hide();
   }
 
-  var widgetSearch = $("#in_searchWidget").val().trim();
+  var widgetSearch = $("#in_searchWidget").val()?.trim();
   if (widgetSearch != '') {
     $('#in_searchWidget').keyup()
   }
@@ -889,7 +889,7 @@ function getCustomParamUrl(url, vars) {
     url += '&jcOrderBy=' + widgetOrder
   }
 
-  var widgetSearch = $("#in_searchWidget").val().trim();
+  var widgetSearch = $("#in_searchWidget").val()?.trim();
   if (widgetSearch != '') {
     url += '&jcSearch=' + widgetSearch
   }
