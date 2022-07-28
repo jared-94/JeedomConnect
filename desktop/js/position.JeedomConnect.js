@@ -4,38 +4,35 @@
  * 
  */
 
-$.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-        'action': 'getAllPositions'
-    },
-    cache: false,
-    dataType: 'json',
-    async: false,
-    success: function (data) {
-        console.log(data)
-        if (data.state != 'ok') {
-            $('#div_alert').showAlert({
-                message: data.result,
-                level: 'danger'
-            });
-        }
-        else {
-            if (data.result.length == 0) {
+function getPositions() {
+    $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+            'action': 'getAllPositions'
+        },
+        cache: false,
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            // console.log(data)
+            if (data.state != 'ok') {
                 $('#div_alert').showAlert({
-                    message: "Aucun équipement autorisé",
-                    level: 'warning'
+                    message: data.result,
+                    level: 'danger'
                 });
             }
-            allJcPositions = data.result;
+            else {
+                if (data.result.length == 0) {
+                    $('#div_alert').showAlert({
+                        message: "Aucun équipement autorisé",
+                        level: 'warning'
+                    });
+                }
+                allJcPositions = data.result;
+            }
         }
-    }
-});
-
-
-var macarte = null;
-var markerClusters;
-var markers = []; // Nous initialisons la liste des marqueurs
+    });
+}
 
 // Fonction d'initialisation de la carte
 function initMap() {
@@ -55,7 +52,8 @@ function initMap() {
     // Nous parcourons la liste des villes
 
     allJcPositions.forEach(function (jcPosition) {
-        console.log('position: :', jcPosition);
+        addJcMapListener(jcPosition.cmdId)
+        // console.log('position: :', jcPosition);
         // Nous définissons l'icône à utiliser pour le marqueur, sa taille affichée (iconSize), sa position (iconAnchor) et le décalage de son ancrage (popupAnchor)
         var myIcon = L.icon({
             iconUrl: jcPosition.icon,
@@ -63,18 +61,13 @@ function initMap() {
             iconAnchor: [20, 40],
             popupAnchor: [-3, -40],
         });
-        var marker = L.marker([jcPosition.lat, jcPosition.lon], { icon: myIcon }); //.addTo(macarte);
+        var marker = L.marker([jcPosition.lat, jcPosition.lon], { icon: myIcon, title: jcPosition.name, customJcCmdId: jcPosition.cmdId }); //.addTo(macarte);
         var latlon = jcPosition.lat + ',' + jcPosition.lon;
-        var urlNav = "https://www.google.com/maps/search/?api=1&query=" + latlon;
 
-        var html = `<h4 class="text-center">${jcPosition.name}</h4>
-            <table  style="font-size:14px">
-                <tr style="background-color:transparent!important"><td><b>Maj : </b></td><td style="padding-left:5px">${jcPosition.lastSeen}</td></tr>
-                <tr style="background-color:transparent!important"><td><b>Position : </b></td><td style="padding-left:5px"><a href="${urlNav}" target="_blank">${latlon}</a></td></tr>
-                <tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Le rejoindre !</a></td></tr>
-            </table>`;
 
-        marker.bindPopup(html);
+        var popUpData = getHtmlPopUp(jcPosition.name, jcPosition.lastSeen, latlon);
+
+        marker.bindPopup(popUpData);
         markerClusters.addLayer(marker); // Nous ajoutons le marqueur aux groupes
         markers.push(marker); // Nous ajoutons le marqueur à la liste des marqueurs
     });
@@ -82,7 +75,20 @@ function initMap() {
 
 }
 
-initMap();
+
+
+function getHtmlPopUp(name, lastSeen, latlon) {
+    var urlNav = "https://www.google.com/maps/search/?api=1&query=" + latlon;
+
+    var html = `<h4 class="text-center">${name}</h4>
+            <table  style="font-size:14px">
+                <tr style="background-color:transparent!important"><td><b>Maj : </b></td><td style="padding-left:5px">${lastSeen}</td></tr>
+                <tr style="background-color:transparent!important"><td><b>Position : </b></td><td style="padding-left:5px"><a href="${urlNav}" target="_blank">${latlon}</a></td></tr>
+                <tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Le rejoindre !</a></td></tr>
+            </table>`;
+
+    return html;
+}
 
 
 $("body").on('change', '.zoomSelection', function () {
@@ -95,6 +101,15 @@ $("body").on('change', '.zoomSelection', function () {
         macarte.setView([lat, lon], 13);  //on recentre sur le point initial
     }
 });
+
+
+var macarte = null;
+var markerClusters;
+var markers = []; // Nous initialisons la liste des marqueurs
+getPositions();
+initMap();
+
+var popup = L.popup();
 
 
 macarte.on('click', function (e) {
@@ -117,4 +132,24 @@ macarte.on('click', function (e) {
         .openOn(macarte);
 });
 
-var popup = L.popup();
+function refreshJcPosition(cmdId, position) {
+
+    var marker = markers.find(i => i.options.customJcCmdId == cmdId);
+    if (marker) {
+        // console.log('marker item =>', marker);
+        data = position.split(',');
+        marker.setLatLng([data[0], data[1]]);
+    }
+}
+
+function addJcMapListener(id) {
+    var script = `<script>
+        jeedom.cmd.update['${id}'] = function (_options) {
+             refreshJcPosition(${id}, _options.value);
+            }
+            jeedom.cmd.update['${id}']({ value: "#state#" })
+    </script>`
+
+    $('#jcMapScript').append(script);
+
+}

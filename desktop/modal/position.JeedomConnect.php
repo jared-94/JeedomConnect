@@ -32,6 +32,10 @@ include_file('desktop', 'leaflet/leaflet.markercluster', 'js', 'JeedomConnect');
     <!-- Ici s'affichera la carte -->
 </div>
 
+<div id="jcMapScript">
+
+</div>
+
 <div class='form-group'>
     <label class='col-xs-3'>Zoom :</label>
     <div class='col-xs-9'>

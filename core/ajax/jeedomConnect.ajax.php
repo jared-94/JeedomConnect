@@ -824,6 +824,8 @@ try {
 			if (count($data) < 2) continue;
 			$result[] = array(
 				'name' => $eqLogic->getName(),
+				'eqId' => $eqLogic->getId(),
+				'cmdId' => $cmd->getId(),
 				'lat' => $data[0],
 				'lon' => $data[1],
 				'lastSeen' => $cmd->getCollectDate(),
