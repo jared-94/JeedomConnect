@@ -822,6 +822,8 @@ try {
 
 			$data = explode(',', $position);
 			if (count($data) < 2) continue;
+			$cmdDistance = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),  'distance');
+			$distance = is_object($cmdDistance) ? number_format($cmdDistance->execCmd(), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
 			$result[] = array(
 				'name' => $eqLogic->getName(),
 				'eqId' => $eqLogic->getId(),
@@ -830,7 +832,7 @@ try {
 				'lon' => $data[1],
 				'lastSeen' => $cmd->getCollectDate(),
 				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png'),
-				'distance' => number_format(JeedomConnectUtils::getDistance($data[0], $data[1]), 0, ',', ' ') . ' m'
+				'distance' => $distance
 			);
 		}
 		ajax::success($result);
