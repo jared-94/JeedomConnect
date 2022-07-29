@@ -963,7 +963,7 @@ class JeedomConnect extends eqLogic {
 		JCLog::debug("[setGeofencesByCoordinates] " . $lat . ' -- ' . $lgt);
 		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
 			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false) {
-				$dist = $this->getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
+				$dist = JeedomConnectUtils::getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
 				if ($dist < $cmd->getConfiguration('radius')) {
 					if ($cmd->execCmd() != 1) {
 						JCLog::debug("Set 1 for geofence " . $cmd->getName());
@@ -977,15 +977,6 @@ class JeedomConnect extends eqLogic {
 				}
 			}
 		}
-	}
-
-	public function getDistance($lat1, $lon1, $lat2, $lon2) {
-		$theta = $lon1 - $lon2;
-		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-		$dist = acos($dist);
-		$dist = rad2deg($dist);
-		$dist = ($dist * 60 * 1.1515) * 1609.344;
-		return floor($dist);
 	}
 
 	public function preInsert() {

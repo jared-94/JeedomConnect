@@ -903,4 +903,27 @@ class JeedomConnectUtils {
 
         JeedomConnect::checkDaemon();
     }
+
+
+    /**
+     * Return distance between 2 coordinates. If 2nd is not defined, by default get the one from JC, or if not defined the one from jeedom, or if not defined Paris
+     *
+     * @param int $lat1
+     * @param int $lon1
+     * @param int $lat2
+     * @param int $lon2
+     * @return int
+     */
+    public static function getDistance($lat1, $lon1, $lat2 = null, $lon2 = null) {
+        //by default the one from JC, or the one from jeedom, or Paris
+        if (is_null($lat2)) $lat2 = config::bykey('latitude', 'JeedomConnect', config::bykey('info::latitude', 'core', 48.852969));
+        if (is_null($lon2)) $lon2 = config::bykey('longitude', 'JeedomConnect', config::bykey('info::longitude', 'core', 2.349903));
+
+        $theta = $lon1 - $lon2;
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $dist = ($dist * 60 * 1.1515) * 1609.344;
+        return floor($dist);
+    }
 }

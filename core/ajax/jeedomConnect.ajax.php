@@ -829,7 +829,8 @@ try {
 				'lat' => $data[0],
 				'lon' => $data[1],
 				'lastSeen' => $cmd->getCollectDate(),
-				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png')
+				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png'),
+				'distance' => number_format(JeedomConnectUtils::getDistance($data[0], $data[1]), 0, ',', ' ') . ' m'
 			);
 		}
 		ajax::success($result);

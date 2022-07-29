@@ -65,7 +65,7 @@ function initMap() {
         var latlon = jcPosition.lat + ',' + jcPosition.lon;
 
 
-        var popUpData = getHtmlPopUp(jcPosition.name, jcPosition.lastSeen, latlon);
+        var popUpData = getHtmlPopUp(jcPosition.name, jcPosition.lastSeen, latlon, jcPosition.distance);
 
         marker.bindPopup(popUpData);
         markerClusters.addLayer(marker); // Nous ajoutons le marqueur aux groupes
@@ -77,13 +77,14 @@ function initMap() {
 
 
 
-function getHtmlPopUp(name, lastSeen, latlon) {
+function getHtmlPopUp(name, lastSeen, latlon, distance) {
     var urlNav = "https://www.google.com/maps/search/?api=1&query=" + latlon;
 
     var html = `<h4 class="text-center">${name}</h4>
             <table  style="font-size:14px">
                 <tr style="background-color:transparent!important"><td><b>Maj : </b></td><td style="padding-left:5px">${lastSeen}</td></tr>
                 <tr style="background-color:transparent!important"><td><b>Position : </b></td><td style="padding-left:5px"><a href="${urlNav}" target="_blank">${latlon}</a></td></tr>
+                <tr style="background-color:transparent!important"><td><b>Distance : </b></td><td style="padding-left:5px">${distance}</td></tr>
                 <tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Y aller !</a></td></tr>
             </table>`;
 
@@ -123,7 +124,7 @@ macarte.on('click', function (e) {
 
     var html = `<b><u>Nouvelle position</u></b><br>
                 <b>Lat :</b>${lat} - <b>Lng :</b>${lng}<br><br>
-                <a class='btn btn-success center-block' type='button' data-coordinates='${coordinates}'>Ajouter ici</a>`;
+                <a class='btn btn-success center-block' type='button' data-coordinates='${coordinates}'>Ajouter ici</a><br/> `;
 
 
     popup
