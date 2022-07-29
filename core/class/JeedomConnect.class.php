@@ -977,6 +977,10 @@ class JeedomConnect extends eqLogic {
 				}
 			}
 		}
+
+		$distToDefault = JeedomConnectUtils::getDistance($lat, $lgt);
+		$cmdDistance = $this->getCmd(null, 'distance');
+		if (is_object($cmdDistance)) $cmdDistance->event($distToDefault);
 	}
 
 	public function preInsert() {

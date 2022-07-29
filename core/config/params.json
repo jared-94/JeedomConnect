@@ -11,6 +11,13 @@
                 "generic_type": "GEOLOCATION"
             },
             {
+                "logicalId": "distance",
+                "name": "Distance",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 0
+            },
+            {
                 "logicalId": "activity",
                 "name": "Activité",
                 "type": "info",
