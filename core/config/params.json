@@ -15,7 +15,8 @@
                 "name": "Distance",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 0
+                "isVisible": 0,
+                "unite": "m"
             },
             {
                 "logicalId": "activity",
