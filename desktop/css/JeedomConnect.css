@@ -1,3 +1,4 @@
+.mapDisplayCard,
 .widgetDisplayCard {
   border: none !important;
   background: transparent !important;
@@ -5,6 +6,7 @@
   text-align: center;
 }
 
+.mapDisplayCard div.cursor,
 .widgetDisplayCard div.cursor {
   margin-bottom: 5px !important;
   padding: 5px !important;
@@ -18,10 +20,12 @@
   min-height: 190px !important;
 }
 
+.eqLogicThumbnailContainer .mapDisplayCard,
 .eqLogicThumbnailContainer .widgetDisplayCard {
   min-height: 168px !important;
 }
 
+.mapDisplayCard,
 .widgetDisplayCard {
   margin-bottom: 10px !important;
   height: 168px !important;
@@ -30,6 +34,7 @@
   overflow: hidden;
 }
 
+.mapDisplayCard .name,
 .widgetDisplayCard .name {
   word-break: break-word !important;
   font-size: 12px !important;
@@ -37,6 +42,7 @@
   top: 3px !important;
 }
 
+.mapDisplayCard>span.name strong,
 .widgetDisplayCard>span.name strong {
   position: relative;
   top: 3px !important;
@@ -45,6 +51,7 @@
   overflow: hidden;
 }
 
+.mapDisplayCard img,
 .widgetDisplayCard img {
   max-height: 99px;
   width: auto !important;
@@ -54,17 +61,21 @@
 }
 
 /* Disabled */
+.mapDisplayCard:not(.disableCard),
 .widgetDisplayCard:not(.disableCard) {
   opacity: 1 !important;
   transition-property: opacity;
   transition-duration: 0.6s;
 }
 
+.mapDisplayCard.disableCard,
 .widgetDisplayCard.disableCard,
+.mapDisplayCard.disableCard>.name>.label,
 .widgetDisplayCard.disableCard>.name>.label {
   opacity: 0.4;
 }
 
+.mapDisplayCard.disableCard:hover,
 .widgetDisplayCard.disableCard:hover {
   opacity: 0.8;
 }

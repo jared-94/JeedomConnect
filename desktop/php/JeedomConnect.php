@@ -265,19 +265,45 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 		<!-- Liste des équipements du plugin -->
 		<div class="eqLogicThumbnailContainer">
 			<?php
+			$allEqToDisplay = '';
+			$eqMap = array();
 			foreach ($eqLogics as $eqLogic) {
+				$type = $eqLogic->getConfiguration('jceqtype', "jc") == "map";
+				if ($type) {
+					$eqMap[] = $eqLogic->getId();
+					continue;
+				}
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-				// echo '<div class="eqLogicDisplayCardParent">';
-				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				echo '<img src="' . JeedomConnectUtils::getCustomPathIcon($eqLogic) . '"/>';
-				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-				echo '<span>';
-				// echo '</div>';
-				echo '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
-				echo '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>';
-				echo '</span>';
-				echo '</div>';
+				// $allEqToDisplay .= '<div class="eqLogicDisplayCardParent">';
+				$allEqToDisplay .= '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
+				$allEqToDisplay .= '<img src="' . JeedomConnectUtils::getCustomPathIcon($eqLogic) . '"/>';
+				$allEqToDisplay .= '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+				$allEqToDisplay .= '<span>';
+				// $allEqToDisplay .= '</div>';
+				$allEqToDisplay .= '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
+				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>';
+				$allEqToDisplay .= '</span>';
+				$allEqToDisplay .= '</div>';
 			}
+
+			$allEqMapToDisplay = '';
+			foreach ($eqMap as $id) {
+				/** @var eqLogic $eqLogic */
+				$eqLogic = eqLogic::byId($id);
+
+				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+
+				$allEqMapToDisplay .= '<div class="mapDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '" data-visible="' . $eqLogic->getIsVisible() . '" data-roomId="' . $eqLogic->getObject_id() . '">';
+				$allEqMapToDisplay .= '<img src="plugins/JeedomConnect/data/img/mapsIcon.png"/>';
+				// $allEqMapToDisplay .= '<i class="fas fa-map-marked-alt"></i>';
+				$allEqMapToDisplay .= '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+				$allEqMapToDisplay .= '<span>';
+				$allEqMapToDisplay .= '</span>';
+				$allEqMapToDisplay .= '</div>';
+			}
+
+			echo $allEqMapToDisplay;
+			echo $allEqToDisplay;
 			?>
 		</div>
 		<!--  FIN --- PANEL DES EQUIPEMENTS  -->

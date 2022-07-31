@@ -15,6 +15,50 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 
+$('body').off('click', '.mapDisplayCard').on('click', '.mapDisplayCard', function () {
+  eqIdMaps = $(this).attr('data-eqLogic_id');
+  visible = $(this).data('visible');
+  roomId = $(this).data('roomid');
+
+  getSimpleModal({
+    title: "Widget MAPS",
+    width: 0.3 * $(window).width(),
+    fields: [
+      { type: "description", text: 'Cet "équipement" permet uniquement de pouvoir disposer de la carte "Localisation" sur le dashboard de Jeedom. Pour l\'afficher il est nécessaire de rendre visible l\'équipement' },
+      { title: "Visible", type: "enable", value: (visible == 1 ? 'checked' : '') },
+      { title: "Pièce", type: "room", value: roomId },
+    ]
+  }, function (result) {
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        action: 'updateEqWidgetMaps',
+        eqId: eqIdMaps,
+        data: result
+      },
+      cache: false,
+      dataType: 'json',
+      async: false,
+      success: function (data) {
+        if (data.state != 'ok') {
+          $('#div_alert').showAlert({
+            message: data.result,
+            level: 'danger'
+          });
+        }
+        else {
+          var vars = getUrlVars()
+          var url = 'index.php?'
+
+          url = getCustomParamUrl(url, vars);
+
+          loadPage(url)
+        }
+      }
+    });
+  });
+})
+
 $('.eqLogicThumbnailContainer').off('click', '.widgetDisplayCard').on('click', '.widgetDisplayCard', function () {
 
   var eqId = $(this).attr('data-widget_id');

@@ -558,7 +558,7 @@ try {
 		$options = '';
 		foreach ((jeeObject::buildTree(null, false)) as $object) {
 			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
-			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName()));
+			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName(), "space" =>  str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber'))));
 		}
 
 		JCLog::debug('getWidgetConfigAll ~~ result : ' . json_encode($widgets));
@@ -804,6 +804,30 @@ try {
 		ajax::success();
 	}
 
+
+	if (init('action') == 'updateEqWidgetMaps') {
+		/** @var eqLogic $eqLogic */
+		$eqLogic = eqLogic::byId(init('eqId'));
+		if (!is_object($eqLogic)) ajax::error('Error - no equipment found');
+
+		$data = init('data');
+
+		$eqLogic->setIsVisible(($data['enable'] == "true") ? 1 : 0);
+		$roomId = ($data['roomId'] != 'none') ? $data['roomId'] : null;
+		$eqLogic->setObject_id($roomId);
+		$eqLogic->save();
+		// JCLog::debug('eqId received =>' . json_encode(init('eqId')));
+		ajax::success($result);
+	}
+
+	if (init('action') == 'getDefaultPosition') {
+
+		list($lon, $lat) = JeedomConnectUtils::getDefaultCoordinates();
+
+		$defaultZoom = (($lat . $lon) == ($latDefault . $lonDefault)) ? 'Autour Paris' : 'Autour de mon Jeedom';
+
+		ajax::success(array('lon' => $lon, 'lat' => $lat, 'defaultText' => $defaultZoom));
+	}
 
 	if (init('action') == 'getAllPositions') {
 		$result = array();

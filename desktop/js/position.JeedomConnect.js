@@ -4,6 +4,24 @@
  * 
  */
 
+$.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: { 'action': 'getDefaultPosition' },
+    dataType: 'json',
+    async: false,
+    success: function (data) {
+        if (data.state != 'ok') {
+            $('#div_alert').showAlert({ message: data.result, level: 'danger' });
+        }
+        else {
+            lat = data.result.lat;
+            lon = data.result.lon;
+            $('.defaultText').text(data.result.defaultText)
+        }
+    }
+});
+
+
 function getPositions() {
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -154,3 +172,15 @@ function addJcMapListener(id) {
     $('#jcMapScript').append(script);
 
 }
+
+/*
+var mySlider = $.createWidgetSlider({
+    sliderDiv: document.getElementById('widget_slider_jc'),
+    state: 0, //('#state#' == '') ? 0 : '#state#',
+    min: 0,
+    max: 300,
+    step: 1,
+    tooltips: true,
+    format: true,
+    unite: ''
+})*/

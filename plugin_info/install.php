@@ -46,6 +46,7 @@ function JeedomConnect_install() {
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
 
   JeedomConnectUtils::addCronCheckDaemon();
+  JeedomConnect::createMapEquipment();
 }
 
 function JeedomConnect_update() {
@@ -96,6 +97,7 @@ function JeedomConnect_update() {
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
 
   JeedomConnectUtils::addCronCheckDaemon();
+  JeedomConnect::createMapEquipment();
 }
 
 function JeedomConnect_remove() {

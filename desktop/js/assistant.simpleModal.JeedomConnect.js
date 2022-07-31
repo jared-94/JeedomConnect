@@ -3,8 +3,9 @@ function setSimpleModalData(options) {
   options.forEach(option => {
     if (option.type == "enable") {
       var value = option.value ? 'checked' : '';
+      var title = option.title || 'Actif';
       enable = `<li><div class='form-group'>
-			<label class='col-xs-3  required' >Actif</label>
+			<label class='col-xs-3  required' >${title}</label>
 			<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="mod-enable-input" ${value}></div></div></div></li>`;
       items.push(enable);
     } else if (option.type == "description") {
@@ -13,6 +14,23 @@ function setSimpleModalData(options) {
     } else if (option.type == "line") {
       line = `<li style="border-bottom: solid 1px;"></li>`;
       items.push(line);
+    } else if (option.type == "room") {
+
+      line = `<li><div class='form-group'>
+    <label class='col-xs-3 '>Pièce</label>
+    <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
+    <option value="none">Sélection  d'une pièce</option>`;
+
+      console.log("compare : " + option.value);
+      roomList.forEach(item => {
+        console.log("compare : " + option.value + " to " + item.id);
+        var checked = (option.value == item.id) ? 'selected' : '';
+
+        line += '<option value="' + item.id + '" ' + checked + '>' + item.space + item.name + '</option>';
+      })
+      line += `</select></div></div></div></li>`;
+      items.push(line);
+
     } else if (option.type == "checkboxes") {
 
       checkboxes = `<li><div class='form-group'>

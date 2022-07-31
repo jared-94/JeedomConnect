@@ -294,7 +294,6 @@ $("body").on('click', '.imagePicker', function () {
 });
 
 $("body").on('change', '.eqLogicAttr[data-l1key=configuration][data-l2key=customImg]', function () {
-    console.log("on change img !", $(this).val());
     if ($(this).val != '') {
         $(this).siblings('a[data-id=icon-div]').find('img').attr('src', $(this).val());
     }

@@ -1353,6 +1353,43 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
+
+	public function toHtml($_version = 'dashboard') {
+		// JCLog::debug("on rentre dans toHTML !");
+		$replace = $this->preToHtml($_version);
+		if (!is_array($replace)) {
+			return $replace;
+		}
+
+		$version = jeedom::versionAlias($_version);
+
+		$type = $this->getConfiguration('jceqtype', 'none');
+		// JCLog::debug("on continue !");
+		if ($type != 'map') return;
+
+		$replace['#id#'] = $this->getId();
+
+		$replace['#title#'] = $this->getName();
+		$replace['#width#'] = '650px';
+		$replace['#height#'] = '650px';
+		$replace['#style#'] = '';
+
+		return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'map', 'JeedomConnect')));
+	}
+
+	public static function createMapEquipment() {
+		$eqMap = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
+		if (is_object($eqMap)) return;
+
+		$eqMap = new eqLogic();
+		$eqMap->setName('Localisation');
+		$eqMap->setLogicalId('jcmapwidget');
+		$eqMap->setConfiguration('jceqtype', 'map');
+		$eqMap->setIsEnable(1);
+		$eqMap->setEqType_name(__CLASS__);
+		$eqMap->save();
+	}
+
 	/*
 	 ************************************************************************
 	 ****************** FUNCTION TO UPDATE CONF FILE FORMAT *****************
