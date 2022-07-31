@@ -90,6 +90,8 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
     /** @var JeedomConnect $eqLogic */
     foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+      if ($eqLogic->isWidgetMap()) continue;
+
 
       // **********    ID    ****************
       $html .= '<tr class="tr_object" data-equipment_id="' . $eqLogic->getId() . '" >';

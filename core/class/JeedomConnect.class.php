@@ -984,6 +984,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preInsert() {
+		if ($this->isWidgetMap()) return;
 
 		if ($this->getConfiguration('apiKey') == '') {
 			$this->setConfiguration('apiKey', JeedomConnectUtils::generateApiKey());
@@ -993,6 +994,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postInsert() {
+		if ($this->isWidgetMap()) return;
 
 		$this->setIsEnable(1);
 		if ($this->getConfiguration('configVersion') == '') {
@@ -1008,6 +1010,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postSave() {
+		if ($this->isWidgetMap()) return;
 
 		if ($this->getConfiguration('pwdChanged') == 'true') {
 			$confStd = $this->getConfig();
@@ -1035,6 +1038,8 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preUpdate() {
+		if ($this->isWidgetMap()) return;
+
 		$save = false;
 
 		if ($this->getConfiguration('scenariosEnabled') == '') {
@@ -1054,6 +1059,8 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postUpdate() {
+		if ($this->isWidgetMap()) return;
+
 		$this->createCommands('all');
 		if ($this->getConfiguration('platformOs') != '') {
 			$this->createCommands($this->getConfiguration('platformOs'));
@@ -1061,10 +1068,15 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preRemove() {
+		if ($this->isWidgetMap()) return;
+
 		$apiKey = $this->getConfiguration('apiKey');
 		self::removeAllData($apiKey);
 	}
 
+	public function isWidgetMap() {
+		return ($this->getConfiguration('jceqtype') == "map");
+	}
 
 	/**
 	 * ensure userImgPath doesn't start with / and ends with /

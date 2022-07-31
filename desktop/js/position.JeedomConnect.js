@@ -184,3 +184,39 @@ var mySlider = $.createWidgetSlider({
     format: true,
     unite: ''
 })*/
+
+
+$("body").on('change', '.updateMapData', function () {
+    var type = $(this).data('conf');
+
+    if (type == 'object_id') {
+        var data = $("option:selected", this).val() || null;
+    }
+    else {
+        var data = $(this).is(':checked');
+    }
+
+    $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+            action: 'updateEqWidgetMaps',
+            type: type,
+            data: data
+        },
+        cache: false,
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            if (data.state != 'ok') {
+                $('#div_alert').showAlert({
+                    message: data.result,
+                    level: 'danger'
+                });
+            }
+            else {
+                //set something to refresh the page    
+            }
+        }
+    });
+
+})

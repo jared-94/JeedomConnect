@@ -807,14 +807,25 @@ try {
 
 	if (init('action') == 'updateEqWidgetMaps') {
 		/** @var eqLogic $eqLogic */
-		$eqLogic = eqLogic::byId(init('eqId'));
+		$eqLogic = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
 		if (!is_object($eqLogic)) ajax::error('Error - no equipment found');
 
 		$data = init('data');
 
-		$eqLogic->setIsVisible(($data['enable'] == "true") ? 1 : 0);
-		$roomId = ($data['roomId'] != 'none') ? $data['roomId'] : null;
-		$eqLogic->setObject_id($roomId);
+		switch (init('type')) {
+			case 'isVisible':
+				$eqLogic->setIsVisible(($data == "true") ? 1 : 0);
+				break;
+
+			case 'object_id':
+				$eqLogic->setObject_id($data);
+				break;
+
+			default:
+				# code...
+				break;
+		}
+
 		$eqLogic->save();
 		// JCLog::debug('eqId received =>' . json_encode(init('eqId')));
 		ajax::success($result);

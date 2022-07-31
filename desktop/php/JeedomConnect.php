@@ -266,13 +266,9 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 		<div class="eqLogicThumbnailContainer">
 			<?php
 			$allEqToDisplay = '';
-			$eqMap = array();
 			foreach ($eqLogics as $eqLogic) {
-				$type = $eqLogic->getConfiguration('jceqtype', "jc") == "map";
-				if ($type) {
-					$eqMap[] = $eqLogic->getId();
-					continue;
-				}
+				if ($eqLogic->isWidgetMap()) continue;
+
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
 				// $allEqToDisplay .= '<div class="eqLogicDisplayCardParent">';
 				$allEqToDisplay .= '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
@@ -286,23 +282,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 				$allEqToDisplay .= '</div>';
 			}
 
-			$allEqMapToDisplay = '';
-			foreach ($eqMap as $id) {
-				/** @var eqLogic $eqLogic */
-				$eqLogic = eqLogic::byId($id);
-
-				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-
-				$allEqMapToDisplay .= '<div class="mapDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '" data-visible="' . $eqLogic->getIsVisible() . '" data-roomId="' . $eqLogic->getObject_id() . '">';
-				$allEqMapToDisplay .= '<img src="plugins/JeedomConnect/data/img/mapsIcon.png"/>';
-				// $allEqMapToDisplay .= '<i class="fas fa-map-marked-alt"></i>';
-				$allEqMapToDisplay .= '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-				$allEqMapToDisplay .= '<span>';
-				$allEqMapToDisplay .= '</span>';
-				$allEqMapToDisplay .= '</div>';
-			}
-
-			echo $allEqMapToDisplay;
 			echo $allEqToDisplay;
 			?>
 		</div>
