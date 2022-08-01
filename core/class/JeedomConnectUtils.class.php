@@ -54,6 +54,7 @@ class JeedomConnectUtils {
         $eqLogics = eqLogic::byType($plugin->getId());
 
         foreach ($eqLogics as $eqLogic) {
+            if ($eqLogic->isWidgetMap()) continue;
             $platformOs = $eqLogic->getConfiguration('platformOs');
             $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
 
