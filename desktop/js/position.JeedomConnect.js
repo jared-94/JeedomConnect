@@ -57,7 +57,7 @@ function initMap() {
 
 
     // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
-    macarte = L.map('map').setView([lat, lon], 13);
+    macarte = L.map('jcMap').setView([lat, lon], 13);
     markerClusters = L.markerClusterGroup(); // Nous initialisons les groupes de marqueurs
 
     // Leaflet ne récupère pas les cartes (tiles) sur un serveur par défaut. Nous devons lui préciser où nous souhaitons les récupérer. Ici, openstreetmap.fr

@@ -21,14 +21,14 @@ include_file('desktop', 'leaflet/leaflet.markercluster', 'js', 'JeedomConnect');
 
 <!-- Nous chargeons les fichiers CDN de Leaflet. Le CSS AVANT le JS -->
 <style type="text/css">
-    #map {
+    #jcMap {
         /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
-        height: 600px;
+        height: 580px;
         width: 650px;
     }
 </style>
 
-<div id="map">
+<div id="jcMap">
     <!-- Ici s'affichera la carte -->
 </div>
 

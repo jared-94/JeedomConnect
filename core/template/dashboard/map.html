@@ -1,5 +1,6 @@
-<div class="eqLogic eqLogic-widget" data-eqType="#eqType#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#"
-    data-version="#version#" style="width: 650px;height: 680px;#style#" data-translate-category="#translate_category#"
+<div class="eqLogic eqLogic-widget allowLayout allowResize allowReorderCmd" data-eqType="#eqType#"
+    data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="#version#"
+    style="width: #width#;height: #height#;#style#" data-translate-category="#translate_category#"
     data-category="#category#" data-tags="#tags#">
     <center class="widget-name"><a href="#eqLink#" style="font-size : 1.1em;#hideEqLogicName#">#name_display# <span
                 class="object_name">#object_name#</span></a></center>
@@ -8,31 +9,23 @@
     <link rel="stylesheet" href="plugins/JeedomConnect/desktop/css/leaflet/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="plugins/JeedomConnect/desktop/css/leaflet/MarkerCluster.css" />
 
-    <!-- <script src="plugins/JeedomConnect/desktop/js/leaflet/leaflet.js"></script> -->
-    <script
-        src="core/php/getResource.php?file=plugins/JeedomConnect/desktop/js/leaflet/leaflet.js&md5=542287c3d5de9c510703eb93994840c3&lang=fr_FR"></script>
-
-    <!-- <script src="plugins/JeedomConnect/desktop/js/leaflet/leaflet.markercluster.js"></script> -->
-    <script
-        src="core/php/getResource.php?file=plugins/JeedomConnect/desktop/js/leaflet/leaflet.markercluster.js&md5=f57b602ec04f4db8874adeeacad51b2d&lang=fr_FR"></script>
-
     <!-- Nous chargeons les fichiers CDN de Leaflet. Le CSS AVANT le JS -->
     <style type="text/css">
-        #map {
+        #jcMap {
             /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
-            height: 600px;
-            width: 650px;
+            height: calc(100% - 80px);
+            width: 100%;
         }
     </style>
 
-    <div id="map">
+    <div id="jcMap">
         <!-- Ici s'affichera la carte -->
     </div>
     <div id="jcMapScript">
 
     </div>
 
-    <div class='form-group'>
+    <div class='form-group JCzoom'>
         <label class='col-xs-3'>Zoom :</label>
         <div class='col-xs-9'>
             <label class='radio-inline'>
@@ -44,5 +37,14 @@
     </div>
 </div>
 
-<script
-    src="core/php/getResource.php?file=plugins/JeedomConnect/desktop/js/position.JeedomConnect.js&md5=a71d500673bfe00bdc4439372f07f5cd&lang=fr_FR"></script>
+<script type="text/javascript">
+    $.include(['plugins/JeedomConnect/desktop/js/leaflet/leaflet.js',
+        'plugins/JeedomConnect/desktop/js/leaflet/leaflet.markercluster.js',
+        'plugins/JeedomConnect/desktop/js/position.JeedomConnect.js'],
+        function () {
+            if ('#hideOption#' == 'true') {
+                $('.JCzoom').hide();
+                $('#jcMap').style('height', "100%");
+            };
+        })
+</script>
