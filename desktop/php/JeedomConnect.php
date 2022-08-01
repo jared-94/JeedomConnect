@@ -560,7 +560,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 
 						<!-- Partie droite de l'onglet "Équipement" -->
 						<!-- Affiche l'icône du plugin par défaut mais vous pouvez y afficher les informations de votre choix -->
-						<div class="col-lg-5">
+						<div class="col-lg-5 jeedomConnect">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
 							<div class="form-group">
 								<div class="alert alert-info" style="width:300px; margin: 10px auto;text-align:center;">
