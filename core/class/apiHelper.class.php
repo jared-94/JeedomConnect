@@ -767,6 +767,7 @@ class apiHelper {
     $userConnected = user::byHash($userHash);
     $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
     foreach ($eqLogics as $eqLogic) {
+      if ($eqLogic->isWidgetMap()) continue;
 
       $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
       if (is_object($userOnEquipment)) {
