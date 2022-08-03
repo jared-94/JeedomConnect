@@ -627,6 +627,7 @@ class JeedomConnect extends eqLogic {
 		$ids = array();
 
 		$conf = $this->getConfig(true);
+		if (is_null($conf)) return $ids;
 
 		foreach ($conf['payload']['widgets'] as $item) {
 			array_push($ids, $item['id']);
