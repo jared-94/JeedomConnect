@@ -432,7 +432,7 @@ function addMarker(geo, withCluster = false) {
 
 }
 
-function updateMarker(geo, marker = null) {
+function updateMarker(geo) {
     if (!marker) var marker = markers.find(i => i.options.id == geo.id);
     if (marker) {
         marker.setLatLng([geo.lat, geo.lon]);
@@ -461,7 +461,7 @@ $('body').off('click', '.geoFocusMarker').on('click', '.geoFocusMarker', functio
 
 function refreshJcPosition(cmdId, position) {
     let data = position.split(',');
-    updateMarker(cmdId, data[0], data[1])
+    updateMarker({ id: cmdId, lat: data[0], lon: data[1] })
 }
 
 function addJcMapListener(id) {
