@@ -307,7 +307,7 @@ $("body").on('click', '.removeImage', function () {
 
 
 $('.showGeofence').off('click').on('click', function () {
-    $("#widgetModal").dialog('destroy').remove();
+    $("#mapsModal").dialog('destroy').remove();
     $('body').append('<div id="mapsModal"></div>');
     $('#mapsModal').dialog({
         title: "{{Geo}}",

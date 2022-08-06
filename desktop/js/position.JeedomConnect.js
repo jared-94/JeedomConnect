@@ -83,7 +83,7 @@ function getHtmlPopUp(name, lastSeen, latlon, distance, radius = null) {
 }
 
 
-$("body").on('change', '.zoomSelection', function () {
+$("body").off('change', '.zoomSelection').on('change', '.zoomSelection', function () {
 
     if ($(this).val() == 'all') {
         var group = new L.featureGroup(markers); // Nous créons le groupe des marqueurs pour adapter le zoom
@@ -203,7 +203,8 @@ else {
     initGeofenceMap();
 
 
-    macarte.on('click', function (e) {
+    macarte.off('click').on('click', function (e) {
+        console.log('je rentre dans "macarte on click"');
         var latlngStr = e.latlng.toString();
         var position = latlngStr.replace('LatLng(', '').replace(')', '');
         var positionArr = position.split(', ');
@@ -264,7 +265,7 @@ function addGeofenceToTable(elt, geo, config) {
     $(elt + ' tbody tr:last').attr('data-id', geo.id);
 }
 
-$('body').on('click', '.removeGeo', function () {
+$('body').off('click', '.removeGeo').on('click', '.removeGeo', function () {
     var isConfig = $(this).hasClass('forConfig');
     var elt = $(this).closest('tr');
     var id = elt.find('.geoAttr[data-l1key=id]').text();
@@ -289,17 +290,31 @@ $('body').on('click', '.removeGeo', function () {
     });
 })
 
-$('body').on('click', '.addGeoToEquipment', function () {
+$('body').off('click', '.addGeoToEquipment').on('click', '.addGeoToEquipment', function () {
     let tr = $(this).closest("tr");
     var geo = tr.getValues('.geoAttr')[0];
     geo['eqId'] = eqId;
+    var msgErr = [];
+    if (geo.name == '') msgErr.push('nom');
+    if (geo.lat == '') msgErr.push('latitude');
+    if (geo.lon == '') msgErr.push('longitude')
+    if (geo.radius == '') msgErr.push('rayon');
+    if (msgErr.length != 0) {
+        let plurial = msgErr.length > 1 ? 's' : '';
+        $('#div_alert').showAlert({
+            message: 'Champ' + plurial + ' obligatoire' + plurial + ' : ' + msgErr.join(', '),
+            level: 'danger'
+        });
+        return;
+    }
     addGeofenceToTable('.currentEq', geo)
     tr.hide();
 
     actionOnCmdGeo(geo)
 });
 
-$('body').on('change', '.forConfig', function () {
+$('body').off('change', '.forConfig').on('change', '.forConfig', function () {
+    console.log('je rentre dans "change for Config"');
     let elt = $(this).closest("tr");
 
     let geofenceData = {
@@ -313,7 +328,8 @@ $('body').on('change', '.forConfig', function () {
 
 });
 
-$('body').on('change', '.geoAttr', function () {
+$('body').off('change', '.geoAttr').on('change', '.geoAttr', function () {
+    console.log('je rentre dans "change for geoAttr"');
     let elt = $(this).closest("tr");
     let id = elt.find('.geoAttr[data-l1key=id]').value();
     let lat = elt.find('.geoAttr[data-l1key=lat]').value();
@@ -389,7 +405,7 @@ function updateMarker(id, lat, lon, name = null, radius = null) {
     }
 }
 
-$('body').on('click', '.geoFocusMarker', function () {
+$('body').off('click', '.geoFocusMarker').on('click', '.geoFocusMarker', function () {
     let elt = $(this).closest("tr");
     let lat = elt.find('.geoAttr[data-l1key=lat]').value();
     let lon = elt.find('.geoAttr[data-l1key=lon]').value();
@@ -414,7 +430,8 @@ function addJcMapListener(id) {
 
 }
 
-$("body").on('click', '.btnAddCoordinates', function () {
+$("body").off('click', '.btnAddCoordinates').on('click', '.btnAddCoordinates', function () {
+    console.log('je rentre dans btnAddCoordinates');
 
     let lat = $(this).data('lat');
     let lon = $(this).data('lon');
@@ -496,7 +513,7 @@ function actionOnConfigGeo(geofence, type = 'createOrUpdate') {
     });
 }
 
-$("body").on('change', '.updateMapData', function () {
+$("body").off('change', '.updateMapData').on('change', '.updateMapData', function () {
     let type = $(this).data('conf');
 
     if (type == 'object_id') {
