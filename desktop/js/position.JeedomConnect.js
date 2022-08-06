@@ -155,7 +155,7 @@ function initGeofenceMap() {
     allJcGeofences.forEach(function (jcGeofence) {
 
         addMarker(jcGeofence.identifier, jcGeofence.lat, jcGeofence.lon, jcGeofence.name, jcGeofence.radius);
-        addCircle(jcGeofence.identifier, jcGeofence.lat, jcGeofence.lon, jcGeofence.radius);
+        addCircle(jcGeofence.identifier, jcGeofence.lat, jcGeofence.lon, jcGeofence.radius, 'green');
         addGeofenceToTable('.currentEq', {
             id: jcGeofence.identifier,
             name: jcGeofence.name,
@@ -177,11 +177,13 @@ function initGeofenceMap() {
             radius: geoConfig.radius,
             parent: geoConfig.parent
         };
-        addMarker(geofenceData.id, geofenceData.lat, geofenceData.lon, geofenceData.name, geofenceData.radius);
-        addCircle(geofenceData.id, geofenceData.lat, geofenceData.lon, geofenceData.radius);
         addGeofenceToTable('.otherItems', geofenceData, true);
         if ($.inArray(geoConfig.id, parents) !== -1) {
             $('.otherItems tbody tr:last').hide();
+        }
+        else {
+            addMarker(geofenceData.id, geofenceData.lat, geofenceData.lon, geofenceData.name, geofenceData.radius);
+            addCircle(geofenceData.id, geofenceData.lat, geofenceData.lon, geofenceData.radius, 'red');
         }
     });
 
@@ -204,7 +206,6 @@ else {
 
 
     macarte.off('click').on('click', function (e) {
-        console.log('je rentre dans "macarte on click"');
         var latlngStr = e.latlng.toString();
         var position = latlngStr.replace('LatLng(', '').replace(')', '');
         var positionArr = position.split(', ');
@@ -276,14 +277,25 @@ $('body').off('click', '.removeGeo').on('click', '.removeGeo', function () {
             if (isConfig) {
                 // console.log("removing config id", id);
                 actionOnConfigGeo({ id: id }, 'remove');
+                removeMarker(id);
+                removeCircle(id);
             }
             else {
 
                 // console.log("removing cmd id", id);
                 actionOnCmdGeo({ id: id }, 'remove');
+                removeMarker(id);
+                removeCircle(id);
+
                 if (parent != undefined) {
                     $('.otherItems tr[data-id=' + parent + ']').show();
+                    var geofenceData = $('.otherItems tr[data-id=' + parent + ']').getValues('.geoAttr')[0];
+                    console.log('geofenceData', geofenceData);
+                    addMarker(geofenceData.id, geofenceData.lat, geofenceData.lon, geofenceData.name, geofenceData.radius);
+                    addCircle(geofenceData.id, geofenceData.lat, geofenceData.lon, geofenceData.radius, 'red');
+
                 }
+
             }
             elt.remove();
         }
@@ -308,13 +320,19 @@ $('body').off('click', '.addGeoToEquipment').on('click', '.addGeoToEquipment', f
         return;
     }
     addGeofenceToTable('.currentEq', geo)
+
+    removeCircle(geo.id);
+    removeMarker(geo.id);
+
+    addMarker(geo.id, geo.lat, geo.lon, geo.name, geo.radius);
+    addCircle(geo.id, geo.lat, geo.lon, geo.radius, 'green');
+
     tr.hide();
 
     actionOnCmdGeo(geo)
 });
 
 $('body').off('change', '.forConfig').on('change', '.forConfig', function () {
-    console.log('je rentre dans "change for Config"');
     let elt = $(this).closest("tr");
 
     let geofenceData = {
@@ -329,7 +347,6 @@ $('body').off('change', '.forConfig').on('change', '.forConfig', function () {
 });
 
 $('body').off('change', '.geoAttr').on('change', '.geoAttr', function () {
-    console.log('je rentre dans "change for geoAttr"');
     let elt = $(this).closest("tr");
     let id = elt.find('.geoAttr[data-l1key=id]').value();
     let lat = elt.find('.geoAttr[data-l1key=lat]').value();
@@ -341,10 +358,9 @@ $('body').off('change', '.geoAttr').on('change', '.geoAttr', function () {
     updateMarker(id, lat, lon, name, radius);
 })
 
-function addCircle(id, lat, lon, radius) {
+function addCircle(id, lat, lon, radius, color = 'red') {
     var circle = L.circle([lat, lon], {
-        color: 'red',
-        fillColor: '#f03',
+        color: color,
         fillOpacity: 0.5,
         radius: radius,
         identifier: id
@@ -357,6 +373,13 @@ function updateCircle(id, lat, lon, radius) {
     if (circle) {
         circle.setLatLng([lat, lon]);
         circle.setRadius(radius);
+    }
+}
+
+function removeCircle(id) {
+    var circle = circles.find(i => i.options.identifier == id);
+    if (circle) {
+        macarte.removeLayer(circle);
     }
 }
 
@@ -405,6 +428,13 @@ function updateMarker(id, lat, lon, name = null, radius = null) {
     }
 }
 
+function removeMarker(id) {
+    var marker = markers.find(i => i.options.identifier == id);
+    if (marker) {
+        macarte.removeLayer(marker)
+    }
+}
+
 $('body').off('click', '.geoFocusMarker').on('click', '.geoFocusMarker', function () {
     let elt = $(this).closest("tr");
     let lat = elt.find('.geoAttr[data-l1key=lat]').value();
@@ -431,7 +461,6 @@ function addJcMapListener(id) {
 }
 
 $("body").off('click', '.btnAddCoordinates').on('click', '.btnAddCoordinates', function () {
-    console.log('je rentre dans btnAddCoordinates');
 
     let lat = $(this).data('lat');
     let lon = $(this).data('lon');
