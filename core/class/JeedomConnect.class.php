@@ -346,7 +346,7 @@ class JeedomConnect extends eqLogic {
 	public function getConfig($replace = false, $saveGenerated = false) {
 
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
-			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY !');
+			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
 		}
 
@@ -561,7 +561,7 @@ class JeedomConnect extends eqLogic {
 	public function getGeneratedConfigFile() {
 
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
-			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY !');
+			JCLog::error('¤¤¤¤¤ getGeneratedConfigFile for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
 		}
 
