@@ -859,7 +859,7 @@ try {
 				$cmd->setSubType('binary');
 				$cmd->setConfiguration('latitude', doubleval($data['lat']));
 				$cmd->setConfiguration('longitude', doubleval($data['lon']));
-				$cmd->setConfiguration('radius', $data['radius']);
+				$cmd->setConfiguration('radius', doubleval($data['radius']));
 				$cmd->setConfiguration('parent', $data['id']);
 				$cmd->setEqLogic_id($data['eqId']);
 				try {

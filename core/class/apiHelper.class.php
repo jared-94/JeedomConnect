@@ -1092,9 +1092,9 @@ class apiHelper {
           'extras' => array(
             'name' => $cmd->getName()
           ),
-          'radius' => $cmd->getConfiguration('radius'),
-          'latitude' => $cmd->getConfiguration('latitude'),
-          'longitude' => $cmd->getConfiguration('longitude'),
+          'radius' => doubleval($cmd->getConfiguration('radius')),
+          'latitude' => doubleval($cmd->getConfiguration('latitude')),
+          'longitude' => doubleval($cmd->getConfiguration('longitude')),
           'notifyOnEntry' => true,
           'notifyOnExit' => true
         ));
