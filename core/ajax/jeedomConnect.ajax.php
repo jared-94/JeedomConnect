@@ -857,8 +857,8 @@ try {
 				$cmd->setName($data['name']);
 				$cmd->setType('info');
 				$cmd->setSubType('binary');
-				$cmd->setConfiguration('latitude', $data['lat']);
-				$cmd->setConfiguration('longitude', $data['lon']);
+				$cmd->setConfiguration('latitude', doubleval($data['lat']));
+				$cmd->setConfiguration('longitude', doubleval($data['lon']));
 				$cmd->setConfiguration('radius', $data['radius']);
 				$cmd->setConfiguration('parent', $data['id']);
 				$cmd->setEqLogic_id($data['eqId']);
