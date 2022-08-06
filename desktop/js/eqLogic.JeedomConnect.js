@@ -303,3 +303,26 @@ $("body").on('click', '.removeImage', function () {
     $(this).empty();
     $('.removeImage').val('');
 });
+
+
+
+$('.showGeofence').off('click').on('click', function () {
+    $("#widgetModal").dialog('destroy').remove();
+    $('body').append('<div id="mapsModal"></div>');
+    $('#mapsModal').dialog({
+        title: "{{Geo}}",
+        width: 0.8 * $(window).width(),
+        height: 640, //0.8 * $(window).height(),
+        modal: true,
+        closeText: '',
+        close: function () {
+            var vars = getUrlVars()
+            var url = 'index.php?'
+
+            url = getCustomParamUrl(url, vars);
+
+            loadPage(url)
+        }
+    });
+    $('#mapsModal').load('index.php?v=d&plugin=JeedomConnect&modal=position.JeedomConnect&geo=true&eqId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+})

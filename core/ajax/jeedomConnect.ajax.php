@@ -840,6 +840,103 @@ try {
 		ajax::success(array('lon' => $lon, 'lat' => $lat, 'defaultText' => $defaultZoom));
 	}
 
+	if (init('action') == 'createOrUpdateCmdGeo') {
+		$data = init('data');
+		$type = init('type');
+
+		switch ($type) {
+			case 'createOrUpdate':
+				/** @var cmd $cmd */
+				$cmd = cmd::byId($data['id']);
+				if (!is_object($cmd)) {
+					$err = "no cmd found with id=[" . $data['id'] . "]";
+					// JCLog::warning($err);
+					$cmd = new Cmd();
+				}
+
+				$cmd->setName($data['name']);
+				$cmd->setType('info');
+				$cmd->setSubType('binary');
+				$cmd->setConfiguration('latitude', $data['lat']);
+				$cmd->setConfiguration('longitude', $data['lon']);
+				$cmd->setConfiguration('radius', $data['radius']);
+				$cmd->setConfiguration('parent', $data['id']);
+				$cmd->setEqLogic_id($data['eqId']);
+				try {
+					$cmd->save();
+					$cmd->setLogicalId('geofence_' . $cmd->getId());
+					$cmd->save();
+					//code...
+				} catch (Exception $err) {
+					JCLog::error($err->getMessage());
+				}
+				event::add('JC_UPDATE_CMD_GEO', array('id' => $cmd->getId(), 'previousId' => $data['id']));
+				break;
+
+			case 'remove':
+				$cmd = cmd::byId($data['id']);
+				if (!is_object($cmd)) {
+					$err = "no cmd found with id=[" . $data['id'] . "]";
+					JCLog::error($err);
+					break;
+				}
+				$cmd->remove();
+				break;
+		}
+
+		ajax::success();
+	}
+
+	if (init('action') == 'createOrUpdateConfigGeo') {
+		$id = init('id');
+		$data = init('data');
+		$type = init('type');
+
+		switch ($type) {
+			case 'createOrUpdate':
+				config::save('geofence::' . $id, $data, 'JeedomConnect');
+				break;
+
+			case 'remove':
+				config::remove('geofence::' . $id, 'JeedomConnect');
+				break;
+		}
+		ajax::success();
+	}
+
+	if (init('action') == 'getAllGeofences') {
+		$result = array();
+		$config = array();
+
+		$eqId = init('eqId');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($eqId);
+		if (is_object($eqLogic)) {
+			// foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach ($eqLogic->getCmd('info') as $cmd) {
+				if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
+					array_push($result, array(
+						'identifier' => $cmd->getId(),
+						'name' => $cmd->getName(),
+						'radius' => $cmd->getConfiguration('radius'),
+						'lat' => $cmd->getConfiguration('latitude'),
+						'lon' => $cmd->getConfiguration('longitude'),
+						'cmdId' => $cmd->getId(),
+						'eqId' => $eqLogic->getId(),
+						'parent' => $cmd->getConfiguration('parent', null),
+					));
+				}
+			}
+		}
+
+
+		foreach (config::searchKey('geofence::', 'JeedomConnect')  as $conf) {
+			array_push($config, $conf['value']);
+		}
+
+		ajax::success(array("equipment" => $result, "config" => $config));
+	}
+
 	if (init('action') == 'getAllPositions') {
 		$result = array();
 		/** @var JeedomConnect $eqLogic */

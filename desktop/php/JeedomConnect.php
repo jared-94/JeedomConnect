@@ -555,6 +555,13 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 								</div>
 							</div>
 
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Personnaliser les GEO}}</label>
+								<div class="col-sm-7">
+									<a class="btn btn-success roundedRight showGeofence"><i class="fas fa-crosshairs"></i> Voir</a>
+								</div>
+							</div>
+
 
 						</div>
 
