@@ -843,14 +843,13 @@ try {
 	if (init('action') == 'createOrUpdateCmdGeo') {
 		$data = init('data');
 		$type = init('type');
+		$eqId = init('eqId');
 
 		switch ($type) {
 			case 'createOrUpdate':
 				/** @var cmd $cmd */
 				$cmd = cmd::byId($data['id']);
 				if (!is_object($cmd)) {
-					$err = "no cmd found with id=[" . $data['id'] . "]";
-					// JCLog::warning($err);
 					$cmd = new Cmd();
 				}
 
@@ -861,16 +860,16 @@ try {
 				$cmd->setConfiguration('longitude', doubleval($data['lon']));
 				$cmd->setConfiguration('radius', doubleval($data['radius']));
 				$cmd->setConfiguration('parent', $data['id']);
-				$cmd->setEqLogic_id($data['eqId']);
+				$cmd->setEqLogic_id($eqId);
 				try {
 					$cmd->save();
 					$cmd->setLogicalId('geofence_' . $cmd->getId());
 					$cmd->save();
-					//code...
 				} catch (Exception $err) {
 					JCLog::error($err->getMessage());
+					ajax::error('Affectation impossible');
 				}
-				event::add('JC_UPDATE_CMD_GEO', array('id' => $cmd->getId(), 'previousId' => $data['id']));
+				$result = array('id' => $cmd->getId());
 				break;
 
 			case 'remove':
@@ -881,10 +880,11 @@ try {
 					break;
 				}
 				$cmd->remove();
+				$result = '';
 				break;
 		}
 
-		ajax::success();
+		ajax::success($result);
 	}
 
 	if (init('action') == 'createOrUpdateConfigGeo') {
@@ -916,7 +916,7 @@ try {
 			foreach ($eqLogic->getCmd('info') as $cmd) {
 				if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
 					array_push($result, array(
-						'identifier' => $cmd->getId(),
+						'id' => $cmd->getId(),
 						'name' => $cmd->getName(),
 						'radius' => $cmd->getConfiguration('radius'),
 						'lat' => $cmd->getConfiguration('latitude'),
