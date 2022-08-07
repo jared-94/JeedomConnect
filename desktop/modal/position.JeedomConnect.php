@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
 /** @var eqLogic $eqLogic */
 $eqLogic = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
