@@ -187,16 +187,12 @@ else {
     initGeofenceMap();
 
     macarte.off('click').on('click', function (e) {
-        var latlngStr = e.latlng.toString();
-        var position = latlngStr.replace('LatLng(', '').replace(')', '');
-        var positionArr = position.split(', ');
-        var lat = positionArr[0];
-        var lng = positionArr[1];
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
 
         var html = `<b><u>Nouvelle position</u></b><br>
                 <b>Lat :</b>${lat} - <b>Lng :</b>${lng}<br><br>
                 <a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${lat}' data-lon='${lng}'>Ajouter ici</a><br/> `;
-
 
         popup
             .setLatLng(e.latlng)
