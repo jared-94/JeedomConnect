@@ -345,6 +345,8 @@ class JeedomConnect extends eqLogic {
 
 	public function getConfig($replace = false, $saveGenerated = false) {
 
+		if ($this->isWidgetMap()) return null;
+
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
 			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
