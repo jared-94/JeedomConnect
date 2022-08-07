@@ -15,7 +15,7 @@ $.post({
         }
         else {
             lat = data.result.lat;
-            lon = data.result.lon;
+            lng = data.result.lng;
             $('.defaultText').text(data.result.defaultText)
         }
     }
@@ -66,13 +66,13 @@ function initLocalisationMap() {
 }
 
 function getHtmlPopUp(geo) {
-    var latlon = geo.lat + ',' + geo.lon;
-    var urlNav = "https://www.google.com/maps/search/?api=1&query=" + latlon;
+    var latlng = geo.lat + ',' + geo.lng;
+    var urlNav = "https://www.google.com/maps/search/?api=1&query=" + latlng;
 
     var html = `<h4 class="text-center">${geo.name || ''}</h4>
             <table  style="font-size:14px">`;
     html += (!geo.radius) ? `<tr style="background-color:transparent!important"><td><b>Maj : </b></td><td style="padding-left:5px">${geo.lastSeen}</td></tr>` : '';
-    html += `<tr style = "background-color:transparent!important" ><td><b>Position : </b></td><td style="padding-left:5px"><a href="${geo.urlNav}" target="_blank">${latlon}</a></td></tr >`;
+    html += `<tr style = "background-color:transparent!important" ><td><b>Position : </b></td><td style="padding-left:5px"><a href="${geo.urlNav}" target="_blank">${latlng}</a></td></tr >`;
     html += (!geo.radius) ? `<tr style="background-color:transparent!important"><td><b>Distance : </b></td><td style="padding-left:5px">${geo.distance}</td></tr>` : '';
     html += (!geo.radius) ? `<tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Y aller !</a></td></tr>` : '';
     html += (geo.radius) ? `<tr style="background-color:transparent!important"><td><b>Rayon : </b></td><td style="padding-left:5px">${geo.radius} m</td></tr>` : '';
@@ -89,7 +89,7 @@ $("body").off('change', '.zoomSelection').on('change', '.zoomSelection', functio
         macarte.fitBounds(group.getBounds().pad(0.5)); // Nous demandons à ce que tous les marqueurs soient visibles, et ajoutons un padding (pad(0.5)) pour que les marqueurs ne soient pas coupés
     }
     else {
-        getFocus([lat, lon], 13);
+        getFocus([lat, lng], 13);
     }
 });
 
@@ -132,7 +132,7 @@ function getGeofences() {
 
 function createJcMap() {
     // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
-    macarte = L.map('jcMap').setView([lat, lon], 13);
+    macarte = L.map('jcMap').setView([lat, lng], 13);
     markerClusters = L.markerClusterGroup(); // Nous initialisons les groupes de marqueurs
 
     // Leaflet ne récupère pas les cartes (tiles) sur un serveur par défaut. Nous devons lui préciser où nous souhaitons les récupérer. Ici, openstreetmap.fr
@@ -192,7 +192,7 @@ else {
 
         var html = `<b><u>Nouvelle position</u></b><br>
                 <b>Lat :</b>${lat} - <b>Lng :</b>${lng}<br><br>
-                <a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${lat}' data-lon='${lng}'>Ajouter ici</a><br/> `;
+                <a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${lat}' data-lng='${lng}'>Ajouter ici</a><br/> `;
 
         popup
             .setLatLng(e.latlng)
@@ -217,7 +217,7 @@ function addGeofenceToTable(elt, geo, config) {
     tr += '<input class="geoAttr form-control input-sm" data-l1key="lat" placeholder="{{Latitude}}">';
     tr += '</td>';
     tr += '<td>';
-    tr += '<input class="geoAttr form-control input-sm" data-l1key="lon" placeholder="{{Longitude}}">';
+    tr += '<input class="geoAttr form-control input-sm" data-l1key="lng" placeholder="{{Longitude}}">';
     tr += '</td>';
     tr += '<td>';
     tr += '<input class="geoAttr form-control input-sm" data-l1key="radius" placeholder="{{Radius}}">';
@@ -280,7 +280,7 @@ function controlFields(geo) {
     var msgErr = [];
     if (geo.name == '') msgErr.push('nom');
     if (geo.lat == '') msgErr.push('latitude');
-    if (geo.lon == '') msgErr.push('longitude')
+    if (geo.lng == '') msgErr.push('longitude')
     if (geo.radius == '') msgErr.push('rayon');
     if (msgErr.length != 0) {
         let plurial = msgErr.length > 1 ? 's' : '';
@@ -340,7 +340,7 @@ $('body').off('change', '.geoAttr').on('change', '.geoAttr', function () {
 })
 
 function addCircle(geo, color = 'red') {
-    var circle = L.circle([geo.lat, geo.lon], {
+    var circle = L.circle([geo.lat, geo.lng], {
         color: color,
         fillOpacity: 0.5,
         radius: geo.radius,
@@ -352,12 +352,12 @@ function addCircle(geo, color = 'red') {
     addMarker(geo);
 }
 
-function updateCoordinates(id, lat, lon) {
+function updateCoordinates(id, lat, lng) {
     var circle = circles.find(i => i.options.id == id);
     if (circle) {
         var geo = circle.options.geoData;
         geo['lat'] = lat;
-        geo['lon'] = lon;
+        geo['lng'] = lng;
         circle.options.geoData = geo;
 
         var currentEq = $('.currentEq tr[data-id=' + id + ']');
@@ -374,7 +374,7 @@ function updateCoordinates(id, lat, lon) {
 function updateCircle(geo) {
     var circle = circles.find(i => i.options.id == geo.id);
     if (circle) {
-        circle.setLatLng([geo.lat, geo.lon]);
+        circle.setLatLng([geo.lat, geo.lng]);
         circle.setRadius(geo.radius);
         circle.options.geoData = geo
         updateMarker(geo)
@@ -408,7 +408,7 @@ function addMarker(geo, withCluster = false) {
             popupAnchor: [-3, -40],
         });
     }
-    var marker = L.marker([geo.lat, geo.lon], { icon: myIcon, draggable: true, title: geo.name, id: geo.id })
+    var marker = L.marker([geo.lat, geo.lng], { icon: myIcon, draggable: true, title: geo.name, id: geo.id })
 
     marker.on('dragend', function (event) {
         var position = marker.getLatLng();
@@ -431,7 +431,7 @@ function addMarker(geo, withCluster = false) {
 function updateMarker(geo) {
     if (!marker) var marker = markers.find(i => i.options.id == geo.id);
     if (marker) {
-        marker.setLatLng([geo.lat, geo.lon]);
+        marker.setLatLng([geo.lat, geo.lng]);
         var popUpData = getHtmlPopUp(geo);
         // if (geo.name) marker._icon.title = geo.name || '';
         marker.setPopupContent(popUpData);
@@ -452,12 +452,12 @@ function getGeofencesData(elt) {
 $('body').off('click', '.geoFocusMarker').on('click', '.geoFocusMarker', function () {
     let geo = getGeofencesData($(this));
 
-    getFocus([geo.lat, geo.lon], 15)
+    getFocus([geo.lat, geo.lng], 15)
 })
 
 function refreshJcPosition(cmdId, position) {
     let data = position.split(',');
-    updateMarker({ id: cmdId, lat: data[0], lon: data[1] })
+    updateMarker({ id: cmdId, lat: data[0], lng: data[1] })
 }
 
 function addJcMapListener(id) {
@@ -477,7 +477,7 @@ $("body").off('click', '.btnAddCoordinates').on('click', '.btnAddCoordinates', f
     let geofenceData = {
         id: makeid(),
         lat: $(this).data('lat'),
-        lon: $(this).data('lon'),
+        lng: $(this).data('lng'),
         radius: 100
     };
     addGeofenceToTable('.otherItems', geofenceData, true);
