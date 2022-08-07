@@ -940,14 +940,26 @@ try {
 
 	if (init('action') == 'getAllPositions') {
 		$result = array();
+		$id = init('id', 'all');
+
+		if ($id == 'all') {
+			$eqLogics = eqLogic::byType('JeedomConnect');
+		} else {
+			/** @var cmd $cmdTmp */
+			$cmdTmp = cmd::byId($id);
+			if (!is_object($cmdTmp)) return;
+			$eqTmp = eqLogic::byId($cmdTmp->getEqLogic_id());
+			$eqLogics = array($eqTmp);
+		}
+
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach ($eqLogics as $eqLogic) {
 			if ($eqLogic->getConfiguration('displayPosition', 0) == 0) continue;
 
 			/** @var cmd $cmd */
 			$cmd = $eqLogic->getCmd(null, 'position');
 			if (!is_object($cmd)) continue;
-			JCLog::debug("position cmd/id => " . $cmd->getId());
+			// JCLog::debug("position cmd/id => " . $cmd->getId());
 
 			/** @var string $position */
 			$position = $cmd->execCmd();
@@ -956,11 +968,11 @@ try {
 			$data = explode(',', $position);
 			if (count($data) < 2) continue;
 			$cmdDistance = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),  'distance');
-			$distance = is_object($cmdDistance) ? number_format($cmdDistance->execCmd(), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
+			$distance = is_object($cmdDistance) ? number_format(floatval($cmdDistance->execCmd()), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
 			$result[] = array(
+				'id' => $cmd->getId(),
 				'name' => $eqLogic->getName(),
 				'eqId' => $eqLogic->getId(),
-				'cmdId' => $cmd->getId(),
 				'lat' => $data[0],
 				'lng' => $data[1],
 				'lastSeen' => $cmd->getCollectDate(),

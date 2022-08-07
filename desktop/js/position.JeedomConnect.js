@@ -21,45 +21,14 @@ $.post({
     }
 });
 
-
-function getLocalisations() {
-    $.post({
-        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-        data: {
-            'action': 'getAllPositions'
-        },
-        cache: false,
-        dataType: 'json',
-        async: false,
-        success: function (data) {
-            // console.log('getAllPositions', data)
-            if (data.state != 'ok') {
-                $('#div_alert').showAlert({
-                    message: data.result,
-                    level: 'danger'
-                });
-            }
-            else {
-                if (data.result.length == 0) {
-                    $('#div_alert').showAlert({
-                        message: "Aucun équipement autorisé",
-                        level: 'warning'
-                    });
-                }
-                allJcPositions = data.result;
-            }
-        }
-    });
-}
-
 // Fonction d'initialisation de la carte
 function initLocalisationMap() {
 
     createJcMap();
 
     allJcPositions.forEach(function (jcPosition) {
-        addJcMapListener(jcPosition.cmdId);
         addMarker(jcPosition, true)
+        addJcMapListener(jcPosition.id);
     });
     macarte.addLayer(markerClusters);
 
@@ -69,10 +38,11 @@ function getHtmlPopUp(geo) {
     var latlng = geo.lat + ',' + geo.lng;
     var urlNav = "https://www.google.com/maps/search/?api=1&query=" + latlng;
 
-    var html = `<h4 class="text-center">${geo.name || ''}</h4>
+    let name = (geo.name) ? geo.name + ' (' + geo.id + ')' : '';
+    var html = `<h4 class="text-center">${name}</h4>
             <table  style="font-size:14px">`;
     html += (!geo.radius) ? `<tr style="background-color:transparent!important"><td><b>Maj : </b></td><td style="padding-left:5px">${geo.lastSeen}</td></tr>` : '';
-    html += `<tr style = "background-color:transparent!important" ><td><b>Position : </b></td><td style="padding-left:5px"><a href="${geo.urlNav}" target="_blank">${latlng}</a></td></tr >`;
+    html += `<tr style = "background-color:transparent!important" ><td><b>Position : </b></td><td style="padding-left:5px"><a href="${urlNav}" target="_blank">${latlng}</a></td></tr >`;
     html += (!geo.radius) ? `<tr style="background-color:transparent!important"><td><b>Distance : </b></td><td style="padding-left:5px">${geo.distance}</td></tr>` : '';
     html += (!geo.radius) ? `<tr style="background-color:transparent!important"><td colspan="2" class="text-center"><a href="${urlNav}" target="_blank">Y aller !</a></td></tr>` : '';
     html += (geo.radius) ? `<tr style="background-color:transparent!important"><td><b>Rayon : </b></td><td style="padding-left:5px">${geo.radius} m</td></tr>` : '';
@@ -177,8 +147,7 @@ var markerClusters;
 var markers = []; // Nous initialisons la liste des marqueurs
 var circles = []; // Nous initialisons la liste des cercles
 if (!geo) {
-    getLocalisations();
-    initLocalisationMap();
+    initMap();
 }
 else {
     $('#jcMap').addClass("col-sm-6")
@@ -199,6 +168,13 @@ else {
             .setContent(html)
             .openOn(macarte);
     });
+}
+
+
+async function initMap() {
+    var infoPositions = await getInfoPosition();
+    allJcPositions = infoPositions.result;
+    initLocalisationMap();
 }
 
 var popup = L.popup();
@@ -455,23 +431,6 @@ $('body').off('click', '.geoFocusMarker').on('click', '.geoFocusMarker', functio
     getFocus([geo.lat, geo.lng], 15)
 })
 
-function refreshJcPosition(cmdId, position) {
-    let data = position.split(',');
-    updateMarker({ id: cmdId, lat: data[0], lng: data[1] })
-}
-
-function addJcMapListener(id) {
-    let script = `<script>
-        jeedom.cmd.update['${id}'] = function (_options) {
-             refreshJcPosition(${id}, _options.value);
-            }
-            jeedom.cmd.update['${id}']({ value: "#state#" })
-    </script>`
-
-    $('#jcMapScript').append(script);
-
-}
-
 $("body").off('click', '.btnAddCoordinates').on('click', '.btnAddCoordinates', function () {
 
     let geofenceData = {
@@ -488,6 +447,52 @@ $("body").off('click', '.btnAddCoordinates').on('click', '.btnAddCoordinates', f
     actionOnConfigGeo(geofenceData);
 
 });
+
+async function refreshJcPositionData(cmdId, position) {
+    var geoData = await getInfoPosition(cmdId);
+
+    if (geoData.state == 'ok') {
+        // console.log('geoData', geoData.result[0]);
+        updateMarker(geoData.result[0])
+    }
+}
+
+function addJcMapListener(cmdId) {
+    let script = `<script>
+        jeedom.cmd.update['${cmdId}'] = function (_options) {
+             refreshJcPositionData(${cmdId}, _options.value);
+            }
+            jeedom.cmd.update['${cmdId}']({ value: "#state#" })
+    </script>`
+
+    $('#jcMapScript').append(script);
+
+}
+
+async function getInfoPosition(cmdId = 'all') {
+
+    const result = await $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+            action: 'getAllPositions',
+            id: cmdId
+        },
+        cache: false,
+        dataType: 'json',
+        async: false
+    });
+
+    if (result.state != 'ok') {
+        $('#div_alert').showAlert({
+            message: result.result,
+            level: 'danger'
+        });
+    }
+
+    if (cmdId == 'all') allJcPositions = result;
+    return result;
+}
+
 
 //----- FOR CMD
 async function actionOnCmdGeo(geofence, type = 'createOrUpdate') {
