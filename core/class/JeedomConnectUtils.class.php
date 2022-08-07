@@ -918,7 +918,7 @@ class JeedomConnectUtils {
     public static function getDistance($lat1, $lon1, $lat2 = null, $lon2 = null) {
         //by default the one from JC, or the one from jeedom, or Paris
         if (is_null($lat2) || is_null($lon2)) {
-            list($lon2, $lat2) = self::getDefaultCoordinates();
+            list($lon2, $lat2) = self::getJcCoordinates();
         }
 
         $theta = $lon1 - $lon2;
@@ -929,10 +929,19 @@ class JeedomConnectUtils {
         return floor($dist);
     }
 
-    public static function getDefaultCoordinates() {
-        $lon = config::bykey('longitude', 'JeedomConnect', config::bykey('info::longitude', 'core', 2.349903));
-        $lat = config::bykey('latitude', 'JeedomConnect', config::bykey('info::latitude', 'core', 48.852969));
+    public static function getJcCoordinates() {
+        list($lngDefault, $latDefault) = JeedomConnectUtils::getDefaultCoordinates();
 
-        return array($lon, $lat);
+        $lng = config::bykey('longitude', 'JeedomConnect', config::bykey('info::longitude', 'core', $lngDefault));
+        $lat = config::bykey('latitude', 'JeedomConnect', config::bykey('info::latitude', 'core', $latDefault));
+
+        return array($lng, $lat);
+    }
+
+    public static function getDefaultCoordinates() {
+        $lng = 2.349903;
+        $lat = 48.852969;
+
+        return array($lng, $lat);
     }
 }

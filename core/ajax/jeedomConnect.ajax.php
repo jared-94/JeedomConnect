@@ -833,11 +833,12 @@ try {
 
 	if (init('action') == 'getDefaultPosition') {
 
-		list($lon, $lat) = JeedomConnectUtils::getDefaultCoordinates();
+		list($lng, $lat) = JeedomConnectUtils::getJcCoordinates();
+		list($lngDefault, $latDefault) = JeedomConnectUtils::getDefaultCoordinates();
 
-		$defaultZoom = (($lat . $lon) == ($latDefault . $lonDefault)) ? 'Autour Paris' : 'Autour de mon Jeedom';
+		$defaultZoom = (($lat . $lng) == ($latDefault . $lngDefault)) ? 'Autour Paris' : 'Autour de mon Jeedom';
 
-		ajax::success(array('lon' => $lon, 'lat' => $lat, 'defaultText' => $defaultZoom));
+		ajax::success(array('lng' => $lng, 'lat' => $lat, 'defaultText' => $defaultZoom));
 	}
 
 	if (init('action') == 'createOrUpdateCmdGeo') {
@@ -857,7 +858,7 @@ try {
 				$cmd->setType('info');
 				$cmd->setSubType('binary');
 				$cmd->setConfiguration('latitude', doubleval($data['lat']));
-				$cmd->setConfiguration('longitude', doubleval($data['lon']));
+				$cmd->setConfiguration('longitude', doubleval($data['lng']));
 				$cmd->setConfiguration('radius', doubleval($data['radius']));
 				$cmd->setConfiguration('parent', $data['id']);
 				$cmd->setEqLogic_id($eqId);
@@ -920,7 +921,7 @@ try {
 						'name' => $cmd->getName(),
 						'radius' => $cmd->getConfiguration('radius'),
 						'lat' => $cmd->getConfiguration('latitude'),
-						'lon' => $cmd->getConfiguration('longitude'),
+						'lng' => $cmd->getConfiguration('longitude'),
 						'cmdId' => $cmd->getId(),
 						'eqId' => $eqLogic->getId(),
 						'parent' => $cmd->getConfiguration('parent', null),
@@ -961,7 +962,7 @@ try {
 				'eqId' => $eqLogic->getId(),
 				'cmdId' => $cmd->getId(),
 				'lat' => $data[0],
-				'lon' => $data[1],
+				'lng' => $data[1],
 				'lastSeen' => $cmd->getCollectDate(),
 				'icon' => $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png'),
 				'distance' => $distance
