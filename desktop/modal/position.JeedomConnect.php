@@ -32,6 +32,10 @@ sendVarToJS('eqId', init('eqId'));
         height: 580px;
         width: 650px;
     }
+
+    .JcMaps th {
+        min-width: 100px;
+    }
 </style>
 
 <div id="jcMap">
@@ -88,7 +92,7 @@ if (!$forGeo) {
     <div class="col-sm-6 dataGeo">
 
         <legend style="margin-top:10px"><i class="fas fa-mobile-alt"></i> {{Sur mon équipement}}</legend>
-        <table class="currentEq" class="table table-bordered table-condensed">
+        <table class="currentEq JcMaps" class="table table-bordered table-condensed">
             <thead>
                 <tr>
                     <th style="width: 100px;">{{ID}}</th>
@@ -105,7 +109,7 @@ if (!$forGeo) {
 
         <br />
         <legend style="margin-top:10px"><i class="mdi mdi-map-marker-multiple-outline"></i> {{Tous les points disponibles}}</legend>
-        <table class="otherItems" class="table table-bordered table-condensed">
+        <table class="otherItems JcMaps" class="table table-bordered table-condensed">
             <thead>
                 <tr>
                     <th style="width: 100px;">{{ID}}</th>
