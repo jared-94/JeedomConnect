@@ -701,6 +701,7 @@ class apiHelper {
       'userId' => $userConnected->getId(),
       'userName' => $userConnected->getLogin(),
       'userProfil' => $userConnected->getProfils(),
+      'userImgPath' => config::byKey('userImgPath',   'JeedomConnect'),
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
       'notifsVersion' => $notifsConfig['idCounter'],
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
