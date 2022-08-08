@@ -336,6 +336,20 @@ sendVarToJS('userHash', $userHash);
   </fieldset>
 </form>
 
+
+<script>
+  function JeedomConnect_postSaveConfiguration() {
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        action: 'restartDaemon'
+      },
+      dataType: 'json'
+    });
+  }
+</script>
+
+
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>

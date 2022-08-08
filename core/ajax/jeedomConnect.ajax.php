@@ -983,6 +983,22 @@ try {
 		ajax::success($result);
 	}
 
+	if (init('action') == 'restartDaemon') {
+
+		$plugin = plugin::byId('JeedomConnect');
+		if (is_object($plugin)) {
+			$daemon_info = $plugin->deamon_info();
+			if ($daemon_info['state'] == 'ok') {
+				message::add('JeedomConnect', 'Redémarrage du démon après sauvegarde de la configuration');
+				JCLog::info('DAEMON restart after saving new setup');
+				$plugin->deamon_start(true);
+			} else {
+				JCLog::info('DAEMON not automatically restarted - daemon state KO');
+			}
+		}
+		ajax::success();
+	}
+
 	if (init('action') == 'regenerateApiKey') {
 		$id = init('eqId');
 		$currentApiKey = init('apiKey');
