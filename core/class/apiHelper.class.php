@@ -721,6 +721,7 @@ class apiHelper {
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
       'objInfo' => self::getObjectData($config, false),
+      'geofenceInfo' => self::getGeofencesData($eqLogic, false),
       'links' => JeedomConnectUtils::getLinks(),
       // check timelineclass for old jeedom core
       'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
@@ -1088,16 +1089,13 @@ class apiHelper {
    * @param JeedomConnect $eqLogic
    * @return (string|array)[]|null
    */
-  private static function getGeofencesData($eqLogic) {
-    $result = array(
-      'type' => 'SET_GEOFENCES',
-      'payload' => array(
-        'geofences' => array()
-      )
-    );
+  private static function getGeofencesData($eqLogic, $withType = true) {
+    $returnType = 'SET_GEOFENCES';
+
+    $result = array();
     foreach ($eqLogic->getCmd('info') as $cmd) {
       if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
-        array_push($result['payload']['geofences'], array(
+        array_push($result, array(
           'identifier' => substr($cmd->getLogicalId(), 9),
           'extras' => array(
             'name' => $cmd->getName()
@@ -1111,8 +1109,11 @@ class apiHelper {
       }
     }
 
-    if (count($result['payload']['geofences']) > 0) {
-      return $result;
+    if (count($result) > 0) {
+      $payload = array(
+        'geofences' => $result
+      );
+      return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
     }
     return null;
   }

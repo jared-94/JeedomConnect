@@ -1,16 +1,21 @@
 <?php
 require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
-/** @var eqLogic $eqLogic */
-$eqLogic = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
-if (!is_object($eqLogic)) {
-    JCLog::error('Error - no MAP equipment found');
-    $visible = $roomId = '';
-} else {
-    $visible = ($eqLogic->getIsVisible() == 1) ? 'checked' : '';
-    $roomId = $eqLogic->getObject_id();
-}
+$forGeo = init('geo', false);
+sendVarToJS('geo', $forGeo);
 
+$visible = $roomId = '';
+if (!$forGeo) {
+    /** @var eqLogic $eqLogic */
+    $eqLogic = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
+    if (!is_object($eqLogic)) {
+        JCLog::warning('Error - no MAP equipment found -- trying to create one');
+        JeedomConnect::createMapEquipment();
+    } else {
+        $visible = ($eqLogic->getIsVisible() == 1) ? 'checked' : '';
+        $roomId = $eqLogic->getObject_id();
+    }
+}
 
 include_file('desktop', 'leaflet/leaflet', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/MarkerCluster.Default', 'css', 'JeedomConnect');
@@ -19,8 +24,7 @@ include_file('desktop', 'leaflet/MarkerCluster', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/leaflet', 'js', 'JeedomConnect');
 include_file('desktop', 'leaflet/leaflet.markercluster', 'js', 'JeedomConnect');
 
-$forGeo = init('geo', false);
-sendVarToJS('geo', $forGeo);
+
 
 sendVarToJS('eqId', init('eqId'));
 ?>

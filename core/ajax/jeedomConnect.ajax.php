@@ -846,6 +846,14 @@ try {
 		$type = init('type');
 		$eqId = init('eqId');
 
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($eqId);
+		if (!is_object($eqLogic)) {
+			$errEq = 'createOrUpdateCmdGeo ==> no eqLogic found [' . $eqId . ']';
+			JCLog::warning($errEq);
+			ajax::error($errEq);
+		}
+
 		switch ($type) {
 			case 'createOrUpdate':
 				/** @var cmd $cmd */
