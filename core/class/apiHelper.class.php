@@ -467,6 +467,18 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_PICOKEY':
+          self::setPicoKey($eqLogic, $param['value']);
+          break;
+        case 'GET_PICOKEY':
+          return array(
+            "type" => "GET_PICOKEY",
+            "payload" => array(
+              "picovoiceKey" => $eqLogic->getConfiguration('picovoiceKey')
+            )
+          );
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -2870,6 +2882,11 @@ class apiHelper {
         "polling" => $value ? '1' : '0'
       )
     );
+  }
+
+  private static function setPicoKey($eqLogic, $value) {
+    $eqLogic->setConfiguration('picovoiceKey', $value);
+    $eqLogic->save(true);
   }
 
   /**
