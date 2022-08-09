@@ -229,7 +229,9 @@ $('body').off('click', '.removeGeo').on('click', '.removeGeo', function () {
     var id = elt.find('.geoAttr[data-l1key=id]').text();
     var parent = elt.data('parent');
 
-    bootbox.confirm("Supprimer cette zone ?", function (result) {
+    var cplt = isConfig ? 'des modèles' : 'de votre équipement';
+
+    bootbox.confirm("Supprimer cette zone " + cplt + " ?", function (result) {
         if (result) {
             if (isConfig) {
                 actionOnConfigGeo({ id: id }, 'remove');
@@ -248,6 +250,7 @@ $('body').off('click', '.removeGeo').on('click', '.removeGeo', function () {
                 removeCircle(id);
             }
             elt.remove();
+            $('.applyGeoModif').show();
         }
     });
 })
@@ -272,6 +275,7 @@ function controlFields(geo) {
 
 $('body').off('click', '.addGeoToEquipment').on('click', '.addGeoToEquipment', function () {
     createCmdAndMoveItem($(this));
+    $('.applyGeoModif').show();
 });
 
 async function createCmdAndMoveItem(elt) {

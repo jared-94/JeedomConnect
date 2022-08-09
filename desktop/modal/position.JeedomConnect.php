@@ -17,6 +17,7 @@ if (!$forGeo) {
     }
 }
 
+include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/leaflet', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/MarkerCluster.Default', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/MarkerCluster', 'css', 'JeedomConnect');
@@ -25,8 +26,10 @@ include_file('desktop', 'leaflet/leaflet', 'js', 'JeedomConnect');
 include_file('desktop', 'leaflet/leaflet.markercluster', 'js', 'JeedomConnect');
 
 
-
-sendVarToJS('eqId', init('eqId'));
+$eqId = init('eqId');
+sendVarToJS('eqId', $eqId);
+$eqLogic = eqLogic::byId($eqId);
+$eqName = is_object($eqLogic) ? $eqLogic->getName() : '';
 ?>
 
 <!-- Nous chargeons les fichiers CDN de Leaflet. Le CSS AVANT le JS -->
@@ -95,7 +98,8 @@ if (!$forGeo) {
 ?>
     <div class="col-sm-6 dataGeo">
 
-        <legend style="margin-top:10px"><i class="fas fa-mobile-alt"></i> {{Sur mon équipement}}</legend>
+        <span class="applyGeoModif description text-center" style="display:none;">Le redémarrage de l'application JC est nécessaire pour prendre en compte les modifications.<br /></span>
+        <legend style="margin-top:10px"><i class="fas fa-mobile-alt"></i> {{Sur mon équipement JC}} &gt; <?= $eqName ?> &lt;</legend>
         <table class="currentEq JcMaps" class="table table-bordered table-condensed">
             <thead>
                 <tr>

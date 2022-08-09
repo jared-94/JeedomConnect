@@ -309,10 +309,11 @@ $("body").on('click', '.removeImage', function () {
 $('.showGeofence').off('click').on('click', function () {
     $("#mapsModal").dialog('destroy').remove();
     $('body').append('<div id="mapsModal"></div>');
+    var coeff = ($(window).width() < 1920) ? 0.9 : 0.8;
     $('#mapsModal').dialog({
-        title: "{{Geo}}",
-        width: 0.8 * $(window).width(),
-        height: 640, //0.8 * $(window).height(),
+        title: "{{Geofencing}}",
+        width: coeff * $(window).width(),
+        height: 640,
         modal: true,
         closeText: '',
         close: function () {
