@@ -473,7 +473,7 @@ class apiHelper {
           break;
 
         case 'GET_PICOKEY':
-          return JeedomConnectUtils::addTypeInPayload($eqLogic->getConfiguration('picovoiceKey', null), 'SET_PICOKEY');
+          return self::getPicoKey($eqLogic);
           break;
 
         default:
@@ -2885,6 +2885,16 @@ class apiHelper {
   private static function setPicoKey($eqLogic, $value) {
     $eqLogic->setConfiguration('picovoiceKey', $value);
     $eqLogic->save(true);
+  }
+
+  private static function getPicoKey($eqLogic, $withType = true) {
+    $returnType = 'SET_PICOKEY';
+
+    $payload = array(
+      'picovoiceKey' => $eqLogic->getConfiguration('picovoiceKey', null)
+    );
+
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   /**
