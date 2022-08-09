@@ -470,13 +470,9 @@ class apiHelper {
         case 'SET_PICOKEY':
           self::setPicoKey($eqLogic, $param['value']);
           break;
+
         case 'GET_PICOKEY':
-          return array(
-            "type" => "GET_PICOKEY",
-            "payload" => array(
-              "picovoiceKey" => $eqLogic->getConfiguration('picovoiceKey')
-            )
-          );
+          return JeedomConnectUtils::addTypeInPayload($eqLogic->getConfiguration('picovoiceKey', null), 'SET_PICOKEY');
           break;
 
         default:
