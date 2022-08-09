@@ -1112,6 +1112,24 @@ function openAssistantWidgetModal(id, event) {
 }
 
 
+$(".btnGeofencing").click(function (event) {
+  if (event !== undefined) event.stopPropagation();
+  var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
+
+  $("#mapsModal").dialog('destroy').remove();
+  $('body').append('<div id="mapsModal"></div>');
+  var coeff = ($(window).width() < 1920) ? 0.9 : 0.8;
+  $('#mapsModal').dialog({
+    title: "{{Geofencing}}",
+    width: coeff * $(window).width(),
+    height: 640,
+    modal: true,
+    closeText: ''
+  });
+  $('#mapsModal').load('index.php?v=d&plugin=JeedomConnect&modal=position.JeedomConnect&geo=true&eqId=' + id).dialog('open');
+
+});
+
 $(".btnNotification").click(function (event) {
   var id = $(this).closest('.eqLogicDisplayCard').data('eqlogic_id');
   openAssistantNotificationModal(id, event);

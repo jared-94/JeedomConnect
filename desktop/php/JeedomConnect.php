@@ -277,7 +277,8 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 				$allEqToDisplay .= '<span>';
 				// $allEqToDisplay .= '</div>';
 				$allEqToDisplay .= '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
-				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>';
+				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>&nbsp;';
+				$allEqToDisplay .= '<a class="btn btn-success btnGeofencing" title="Gérer le geofencing"><i class="fas fa-crosshairs"></i></a>';
 				$allEqToDisplay .= '</span>';
 				$allEqToDisplay .= '</div>';
 			}
@@ -556,7 +557,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Personnaliser les GEO}}</label>
+								<label class="col-sm-3 control-label">{{Personnaliser les Geofencing}}</label>
 								<div class="col-sm-7">
 									<a class="btn btn-success roundedRight showGeofence"><i class="fas fa-crosshairs"></i> Voir</a>
 								</div>
