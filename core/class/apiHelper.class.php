@@ -469,6 +469,7 @@ class apiHelper {
 
         case 'SET_PICOKEY':
           self::setPicoKey($eqLogic, $param['value']);
+          return null;
           break;
 
         case 'GET_PICOKEY':
