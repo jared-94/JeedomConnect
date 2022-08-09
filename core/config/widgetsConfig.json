@@ -4384,6 +4384,16 @@
 					}
 				},
 				{
+					"id": "color",
+					"name": "Couleur",
+					"required": false,
+					"category": "color",
+					"description": "Personnalisez la couleur du tracé et du marqueur",
+					"options": {
+						"hasImage": "false"
+					}
+				},
+				{
 					"id": "zoomDistance",
 					"name": "Zoom",
 					"category": "string",
@@ -4441,6 +4451,7 @@
 			"name": "Groupe de géolocalisation",
 			"img": "groupGeo.png",
 			"description": "Permet d'afficher plusieurs géolocalisation sur une seule et même carte",
+			"hide": true,
 			"variables": [
 				{
 					"name": "room",
