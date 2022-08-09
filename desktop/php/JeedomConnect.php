@@ -196,7 +196,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 					<div class="cursor eqLogicAction " data-action="showMaps" style="color:rgb(27,161,242);">
 						<i class="fas fa-map-marked-alt"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Maps}}</span>
+						<span style="color:var(--txt-color)">{{Localisation}}</span>
 					</div>
 
 					<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
