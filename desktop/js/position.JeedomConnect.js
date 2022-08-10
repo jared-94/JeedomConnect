@@ -380,11 +380,16 @@ function addMarker(geo, withCluster = false) {
         });
     }
     else {
+        var originalWidth = geo.infoImg[0];
+        var originalWheight = geo.infoImg[1];
+
+        var width = Math.floor(40 * originalWidth / originalWheight);
+        var halfWidth = Math.floor(width / 2);
 
         var myIcon = L.icon({
             iconUrl: geo.icon,
-            iconSize: [40, 40],
-            iconAnchor: [20, 40],
+            iconSize: [width, 40],
+            iconAnchor: [halfWidth, 40],
             popupAnchor: [-3, -40],
         });
     }
