@@ -43,7 +43,7 @@ $('.eqLogicAttr.checkJcConnexionOption').on('change', function () {
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
     var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
-    $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + key + '.png');
+    $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + key + '.png?' + new Date().getTime());
 
 });
 
@@ -234,7 +234,7 @@ $(".btRegenerateApiKey").click(function () {
                     var ApiKey = data.result.newapikey;
                     // console.log('new api key', ApiKey);
                     $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text(ApiKey)
-                    $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + ApiKey + '.png');
+                    $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + ApiKey + '.png?' + new Date().getTime());
                 }
             },
             error: function (error) {

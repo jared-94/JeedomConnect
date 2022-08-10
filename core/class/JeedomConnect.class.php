@@ -776,8 +776,10 @@ class JeedomConnect extends eqLogic {
 		}
 		$user = user::byId($this->getConfiguration('userId'));
 		if ($user == null) {
-			$user = user::all()[0];
-			$this->setConfiguration('userId', $user->getId());
+			// $user = user::all()[0];
+			// $this->setConfiguration('userId', $user->getId());
+			// $this->save(true);  //save manquant ! info non persistée
+			JCLog::error('Aucun utilisateur sélectionné sur [' . $this->getName() . ']');
 		}
 
 		$connectData = array(
@@ -788,7 +790,7 @@ class JeedomConnect extends eqLogic {
 			'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
 			'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
-			'userHash' => $user->getHash(),
+			'userHash' => $user ? $user->getHash() : null,
 			'eqName' => $this->getName()
 		);
 
