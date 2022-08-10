@@ -828,7 +828,7 @@ try {
 
 		$eqLogic->save();
 		// JCLog::debug('eqId received =>' . json_encode(init('eqId')));
-		ajax::success($result);
+		ajax::success();
 	}
 
 	if (init('action') == 'getDefaultPosition') {
