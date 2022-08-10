@@ -1109,13 +1109,10 @@ class apiHelper {
       }
     }
 
-    if (count($result) > 0) {
-      $payload = array(
-        'geofences' => $result
-      );
-      return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
-    }
-    return null;
+    $payload = array(
+      'geofences' => $result
+    );
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   //PLUGIN CONF FUNCTIONS
