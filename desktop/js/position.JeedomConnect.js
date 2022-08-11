@@ -156,12 +156,12 @@ else {
     initGeofenceMap();
 
     macarte.off('click').on('click', function (e) {
-        var lat = e.latlng.lat;
-        var lng = e.latlng.lng;
+        var lat = e.latlng.lat.toFixed(6);
+        var lng = e.latlng.lng.toFixed(6);
 
         var html = `<b><u>Nouvelle position</u></b><br>
                 <b>Lat :</b>${lat} - <b>Lng :</b>${lng}<br><br>
-                <a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${lat}' data-lng='${lng}'>Ajouter ici</a><br/> `;
+                <a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${lat}' data-lng='${lng}'>Créer une zone ici</a><br/> `;
 
         popup
             .setLatLng(e.latlng)
@@ -336,8 +336,8 @@ function updateCoordinates(id, lat, lng) {
     var circle = circles.find(i => i.options.id == id);
     if (circle) {
         var geo = circle.options.geoData;
-        geo['lat'] = lat;
-        geo['lng'] = lng;
+        geo['lat'] = lat.toFixed(6);
+        geo['lng'] = lng.toFixed(6);
         circle.options.geoData = geo;
 
         var currentEq = $('.currentEq tr[data-id=' + id + ']');
