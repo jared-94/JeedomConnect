@@ -337,7 +337,7 @@ sendVarToJS('userHash', $userHash);
 </form>
 
 
-<script>
+<!-- <script>
   function JeedomConnect_postSaveConfiguration() {
     $.post({
       url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -347,7 +347,7 @@ sendVarToJS('userHash', $userHash);
       dataType: 'json'
     });
   }
-</script>
+</script> -->
 
 
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
