@@ -996,6 +996,7 @@ try {
 
 	if (init('action') == 'restartDaemon') {
 
+		/** @var plugin $plugin */
 		$plugin = plugin::byId('JeedomConnect');
 		if (is_object($plugin)) {
 			$daemon_info = $plugin->deamon_info();

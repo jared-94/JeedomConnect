@@ -87,17 +87,20 @@ function JeedomConnect_update() {
     JeedomConnect::migrateAppPref();
   }
 
-  // FORCE save on all equipments to save new cmd
-  /** @var JeedomConnect $eqLogic */
-  foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
-    $eqLogic->save();
-  }
-
   $pluginInfo = JeedomConnect::getPluginInfo();
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
 
   JeedomConnectUtils::addCronCheckDaemon();
   JeedomConnect::createMapEquipment();
+
+
+  //////// PLEASE KEEP IT AT THE END !! 
+  // FORCE save on all equipments to save new cmd
+  /** @var JeedomConnect $eqLogic */
+  foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+    $eqLogic->save();
+  }
+  ///---------- NOTHING BELOW PLZ !!!!!!!! 
 }
 
 function JeedomConnect_remove() {
