@@ -27,7 +27,7 @@ function initLocalisationMap() {
     createJcMap();
 
     allJcPositions.forEach(function (jcPosition) {
-        addMarker(jcPosition, true)
+        addMarker(jcPosition, false, true)
         addJcMapListener(jcPosition.id);
     });
     macarte.addLayer(markerClusters);
@@ -369,7 +369,7 @@ function removeCircle(id) {
     }
 }
 
-function addMarker(geo, withCluster = false) {
+function addMarker(geo, isDraggable = true, withCluster = false) {
 
     if (!geo.icon) {
         var myIcon = L.icon({
@@ -393,12 +393,14 @@ function addMarker(geo, withCluster = false) {
             popupAnchor: [-3, -40],
         });
     }
-    var marker = L.marker([geo.lat, geo.lng], { icon: myIcon, draggable: true, title: geo.name, id: geo.id })
+    var marker = L.marker([geo.lat, geo.lng], { icon: myIcon, draggable: isDraggable, title: geo.name, id: geo.id })
 
-    marker.on('dragend', function (event) {
-        var position = marker.getLatLng();
-        updateCoordinates(marker.options.id, position.lat, position.lng)
-    });
+    if (isDraggable) {
+        marker.on('dragend', function (event) {
+            var position = marker.getLatLng();
+            updateCoordinates(marker.options.id, position.lat, position.lng)
+        });
+    }
 
     let popUpData = getHtmlPopUp(geo);
 
