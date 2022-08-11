@@ -699,7 +699,7 @@ $('.eqLogicAction[data-action=showMaps]').off('click').on('click', function () {
   $("#widgetModal").dialog('destroy').remove();
   $('body').append('<div id="mapsModal"></div>');
   $('#mapsModal').dialog({
-    title: "{{Localisation}}",
+    title: "{{Localisation de vos équipements JC}}",
     width: 710,
     height: 770, //0.8 * $(window).height(),
     modal: true,
