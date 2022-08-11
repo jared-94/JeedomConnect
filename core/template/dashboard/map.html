@@ -1,0 +1,52 @@
+<div class="eqLogic eqLogic-widget allowLayout allowResize allowReorderCmd" data-eqType="#eqType#"
+    data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="#version#"
+    style="width: #width#;height: #height#;#style#" data-translate-category="#translate_category#"
+    data-category="#category#" data-tags="#tags#">
+    <center class="widget-name"><a href="#eqLink#" style="font-size : 1.1em;#hideEqLogicName#">#name_display# <span
+                class="object_name">#object_name#</span></a></center>
+
+    <link rel="stylesheet" href="plugins/JeedomConnect/desktop/css/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="plugins/JeedomConnect/desktop/css/leaflet/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="plugins/JeedomConnect/desktop/css/leaflet/MarkerCluster.css" />
+    <script>
+        var geo = false;
+    </script>
+    <!-- Nous chargeons les fichiers CDN de Leaflet. Le CSS AVANT le JS -->
+    <style type="text/css">
+        #jcMap {
+            /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
+            height: calc(100% - 80px);
+            width: 100%;
+        }
+    </style>
+
+    <div id="jcMap">
+        <!-- Ici s'affichera la carte -->
+    </div>
+    <div id="jcMapScript">
+
+    </div>
+
+    <div class='form-group JCzoom'>
+        <label class='col-xs-3'>Zoom :</label>
+        <div class='col-xs-9'>
+            <label class='radio-inline'>
+                <label><input type="radio" class="zoomSelection" name="radio" value="home" checked><span
+                        class="defaultText"></span></label><br />
+                <label><input type="radio" class="zoomSelection" name="radio" value="all"> Toutes les positions</label>
+            </label>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $.include(['plugins/JeedomConnect/desktop/js/leaflet/leaflet.js',
+        'plugins/JeedomConnect/desktop/js/leaflet/leaflet.markercluster.js',
+        'plugins/JeedomConnect/desktop/js/position.JeedomConnect.js'],
+        function () {
+            if ('#hideOption#' == 'true') {
+                $('.JCzoom').hide();
+                $('#jcMap').style('height', "100%");
+            };
+        })
+</script>

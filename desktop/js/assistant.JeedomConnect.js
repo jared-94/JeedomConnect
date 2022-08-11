@@ -281,6 +281,12 @@ function getSimpleModal(_options, _callback) {
 					if (_options.fields.find(i => i.type == "enable")) {
 						result.enable = $("#mod-enable-input").is(':checked');
 					}
+					if (_options.fields.find(i => i.type == "room")) {
+						if ($("#room-input").val() == undefined) {
+							throw 'Choix obligatoire';
+						}
+						result.roomId = $("#room-input option:selected").val();
+					}
 					if (_options.fields.find(i => i.type == "checkboxes")) {
 						checkedVals = $('.checkboxesSelection:checkbox:checked').map(function () {
 							return this.value;

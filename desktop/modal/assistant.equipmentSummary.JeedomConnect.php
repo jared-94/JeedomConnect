@@ -32,7 +32,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
     <tr>
       <th colspan="5" data-sorter="false" data-filter="false">&nbsp;</th>
       <th colspan="2" data-sorter="false" data-filter="false" class="text-center">Connexion</th>
-      <th colspan="4" data-sorter="false" data-filter="false" class="text-center">Accès à</th>
+      <th colspan="5" data-sorter="false" data-filter="false" class="text-center">Accès à</th>
       <th data-sorter="false" data-filter="false" class="text-center">Masquer</th>
       <th colspan="4" data-sorter="false" data-filter="false">&nbsp;</th>
     </tr>
@@ -69,6 +69,10 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-check"></i></a>
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
+      <th data-sorter="checkbox" data-filter="false">{{Position}}
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="displayPosition" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="displayPosition" style="width:22px;"><i class="fas fa-times"></i></a>
+      </th>
       <th data-sorter="checkbox" data-filter="false">{{Batterie}}
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-check"></i></a>
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-times"></i></a>
@@ -86,6 +90,8 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
     /** @var JeedomConnect $eqLogic */
     foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+      if ($eqLogic->isWidgetMap()) continue;
+
 
       // **********    ID    ****************
       $html .= '<tr class="tr_object" data-equipment_id="' . $eqLogic->getId() . '" >';
@@ -147,6 +153,10 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       // **********    addAltitude    ****************
       $addAltitude = $eqLogic->getConfiguration('addAltitude', false) ? 'checked' : '';
       $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $addAltitude . ' data-l1key="addAltitude" /></td>';
+
+      // **********    Position    ****************
+      $displayPosition = $eqLogic->getConfiguration('displayPosition', false) ? 'checked' : '';
+      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $displayPosition . ' data-l1key="displayPosition" /></td>';
 
       // **********    hideBattery    ****************
       $hideBattery = $eqLogic->getConfiguration('hideBattery', false) ? 'checked' : '';
@@ -245,5 +255,6 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
 
 <?php include_file('desktop', 'equipementsummary.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'equipmentJC', 'css', 'JeedomConnect'); ?>
 <?php include_file('desktop/common', 'utils', 'js'); ?>

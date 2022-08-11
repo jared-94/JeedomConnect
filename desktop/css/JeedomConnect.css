@@ -11,7 +11,7 @@
 }
 
 .eqLogicThumbnailContainer {
-  min-height: 200px !important;
+  /* min-height: 200px !important; */
 }
 
 .eqLogicThumbnailContainer .eqLogicDisplayCard {
@@ -103,10 +103,6 @@
   margin-top: 15px;
 }
 
-.btn-supp {
-  background-color: var(--al-danger-color) !important;
-}
-
 .borderLef {
   border-left: 1px solid #ccc;
 }
@@ -117,4 +113,9 @@
 
 .text-center {
   text-align: center;
+}
+
+.description {
+  color: var(--al-info-color);
+  font-size: 11px;
 }

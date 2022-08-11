@@ -27,7 +27,6 @@ sendVarToJS('userImgPath', $customPath);
 
 
 include_file('desktop', 'notifs.JeedomConnect', 'js', 'JeedomConnect');
-include_file('desktop', 'notifsManager', 'js', 'JeedomConnect');
 include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
 ?>
 
@@ -47,18 +46,16 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
       <div class="tab fixed">
         <?php
         if ($eqLogic->getConfiguration('platformOs') == 'android') {
-          echo "<button class=\"tablinks\" onclick=\"openTab(event, 'channelsTab')\" id=\"defaultOpen\">Canaux</button>";
-          echo "<button class= \"tablinks\" onclick=\"openTab(event, 'notifsTab')\">Notifications</button>";
-        } else {
-          echo "<button class= \"tablinks\" onclick=\"openTab(event, 'notifsTab')\" id=\"defaultOpen\">Notifications</button>";
+          echo '<button class="tablinks" data-link="channelsTab">Canaux</button>';
         }
         ?>
+        <button class="tablinks" data-link="notifsTab">Notifications</button>
       </div>
     </div>
 
 
     <div id="detailTab" class="col-sm-9 ">
-      <div id="channelsTab" class="tabcontent">
+      <div id="channelsTab" class="tabcontent" style="display:none">
         <div class="leftContent">
           <h3>Canaux</h3>
           <a class="btn btn-success btn-sm " style="margin-top:5px;" onclick="addChannelTabModal()"><i class="fa fa-plus-circle"></i> Ajouter un canal</a>
@@ -73,7 +70,7 @@ include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
         </div>
       </div>
 
-      <div id="notifsTab" class="tabcontent">
+      <div id="notifsTab" class="tabcontent" style="display:none">
         <div class="leftContent">
           <h3>Notifications</h3>
           <a class="btn btn-success btn-sm " style="margin-top:5px;margin-left:10px;" onclick="addNotifModal()"><i class="fa fa-plus-circle"></i> Ajouter une notification</a>

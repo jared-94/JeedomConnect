@@ -199,10 +199,31 @@ sendVarToJS('userHash', $userHash);
         <input type="checkbox" class="configKey" data-l1key="isStrict" checked />
       </div>
     </div>
+    <br />
 
+    <!-- LOCALISATION ZONE -->
+    <div class="alert alert-success text-align">
+      {{Localisation}}
+    </div>
 
+    <div class="form-group">
+      <div class="description text-center">Point de répère par défaut pour calculer les distances avec les positions de chaque équipement</div>
+    </div>
+    <div class="form-group">
+      <label class="col-lg-6 control-label">{{Latitude}}</label>
+      <div class="col-lg-3">
+        <input class="configKey form-control" type="string" data-l1key="latitude" placeholder="<?= config::bykey('info::latitude', 'core', 'celle de paris :)'); ?>" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-lg-6 control-label">{{Longitude}}</label>
+      <div class="col-lg-3">
+        <input class="configKey form-control" type="string" data-l1key="longitude" placeholder="<?= config::bykey('info::longitude', 'core', 'celle de paris :)'); ?>" />
+      </div>
+    </div>
 
     <br />
+
     <!-- BEGIN DANGER ZONE -->
     <div class="alert alert-danger" style="text-align:center;">
       <i class="fas fa-skull-crossbones"></i>&nbsp;&nbsp;&nbsp;&nbsp;{{Attention vous entrez en zone de Dangers !}}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-skull-crossbones"></i>
@@ -315,5 +336,20 @@ sendVarToJS('userHash', $userHash);
   </fieldset>
 </form>
 
+
+<!-- <script>
+  function JeedomConnect_postSaveConfiguration() {
+    $.post({
+      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+      data: {
+        action: 'restartDaemon'
+      },
+      dataType: 'json'
+    });
+  }
+</script> -->
+
+
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>

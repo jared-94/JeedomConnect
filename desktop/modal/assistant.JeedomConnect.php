@@ -25,8 +25,8 @@ sendVarToJS('apiKey', $eqLogic->getConfiguration('apiKey'));
 $eqName = $eqLogic->getName();
 
 
-include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'configManager', 'js', 'JeedomConnect');
+include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
 
 /** @var array<JeedomConnect> $eqLogics */

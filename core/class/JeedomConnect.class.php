@@ -25,6 +25,7 @@ require_once dirname(__FILE__) . '/JeedomConnectLogs.class.php';
 
 class JeedomConnect extends eqLogic {
 
+	public static $_widgetPossibility = array('custom' => true);
 	/*     * *************************Attributs****************************** */
 
 	public static $_initialConfig = array(
@@ -344,8 +345,10 @@ class JeedomConnect extends eqLogic {
 
 	public function getConfig($replace = false, $saveGenerated = false) {
 
+		if ($this->isWidgetMap()) return null;
+
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
-			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY !');
+			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
 		}
 
@@ -489,9 +492,6 @@ class JeedomConnect extends eqLogic {
 		$pwd = $this->getConfiguration('pwdAction', null);
 		$jsonConfig['payload']['password'] = $pwd;
 
-		//custom path
-		$jsonConfig['payload']['userImgPath'] = config::byKey('userImgPath',   'JeedomConnect');
-
 		//add summary details
 		$objSummary = config::byKey('object:summary');
 		$allSummaries = $jsonConfig['payload']['summaries'] ?? [];
@@ -560,7 +560,7 @@ class JeedomConnect extends eqLogic {
 	public function getGeneratedConfigFile() {
 
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
-			JCLog::error('¤¤¤¤¤ getConfig for ApiKey EMPTY !');
+			JCLog::error('¤¤¤¤¤ getGeneratedConfigFile for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
 		}
 
@@ -626,6 +626,7 @@ class JeedomConnect extends eqLogic {
 		$ids = array();
 
 		$conf = $this->getConfig(true);
+		if (is_null($conf)) return $ids;
 
 		foreach ($conf['payload']['widgets'] as $item) {
 			array_push($ids, $item['id']);
@@ -775,8 +776,10 @@ class JeedomConnect extends eqLogic {
 		}
 		$user = user::byId($this->getConfiguration('userId'));
 		if ($user == null) {
-			$user = user::all()[0];
-			$this->setConfiguration('userId', $user->getId());
+			// $user = user::all()[0];
+			// $this->setConfiguration('userId', $user->getId());
+			// $this->save(true);  //save manquant ! info non persistée
+			JCLog::error('Aucun utilisateur sélectionné sur [' . $this->getName() . ']');
 		}
 
 		$connectData = array(
@@ -787,7 +790,7 @@ class JeedomConnect extends eqLogic {
 			'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
 			'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
-			'userHash' => $user->getHash(),
+			'userHash' => $user ? $user->getHash() : null,
 			'eqName' => $this->getName()
 		);
 
@@ -963,7 +966,7 @@ class JeedomConnect extends eqLogic {
 		JCLog::debug("[setGeofencesByCoordinates] " . $lat . ' -- ' . $lgt);
 		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
 			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false) {
-				$dist = $this->getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
+				$dist = JeedomConnectUtils::getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
 				if ($dist < $cmd->getConfiguration('radius')) {
 					if ($cmd->execCmd() != 1) {
 						JCLog::debug("Set 1 for geofence " . $cmd->getName());
@@ -977,18 +980,14 @@ class JeedomConnect extends eqLogic {
 				}
 			}
 		}
-	}
 
-	public function getDistance($lat1, $lon1, $lat2, $lon2) {
-		$theta = $lon1 - $lon2;
-		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-		$dist = acos($dist);
-		$dist = rad2deg($dist);
-		$dist = ($dist * 60 * 1.1515) * 1609.344;
-		return floor($dist);
+		$distToDefault = JeedomConnectUtils::getDistance($lat, $lgt);
+		$cmdDistance = $this->getCmd(null, 'distance');
+		if (is_object($cmdDistance)) $cmdDistance->event($distToDefault);
 	}
 
 	public function preInsert() {
+		if ($this->isWidgetMap()) return;
 
 		if ($this->getConfiguration('apiKey') == '') {
 			$this->setConfiguration('apiKey', JeedomConnectUtils::generateApiKey());
@@ -998,6 +997,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postInsert() {
+		if ($this->isWidgetMap()) return;
 
 		$this->setIsEnable(1);
 		if ($this->getConfiguration('configVersion') == '') {
@@ -1013,6 +1013,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postSave() {
+		if ($this->isWidgetMap()) return;
 
 		if ($this->getConfiguration('pwdChanged') == 'true') {
 			$confStd = $this->getConfig();
@@ -1040,6 +1041,8 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preUpdate() {
+		if ($this->isWidgetMap()) return;
+
 		$save = false;
 
 		if ($this->getConfiguration('scenariosEnabled') == '') {
@@ -1059,6 +1062,8 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function postUpdate() {
+		if ($this->isWidgetMap()) return;
+
 		$this->createCommands('all');
 		if ($this->getConfiguration('platformOs') != '') {
 			$this->createCommands($this->getConfiguration('platformOs'));
@@ -1066,10 +1071,15 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function preRemove() {
+		if ($this->isWidgetMap()) return;
+
 		$apiKey = $this->getConfiguration('apiKey');
 		self::removeAllData($apiKey);
 	}
 
+	public function isWidgetMap() {
+		return ($this->getConfiguration('jceqtype') == "map");
+	}
 
 	/**
 	 * ensure userImgPath doesn't start with / and ends with /
@@ -1356,6 +1366,34 @@ class JeedomConnect extends eqLogic {
 			$enrollmentLink = htmlentities('<a href="' . $pluginInfo['enrollment'] . '" target="_blank">en cliquant ici</a>');
 			message::add('JeedomConnect',  'Si ça n\'est pas déjà fait, pensez à vous inscrire dans le programme beta-testeur de l\'application sur le Store : ' . $enrollmentLink);
 		}
+	}
+
+
+	public function toHtml($_version = 'dashboard') {
+		$type = $this->getConfiguration('jceqtype', 'none');
+		if ($type != 'map') return;
+
+		$replace = $this->preToHtml($_version);
+		if (!is_array($replace)) {
+			return $replace;
+		}
+
+		$version = jeedom::versionAlias($_version);
+
+		return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'map', 'JeedomConnect')));
+	}
+
+	public static function createMapEquipment() {
+		$eqMap = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
+		if (is_object($eqMap)) return;
+
+		$eqMap = new eqLogic();
+		$eqMap->setName('Localisation');
+		$eqMap->setLogicalId('jcmapwidget');
+		$eqMap->setConfiguration('jceqtype', 'map');
+		$eqMap->setIsEnable(1);
+		$eqMap->setEqType_name(__CLASS__);
+		$eqMap->save();
 	}
 
 	/*
