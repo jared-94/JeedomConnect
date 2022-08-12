@@ -42,7 +42,7 @@ $('.eqLogicAttr.checkJcConnexionOption').on('change', function () {
 
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
-    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
     $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + key + '.png?' + new Date().getTime());
 
 });
@@ -245,7 +245,7 @@ $(".btRegenerateApiKey").click(function () {
 })
 
 $("#qrcode-regenerate").click(function () {
-    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
