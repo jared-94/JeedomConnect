@@ -1371,7 +1371,7 @@ class JeedomConnect extends eqLogic {
 
 	public function toHtml($_version = 'dashboard') {
 		$type = $this->getConfiguration('jceqtype', 'none');
-		if ($type != 'map') return;
+		if ($type != 'map') return parent::toHtml($_version);
 
 		$replace = $this->preToHtml($_version);
 		if (!is_array($replace)) {
