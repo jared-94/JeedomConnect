@@ -1017,9 +1017,9 @@ class JeedomConnect extends eqLogic {
 	public function postSave() {
 		if ($this->isWidgetMap()) return;
 
-		if ($this->getConfiguration('qrRefresh') == 'true') {
+		if ($this->getConfiguration('qrRefresh')) {
 			$this->generateQRCode();
-			$this->setConfiguration('qrRefresh',  'false');
+			$this->setConfiguration('qrRefresh',  0);
 			$this->save(true);
 		}
 

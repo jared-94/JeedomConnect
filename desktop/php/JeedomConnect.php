@@ -408,7 +408,9 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							<br>
 
 							<legend><i class="fa fa-cogs"></i> {{Paramètres}}</legend>
-
+							<!-- ELT TO KNOW IF IMPORTANT DATA HAS BEEN CHANGED -->
+							<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="qrRefresh" type="checkbox" style="display:none;">
+							<!-- END -->
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
 								<div class="col-sm-7">

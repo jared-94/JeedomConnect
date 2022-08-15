@@ -16,12 +16,7 @@ function saveEqLogic(_eqLogic) {
         _eqLogic.configuration.pwdChanged = 'true';
     }
 
-    if ($('.customJCObject').attr('data-needrefresh') == 'true') {
-        _eqLogic.configuration.qrRefresh = 'true';
-    }
-
     return _eqLogic;
-
 }
 
 $('body').off('click', '.toggle-password').on('click', '.toggle-password', function () {
@@ -332,41 +327,18 @@ $('.showGeofence').off('click').on('click', function () {
     $('#mapsModal').load('index.php?v=d&plugin=JeedomConnect&modal=position.JeedomConnect&geo=true&eqId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
 })
 
+
+//*****
+//----  GET CHANGES DONE BY THE USER TO REGEN THE QRCODE
+
 function printEqLogic(_eqLogic) {
-    if ($('.customJCObject').length) $('.customJCObject').remove();
-
-    $('#eqlogictab .jeedomConnect').append('<div class="customJCObject"></div>')
-
-    $('.customJCObject').attr('data-name', _eqLogic.name);
-    $('.customJCObject').attr('data-usews', _eqLogic.configuration.useWs);
-    $('.customJCObject').attr('data-polling', _eqLogic.configuration.polling);
-    $('.customJCObject').attr('data-userid', _eqLogic.configuration.userId);
-
     $('.qrCodeImg').show();
     $('.infoRefresh').hide();
+    $('.eqLogicAttr[data-l2key=qrRefresh]').prop('checked', false);
 }
 
 $('.needJCRefresh').on('change', function () {
-
-    if (!$('.customJCObject').length) return;
-
-    var dataType = $(this).data('l2key') || $(this).data('l1key');
-
-    var previousData = $('.customJCObject').data(dataType.toLowerCase());
-
-    var eltType = $(this).prop('type')
-    if (eltType == 'checkbox') {
-        var newData = $(this).is(':checked') ? 1 : 0;
-    }
-    else {
-        var newData = $(this).val();
-    }
-
-    if (previousData != newData) {
-        $('.qrCodeImg').hide();
-        $('.infoRefresh').show();
-
-        $('.customJCObject').attr('data-needrefresh', true);
-    }
-
+    $('.qrCodeImg').hide();
+    $('.infoRefresh').show();
+    $('.eqLogicAttr[data-l2key=qrRefresh]').prop('checked', true);
 })
