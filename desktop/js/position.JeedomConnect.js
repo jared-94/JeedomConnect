@@ -4,6 +4,13 @@
  * 
  */
 
+var myDefaultIcon = L.icon({
+    iconUrl: 'plugins/JeedomConnect/data/img/pin.png',
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [-3, -40],
+});
+
 $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: { 'action': 'getDefaultPosition' },
@@ -101,7 +108,7 @@ function getGeofences() {
 }
 
 function createJcMap() {
-    // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
+    // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "jcMap"
     macarte = L.map('jcMap').setView([lat, lng], 13);
     markerClusters = L.markerClusterGroup(); // Nous initialisons les groupes de marqueurs
 
@@ -112,6 +119,20 @@ function createJcMap() {
         minZoom: 1,
         maxZoom: 20
     }).addTo(macarte);
+
+    // adding the search bar
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    })
+        .on('markgeocode', function (e) {
+            var latlng = e.geocode.center;
+            var html = e.geocode.html + '<br>'
+            html += `<b>Lat :</b>${latlng.lat} - <b>Lng :</b>${latlng.lng}`;
+            html += `<a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${latlng.lat}' data-lng='${latlng.lng}'>Créer une zone ici</a><br/> `;
+            var marker = L.marker(latlng, { icon: myDefaultIcon }).addTo(macarte).bindPopup(html).openPopup();
+            macarte.fitBounds(e.geocode.bbox);
+        })
+        .addTo(macarte);
 
 }
 
@@ -372,12 +393,7 @@ function removeCircle(id) {
 function addMarker(geo, isDraggable = true, withCluster = false) {
 
     if (!geo.icon) {
-        var myIcon = L.icon({
-            iconUrl: 'plugins/JeedomConnect/data/img/pin.png',
-            iconSize: [32, 48],
-            iconAnchor: [16, 48],
-            popupAnchor: [-3, -40],
-        });
+        var myIcon = myDefaultIcon
     }
     else {
         var originalWidth = geo.infoImg[0];
