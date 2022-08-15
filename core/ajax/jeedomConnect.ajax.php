@@ -785,15 +785,24 @@ try {
 	}
 
 	if (init('action') == 'generateQRcode') {
-		$id = init('id');
-		/** @var JeedomConnect $eqLogic */
-		$eqLogic = eqLogic::byId($id);
-		if (!is_object($eqLogic)) {
-			ajax::error('Error - no equipment found');
+		$id = init('id', 'all');
+
+		if ($id == 'all') {
+			// JCLog::debug('QRCode regen all');
+			$eqLogics = eqLogic::byType('JeedomConnect');
 		} else {
-			$eqLogic->generateQRCode();
-			ajax::success();
+			// JCLog::debug('QRCode regen unit for id=' . $id);
+			$eqTmp = eqLogic::byId($id);
+			if (!is_object($eqTmp)) ajax::error('Error - no equipment found');
+			$eqLogics = array($eqTmp);
 		}
+
+		/** @var JeedomConnect $eqLogic */
+		foreach ($eqLogics as $eqLogic) {
+			if ($eqLogic->isWidgetMap()) continue;
+			$eqLogic->generateQRCode();
+		}
+		ajax::success();
 	}
 
 	if (init('action') == 'incrementWarning') {

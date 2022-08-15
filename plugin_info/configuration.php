@@ -84,6 +84,12 @@ sendVarToJS('userHash', $userHash);
   }
   ?>
 
+  <div class="customJCObject"></div>
+  <div class="alert alert-warning infoRefresh" style="text-align:center;display:none;">
+    Pour information : vous êtes en train de modifier des éléments de configuration essentiels au bon fonctionnement de vos équipements JC. <br />
+    Les QR-Code de l'ensemble de vos équipements JC seront automatiquement regénérés après la sauvegarde de vos modifications.
+  </div>
+
   <div class="alert alert-info" style="text-align:center;">
     Les paramètres ci-dessous doivent être configurés correctement pour le bon fonctionnement de l'application.<br />
     Les paramètres liés au websocket ne sont nécessaires que si vous l'activez.
@@ -94,13 +100,13 @@ sendVarToJS('userHash', $userHash);
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse http externe}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="httpUrl" placeholder="<?php echo network::getNetworkAccess('external'); ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="httpUrl" placeholder="<?php echo network::getNetworkAccess('external'); ?>" />
       </div>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse http interne}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="internHttpUrl" placeholder="<?php echo network::getNetworkAccess('internal'); ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="internHttpUrl" placeholder="<?php echo network::getNetworkAccess('internal'); ?>" />
       </div>
     </div>
     <div class="alert alert-info" style="text-align:center;">
@@ -125,13 +131,13 @@ sendVarToJS('userHash', $userHash);
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse externe websocket}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="wsAddress" placeholder="<?php echo 'ws://' . config::byKey('externalAddr') . ':8090'; ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="wsAddress" placeholder="<?php echo 'ws://' . config::byKey('externalAddr') . ':8090'; ?>" />
       </div>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse interne websocket}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="internWsAddress" placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="internWsAddress" placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
       </div>
     </div>
 
@@ -336,18 +342,46 @@ sendVarToJS('userHash', $userHash);
   </fieldset>
 </form>
 
+<script>
+  var JCdataChange = ''
+  $('.needJCRefresh').on('focusin', function() {
+    JCdataChange = $(this).val();
+    // console.log('focus in', JCdataChange);
+  });
 
-<!-- <script>
+  $('.needJCRefresh').on('focusout', function() {
+    JCdataChangeOut = $(this).val();
+    // console.log('focus out', JCdataChangeOut);
+    if (JCdataChange != JCdataChangeOut) {
+      $('.customJCObject').attr('data-needrefresh', true);
+      $('.infoRefresh').show();
+    }
+  });
+
   function JeedomConnect_postSaveConfiguration() {
-    $.post({
-      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-      data: {
-        action: 'restartDaemon'
-      },
-      dataType: 'json'
-    });
+
+    if ($('.customJCObject').attr('data-needrefresh') == 'true') {
+      $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+          action: 'generateQRcode'
+        },
+        dataType: 'json'
+      });
+      $('.infoRefresh').hide();
+      $('.customJCObject').removeAttr('data-needrefresh');
+    }
+
+
+    // $.post({
+    //   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    //   data: {
+    //     action: 'restartDaemon'
+    //   },
+    //   dataType: 'json'
+    // });
   }
-</script> -->
+</script>
 
 
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
