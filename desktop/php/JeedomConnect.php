@@ -359,7 +359,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
 								<div class="col-sm-7">
 									<input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
-									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement}}" />
+									<input type="text" class="eqLogicAttr form-control needJCRefresh" data-l1key="name" placeholder="{{Nom de l'équipement}}" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -412,7 +412,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}" <?= $wsDisable ?>>
+									<input class="eqLogicAttr form-control checkJcConnexionOption needJCRefresh" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}" <?= $wsDisable ?>>
 								</div>
 							</div>
 
@@ -423,7 +423,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 									</sup>
 								</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control checkJcConnexionOption" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}" <?= $pollingDefault ?>>
+									<input class="eqLogicAttr form-control checkJcConnexionOption needJCRefresh" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}" <?= $pollingDefault ?>>
 									<?php
 									if ($hasDNSConnexion) {
 									?>
@@ -437,7 +437,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
 								<div class="col-sm-7">
-									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userId">
+									<select class="eqLogicAttr configuration form-control needJCRefresh" data-l1key="configuration" data-l2key="userId">
 										<option value="">{{Aucun}}</option>
 										<?php
 										foreach (user::all() as $user) {
@@ -592,26 +592,36 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{QR Code :}}</label>
-								<div class="row">
-									<div class="col-sm-6">
-										<img id="img_config" class="img-responsive" style="margin:10px auto; max-height : 250px;" />
+								<div class="qrCodeImg">
+									<div class="row">
+										<div class="col-sm-6">
+											<img id="img_config" class="img-responsive" style="margin:10px auto; max-height : 250px;" />
+										</div>
+									</div>
+
+									<div class="row" style="margin: 0px auto;text-align:center;">
+										<span class="eqNameQrCode" style="font-size:1.2em;font-weight: bold;"></span>
+									</div>
+									<div class="row" style="margin: 10px auto;text-align:center;">
+										<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
 									</div>
 								</div>
 
-								<div class="row" style="margin: 0px auto;text-align:center;">
-									<span class="eqNameQrCode" style="font-size:1.2em;font-weight: bold;"></span>
-								</div>
-								<div class="row" style="margin: 10px auto;text-align:center;">
-									<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
+
+								<div class="row">
+									<div class="alert alert-danger infoRefresh text-center" style=" margin: 10px auto; width:350px;display:none;">
+										Il semblerait que vous ayez modifié certaines données utilisées dans le QR-Code. <br />
+										Sauvegardez les modifications sur cet équipement pour accéder à un nouveau QR-Code valide !
+									</div>
 								</div>
 
 								<div class="row">
-									<div class="alert alert-danger" style=" margin: 10px auto; width:350px;">
+									<div class="alert alert-warning" style=" margin: 10px auto; width:350px;">
 										Veuillez re-générer le QR code si vous avez modifié :<br />
 										<ul>
-											<li>Les adresses dans la config du plugin</li>
+											<li>Les adresses dans la configuration du plugin</li>
 											<li>L'utilisateur de cet équipement</li>
-											<li>La connexion websocket de cet équipement</li>
+											<li>Le type de connexion de cet équipement</li>
 										</ul>
 									</div>
 								</div>

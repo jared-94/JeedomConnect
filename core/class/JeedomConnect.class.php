@@ -785,13 +785,14 @@ class JeedomConnect extends eqLogic {
 		$connectData = array(
 			'useWs' => $this->getConfiguration('useWs', 0),
 			'polling' => $this->getConfiguration('polling', 0),
+			'eqName' => $this->getName(),
+			'userName' => $user ? $user->getLogin() : null,
 			'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
 			'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
 			'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
 			'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
 			'userHash' => $user ? $user->getHash() : null,
-			'eqName' => $this->getName()
 		);
 
 		JCLog::debug('Generate qrcode with data ' . json_encode($connectData));
@@ -1014,6 +1015,12 @@ class JeedomConnect extends eqLogic {
 
 	public function postSave() {
 		if ($this->isWidgetMap()) return;
+
+		if ($this->getConfiguration('qrRefresh') == 'true') {
+			$this->generateQRCode();
+			$this->setConfiguration('qrRefresh',  'false');
+			$this->save(true);
+		}
 
 		if ($this->getConfiguration('pwdChanged') == 'true') {
 			$confStd = $this->getConfig();
