@@ -795,7 +795,8 @@ class JeedomConnect extends eqLogic {
 			'userHash' => $user ? $user->getHash() : null,
 		);
 
-		JCLog::debug('Generate qrcode with data ' . json_encode($connectData));
+		$dataFree = JeedomConnectUtils::hideSensitiveData(json_encode($connectData), 'send');
+		JCLog::debug('Generate qrcode with data ' . $dataFree);
 
 		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
 		try {
