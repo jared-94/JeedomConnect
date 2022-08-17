@@ -110,7 +110,8 @@ sendVarToJS('userHash', $userHash);
       </div>
     </div>
     <div class="alert alert-info" style="text-align:center;">
-      La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
+      La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.<br />
+      Vous pouvez suivre <a href='https://community.jeedom.com/t/plugin-jeedomconnect-actualites/71794/4' target='_blank'>ce tuto sur community <i class="fas fa-external-link-alt"></i></a>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Connexion IPV6}}
