@@ -150,10 +150,10 @@ sendVarToJS('userHash', $userHash);
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Chemin pour les images perso}}
         <sup>
-          <i class="fas fa-question-circle floatright" title="Chemin où sont stockés vos images personnelles<br/>Indiquez-le SANS la racine de votre installation jeedom [/var/www/html/]<br/>Par exemple, renseignez 'data/img/' pour le répertoire '/var/www/html/data/img/'"></i>
+          <i class="fas fa-question-circle floatright" title="Chemin où sont stockés vos images personnelles<br/>Indiquez-le SANS la racine de votre installation jeedom [/var/www/html/]<br/>Par exemple, renseignez ' data/img/' pour le répertoire '/var/www/html/data/img/'"></i>
         </sup>
       </label>
-      <div class="col-lg-3">
+      <div class=" col-lg-3">
         <input class="configKey form-control" type="string" data-l1key="userImgPath" placeholder="<?= config::byKey('userImgPath', 'JeedomConnect'); ?>" />
       </div>
     </div>
@@ -352,48 +352,6 @@ sendVarToJS('userHash', $userHash);
 
   </fieldset>
 </form>
-
-<script>
-  var JCdataChange = ''
-  $('.needJCRefresh').on('focusin', function() {
-    JCdataChange = $(this).val();
-    // console.log('focus in', JCdataChange);
-  });
-
-  $('.needJCRefresh').on('focusout', function() {
-    JCdataChangeOut = $(this).val();
-    // console.log('focus out', JCdataChangeOut);
-    if (JCdataChange != JCdataChangeOut) {
-      $('.customJCObject').attr('data-needrefresh', true);
-      $('.infoRefresh').show();
-    }
-  });
-
-  function JeedomConnect_postSaveConfiguration() {
-
-    if ($('.customJCObject').attr('data-needrefresh') == 'true') {
-      $.post({
-        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-        data: {
-          action: 'generateQRcode'
-        },
-        dataType: 'json'
-      });
-      $('.infoRefresh').hide();
-      $('.customJCObject').removeAttr('data-needrefresh');
-    }
-
-
-    // $.post({
-    //   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    //   data: {
-    //     action: 'restartDaemon'
-    //   },
-    //   dataType: 'json'
-    // });
-  }
-</script>
-
 
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
