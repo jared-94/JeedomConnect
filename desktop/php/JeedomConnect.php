@@ -148,7 +148,7 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
 
 		<div class="row">
-			<div class="col-sm-10">
+			<div class="col-sm-10" style="min-height:200px">
 				<legend><i class="fas fa-cog"></i> {{Gestion}}</legend>
 				<!-- Boutons de gestion du plugin -->
 				<div class="eqLogicThumbnailContainer">
@@ -214,6 +214,12 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 								<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
 							</sup>
 						</div>
+					<?php }
+
+					if (config::byKey('showQrCodeMainPage', 'JeedomConnect', false)) { ?>
+						<div class="showqrcode-content">
+							<img class="showqrcode" src='' width='150px' height="150px" style="display:none;">
+						</div>
 					<?php } ?>
 				</div>
 			</div>
@@ -272,7 +278,14 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
 				// $allEqToDisplay .= '<div class="eqLogicDisplayCardParent">';
 				$allEqToDisplay .= '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				$allEqToDisplay .= '<img src="' . JeedomConnectUtils::getCustomPathIcon($eqLogic) . '"/>';
+
+				$imgPlugin = JeedomConnectUtils::getCustomPathIcon($eqLogic);
+				$apiKey = $eqLogic->getConfiguration('apiKey');
+				$imgQrCode = 'plugins/JeedomConnect/data/qrcodes/' . $apiKey . '.png';
+				if (!file_exists('/var/www/html/' . $imgQrCode)) {
+					$eqLogic->generateQRCode();
+				}
+				$allEqToDisplay .= '<img class="eqlogic-qrcode" data-qrcode="' . $imgQrCode . '" data-plugin="' . $imgPlugin . '" src="' . $imgPlugin . '"/>';
 				$allEqToDisplay .= '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
 				$allEqToDisplay .= '<span>';
 				// $allEqToDisplay .= '</div>';
