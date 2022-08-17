@@ -141,8 +141,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 
 ?>
 
-<link href="/plugins/JeedomConnect/desktop/css/md/css/materialdesignicons.css" rel="stylesheet">
-
 <div class="row row-overflow">
 	<!-- Page d'accueil du plugin -->
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
@@ -718,5 +716,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'eqLogic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'md/css/materialdesignicons', 'css', 'JeedomConnect'); ?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js'); ?>

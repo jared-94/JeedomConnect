@@ -357,3 +357,4 @@ sendVarToJS('userHash', $userHash);
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'md/css/materialdesignicons', 'css', 'JeedomConnect'); ?>
