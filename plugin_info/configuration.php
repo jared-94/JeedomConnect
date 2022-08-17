@@ -219,7 +219,7 @@ sendVarToJS('userHash', $userHash);
     <br />
 
     <!-- LOCALISATION ZONE -->
-    <div class="alert alert-success text-align">
+    <div class="alert alert-success text-center">
       {{Localisation}}
     </div>
 
