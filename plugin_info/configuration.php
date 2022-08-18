@@ -27,7 +27,7 @@ if (!isConnect()) {
 
 $existOldFormat = false;
 /** @var JeedomConnect $eqLogic */
-foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
   $configFile = $eqLogic->getConfig(false);
   if (!is_null($configFile) && !array_key_exists('formatVersion', $configFile)) $existOldFormat = true;
 }

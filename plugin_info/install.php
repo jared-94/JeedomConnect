@@ -52,7 +52,7 @@ function JeedomConnect_install() {
 function JeedomConnect_update() {
 
   /** @var JeedomConnect $eqLogic */
-  foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+  foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
     $eqLogic->updateConfig();
     $eqLogic->generateNewConfigVersion();
   }
@@ -97,7 +97,7 @@ function JeedomConnect_update() {
   //////// PLEASE KEEP IT AT THE END !! 
   // FORCE save on all equipments to save new cmd
   /** @var JeedomConnect $eqLogic */
-  foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+  foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
     $eqLogic->save();
   }
   ///---------- NOTHING BELOW PLZ !!!!!!!! 

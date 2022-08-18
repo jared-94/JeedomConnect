@@ -26,7 +26,7 @@ if (isConnect()) {
 sendVarToJS('userHash', $userHash);
 
 /** @var array<JeedomConnect> $eqLogics */
-$eqLogics = eqLogic::byType($plugin->getId());
+$eqLogics = JeedomConnect::getAllJCequipment();;
 
 list($widgetInError, $roomInError) = JeedomConnectWidget::checkCmdSetupInWidgets();
 
@@ -271,7 +271,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 			<?php
 			$allEqToDisplay = '';
 			foreach ($eqLogics as $eqLogic) {
-				if ($eqLogic->isWidgetMap()) continue;
 
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
 				// $allEqToDisplay .= '<div class="eqLogicDisplayCardParent">';

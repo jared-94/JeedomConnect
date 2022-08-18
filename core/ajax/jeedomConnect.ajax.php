@@ -107,7 +107,7 @@ try {
 
 		if (!is_null(init('eqId'))  && init('eqId') != '') {
 			/** @var JeedomConnect $eqLogic */
-			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 				$eqLogic->checkEqAndUpdateConfig(init('eqId'));
 			}
 		}
@@ -121,7 +121,7 @@ try {
 		$scope = init('scope') ?? '';
 		$more = false;
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			if (($scope == 'all') || (($scope == 'enableOnly') && $eqLogic->getIsEnable())) {
 				JCLog::info('migrate conf for equipment ' . $eqLogic->getName(), '_migration');
 				$eqLogic->moveToNewConfig();
@@ -211,7 +211,7 @@ try {
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$eqLogic->resetConfigFile();
 			$nbEq++;
 		}
@@ -232,7 +232,7 @@ try {
 
 		$widgetsByEquipment = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$item = array();
 
 			$widgetForEq = $eqLogic->getWidgetId();
@@ -508,7 +508,7 @@ try {
 
 			$nbEq = 0;
 			/** @var JeedomConnect $eqLogic */
-			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 				$eqLogic->resetConfigFile();
 				$nbEq++;
 			}
@@ -570,7 +570,7 @@ try {
 		$myId = init('id');
 		$arrayName = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$eqIds = $eqLogic->getWidgetId();
 			JCLog::debug('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
 			if (in_array($myId, $eqIds)) {
@@ -609,8 +609,7 @@ try {
 
 		$result = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
-			if ($eqLogic->isWidgetMap()) continue;
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			$name = $eqLogic->getName();
 			$eqId = $eqLogic->getId();
@@ -790,7 +789,7 @@ try {
 
 		if ($id == 'all') {
 			// JCLog::debug('QRCode regen all');
-			$eqLogics = eqLogic::byType('JeedomConnect');
+			$eqLogics = JeedomConnect::getAllJCequipment();
 		} else {
 			// JCLog::debug('QRCode regen unit for id=' . $id);
 			$eqTmp = eqLogic::byId($id);
@@ -800,7 +799,6 @@ try {
 
 		/** @var JeedomConnect $eqLogic */
 		foreach ($eqLogics as $eqLogic) {
-			if ($eqLogic->isWidgetMap()) continue;
 			$eqLogic->generateQRCode();
 		}
 		ajax::success();
@@ -943,7 +941,7 @@ try {
 		/** @var JeedomConnect $eqLogic */
 		$eqLogic = eqLogic::byId($eqId);
 		if (is_object($eqLogic)) {
-			// foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			// foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			foreach ($eqLogic->getCmd('info') as $cmd) {
 				if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
 					array_push($result, array(
@@ -973,7 +971,7 @@ try {
 		$id = init('id', 'all');
 
 		if ($id == 'all') {
-			$eqLogics = eqLogic::byType('JeedomConnect');
+			$eqLogics = JeedomConnect::getAllJCequipment();
 		} else {
 			/** @var cmd $cmdTmp */
 			$cmdTmp = cmd::byId($id);
