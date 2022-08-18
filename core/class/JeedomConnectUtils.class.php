@@ -50,11 +50,8 @@ class JeedomConnectUtils {
         $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
-        /** @var array<JeedomConnect> $eqLogics */
-        $eqLogics = eqLogic::byType($plugin->getId());
-
-        foreach ($eqLogics as $eqLogic) {
-            if ($eqLogic->isWidgetMap()) continue;
+        /** @var JeedomConnect $eqLogic */
+        foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
             $platformOs = $eqLogic->getConfiguration('platformOs');
             $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
 

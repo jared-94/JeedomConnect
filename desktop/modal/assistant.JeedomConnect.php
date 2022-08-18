@@ -30,7 +30,7 @@ include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
 
 /** @var array<JeedomConnect> $eqLogics */
-$eqLogics = eqLogic::byType('JeedomConnect');
+$eqLogics = JeedomConnect::getAllJCequipment();
 
 $widgetsConfigJsonFile = file_get_contents('plugins/JeedomConnect/core/config/widgetsConfig.json');
 

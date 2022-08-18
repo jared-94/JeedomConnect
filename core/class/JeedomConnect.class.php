@@ -211,7 +211,7 @@ class JeedomConnect extends eqLogic {
 		 * @param JeedomConnect $eqLogic
 		 */
 		$daemonRequired = false;
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (\JeedomConnect::getAllJCequipment() as $eqLogic) {
 			if ($eqLogic->getConfiguration('useWs', false)) {
 				$daemonRequired = true;
 				break;
@@ -238,7 +238,7 @@ class JeedomConnect extends eqLogic {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
 
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (\JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getLogicalId();
 
 			$bkpDir = self::$_backup_dir . $apiKey;
@@ -1093,6 +1093,17 @@ class JeedomConnect extends eqLogic {
 		return ($this->getConfiguration('jceqtype') == "map");
 	}
 
+
+	public static function getAllJCequipment() {
+		$allEq = array();
+		/** @var JeedomConnect $eqLogic */
+		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			if ($eqLogic->isWidgetMap()) continue;
+			$allEq[] = $eqLogic;
+		}
+		return $allEq;
+	}
+
 	/**
 	 * ensure userImgPath doesn't start with / and ends with /
 	 */
@@ -1215,7 +1226,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function checkAllEquimentsAndUpdateConfig($widgetId) {
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$eqLogic->checkEqAndUpdateConfig($widgetId);
 		}
 	}
@@ -1616,7 +1627,7 @@ class JeedomConnect extends eqLogic {
 	public static function migrationAllNotif() {
 		$result = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			foreach ($eqLogic->getCmd() as $cmd) {
 				// JCLog::debug( '    | checking cmd : ' . $cmd->getName());
 				if ($cmd->getLogicalId() != 'notifall' && strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
@@ -1637,7 +1648,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function migrateAppPref() {
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getLogicalId();
 
 			$bkpDir = self::$_backup_dir . $apiKey;
@@ -1655,7 +1666,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function migrateCustomData() {
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			// JCLog::debug('checking ' . $eqLogic->getName . ' [' . $apiKey . ']', '_mig')
 
@@ -1710,7 +1721,7 @@ class JeedomConnect extends eqLogic {
 
 			//****** UPDATE ALL EQUIPMENT JSON CONFIG (summary)  ******
 			/** @var JeedomConnect $eqLogic */
-			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 				$hasChangesEq = false;
 				$jsonConfig = $eqLogic->getConfig();
 

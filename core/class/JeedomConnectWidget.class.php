@@ -209,7 +209,7 @@ class JeedomConnectWidget extends config {
 
 
 		// remove the widget ID inside json file config of each JC equipement
-		foreach (JeedomConnect::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			if ($apiKey !=  '') {
 				$eqLogic->removeWidgetConf($arrayIdToRemove);
@@ -300,7 +300,7 @@ class JeedomConnectWidget extends config {
 
 		$unexistingId = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (\eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			if ($eqLogic->getIsEnable()) {
 
 				$conf = $eqLogic->getConfig(true);

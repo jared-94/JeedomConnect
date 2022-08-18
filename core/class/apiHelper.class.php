@@ -768,7 +768,7 @@ class apiHelper {
     $returnType = 'AVAILABLE_EQUIPEMENT';
 
     /** @var array<JeedomConnect> $eqLogics */
-    $eqLogics = eqLogic::byType('JeedomConnect');
+    $eqLogics = JeedomConnect::getAllJCequipment();
 
     if (is_null($eqLogics)) {
       throw new Exception(__("No equipment available", __FILE__), -32699);
@@ -778,8 +778,6 @@ class apiHelper {
     $userConnected = user::byHash($userHash);
     $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
     foreach ($eqLogics as $eqLogic) {
-      if ($eqLogic->isWidgetMap()) continue;
-
       $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
       if (is_object($userOnEquipment)) {
         $userOnEquipmentHash = $userOnEquipment->getHash();

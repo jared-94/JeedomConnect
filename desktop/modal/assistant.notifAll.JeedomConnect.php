@@ -26,7 +26,7 @@ $alreadyChecked = config::byKey('notifAll', 'JeedomConnect', array());
 
 $txt = '';
 /** @var JeedomConnect $eqLogic */
-foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
   $tmpTxt = '';
   foreach ($eqLogic->getCmd('action') as $cmd) {
     if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
