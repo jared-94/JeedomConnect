@@ -922,6 +922,18 @@ try {
 		ajax::success();
 	}
 
+	if (init('action') == 'updateCmdParent') {
+		$cmdId = init('id');
+		$parentId = init('parentId');
+
+		$cmd = cmd::byId($cmdId);
+		if (!is_object($cmd)) ajax::error('cmd not found');
+
+		$cmd->setConfiguration('parent', $parentId);
+		$cmd->save();
+		ajax::success();
+	}
+
 	if (init('action') == 'getAllGeofences') {
 		$result = array();
 		$config = array();
