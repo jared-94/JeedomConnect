@@ -610,6 +610,7 @@ try {
 		$result = array();
 		/** @var JeedomConnect $eqLogic */
 		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			if ($eqLogic->isWidgetMap()) continue;
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			$name = $eqLogic->getName();
 			$eqId = $eqLogic->getId();
