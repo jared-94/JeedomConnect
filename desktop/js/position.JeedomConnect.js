@@ -120,20 +120,6 @@ function createJcMap() {
         maxZoom: 20
     }).addTo(macarte);
 
-    // adding the search bar
-    var geocoder = L.Control.geocoder({
-        defaultMarkGeocode: false
-    })
-        .on('markgeocode', function (e) {
-            var latlng = e.geocode.center;
-            var html = e.geocode.html + '<br>'
-            html += `<b>Lat :</b>${latlng.lat} - <b>Lng :</b>${latlng.lng}`;
-            html += `<a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${latlng.lat}' data-lng='${latlng.lng}'>Créer une zone ici</a><br/> `;
-            var marker = L.marker(latlng, { icon: myDefaultIcon }).addTo(macarte).bindPopup(html).openPopup();
-            macarte.fitBounds(e.geocode.bbox);
-        })
-        .addTo(macarte);
-
 }
 
 // Fonction d'initialisation de la carte
@@ -166,6 +152,20 @@ function initGeofenceMap() {
             addCircle(geoConfig);
         }
     });
+
+    // adding the search bar
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    })
+        .on('markgeocode', function (e) {
+            var latlng = e.geocode.center;
+            var html = e.geocode.html + '<br>'
+            html += `<b>Lat :</b>${latlng.lat} - <b>Lng :</b>${latlng.lng}`;
+            html += `<a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${latlng.lat}' data-lng='${latlng.lng}'>Créer une zone ici</a><br/> `;
+            var marker = L.marker(latlng, { icon: myDefaultIcon }).addTo(macarte).bindPopup(html).openPopup();
+            macarte.fitBounds(e.geocode.bbox);
+        })
+        .addTo(macarte);
 
 }
 
