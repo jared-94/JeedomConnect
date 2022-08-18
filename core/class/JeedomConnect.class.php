@@ -549,6 +549,10 @@ class JeedomConnect extends eqLogic {
 
 		$final = array();
 		foreach ($allCustomData as $item) {
+			if (!key_exists('widgetId', $item['value'])) {
+				JCLog::error('no widgetId found - skip');
+				continue;
+			}
 			$final[$item['value']['widgetId']] = $item['value'];
 		}
 
@@ -785,16 +789,18 @@ class JeedomConnect extends eqLogic {
 		$connectData = array(
 			'useWs' => $this->getConfiguration('useWs', 0),
 			'polling' => $this->getConfiguration('polling', 0),
+			'eqName' => $this->getName(),
+			'userName' => $user ? $user->getLogin() : null,
 			'httpUrl' => config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external')),
 			'internalHttpUrl' => config::byKey('internHttpUrl', 'JeedomConnect', network::getNetworkAccess('internal')),
 			'wsAddress' => config::byKey('wsAddress', 'JeedomConnect', 'ws://' . config::byKey('externalAddr') . ':8090'),
 			'internalWsAddress' => config::byKey('internWsAddress', 'JeedomConnect', 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'),
 			'apiKey' => $this->getConfiguration('apiKey'),
 			'userHash' => $user ? $user->getHash() : null,
-			'eqName' => $this->getName()
 		);
 
-		JCLog::debug('Generate qrcode with data ' . json_encode($connectData));
+		$dataFree = JeedomConnectUtils::hideSensitiveData(json_encode($connectData), 'send');
+		JCLog::debug('Generate qrcode with data ' . $dataFree);
 
 		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
 		try {
@@ -1014,6 +1020,12 @@ class JeedomConnect extends eqLogic {
 
 	public function postSave() {
 		if ($this->isWidgetMap()) return;
+
+		if ($this->getConfiguration('qrRefresh')) {
+			$this->generateQRCode();
+			$this->setConfiguration('qrRefresh',  0);
+			$this->save(true);
+		}
 
 		if ($this->getConfiguration('pwdChanged') == 'true') {
 			$confStd = $this->getConfig();
@@ -1371,7 +1383,7 @@ class JeedomConnect extends eqLogic {
 
 	public function toHtml($_version = 'dashboard') {
 		$type = $this->getConfiguration('jceqtype', 'none');
-		if ($type != 'map') return;
+		if ($type != 'map') return parent::toHtml($_version);
 
 		$replace = $this->preToHtml($_version);
 		if (!is_array($replace)) {

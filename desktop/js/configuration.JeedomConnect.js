@@ -2,35 +2,36 @@
 $('.jeedomConnect').off('click', '#removeAllWidgets').on('click', '#removeAllWidgets', function () {
     $('.actions-detail').hideAlert();
     var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
-    getSimpleModal({
-        title: "Confirmation", fields: [{
-            type: "string",
-            value: warning + " Vous allez supprimer l'ensemble des widgets sauvegardés ainsi que remettre à 0 la configuration de tous vos équipements.<br><b>Le retour arrière n'est pas possible.</b><br>Voulez-vous continuer ? " + warning
-        }]
-    }, function (result) {
-        $.post({
-            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-            data: {
-                action: 'removeWidgetConfig',
-                all: true
-            },
-            cache: false,
-            dataType: 'json',
-            success: function (data) {
-                if (data.state != 'ok') {
-                    $('.actions-detail').showAlert({
-                        message: data.result,
-                        level: 'danger'
-                    });
+    var msg = " Vous allez supprimer l'ensemble des widgets sauvegardés ainsi que remettre à 0 la configuration de tous vos équipements.<br>"
+    msg += warning + " <b> Le retour arrière n'est pas possible.</b> " + warning
+    msg += "<br>Voulez-vous continuer ? "
+
+    bootbox.confirm(msg, function (result) {
+        if (result) {
+            $.post({
+                url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                data: {
+                    action: 'removeWidgetConfig',
+                    all: true
+                },
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state != 'ok') {
+                        $('.actions-detail').showAlert({
+                            message: data.result,
+                            level: 'danger'
+                        });
+                    }
+                    else {
+                        $('.actions-detail').showAlert({
+                            message: data.result.widget + ' widgets ont été supprimés <br>Ainsi que ' + data.result.eqLogic + ' équipements réinitialisé(s)',
+                            level: 'success'
+                        });
+                    }
                 }
-                else {
-                    $('.actions-detail').showAlert({
-                        message: data.result.widget + ' widgets ont été supprimés <br>Ainsi que ' + data.result.eqLogic + ' équipements réinitialisé(s)',
-                        level: 'success'
-                    });
-                }
-            }
-        });
+            });
+        }
     });
 
 })
@@ -55,39 +56,37 @@ $('.jeedomConnect').off('click', '#migrateConf').on('click', '#migrateConf', fun
     }
 
     var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
-    getSimpleModal({
-        title: "Confirmation", fields: [{
-            type: "string",
-            value: warning + " Vous allez migrer vos configurations " + cplt + "vers le nouveau format.<br>Cette étape est nécessaire au bon fonctionnement de l'application.<br><br>Voulez-vous continuer ? " + warning
-        }]
-    }, function (result) {
-        $.post({
-            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-            data: {
-                action: 'migrateConfiguration',
-                scope: optionSelected
-            },
-            cache: false,
-            dataType: 'json',
-            success: function (data) {
-                if (data.state != 'ok') {
-                    $('.actions-detail').showAlert({
-                        message: data.result,
-                        level: 'danger'
-                    });
-                }
-                else {
-                    $('.actions-detail').showAlert({
-                        message: cpltResult + 'ont bien été migrés dans le nouveau format. (Consultez les logs pour plus de détails)',
-                        level: 'success'
-                    });
+    var msg = warning + " Vous allez migrer vos configurations " + cplt + "vers le nouveau format.<br>Cette étape est nécessaire au bon fonctionnement de l'application.<br><br>Voulez-vous continuer ? " + warning;
+    bootbox.confirm(msg, function (result) {
+        if (result) {
+            $.post({
+                url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                data: {
+                    action: 'migrateConfiguration',
+                    scope: optionSelected
+                },
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state != 'ok') {
+                        $('.actions-detail').showAlert({
+                            message: data.result,
+                            level: 'danger'
+                        });
+                    }
+                    else {
+                        $('.actions-detail').showAlert({
+                            message: cpltResult + 'ont bien été migrés dans le nouveau format. (Consultez les logs pour plus de détails)',
+                            level: 'success'
+                        });
 
-                    if (data.result.more == false) {
-                        $('#migrationDiv').css('display', 'none');
+                        if (data.result.more == false) {
+                            $('#migrationDiv').css('display', 'none');
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     });
 
 })
@@ -97,34 +96,34 @@ $('.jeedomConnect').off('click', '#reinitAllEq').on('click', '#reinitAllEq', fun
 
     $('.actions-detail').hideAlert();
     var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
-    getSimpleModal({
-        title: "Confirmation", fields: [{
-            type: "string",
-            value: warning + " Vous allez remettre à 0 la configuration de tous vos équipements.<br><b>Le retour arrière n'est pas possible.</b><br>Voulez-vous continuer ? " + warning
-        }]
-    }, function (result) {
-        $.post({
-            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-            data: {
-                action: 'reinitEquipement'
-            },
-            cache: false,
-            dataType: 'json',
-            success: function (data) {
-                if (data.state != 'ok') {
-                    $('.actions-detail').showAlert({
-                        message: data.result,
-                        level: 'danger'
-                    });
+    var msg = "Vous allez remettre à 0 la configuration de tous vos équipements.<br>";
+    msg += warning + " <b>Le retour arrière n'est pas possible.</b> " + warning;
+    msg += "<br>Voulez-vous continuer ? ";
+    bootbox.confirm(msg, function (result) {
+        if (result) {
+            $.post({
+                url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                data: {
+                    action: 'reinitEquipement'
+                },
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state != 'ok') {
+                        $('.actions-detail').showAlert({
+                            message: data.result,
+                            level: 'danger'
+                        });
+                    }
+                    else {
+                        $('.actions-detail').showAlert({
+                            message: data.result.eqLogic + ' équipements ont été réinitialisés',
+                            level: 'success'
+                        });
+                    }
                 }
-                else {
-                    $('.actions-detail').showAlert({
-                        message: data.result.eqLogic + ' équipements ont été réinitialisés',
-                        level: 'success'
-                    });
-                }
-            }
-        });
+            });
+        }
     });
 
 })
@@ -303,67 +302,41 @@ $('.jeedomConnect').off('change', '#importConfig-input').on('change', '#importCo
 });
 
 
+var JCdataChange = ''
+$('.needJCRefresh').on('focusin', function () {
+    JCdataChange = $(this).val();
+    // console.log('focus in', JCdataChange);
+});
 
-function getSimpleModal(_options, _callback) {
-    if (!isset(_options)) {
-        return;
+$('.needJCRefresh').on('focusout', function () {
+    JCdataChangeOut = $(this).val();
+    // console.log('focus out', JCdataChangeOut);
+    if (JCdataChange != JCdataChangeOut) {
+        $('.customJCObject').attr('data-needrefresh', true);
+        $('.infoRefresh').show();
     }
-    $("#simpleModal").dialog('destroy').remove();
-    if ($("#simpleModal").length == 0) {
-        $('body').append('<div id="simpleModal"></div>');
-        $("#simpleModal").dialog({
-            title: _options.title,
-            closeText: '',
-            autoOpen: false,
-            modal: true,
-            width: 350
-        });
-        jQuery.ajaxSetup({
-            async: false
-        });
-        $('#simpleModal').load('index.php?v=d&plugin=JeedomConnect&modal=assistant.simpleModal.JeedomConnect');
-        jQuery.ajaxSetup({
-            async: true
-        });
-    }
-    setSimpleModalData(_options.fields);
-    $("#simpleModal").dialog({
-        title: _options.title, buttons: {
-            "Annuler": function () {
-                $(this).dialog("close");
+});
+
+function JeedomConnect_postSaveConfiguration() {
+
+    if ($('.customJCObject').attr('data-needrefresh') == 'true') {
+        $.post({
+            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+            data: {
+                action: 'generateQRcode'
             },
-            Save: {
-                text: "Valider",
-                id: "saveSimple",
-                click: function (result) {
-
-                    if ($.trim(result) != '' && 'function' == typeof (_callback)) {
-                        _callback(result);
-                    }
-                    $(this).dialog('close');
-                }
-            }
-        }
-    });
-    $('#simpleModal').dialog('open');
-    $('#simpleModal').keydown(function (e) {
-        if (e.which == 13) {
-            $('#saveSimple').click();
-            return false;
-        }
-    })
-};
+            dataType: 'json'
+        });
+        $('.infoRefresh').hide();
+        $('.customJCObject').removeAttr('data-needrefresh');
+    }
 
 
-
-function setSimpleModalData(options) {
-    items = [];
-    options.forEach(option => {
-        if (option.type == "string") {
-            items.push(`<li>${option.value}</li>`);
-        }
-    });
-
-    $("#modalOptions").append(items.join(""));
-
+    // $.post({
+    //   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    //   data: {
+    //     action: 'restartDaemon'
+    //   },
+    //   dataType: 'json'
+    // });
 }

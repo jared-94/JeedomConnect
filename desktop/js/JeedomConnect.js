@@ -1225,6 +1225,15 @@ function addCmdToTable(_cmd) {
 // ------------- END COMMAND TAB
 
 
+$(".eqlogic-qrcode").hover(function () {
+  $('.showqrcode').attr('src', $(this).data('qrcode') + '?' + new Date().getTime());
+  $('.showqrcode').show();
+}, function () {
+  $('.showqrcode').attr('src', '');
+  $('.showqrcode').hide();
+});
+
+
 /**
  * *************
  * DOCUMENT READY

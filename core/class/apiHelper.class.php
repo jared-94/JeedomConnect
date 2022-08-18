@@ -1446,6 +1446,10 @@ class apiHelper {
   private static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
+      if (!key_exists('widgetId', $customWidget)) {
+        JCLog::error('no widgetId found - skip');
+        continue;
+      }
       JCLog::debug('save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
       config::save('customData::' . $apiKey . '::' . $customWidget['widgetId'], json_encode($customWidget), 'JeedomConnect');
     }

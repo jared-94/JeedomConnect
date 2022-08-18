@@ -84,6 +84,12 @@ sendVarToJS('userHash', $userHash);
   }
   ?>
 
+  <div class="customJCObject"></div>
+  <div class="alert alert-warning infoRefresh" style="text-align:center;display:none;">
+    Pour information : vous êtes en train de modifier des éléments de configuration essentiels au bon fonctionnement de vos équipements JC. <br />
+    Les QR-Code de l'ensemble de vos équipements JC seront automatiquement regénérés après la sauvegarde de vos modifications.
+  </div>
+
   <div class="alert alert-info" style="text-align:center;">
     Les paramètres ci-dessous doivent être configurés correctement pour le bon fonctionnement de l'application.<br />
     Les paramètres liés au websocket ne sont nécessaires que si vous l'activez.
@@ -94,17 +100,18 @@ sendVarToJS('userHash', $userHash);
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse http externe}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="httpUrl" placeholder="<?php echo network::getNetworkAccess('external'); ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="httpUrl" placeholder="<?php echo network::getNetworkAccess('external'); ?>" />
       </div>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse http interne}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="internHttpUrl" placeholder="<?php echo network::getNetworkAccess('internal'); ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="internHttpUrl" placeholder="<?php echo network::getNetworkAccess('internal'); ?>" />
       </div>
     </div>
     <div class="alert alert-info" style="text-align:center;">
-      La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.
+      La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.<br />
+      Vous pouvez suivre <a href='https://community.jeedom.com/t/plugin-jeedomconnect-actualites/71794/4' target='_blank'>ce tuto sur community <i class="fas fa-external-link-alt"></i></a>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Connexion IPV6}}
@@ -125,13 +132,13 @@ sendVarToJS('userHash', $userHash);
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse externe websocket}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="wsAddress" placeholder="<?php echo 'ws://' . config::byKey('externalAddr') . ':8090'; ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="wsAddress" placeholder="<?php echo 'ws://' . config::byKey('externalAddr') . ':8090'; ?>" />
       </div>
     </div>
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Adresse interne websocket}}</label>
       <div class="col-lg-3">
-        <input class="configKey form-control" type="string" data-l1key="internWsAddress" placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
+        <input class="configKey form-control needJCRefresh" type="string" data-l1key="internWsAddress" placeholder="<?php echo 'ws://' . config::byKey('internalAddr', 'core', 'localhost') . ':8090'; ?>" />
       </div>
     </div>
 
@@ -144,10 +151,10 @@ sendVarToJS('userHash', $userHash);
     <div class="form-group">
       <label class="col-lg-6 control-label">{{Chemin pour les images perso}}
         <sup>
-          <i class="fas fa-question-circle floatright" title="Chemin où sont stockés vos images personnelles<br/>Indiquez-le SANS la racine de votre installation jeedom [/var/www/html/]<br/>Par exemple, renseignez 'data/img/' pour le répertoire '/var/www/html/data/img/'"></i>
+          <i class="fas fa-question-circle floatright" title="Chemin où sont stockés vos images personnelles<br/>Indiquez-le SANS la racine de votre installation jeedom [/var/www/html/]<br/>Par exemple, renseignez ' data/img/' pour le répertoire '/var/www/html/data/img/'"></i>
         </sup>
       </label>
-      <div class="col-lg-3">
+      <div class=" col-lg-3">
         <input class="configKey form-control" type="string" data-l1key="userImgPath" placeholder="<?= config::byKey('userImgPath', 'JeedomConnect'); ?>" />
       </div>
     </div>
@@ -179,6 +186,17 @@ sendVarToJS('userHash', $userHash);
     </div>
 
     <div class="form-group">
+      <label class="col-lg-6 control-label">{{QR Code sur la page principale}}
+        <sup>
+          <i class="fas fa-question-circle floatright" title="Au survol d'un équipement, son QR Code est affiché en haut de la page principale du plugin."></i>
+        </sup>
+      </label>
+      <div class="col-lg-3">
+        <input type="checkbox" class="configKey" data-l1key="showQrCodeMainPage" />
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="col-lg-6 control-label">{{Activer le mode Expert}}
         <sup>
           <i class="fas fa-question-circle floatright" title="Permet de laisser l'utilisateur modifier les commandes manuellement"></i>
@@ -202,7 +220,7 @@ sendVarToJS('userHash', $userHash);
     <br />
 
     <!-- LOCALISATION ZONE -->
-    <div class="alert alert-success text-align">
+    <div class="alert alert-success text-center">
       {{Localisation}}
     </div>
 
@@ -336,20 +354,7 @@ sendVarToJS('userHash', $userHash);
   </fieldset>
 </form>
 
-
-<!-- <script>
-  function JeedomConnect_postSaveConfiguration() {
-    $.post({
-      url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-      data: {
-        action: 'restartDaemon'
-      },
-      dataType: 'json'
-    });
-  }
-</script> -->
-
-
 <?php include_file('desktop', 'configuration.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'md/css/materialdesignicons', 'css', 'JeedomConnect'); ?>

@@ -17,7 +17,6 @@ function saveEqLogic(_eqLogic) {
     }
 
     return _eqLogic;
-
 }
 
 $('body').off('click', '.toggle-password').on('click', '.toggle-password', function () {
@@ -42,7 +41,7 @@ $('.eqLogicAttr.checkJcConnexionOption').on('change', function () {
 
 
 $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').on('change', function () {
-    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
     $('#img_config').attr("src", 'plugins/JeedomConnect/data/qrcodes/' + key + '.png?' + new Date().getTime());
 
 });
@@ -245,7 +244,7 @@ $(".btRegenerateApiKey").click(function () {
 })
 
 $("#qrcode-regenerate").click(function () {
-    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').value();
+    var key = $('.eqLogicAttr[data-l1key=configuration][data-l2key=apiKey]').text();
     $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
@@ -326,4 +325,20 @@ $('.showGeofence').off('click').on('click', function () {
         }
     });
     $('#mapsModal').load('index.php?v=d&plugin=JeedomConnect&modal=position.JeedomConnect&geo=true&eqId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');
+})
+
+
+//*****
+//----  GET CHANGES DONE BY THE USER TO REGEN THE QRCODE
+
+function printEqLogic(_eqLogic) {
+    $('.qrCodeImg').show();
+    $('.infoRefresh').hide();
+    $('.eqLogicAttr[data-l2key=qrRefresh]').prop('checked', false);
+}
+
+$('.needJCRefresh').on('change', function () {
+    $('.qrCodeImg').hide();
+    $('.infoRefresh').show();
+    $('.eqLogicAttr[data-l2key=qrRefresh]').prop('checked', true);
 })

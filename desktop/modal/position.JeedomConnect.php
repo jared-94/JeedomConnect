@@ -21,9 +21,11 @@ include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/leaflet', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/MarkerCluster.Default', 'css', 'JeedomConnect');
 include_file('desktop', 'leaflet/MarkerCluster', 'css', 'JeedomConnect');
+include_file('desktop', 'leaflet/geocoder', 'css', 'JeedomConnect');
 
 include_file('desktop', 'leaflet/leaflet', 'js', 'JeedomConnect');
 include_file('desktop', 'leaflet/leaflet.markercluster', 'js', 'JeedomConnect');
+include_file('desktop', 'leaflet/geocoder', 'js', 'JeedomConnect');
 
 
 $eqId = init('eqId');

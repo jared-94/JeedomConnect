@@ -4,6 +4,13 @@
  * 
  */
 
+var myDefaultIcon = L.icon({
+    iconUrl: 'plugins/JeedomConnect/data/img/pin.png',
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [-3, -40],
+});
+
 $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: { 'action': 'getDefaultPosition' },
@@ -101,7 +108,7 @@ function getGeofences() {
 }
 
 function createJcMap() {
-    // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
+    // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "jcMap"
     macarte = L.map('jcMap').setView([lat, lng], 13);
     markerClusters = L.markerClusterGroup(); // Nous initialisons les groupes de marqueurs
 
@@ -113,6 +120,20 @@ function createJcMap() {
         maxZoom: 20
     }).addTo(macarte);
 
+    // adding the search bar
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    })
+        .on('markgeocode', function (e) {
+            var latlng = e.geocode.center;
+            var html = e.geocode.html + '<br>'
+            html += `<b>Lat :</b>${latlng.lat} - <b>Lng :</b>${latlng.lng}`;
+            html += `<a class='btn btn-success center-block btnAddCoordinates' type='button' data-lat='${latlng.lat}' data-lng='${latlng.lng}'>Créer une zone ici</a><br/> `;
+            var marker = L.marker(latlng, { icon: myDefaultIcon }).addTo(macarte).bindPopup(html).openPopup();
+            macarte.fitBounds(e.geocode.bbox);
+        })
+        .addTo(macarte);
+
 }
 
 // Fonction d'initialisation de la carte
@@ -121,6 +142,13 @@ function initGeofenceMap() {
     createJcMap();
 
     var parents = []
+    // var parents = $.map(allJcGeofences, function (elt, i) {
+    //     return elt.parent || null;
+    // });
+
+    // var allConfig = $.map(allJcGeofencesConfig, function (elt, i) {
+    //     return elt.id;
+    // });
 
     allJcGeofences.forEach(function (jcGeofence) {
         addCircle(jcGeofence, 'green');
@@ -180,7 +208,7 @@ async function initMap() {
 var popup = L.popup();
 
 
-function addGeofenceToTable(elt, geo, config) {
+function addGeofenceToTable(elt, geo, config, hide = false) {
 
     var tr = '<tr>';
     tr += '<td>';
@@ -206,6 +234,9 @@ function addGeofenceToTable(elt, geo, config) {
     }
     else {
         tr += '<i class="fas fa-minus-circle pull-right cursor removeGeo geoOpt" title="Supprimer cette zone/commande de mon équipement"></i>';
+        if (!geo.parent) {
+            tr += '<i class="fas fa-plus-circle pull-right cursor addGeoToConfig geoOpt" title="Ajouter cette zone aux modèles partagés" data-genid="' + makeid() + '"></i>';
+        }
     }
     tr += '</td>';
     tr += '</tr>';
@@ -221,6 +252,7 @@ function addGeofenceToTable(elt, geo, config) {
     }
     $(elt + ' tbody tr:last').attr('data-parent', geo.parent);
     $(elt + ' tbody tr:last').attr('data-id', geo.id);
+    if (hide) $(elt + ' tbody tr:last').hide();
 }
 
 $('body').off('click', '.removeGeo').on('click', '.removeGeo', function () {
@@ -292,7 +324,7 @@ async function createCmdAndMoveItem(elt) {
         geo.id = creaCmd.result.id;
         geo.parent = oldId;
 
-        addGeofenceToTable('.currentEq', geo)
+        addGeofenceToTable('.currentEq', geo, false)
 
         removeCircle(oldId);
         addCircle(geo, 'green');
@@ -300,6 +332,38 @@ async function createCmdAndMoveItem(elt) {
         tr.hide();
     }
 }
+
+$('body').off('click', '.addGeoToConfig').on('click', '.addGeoToConfig', function () {
+    let geo = getGeofencesData($(this));
+
+    addConfAndUpdateEqlogic(geo, $(this).data('genid'), $(this))
+});
+
+async function addConfAndUpdateEqlogic(geo, parentId, elt) {
+    var cmdId = geo.id;
+    geo.id = parentId;
+
+    var creaConfig = await actionOnConfigGeo(geo);
+
+    //if creation failed then do not move item to equipment
+    if (creaConfig.state == 'ok') {
+        $('#div_alert').showAlert({
+            message: "zone partagée avec succès",
+            level: 'success'
+        });
+
+        updateParent(cmdId, parentId)
+        //hide add button
+        $(elt).hide();
+        //add data-parent to main elt
+        elt.closest("tr").attr('data-parent', parentId);
+
+        //add line to conf, in order to display it if it gets removed from the eq at the same time
+        addGeofenceToTable('.otherItems', geo, true, true);
+
+    }
+}
+
 
 $('body').off('change', '.forConfig, .forCmd').on('change', '.forConfig, .forCmd', function () {
     let geo = getGeofencesData($(this));
@@ -372,12 +436,7 @@ function removeCircle(id) {
 function addMarker(geo, isDraggable = true, withCluster = false) {
 
     if (!geo.icon) {
-        var myIcon = L.icon({
-            iconUrl: 'plugins/JeedomConnect/data/img/pin.png',
-            iconSize: [32, 48],
-            iconAnchor: [16, 48],
-            popupAnchor: [-3, -40],
-        });
+        var myIcon = myDefaultIcon
     }
     else {
         var originalWidth = geo.infoImg[0];
@@ -531,8 +590,8 @@ async function actionOnCmdGeo(geofence, type = 'createOrUpdate') {
 }
 
 //------- FOR CONFIG 
-function actionOnConfigGeo(geofence, type = 'createOrUpdate') {
-    $.post({
+async function actionOnConfigGeo(geofence, type = 'createOrUpdate') {
+    const result = await $.post({
         url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
             action: 'createOrUpdateConfigGeo',
@@ -542,16 +601,40 @@ function actionOnConfigGeo(geofence, type = 'createOrUpdate') {
         },
         cache: false,
         dataType: 'json',
-        async: false,
-        success: function (data) {
-            if (data.state != 'ok') {
-                $('#div_alert').showAlert({
-                    message: data.result,
-                    level: 'danger'
-                });
-            }
-        }
+        async: false
     });
+
+    if (result.state != 'ok') {
+        $('#div_alert').showAlert({
+            message: result.result,
+            level: 'danger'
+        });
+    }
+
+    return result;
+}
+
+async function updateParent(cmdId, parentId) {
+    const result = await $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: {
+            action: 'updateCmdParent',
+            id: cmdId,
+            parentId: parentId
+        },
+        cache: false,
+        dataType: 'json',
+        async: false
+    });
+
+    if (result.state != 'ok') {
+        $('#div_alert').showAlert({
+            message: result.result,
+            level: 'danger'
+        });
+    }
+
+    return result;
 }
 
 $("body").off('change', '.updateMapData').on('change', '.updateMapData', function () {
