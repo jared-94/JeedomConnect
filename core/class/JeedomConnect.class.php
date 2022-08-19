@@ -1382,8 +1382,7 @@ class JeedomConnect extends eqLogic {
 		$pluginInfo = self::getPluginInfo();
 
 		$apkVersionRequired = $pluginInfo['require'];
-		$playStoreUrl = htmlentities('<a href="' . $pluginInfo['storeUrl'] . '" target="_blank">Play Store</a>');
-		message::add('JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : ' . $apkVersionRequired . '. Si nécessaire, pensez à mettre à jour votre application depuis le ' . $playStoreUrl);
+		message::add('JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : ' . $apkVersionRequired . '. Si nécessaire, pensez à mettre à jour votre application depuis votre Store');
 
 		if ($pluginInfo['typeVersion'] == 'beta') {
 			$enrollmentLink = htmlentities('<a href="' . $pluginInfo['enrollment'] . '" target="_blank">en cliquant ici</a>');
