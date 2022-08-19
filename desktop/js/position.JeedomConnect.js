@@ -62,8 +62,10 @@ function getHtmlPopUp(geo) {
 $("body").off('change', '.zoomSelection').on('change', '.zoomSelection', function () {
 
     if ($(this).val() == 'all') {
-        var group = new L.featureGroup(markers); // Nous créons le groupe des marqueurs pour adapter le zoom
-        macarte.fitBounds(group.getBounds().pad(0.5)); // Nous demandons à ce que tous les marqueurs soient visibles, et ajoutons un padding (pad(0.5)) pour que les marqueurs ne soient pas coupés
+        if (markers.length != 0) {
+            var group = new L.featureGroup(markers); // Nous créons le groupe des marqueurs pour adapter le zoom
+            macarte.fitBounds(group.getBounds().pad(0.5)); // Nous demandons à ce que tous les marqueurs soient visibles, et ajoutons un padding (pad(0.5)) pour que les marqueurs ne soient pas coupés
+        }
     }
     else {
         getFocus([lat, lng], 13);
@@ -663,9 +665,6 @@ $("body").off('change', '.updateMapData').on('change', '.updateMapData', functio
                     message: data.result,
                     level: 'danger'
                 });
-            }
-            else {
-                //set something to refresh the page    
             }
         }
     });
