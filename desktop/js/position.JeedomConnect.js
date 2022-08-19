@@ -204,6 +204,8 @@ else {
 async function initMap() {
     var infoPositions = await getInfoPosition();
     allJcPositions = infoPositions.result;
+
+    if (allJcPositions.length == 0) $('#div_alert').showAlert({ message: "Aucun équipement n'est autorisé à partager sa position ici !", level: 'warning' });
     initLocalisationMap();
 }
 
