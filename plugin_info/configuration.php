@@ -299,7 +299,7 @@ sendVarToJS('userHash', $userHash);
     </div>
 
     <div class="row">
-      <div class="form-group col-lg-3">
+      <div class="form-group col-lg-4">
         <label class="col-sm-6 control-label">{{Exporter}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Permet d'exporter vos widgets ou les personnalisations de vos widgets"></i>
@@ -315,7 +315,7 @@ sendVarToJS('userHash', $userHash);
         </div>
       </div>
 
-      <div class="form-group col-lg-3">
+      <div class="form-group col-lg-2">
         <label class="col-sm-6 control-label">{{Importer}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Permet d'importer les configurations de vos wigets et/ou de vos personnalisations de widgets"></i>
