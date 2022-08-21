@@ -396,6 +396,10 @@ function refreshCmdListOption(optionsJson) {
     if (['message', 'slider', 'color'].indexOf(item.subtype) > -1 && item.options != null) {
       Object.entries(item.options).forEach(entry => {
         const [key, value] = entry;
+        if ($.inArray(key, ['displayTitle', 'keepLastMsg']) != -1) {
+          $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').prop('checked', value);
+          return true;
+        }
         if (value != '') {
           getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: value, id: item.id, index: item.index }, function (result, _params) {
             $('.jcCmdListOptions[data-id="' + key + '-' + _params.id + '"][data-index="' + _params.index + '"]').val(result);
