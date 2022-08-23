@@ -1064,7 +1064,14 @@ class apiHelper {
    */
   private static function setGeofence($eqLogic, $param) {
     $ts = array_key_exists('timestampMeta', $param) ? floor($param['timestampMeta']['systemTime'] / 1000) : strtotime($param['timestamp']);
-    $eqLogic->setCoordinates($param['coords']['latitude'], $param['coords']['longitude'], $param['coords']['altitude'], $param['activity']['type'], $param['battery']['level'] * 100, $ts);
+
+    $activity = $param['activity']['type'];
+    $accuracy = $param['coords']['accuracy'];
+    if ($accuracy < 50 || ($activity == 'in_vehicle' && $accuracy && $accuracy < 400)) {
+      $eqLogic->setCoordinates($param['coords']['latitude'], $param['coords']['longitude'], $param['coords']['altitude'], $param['activity']['type'], $param['battery']['level'] * 100, $ts);
+    } else {
+      JCLog::debug("[GeoLoc] data not saved, not accurate enough");
+    }
 
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
