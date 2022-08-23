@@ -4374,7 +4374,8 @@
 					"description": "Personnalisez l'icone du repère sur la carte",
 					"options": {
 						"hasImage": "false"
-					}
+					},
+					"customizable": true
 				},
 				{
 					"id": "color",
@@ -4384,7 +4385,8 @@
 					"description": "Personnalisez la couleur du tracé et du marqueur",
 					"options": {
 						"hasImage": "false"
-					}
+					},
+					"customizable": true
 				},
 				{
 					"id": "zoomDistance",
