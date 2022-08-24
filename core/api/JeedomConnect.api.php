@@ -22,6 +22,18 @@ require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
 require_once dirname(__FILE__) . "/../class/apiHelper.class.php";
 require_once dirname(__FILE__) . "/../class/JeedomConnect.class.php";
 
+function sendAnswer($isWsConnexion, $jsonrpc, $result) {
+
+  if (!$isWsConnexion && is_null($result)) {
+    return $jsonrpc->makeSuccess();
+  } elseif (!$isWsConnexion) {
+    return $jsonrpc->makeSuccess($result);
+  } else {
+    return JeedomConnect::sendToDaemon($result);
+  }
+}
+
+
 $jsonData = file_get_contents("php://input");
 $jsonrpc = new jsonrpc($jsonData);
 
@@ -34,9 +46,12 @@ try {
   $params = $jsonrpc->getParams();
   $method = $jsonrpc->getMethod();
 
+  $connexionType = $params['connexionFrom'] ?? 'API';
+  $isWsConnexion = ($connexionType != "API");
+
   $skipLog = in_array($method, apiHelper::$_skipLog);
 
-  if (!$skipLog) JCLog::debug('[API] HTTP Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
+  if (!$skipLog) JCLog::debug('[' . $connexionType . '] Request Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
 
 
   $apiKey = ($method == 'GEOLOC') ? $jsonrpc->getId() : ($params['apiKey'] ?? null);
@@ -57,24 +72,23 @@ try {
       throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
     } else {
       $result = apiHelper::getApiKeyRegenerated($apiKey);
-      JCLog::debug('[API] No answer for ' . $method . ' || Sending new apiKey info -> ' . json_encode($result));
-      $jsonrpc->makeSuccess($result);
+      JCLog::debug('[' . $connexionType . '] No answer for ' . $method . ' || Sending new apiKey info -> ' . json_encode($result));
+      return sendAnswer($isWsConnexion, $jsonrpc, $result);
     }
   }
 
-  $result = apiHelper::dispatch('API', $method, $eqLogic, $params ?? array(), $apiKey);
-  if (!$skipLog) JCLog::debug('[API] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
+  $result = apiHelper::dispatch($connexionType, $method, $eqLogic, $params ?? array(), $apiKey);
+  if (!$skipLog) JCLog::debug('[' . $connexionType . '] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
 
 
-  if (is_null($result)) {
-    return $jsonrpc->makeSuccess();
-  }
-  return $jsonrpc->makeSuccess($result);
+  if ($isWsConnexion) $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
+
+  return sendAnswer($isWsConnexion, $jsonrpc, $result);
 } catch (Exception $e) {
 
-  if ($skipLog) JCLog::debug('[API] HTTP Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
+  if ($skipLog) JCLog::debug('[' . $connexionType . '] HTTP Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
 
   $result = apiHelper::raiseException($e->getMessage(), $method);
-  // JCLog::error('[API] Send ' . $method . ' -> ' . json_encode($result));
-  $jsonrpc->makeSuccess($result);
+  // JCLog::error('['. $connexionType. '] Send ' . $method . ' -> ' . json_encode($result));
+  return sendAnswer($isWsConnexion, $jsonrpc, $result);
 }

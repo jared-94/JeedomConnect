@@ -361,10 +361,12 @@ class apiHelper {
           $eqLogic->setConfiguration('lastSeen', time());
           $eqLogic->save(true);
 
-          $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
-          if ($newConfig != false) {
-            JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-            return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
+          if (!is_null($param['configVersion'])) {
+            $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
+            if ($newConfig != false) {
+              JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
+              return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
+            }
           }
 
           $actions = self::getJCActions($apiKey);
@@ -372,8 +374,12 @@ class apiHelper {
             return array($actions);
           }
 
+          if ($eqLogic->getConfiguration('appState', '') != 'active') {
+            return null;
+          }
+
           $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
-          return $result;
+          return array('type' => 'SET_EVENTS', 'payload' => $result);
 
           // TODO : target solution
           /*
