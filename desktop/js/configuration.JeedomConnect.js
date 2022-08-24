@@ -319,7 +319,8 @@ $('.needJCRefresh').on('focusout', function () {
 
 function JeedomConnect_postSaveConfiguration() {
 
-    if ($('.customJCObject').attr('data-needrefresh') == 'true') {
+    var refreshRequired = $('.customJCObject').attr('data-needrefresh') == 'true';
+    if (refreshRequired) {
         $.post({
             url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
             data: {
@@ -329,14 +330,13 @@ function JeedomConnect_postSaveConfiguration() {
         });
         $('.infoRefresh').hide();
         $('.customJCObject').removeAttr('data-needrefresh');
+
+        $.post({
+            url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+            data: {
+                action: 'restartDaemon'
+            },
+            dataType: 'json'
+        });
     }
-
-
-    // $.post({
-    //   url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    //   data: {
-    //     action: 'restartDaemon'
-    //   },
-    //   dataType: 'json'
-    // });
 }

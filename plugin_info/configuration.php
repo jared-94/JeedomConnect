@@ -88,7 +88,8 @@ sendVarToJS('userHash', $userHash);
   <!-- end used for refresh -->
   <div class="alert alert-warning infoRefresh" style="text-align:center;display:none;">
     Pour information : vous êtes en train de modifier des éléments de configuration essentiels au bon fonctionnement de vos équipements JC. <br />
-    Les QR-Code de l'ensemble de vos équipements JC seront automatiquement regénérés après la sauvegarde de vos modifications.
+    Les QR-Code de l'ensemble de vos équipements JC seront automatiquement regénérés après la sauvegarde de vos modifications.<br />
+    Le démon sera automatique redémarré.
   </div>
 
   <div class="alert alert-info" style="text-align:center;">
@@ -386,12 +387,3 @@ sendVarToJS('userHash', $userHash);
 <?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'md/css/materialdesignicons', 'css', 'JeedomConnect'); ?>
-
-<script>
-  // $('.bt_startDeamon').off('click').on('click', function() {
-  $('body').off('click', '.bt_startDeamon').on('click', '.bt_startDeamon', function() {
-    event.stopPropagation();
-    // ton nouveau code
-    console.log('restart here')
-  });
-</script>
