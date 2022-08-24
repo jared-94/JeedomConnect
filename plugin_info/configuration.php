@@ -121,7 +121,8 @@ sendVarToJS('userHash', $userHash);
       Les paramètres liés au websocket ne sont nécessaires que si vous l'activez sur un équipement.
       Si vous n'utilisez pas le websocket, vous pouvez désactiver le démon.<br />
       La connexion par Websocket nécessite une configuration supplémentaire sur votre réseau, au moins pour un accès extérieur.<br />
-      Vous pouvez suivre <a href='https://community.jeedom.com/t/plugin-jeedomconnect-actualites/71794/4' target='_blank'>ce tuto sur community <i class="fas fa-external-link-alt"></i></a>
+      Vous pouvez suivre <a href='https://community.jeedom.com/t/plugin-jeedomconnect-actualites/71794/4' target='_blank'>ce tuto sur community <i class="fas fa-external-link-alt"></i></a><br />
+      <i class="fas fa-exclamation-triangle"></i>&nbsp;NON-compatible avec les DNS Jeedom.&nbsp;<i class="fas fa-exclamation-triangle"></i>
     </div>
     <div class="row">
       <div class="form-group col-lg-6">
@@ -197,7 +198,8 @@ sendVarToJS('userHash', $userHash);
 
     <div class="row">
       <div class="form-group col-lg-6">
-        <label class="col-lg-6 control-label">{{Logo JC sur QR Code}}
+        <label class="col-lg-4 control-label">{{Qr Code : }}</label>
+        <label class="col-lg-2 control-label">{{Logo JC}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Insère le logo JC à l'intérieur du qr code de chaque équipement"></i>
           </sup>
@@ -208,7 +210,7 @@ sendVarToJS('userHash', $userHash);
       </div>
 
       <div class="form-group col-lg-6">
-        <label class="col-lg-3 control-label">{{QR Code sur page principale}}
+        <label class="col-lg-3 control-label">{{Afficher sur page principale}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Au survol d'un équipement, son QR Code est affiché en haut de la page principale du plugin."></i>
           </sup>
@@ -221,7 +223,8 @@ sendVarToJS('userHash', $userHash);
 
     <div class="row">
       <div class="form-group col-lg-6">
-        <label class="col-lg-6 control-label">{{Création en mode strict}}
+        <label class="col-lg-4 control-label">{{Création de widget : }}</label>
+        <label class="col-lg-2 control-label">{{Mode strict}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Impose que tous les types génériques nécessaires soient correctement configurés pour la création de widget en masse mais réduit le nombre d'erreur de l'assistant"></i>
           </sup>
@@ -248,7 +251,8 @@ sendVarToJS('userHash', $userHash);
     <!-- LOCALISATION ZONE -->
     <div class="alert alert-success text-center">{{Localisation}}</div>
 
-    <div class="description text-center">Point de répère par défaut pour calculer les distances avec les positions de chaque équipement et pour centrer la carte lors de l'initialisation.</div>
+    <div class="description text-center">Point de répère par défaut pour calculer les distances avec les positions de chaque équipement et pour centrer la carte lors de l'initialisation.<br />
+      Par défaut la localisation de votre Jeedom est prise en compte, à défaut ça sera Paris !</div>
     <div class="row">
       <div class="form-group col-lg-6">
         <label class="col-lg-6 control-label">{{Latitude}}</label>
