@@ -4446,7 +4446,6 @@
 			"name": "Groupe de géolocalisation",
 			"img": "groupGeo.png",
 			"description": "Permet d'afficher plusieurs géolocalisation sur une seule et même carte",
-			"hide": true,
 			"variables": [
 				{
 					"name": "room",
