@@ -92,7 +92,7 @@ try {
   return sendAnswer($isWsConnexion, $jsonrpc, $result);
 } catch (Exception $e) {
 
-  if ($skipLog) JCLog::debug('[' . $connexionType . '] HTTP Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
+  if ($skipLog) JCLog::debug('[' . $connexionType . '] Request Received ' . JeedomConnectUtils::hideSensitiveData($jsonData, 'receive'));
 
   $result = apiHelper::raiseException($e->getMessage(), $method);
   // JCLog::error('['. $connexionType. '] Send ' . $method . ' -> ' . json_encode($result));

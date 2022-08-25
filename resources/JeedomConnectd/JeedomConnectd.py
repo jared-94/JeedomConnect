@@ -62,10 +62,10 @@ def read_socket():
                                 f"Broadcast to {toClient['id']} : " + str(elt)
                             )
                             server.send_message(toClient, json.dumps(elt))
-            elif toClient and method == "JEEDOM_CONFIG":
-                toClient["configVersion"] = payload["payload"]["configVersion"]
             else:
                 if toClient:
+                    if method == "JEEDOM_CONFIG":
+                        toClient["configVersion"] = payload["payload"]["configVersion"]
                     server.send_message(toClient, msg_socket_str)
                 else:
                     raise Exception("no client found ! ")
