@@ -25,12 +25,14 @@ require_once dirname(__FILE__) . "/../class/JeedomConnect.class.php";
 function sendAnswer($isWsConnexion, $jsonrpc, $result) {
 
   if (!$isWsConnexion && is_null($result)) {
-    return $jsonrpc->makeSuccess();
+    $jsonrpc->makeSuccess();
   } elseif (!$isWsConnexion) {
-    return $jsonrpc->makeSuccess($result);
-  } else {
-    return JeedomConnect::sendToDaemon($result);
+    $jsonrpc->makeSuccess($result);
+  } elseif (!is_null($result)) {
+    JeedomConnect::sendToDaemon($result);
   }
+
+  return;
 }
 
 
@@ -45,6 +47,9 @@ try {
 
   $params = $jsonrpc->getParams();
   $method = $jsonrpc->getMethod();
+
+  $request = json_decode($jsonData, true);
+  $messageId = $request['messageId'] ?? null;
 
   $connexionType = $params['connexionFrom'] ?? 'API';
   $isWsConnexion = ($connexionType != "API");
@@ -81,7 +86,10 @@ try {
   if (!$skipLog) JCLog::debug('[' . $connexionType . '] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
 
 
-  if ($isWsConnexion) $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
+  if ($isWsConnexion) {
+    if (!is_null($messageId)) $result['messageId'] = $messageId;
+    $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
+  }
 
   return sendAnswer($isWsConnexion, $jsonrpc, $result);
 } catch (Exception $e) {
