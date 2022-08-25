@@ -168,6 +168,13 @@ class JeedomConnect extends eqLogic {
 		$return = array();
 		$return['log'] = __CLASS__;
 		$return['state'] = 'nok';
+
+		if (!self::useWebsocket()) {
+			$return['launchable'] = 'nok';
+			$return['launchable_message'] = 'Aucun équipement utilise le websocket';
+			return $return;
+		}
+
 		$pid_file = jeedom::getTmpFolder(__CLASS__) . '/deamon.pid';
 
 		// $serverExist = count(system::ps('core/php/server.php')) > 0;
@@ -245,6 +252,18 @@ class JeedomConnect extends eqLogic {
 
 	/*     * -------------------------------- END DAEMON -------------------------------- */
 
+	public static function useWebsocket() {
+		/** @param JeedomConnect $eqLogic */
+		$daemonRequired = false;
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			if ($eqLogic->getConfiguration('useWs', false)) {
+				$daemonRequired = true;
+				break;
+			}
+		}
+		return $daemonRequired;
+	}
+
 	/**
 	 * Check if websocket is acitvated at least on one equipment, if not and if daemon is started
 	 * then displays a message in jeedom console to let the user know that the daemon seems not required
@@ -256,13 +275,7 @@ class JeedomConnect extends eqLogic {
 		/**
 		 * @param JeedomConnect $eqLogic
 		 */
-		$daemonRequired = false;
-		foreach (\JeedomConnect::getAllJCequipment() as $eqLogic) {
-			if ($eqLogic->getConfiguration('useWs', false)) {
-				$daemonRequired = true;
-				break;
-			}
-		}
+		$daemonRequired = self::useWebsocket();
 
 		if (!$daemonRequired) {
 			JCLog::warning("le démon n'est pas nécessaire !");
