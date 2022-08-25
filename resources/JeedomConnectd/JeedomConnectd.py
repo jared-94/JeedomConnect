@@ -38,7 +38,6 @@ def read_socket():
                 raise Exception("no apiKey found ! ")
 
             if toClient and method == "WELCOME":
-                server.close_client_existing(eqApiKey)
                 toClient["configVersion"] = payload.get("configVersion", None)
                 toClient["lastReadTimestamp"] = time.time()
                 toClient["lastHistoricReadTimestamp"] = time.time()
@@ -70,6 +69,17 @@ def read_socket():
                     server.send_message(toClient, msg_socket_str)
                 else:
                     raise Exception("no client found ! ")
+
+            if toClient and method in [
+                "BAD_DEVICE",
+                "EQUIPMENT_DISABLE",
+                "APP_VERSION_ERROR",
+                "PLUGIN_VERSION_ERROR",
+                "EMPTY_CONFIG_FILE",
+                "FORMAT_VERSION_ERROR",
+            ]:
+                logging.debug("Bad configuration closing connexion")
+                server.close_client(toClient)
 
         except Exception as e:
             logging.exception(e)
@@ -125,19 +135,22 @@ def shutdown():
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 def client_left(client, server):
-    logging.info(f"Connection #{client['id']} ({client['apiKey']}) has disconnected")
-    result = dict()
-    result["jsonrpc"] = "2.0"
-    result["method"] = "DISCONNECT"
-    result["id"] = str(uuid.uuid4())
+    if client:
+        logging.info(
+            f"Connection #{client['id']} ({client['apiKey']}) has disconnected"
+        )
+        result = dict()
+        result["jsonrpc"] = "2.0"
+        result["method"] = "DISCONNECT"
+        result["id"] = str(uuid.uuid4())
 
-    params = dict()
-    params["apiKey"] = client["apiKey"]
-    params["connexionFrom"] = "WS"
+        params = dict()
+        params["apiKey"] = client["apiKey"] if "apiKey" in client else None
+        params["connexionFrom"] = "WS"
 
-    result["params"] = params
+        result["params"] = params
 
-    jeedomCom.send_change_immediate(result)
+        jeedomCom.send_change_immediate(result)
 
 
 def new_client(client, server):
@@ -145,7 +158,7 @@ def new_client(client, server):
     logging.info(f"Number of client connected #{len(server.clients)}")
     client["openTimestamp"] = time.time()
     # logging.debug(f"All Clients {str(server.clients)}")
-    nbNotAuthenticate = server.client_not_authenticated(client)
+    nbNotAuthenticate = server.client_not_authenticated()
     if nbNotAuthenticate > 0:
         logging.warning(f"Clients not authenticated #{nbNotAuthenticate}")
         # server.close_unauthenticated(client)
@@ -174,6 +187,7 @@ def onMessageReceived(client, server, message):
 
         if method == "CONNECT":
             apiKey = params.get("apiKey", None)
+            server.close_client_existing(apiKey)
             client["apiKey"] = apiKey
 
         if not params:
@@ -195,7 +209,7 @@ def async_worker():
     try:
         while True:
             # Check is there is unauthenticated clients for too long
-            if server.client_not_authenticated > 0:
+            if server.client_not_authenticated() > 0:
                 server.close_unauthenticated(time.time(), 3)
 
             # Get last event for every connected client
