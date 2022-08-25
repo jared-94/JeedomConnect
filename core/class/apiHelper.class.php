@@ -408,7 +408,7 @@ class apiHelper {
 
         case 'DISCONNECT':
           $result = self::disconnect($eqLogic);
-          return $result;
+          return null;
           break;
 
         case 'GET_LOG':

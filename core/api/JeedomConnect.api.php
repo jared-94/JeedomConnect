@@ -84,9 +84,9 @@ try {
   if (!$skipLog) JCLog::debug('[' . $connexionType . '] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
 
 
-  if ($isWsConnexion) {
+  if ($isWsConnexion & !is_null($result)) {
     $result['messageId'] = $messageId;
-    if (!is_null($result)) $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
+    $result['eqApiKey'] = $apiKey;
   }
 
   return sendAnswer($isWsConnexion, $jsonrpc, $result);
