@@ -235,6 +235,7 @@ parser.add_argument("--loglevel", help="Log Level for the daemon", type=str)
 parser.add_argument("--user", help="username", type=str)
 parser.add_argument("--pwd", help="password", type=str)
 parser.add_argument("--socketport", help="Socket Port", type=int)
+parser.add_argument("--websocketport", help="Socket Port", type=int)
 parser.add_argument("--callback", help="Value to write", type=str)
 parser.add_argument("--apikey", help="Value to write", type=str)
 parser.add_argument("--pid", help="Value to write", type=str)
@@ -242,7 +243,7 @@ args = parser.parse_args()
 
 _log_level = args.loglevel
 _socket_port = args.socketport
-_websocket_port = 8090
+_websocket_port = args.websocketport
 _pidfile = args.pid
 _apikey = args.apikey
 _callback = args.callback
