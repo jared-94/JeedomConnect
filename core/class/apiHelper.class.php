@@ -361,6 +361,10 @@ class apiHelper {
           $eqLogic->setConfiguration('lastSeen', time());
           $eqLogic->save(true);
 
+          if ($eqLogic->getConfiguration('appState', '') != 'active') {
+            return null;
+          }
+
           if (!is_null($param['configVersion'])) {
             $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
             if ($newConfig != false) {
@@ -372,10 +376,6 @@ class apiHelper {
           $actions = self::getJCActions($apiKey);
           if (count($actions['payload']) > 0) {
             return array($actions);
-          }
-
-          if ($eqLogic->getConfiguration('appState', '') != 'active') {
-            return null;
           }
 
           $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
@@ -403,6 +403,11 @@ class apiHelper {
 
         case 'CONNECT':
           $result = self::checkConnexion($eqLogic, $param);
+          return $result;
+          break;
+
+        case 'DISCONNECT':
+          $result = self::disconnect($eqLogic);
           return $result;
           break;
 
@@ -608,6 +613,12 @@ class apiHelper {
     $payload['authorized'] =  (trim($password2FA) != '' && is_object($user) && $user->validateTwoFactorCode($password2FA));
 
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function disconnect($eqLogic) {
+    $eqLogic->setConfiguration('connected', 0);
+    $eqLogic->setConfiguration('appState', 'background');
+    $eqLogic->save(true);
   }
 
 

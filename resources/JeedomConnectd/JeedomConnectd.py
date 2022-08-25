@@ -123,6 +123,22 @@ def shutdown():
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
+def client_left(client, server):
+    logging.info(f"Connection #{client['id']} ({client['apiKey']}) has disconnected")
+    result = dict()
+    result["jsonrpc"] = "2.0"
+    result["method"] = "DISCONNECT"
+    result["id"] = str(uuid.uuid4())
+
+    params = dict()
+    params["apiKey"] = client["apiKey"]
+    params["connexionFrom"] = "WS"
+
+    result["params"] = params
+
+    jeedomCom.send_change_immediate(result)
+
+
 def new_client(client, server):
     logging.info(f"New connection: #{client['id']} from IP: {client['address']}")
     logging.info(f"Number of client connected #{len(server.clients)}")
@@ -149,6 +165,10 @@ def onMessageReceived(client, server, message):
             logging.debug("[WEBSOCKET RECEIVE] message: " + str(message))
             # logging.info("[WEBSOCKET RECEIVE] message: " + str(message))
             logDebug = False
+
+        if not method:
+            logging.warning("no method received - skip")
+            return
 
         if method == "CONNECT":
             apiKey = params.get("apiKey", None)
@@ -246,6 +266,7 @@ try:
     server = WebsocketServer(host="0.0.0.0", port=_websocket_port)
     server.set_fn_message_received(onMessageReceived)
     server.set_fn_new_client(new_client)
+    server.set_fn_client_left(client_left)
     server.run_forever(True)
 
     async_GET_EVENTS = threading.Thread(target=async_worker, daemon=True)
