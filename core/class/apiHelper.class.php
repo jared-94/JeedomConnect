@@ -375,7 +375,7 @@ class apiHelper {
 
           $actions = self::getJCActions($apiKey);
           if (count($actions['payload']) > 0) {
-            return array($actions);
+            return $actions;
           }
 
           $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
