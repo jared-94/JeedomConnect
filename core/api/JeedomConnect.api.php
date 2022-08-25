@@ -47,9 +47,7 @@ try {
 
   $params = $jsonrpc->getParams();
   $method = $jsonrpc->getMethod();
-
-  $request = json_decode($jsonData, true);
-  $messageId = $request['messageId'] ?? null;
+  $messageId = $jsonrpc->getId();
 
   $connexionType = $params['connexionFrom'] ?? 'API';
   $isWsConnexion = ($connexionType != "API");
@@ -87,7 +85,7 @@ try {
 
 
   if ($isWsConnexion) {
-    if (!is_null($messageId)) $result['messageId'] = $messageId;
+    $result['messageId'] = $messageId;
     if (!is_null($result)) $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
   }
 
