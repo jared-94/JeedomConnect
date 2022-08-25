@@ -95,11 +95,10 @@ class API:
         self.message_received = fn
 
     def send_message(self, client, msg):
-        logging.debug("sending msg to ==> " + str(client))
         self._unicast(client, msg)
 
     def send_message_to_all(self, msg):
-        logging.debug("message_to_all ==> " + str(msg))
+        logging.info("[WEBSOCKET SEND] broadcast message to ALL connected clients")
         self._multicast(msg)
 
     def deny_new_connections(
@@ -228,13 +227,14 @@ class WebsocketServer(ThreadingMixIn, TCPServer, API):
             self.clients.remove(client)
 
     def _unicast(self, receiver_client, msg):
+        logging.debug(
+            f"[WEBSOCKET SEND] message to client #{receiver_client['id']}: " + str(msg)
+        )
         receiver_client["handler"].send_message(msg)
 
     def _multicast(self, msg):
         for client in self.clients:
-            logging.debug("sending multicast to " + str(client))
             self._unicast(client, msg)
-        logging.debug("end multicast")
 
     def handler_to_client(self, handler):
         for client in self.clients:
@@ -246,6 +246,19 @@ class WebsocketServer(ThreadingMixIn, TCPServer, API):
             if client["apiKey"] == apiKey:
                 return client
         return None
+
+    def close_unauthenticated(self, current):
+        for client in self.clients:
+            if client != current:
+                client["handler"].send_close(CLOSE_STATUS_NORMAL, DEFAULT_CLOSE_REASON)
+                self._terminate_client_handler(client["handler"])
+
+    def client_not_authenticated(self, current):
+        count = 0
+        for client in self.clients:
+            if client != current and not client["apiKey"]:
+                count += 1
+        return count
 
     def _terminate_client_handler(self, handler):
         handler.keep_alive = False

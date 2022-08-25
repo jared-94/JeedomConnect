@@ -20,10 +20,10 @@ from websocket_server import WebsocketServer
 def read_socket():
     global JEEDOM_SOCKET_MESSAGE
     if not JEEDOM_SOCKET_MESSAGE.empty():
-        logging.debug("Msg received in JEEDOM_SOCKET_MESSAGE")
+        # logging.debug("Msg received in JEEDOM_SOCKET_MESSAGE")
         msg_socket_str = JEEDOM_SOCKET_MESSAGE.get().decode("utf-8")
         msg_socket = json.loads(msg_socket_str)
-        logging.debug("Msg received => " + msg_socket_str)
+        # logging.debug("Msg received => " + msg_socket_str)
         try:
             if msg_socket.get("jeedomApiKey", None) != _apikey:
                 raise Exception("Invalid apikey from socket : " + str(msg_socket))
@@ -120,15 +120,31 @@ def shutdown():
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 def new_client(client, server):
-    logging.debug(f"New connection: #{client['id']} from IP: {client['address']}")
+    logging.info(f"New connection: #{client['id']} from IP: {client['address']}")
+    logging.info(f"Number of client connected #{len(server.clients)}")
+    # logging.debug(f"All Clients {str(server.clients)}")
+    nbNotAuthenticate = server.client_not_authenticated(client)
+    if nbNotAuthenticate > 0:
+        logging.warning(f"Clients not authenticated #{nbNotAuthenticate}")
+        # server.close_unauthenticated(client)
+    # else:
+    #     logging.debug(f"All clients are authenticated")
 
 
 def onMessageReceived(client, server, message):
-    logging.info("[WS] Message received=> " + str(message))
+    # logging.info("[WEBSOCKET RECEIVED] message: " + str(message))
     try:
         original = json.loads(message)
         method = original.get("method", None)
         params = original.get("params", None)
+
+        if method == "SET_EVENTS":
+            logging.debug("[WEBSOCKET RECEIVE] message: " + str(message))
+            logDebug = True
+        else:
+            logging.debug("[WEBSOCKET RECEIVE] message: " + str(message))
+            # logging.info("[WEBSOCKET RECEIVE] message: " + str(message))
+            logDebug = False
 
         if method == "CONNECT":
             apiKey = params.get("apiKey", None)
@@ -143,6 +159,7 @@ def onMessageReceived(client, server, message):
         original["params"]["connexionFrom"] = "WS"
 
         jeedomCom.send_change_immediate(original)
+        # jeedomCom.send_change_immediate(original, logDebug)
     except Exception as err:
         logging.exception("Exception onMessageReceived : " + str(err))
 
@@ -170,8 +187,9 @@ def async_worker():
                     result["params"] = params
 
                     jeedomCom.send_change_immediate(result)
+                    # jeedomCom.send_change_immediate(result, True)
                 else:
-                    logging.debug(f"no api key found for client ${str(client)}")
+                    logging.warning(f"no api key found for client ${str(client)}")
             time.sleep(1)
     except Exception as err:
         logging.exception(err)

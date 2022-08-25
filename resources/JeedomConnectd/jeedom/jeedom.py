@@ -120,11 +120,20 @@ class jeedom_com:
             else:
                 self.changes[key] = value
 
-    def send_change_immediate(self, change):
-        threading.Thread(target=self.thread_change, args=(change,)).start()
+    def send_change_immediate(self, change, logDebug=False):
+        threading.Thread(
+            target=self.thread_change,
+            args=(
+                change,
+                logDebug,
+            ),
+        ).start()
 
-    def thread_change(self, change):
-        logging.info("Send to jeedom :  %s" % (str(change),))
+    def thread_change(self, change, logDebug):
+        if logDebug:
+            logging.debug("[DAEMON SEND] message:  %s" % (str(change),))
+        else:
+            logging.info("[DAEMON SEND] message:  %s" % (str(change),))
         i = 0
         while i < self.retry:
             try:
@@ -374,12 +383,12 @@ JEEDOM_SOCKET_MESSAGE = Queue()
 class jeedom_socket_handler(StreamRequestHandler):
     def handle(self):
         global JEEDOM_SOCKET_MESSAGE
-        logging.info("Client connected to [%s:%d]" % self.client_address)
+        logging.debug("Client connected to [%s:%d]" % self.client_address)
         lg = self.rfile.readline()
         JEEDOM_SOCKET_MESSAGE.put(lg)
-        logging.info("Message read from socket: " + str(lg.strip()))
+        logging.debug("[DAEMON RECEIVE] message: " + str(lg.strip()))
         self.netAdapterClientConnected = False
-        logging.info("Client disconnected from [%s:%d]" % self.client_address)
+        logging.debug("Client disconnected from [%s:%d]" % self.client_address)
 
 
 class jeedom_socket:

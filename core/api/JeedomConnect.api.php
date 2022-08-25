@@ -88,7 +88,7 @@ try {
 
   if ($isWsConnexion) {
     if (!is_null($messageId)) $result['messageId'] = $messageId;
-    $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
+    if (!is_null($result)) $result['eqApiKey'] = $eqLogic->getConfiguration('apiKey', null);
   }
 
   return sendAnswer($isWsConnexion, $jsonrpc, $result);
