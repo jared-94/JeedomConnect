@@ -29,14 +29,16 @@ def read_socket():
                 raise Exception("Invalid apikey from socket : " + str(msg_socket))
 
             method = msg_socket.get("type", None)
+            payload = msg_socket.get("payload", None)
             eqApiKey = msg_socket.get("eqApiKey", None)
+
             if eqApiKey:
                 toClient = server.apiKey_to_client(eqApiKey)
             else:
                 raise Exception("no apiKey found ! ")
 
             if toClient and method == "WELCOME":
-                toClient["configVersion"] = msg_socket["payload"]["configVersion"]
+                toClient["configVersion"] = payload.get("configVersion", None)
                 toClient["lastReadTimestamp"] = time.time()
                 toClient["lastHistoricReadTimestamp"] = time.time()
                 # logging.debug("all data client =>" + str(toClient))
@@ -60,6 +62,8 @@ def read_socket():
                                 f"Broadcast to {toClient['id']} : " + str(elt)
                             )
                             server.send_message(toClient, json.dumps(elt))
+            elif toClient and method == "JEEDOM_CONFIG":
+                toClient["configVersion"] = payload["payload"]["configVersion"]
             else:
                 if toClient:
                     server.send_message(toClient, msg_socket_str)
