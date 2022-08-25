@@ -4367,6 +4367,13 @@
 					"generic_type": "GEOLOCATION"
 				},
 				{
+					"id": "markerTitle",
+					"name": "Titre",
+					"required": false,
+					"description": "A compléter si vous désirez qu'un titre soit au dessus de la pastille",
+					"category": "string"
+				},
+				{
 					"id": "pin",
 					"name": "Repère",
 					"required": false,
