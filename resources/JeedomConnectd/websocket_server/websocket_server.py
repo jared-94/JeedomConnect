@@ -247,11 +247,24 @@ class WebsocketServer(ThreadingMixIn, TCPServer, API):
                 return client
         return None
 
-    def close_unauthenticated(self, current):
+    def close_client(self, client):
+        client["handler"].send_close(CLOSE_STATUS_NORMAL, DEFAULT_CLOSE_REASON)
+        self._terminate_client_handler(client["handler"])
+
+    def close_client_existing(self, eqApiKey):
         for client in self.clients:
-            if client != current:
-                client["handler"].send_close(CLOSE_STATUS_NORMAL, DEFAULT_CLOSE_REASON)
-                self._terminate_client_handler(client["handler"])
+            if "apiKey" in client and client["apiKey"] == eqApiKey:
+                self.close_client(client)
+
+    def close_unauthenticated(self, currentTime, maxTime):
+        for client in self.clients:
+            if "openTimestamp" in client and (
+                (currentTime - client["openTimestamp"]) > maxTime
+            ):
+                logging.warning(
+                    f"Close unauthenticated client #{client['id']} from address: {client['address']}"
+                )
+                self.close_client(client)
 
     def client_not_authenticated(self, current):
         count = 0

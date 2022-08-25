@@ -38,6 +38,7 @@ def read_socket():
                 raise Exception("no apiKey found ! ")
 
             if toClient and method == "WELCOME":
+                server.close_client_existing(eqApiKey)
                 toClient["configVersion"] = payload.get("configVersion", None)
                 toClient["lastReadTimestamp"] = time.time()
                 toClient["lastHistoricReadTimestamp"] = time.time()
@@ -142,6 +143,7 @@ def client_left(client, server):
 def new_client(client, server):
     logging.info(f"New connection: #{client['id']} from IP: {client['address']}")
     logging.info(f"Number of client connected #{len(server.clients)}")
+    client["openTimestamp"] = time.time()
     # logging.debug(f"All Clients {str(server.clients)}")
     nbNotAuthenticate = server.client_not_authenticated(client)
     if nbNotAuthenticate > 0:
@@ -192,6 +194,11 @@ def async_worker():
     logging.debug("Starting loop to retrieve all events")
     try:
         while True:
+            # Check is there is unauthenticated clients for too long
+            if server.client_not_authenticated > 0:
+                server.close_unauthenticated(time.time(), 3)
+
+            # Get last event for every connected client
             for client in server.clients:
                 if client.get("apiKey", None):
                     result = dict()
