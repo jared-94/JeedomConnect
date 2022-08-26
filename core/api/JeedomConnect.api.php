@@ -85,7 +85,7 @@ try {
 
 
   if ($isWsConnexion & !is_null($result)) {
-    $result['messageId'] = $messageId;
+    $result['id'] = $messageId;
     $result['eqApiKey'] = $apiKey;
   }
 
