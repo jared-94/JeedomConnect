@@ -77,6 +77,7 @@ def read_socket():
                 "PLUGIN_VERSION_ERROR",
                 "EMPTY_CONFIG_FILE",
                 "FORMAT_VERSION_ERROR",
+                "BAD_TYPE_VERSION",
             ]:
                 logging.debug("Bad configuration closing connexion")
                 server.close_client(toClient)
