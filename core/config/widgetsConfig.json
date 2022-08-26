@@ -4371,6 +4371,7 @@
 					"name": "Titre",
 					"required": false,
 					"description": "A compléter si vous désirez qu'un titre soit au dessus de la pastille",
+					"type": "info",
 					"category": "string"
 				},
 				{
