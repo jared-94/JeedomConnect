@@ -652,6 +652,13 @@ class apiHelper {
       return array('type' => 'EQUIPMENT_DISABLE');
     }
 
+    //check if plugin=app type version => stable/stable or beta/beta
+    $pluginType = JeedomConnectUtils::isBeta() ? 'beta' : 'stable';
+    if (config::byKey('ctrl::appTypeVersion', 'JeedomConnect', true) && key_exists('appTypeVersion', $param) &&  $param['appTypeVersion'] != $pluginType) {
+      JCLog::warning("App and Plugin not aligned : beta/beta or stable/stable. Here app=" . $param['appTypeVersion'] . "/plugin=" . $pluginType);
+      return array('type' => 'BAD_TYPE_VERSION');
+    }
+
     //check version requirement
     if (version_compare($param['appVersion'], $versionJson['require'], "<")) {
       JCLog::warning("Failed to connect : bad version requirement");

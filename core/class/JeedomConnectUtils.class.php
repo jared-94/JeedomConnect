@@ -36,14 +36,7 @@ class JeedomConnectUtils {
 
         $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
 
-        $beta_version = false;
-
-        $plugin = plugin::byId('JeedomConnect');
-        $update = $plugin->getUpdate();
-        if (is_object($update)) {
-            $version = $update->getConfiguration('version');
-            if ($version && $version != 'stable') $beta_version = true;
-        }
+        $beta_version = self::isBeta();
 
 
         $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/>';
