@@ -135,7 +135,7 @@ def shutdown():
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 def client_left(client, server):
-    if client:
+    if client and client["apiKey"]:
         logging.info(
             f"Connection #{client['id']} ({client['apiKey']}) has disconnected"
         )
@@ -145,7 +145,7 @@ def client_left(client, server):
         result["id"] = str(uuid.uuid4())
 
         params = dict()
-        params["apiKey"] = client["apiKey"] if "apiKey" in client else None
+        params["apiKey"] = client["apiKey"]
         params["connexionFrom"] = "WS"
 
         result["params"] = params

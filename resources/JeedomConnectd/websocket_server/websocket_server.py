@@ -256,20 +256,26 @@ class WebsocketServer(ThreadingMixIn, TCPServer, API):
 
     def close_client_existing(self, eqApiKey):
         for client in self.clients:
-            if "apiKey" in client and client["apiKey"] == eqApiKey:
+            if client["apiKey"] and client["apiKey"] == eqApiKey:
                 self.close_client(client)
 
     def close_unauthenticated(self, currentTime, maxTime):
+        logging.debug(
+            f"trying to close unauthenticate client. current time {currentTime} with max time {maxTime}"
+        )
         for client in self.clients:
             if "openTimestamp" in client and (
                 (currentTime - client["openTimestamp"]) > maxTime
             ):
+                logging.debug(
+                    f"Over time unauthenticate closing connexion for {str(client)}"
+                )
                 self.close_client(client)
 
     def client_not_authenticated(self):
         count = 0
         for client in self.clients:
-            if "apiKey" not in client:
+            if not client["apiKey"]:
                 count += 1
         return count
 
