@@ -125,24 +125,34 @@ sendVarToJS('userHash', $userHash);
       <i class="fas fa-exclamation-triangle"></i>&nbsp;NON-compatible avec les DNS Jeedom.&nbsp;<i class="fas fa-exclamation-triangle"></i>
     </div>
     <div class="row">
-      <div class="form-group col-lg-6">
+      <div class="form-group col-lg-4">
         <label class="col-lg-6 control-label">{{Connexion IPV6}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Protocole de connexion en IPV6"></i>
           </sup>
         </label>
         <div class="col-lg-3">
-          <input type="checkbox" class="configKey" data-l1key="ipv6" />
+          <input type="checkbox" class="configKey needJCRefresh" data-l1key="ipv6" />
         </div>
       </div>
-      <div class="form-group col-lg-6">
-        <label class="col-lg-3 control-label">{{Port websocket}}
+      <div class="form-group col-lg-4">
+        <label class="col-lg-4 control-label">{{Port Websocket JC}}
           <sup>
-            <i class="fas fa-question-circle floatright" title="Port d'écoute sur lequel le websocket sera connecté"></i>
+            <i class="fas fa-question-circle floatright" title="Port d'écoute sur lequel le websocket sera connecté. A utiliser sur l'application JC pour vous connecter à votre Jeedom."></i>
           </sup>
         </label>
         <div class="col-lg-3">
-          <input class="configKey form-control" type="number" data-l1key="port" placeholder="8090" />
+          <input class="configKey form-control needJCRefresh" type="number" data-l1key="port" placeholder="8090" />
+        </div>
+      </div>
+      <div class="form-group col-lg-4">
+        <label class="col-lg-4 control-label">{{Port Socket Démon}}
+          <sup>
+            <i class="fas fa-question-circle floatright" title="Port d'échange interne entre le démon et votre Jeedom."></i>
+          </sup>
+        </label>
+        <div class="col-lg-3">
+          <input class="configKey form-control needJCRefresh" type="number" data-l1key="socketport" placeholder="58090" />
         </div>
       </div>
     </div>

@@ -361,19 +361,25 @@ class apiHelper {
           $eqLogic->setConfiguration('lastSeen', time());
           $eqLogic->save(true);
 
-          $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
-          if ($newConfig != false) {
-            JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-            return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
+          if ($eqLogic->getConfiguration('appState', '') != 'active') {
+            return null;
+          }
+
+          if (!is_null($param['configVersion'])) {
+            $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
+            if ($newConfig != false) {
+              JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
+              return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
+            }
           }
 
           $actions = self::getJCActions($apiKey);
           if (count($actions['payload']) > 0) {
-            return array($actions);
+            return $actions;
           }
 
           $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
-          return $result;
+          return array('type' => 'SET_EVENTS', 'payload' => $result);
 
           // TODO : target solution
           /*
@@ -398,6 +404,11 @@ class apiHelper {
         case 'CONNECT':
           $result = self::checkConnexion($eqLogic, $param);
           return $result;
+          break;
+
+        case 'DISCONNECT':
+          $result = self::disconnect($eqLogic);
+          return null;
           break;
 
         case 'GET_LOG':
@@ -602,6 +613,12 @@ class apiHelper {
     $payload['authorized'] =  (trim($password2FA) != '' && is_object($user) && $user->validateTwoFactorCode($password2FA));
 
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function disconnect($eqLogic) {
+    $eqLogic->setConfiguration('connected', 0);
+    $eqLogic->setConfiguration('appState', 'background');
+    $eqLogic->save(true);
   }
 
 

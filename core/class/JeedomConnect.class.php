@@ -162,23 +162,56 @@ class JeedomConnect extends eqLogic {
 
 	/*     * ***********************Methode static*************************** */
 
+	/*     * ********************** DAEMON MANAGEMENT *************************** */
+
 	public static function deamon_info() {
 		$return = array();
-		$return['state'] = count(system::ps('core/php/server.php')) > 0 ? 'ok' : 'nok';
+		$return['log'] = __CLASS__;
+		$return['state'] = 'nok';
+
+		if (!self::useWebsocket()) {
+			$return['launchable'] = 'nok';
+			$return['launchable_message'] = 'Aucun équipement utilise le websocket';
+			return $return;
+		}
+
+		$pid_file = jeedom::getTmpFolder(__CLASS__) . '/deamon.pid';
+
+		// $serverExist = count(system::ps('core/php/server.php')) > 0;
+		if (file_exists($pid_file)) {
+			if (@posix_getsid(trim(file_get_contents($pid_file)))) {
+				$return['state'] = 'ok';
+			} else {
+				shell_exec(system::getCmdSudo() . 'rm -rf ' . $pid_file . ' 2>&1 > /dev/null');
+			}
+		}
 		$return['launchable'] = 'ok';
 		return $return;
 	}
 
-	public static function deamon_start($_debug = false) {
-		self::deamon_stop();
-		JCLog::info('Starting daemon');
-		JCLog::info('Starting daemon');
-		$cmd = 'php ' . dirname(__FILE__) . '/../../core/php/server.php';
-		$cmd .= ' >> ' . log::getPathToLog('JeedomConnect') . ' 2>&1 &';
 
-		shell_exec($cmd);
+	public static function deamon_start() {
+		self::deamon_stop();
+
+		$deamon_info = self::deamon_info();
+		if ($deamon_info['launchable'] != 'ok') {
+			throw new Exception(__('Veuillez vérifier la configuration', __FILE__));
+		}
+
+		$path = realpath(dirname(__FILE__) . '/../../resources/JeedomConnectd'); // répertoire du démon à modifier
+		$cmd = 'python3 ' . $path . '/JeedomConnectd.py'; // nom du démon à modifier
+		$cmd .= ' --loglevel ' . log::convertLogLevel(log::getLogLevel(__CLASS__));
+		$cmd .= ' --socketport ' . config::byKey('socketport', __CLASS__, '58090'); // port socket - échange entre le démon en PY et l'api jeedom
+		$cmd .= ' --websocketport ' . config::byKey('port', __CLASS__, '8090'); // port d'écoute du démon pour échange avec l'application JC
+		$cmd .= ' --callback ' . network::getNetworkAccess('internal', 'proto:127.0.0.1:port:comp') . '/plugins/JeedomConnect/core/api/JeedomConnect.api.php'; // chemin de la callback url à modifier (voir ci-dessous)
+		$cmd .= ' --apikey ' . jeedom::getApiKey(__CLASS__); // l'apikey pour authentifier les échanges suivants
+		$cmd .= ' --pid ' . jeedom::getTmpFolder(__CLASS__) . '/deamon.pid'; // et on précise le chemin vers le pid file (ne pas modifier)
+		log::add(__CLASS__, 'info', 'Lancement démon');
+		log::add(__CLASS__, 'debug', 'Lancement démon avec cmd >>' . $cmd . '<<');
+		exec($cmd . ' >> ' . log::getPathToLog('JeedomConnect_daemon') . ' 2>&1 &'); // 'template_daemon' est le nom du log pour votre démon, vous devez nommer votre log en commençant par le pluginid pour que le fichier apparaisse dans la page de config
+
 		$i = 0;
-		while ($i < 30) {
+		while ($i < 10) {
 			$deamon_info = self::deamon_info();
 			if ($deamon_info['state'] == 'ok') {
 				break;
@@ -186,17 +219,49 @@ class JeedomConnect extends eqLogic {
 			sleep(1);
 			$i++;
 		}
-		if ($i >= 30) {
-			JCLog::error('Unable to start daemon');
+		if ($i >= 10) {
+			log::add(__CLASS__, 'error', __('Impossible de lancer le démon, vérifiez le log', __FILE__), 'unableStartDeamon');
 			return false;
 		}
+		message::removeAll(__CLASS__, 'unableStartDeamon');
+		return true;
 	}
 
 	public static function deamon_stop() {
-		JCLog::info('Stopping daemon');
-		if (count(system::ps('core/php/server.php')) > 0) {
-			system::kill('core/php/server.php', false);
+		$pid_file = jeedom::getTmpFolder(__CLASS__) . '/deamon.pid'; // ne pas modifier
+		if (file_exists($pid_file)) {
+			$pid = intval(trim(file_get_contents($pid_file)));
+			system::kill($pid);
 		}
+		system::kill('JeedomConnectd.py');
+		sleep(1);
+	}
+
+	public static function sendToDaemon($params) {
+		$deamon_info = self::deamon_info();
+		if ($deamon_info['state'] != 'ok') {
+			throw new Exception("Le démon n'est pas démarré");
+		}
+		$params['jeedomApiKey'] = jeedom::getApiKey(__CLASS__);
+		$payLoad = json_encode($params);
+		$socket = socket_create(AF_INET, SOCK_STREAM, 0);
+		socket_connect($socket, '127.0.0.1', config::byKey('socketport', __CLASS__, '58090')); //port par défaut de votre plugin à modifier
+		socket_write($socket, $payLoad, strlen($payLoad));
+		socket_close($socket);
+	}
+
+	/*     * -------------------------------- END DAEMON -------------------------------- */
+
+	public static function useWebsocket() {
+		/** @param JeedomConnect $eqLogic */
+		$daemonRequired = false;
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			if ($eqLogic->getConfiguration('useWs', false)) {
+				$daemonRequired = true;
+				break;
+			}
+		}
+		return $daemonRequired;
 	}
 
 	/**
@@ -210,13 +275,7 @@ class JeedomConnect extends eqLogic {
 		/**
 		 * @param JeedomConnect $eqLogic
 		 */
-		$daemonRequired = false;
-		foreach (\JeedomConnect::getAllJCequipment() as $eqLogic) {
-			if ($eqLogic->getConfiguration('useWs', false)) {
-				$daemonRequired = true;
-				break;
-			}
-		}
+		$daemonRequired = self::useWebsocket();
 
 		if (!$daemonRequired) {
 			JCLog::warning("le démon n'est pas nécessaire !");
