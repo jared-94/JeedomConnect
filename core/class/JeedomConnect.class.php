@@ -169,12 +169,6 @@ class JeedomConnect extends eqLogic {
 		$return['log'] = __CLASS__;
 		$return['state'] = 'nok';
 
-		if (!self::useWebsocket()) {
-			$return['launchable'] = 'nok';
-			$return['launchable_message'] = 'Aucun équipement utilise le websocket';
-			return $return;
-		}
-
 		$pid_file = jeedom::getTmpFolder(__CLASS__) . '/deamon.pid';
 
 		// $serverExist = count(system::ps('core/php/server.php')) > 0;
@@ -185,6 +179,15 @@ class JeedomConnect extends eqLogic {
 				shell_exec(system::getCmdSudo() . 'rm -rf ' . $pid_file . ' 2>&1 > /dev/null');
 			}
 		}
+
+		if (!self::useWebsocket()) {
+			if ($return['state'] == 'ok') self::deamon_stop();
+			$return['state'] == 'nok';
+			$return['launchable'] = 'nok';
+			$return['launchable_message'] = 'Aucun équipement utilise le websocket';
+			return $return;
+		}
+
 		$return['launchable'] = 'ok';
 		return $return;
 	}
@@ -192,6 +195,7 @@ class JeedomConnect extends eqLogic {
 
 	public static function deamon_start() {
 		self::deamon_stop();
+		JCLog::info('Starting daemon');
 
 		$deamon_info = self::deamon_info();
 		if ($deamon_info['launchable'] != 'ok') {
@@ -206,8 +210,7 @@ class JeedomConnect extends eqLogic {
 		$cmd .= ' --callback ' . network::getNetworkAccess('internal', 'proto:127.0.0.1:port:comp') . '/plugins/JeedomConnect/core/api/JeedomConnect.api.php'; // chemin de la callback url à modifier (voir ci-dessous)
 		$cmd .= ' --apikey ' . jeedom::getApiKey(__CLASS__); // l'apikey pour authentifier les échanges suivants
 		$cmd .= ' --pid ' . jeedom::getTmpFolder(__CLASS__) . '/deamon.pid'; // et on précise le chemin vers le pid file (ne pas modifier)
-		log::add(__CLASS__, 'info', 'Lancement démon');
-		log::add(__CLASS__, 'debug', 'Lancement démon avec cmd >>' . $cmd . '<<');
+		log::add(__CLASS__, 'debug', 'Starting daemon with cmd >>' . $cmd . '<<');
 		exec($cmd . ' >> ' . log::getPathToLog('JeedomConnect_daemon') . ' 2>&1 &'); // 'template_daemon' est le nom du log pour votre démon, vous devez nommer votre log en commençant par le pluginid pour que le fichier apparaisse dans la page de config
 
 		$i = 0;
@@ -228,6 +231,7 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function deamon_stop() {
+		JCLog::info('Stopping daemon');
 		$pid_file = jeedom::getTmpFolder(__CLASS__) . '/deamon.pid'; // ne pas modifier
 		if (file_exists($pid_file)) {
 			$pid = intval(trim(file_get_contents($pid_file)));
