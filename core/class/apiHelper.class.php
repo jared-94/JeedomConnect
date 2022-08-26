@@ -2893,6 +2893,12 @@ class apiHelper {
   private static function setWebsocket($eqLogic, $value) {
     $eqLogic->setConfiguration('useWs', $value ? '1' : '0');
     $eqLogic->save(true);
+
+    $deamon_info = JeedomConnect::deamon_info();
+    if ($deamon_info['launchable'] == 'ok' && $deamon_info['state'] != 'ok') {
+      JeedomConnect::deamon_start();
+    }
+
     return array(
       "type" => "GET_WEBSOCKET",
       "payload" => array(
