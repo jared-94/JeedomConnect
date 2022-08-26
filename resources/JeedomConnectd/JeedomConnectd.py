@@ -214,7 +214,7 @@ def async_worker():
 
             # Get last event for every connected client
             for client in server.clients:
-                if client.get("apiKey", None):
+                if client["apiKey"]:
                     result = dict()
                     result["jsonrpc"] = "2.0"
                     result["method"] = "GET_EVENTS"
