@@ -1370,7 +1370,10 @@ class JeedomConnect extends eqLogic {
 	public static function getPluginInfo() {
 
 		$pluginInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'version.json'), true);
-		$branchInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'branch.json'), true);
+		$branchInfo = array(
+			"typeVersion" => JeedomConnectUtils::isBeta(true),
+			"enrollment" => "https://jared-94.github.io/JeedomConnectDoc/fr_FR/#qBeta"
+		);
 
 		$result = array_merge($pluginInfo, $branchInfo);
 
