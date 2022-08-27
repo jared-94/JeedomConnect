@@ -81,6 +81,7 @@ class apiHelper {
           break;
 
         case 'SC_EXEC':
+          $param['options']['tags'] = ($param['options']['tags'] ?? '') . ' eqId=' . $eqLogic->getId();
           $result = self::execSc($param['id'], $param['options']);
           return $result;
           break;
@@ -96,7 +97,7 @@ class apiHelper {
           break;
 
         case 'QUERY_INTERACT':
-          $result = self::queryInteract($param['query'], $param['options']);
+          $result = self::queryInteract($param['query'], $param['options'], $param['keywordIndex']);
           return $result;
           break;
 
@@ -466,6 +467,15 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_PICOKEY':
+          self::setPicoKey($eqLogic, $param['value']);
+          return null;
+          break;
+
+        case 'GET_PICOKEY':
+          return self::getPicoKey($eqLogic);
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -700,6 +710,7 @@ class apiHelper {
       'userId' => $userConnected->getId(),
       'userName' => $userConnected->getLogin(),
       'userProfil' => $userConnected->getProfils(),
+      'userImgPath' => config::byKey('userImgPath',   'JeedomConnect'),
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
       'notifsVersion' => $notifsConfig['idCounter'],
       'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
@@ -710,6 +721,7 @@ class apiHelper {
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
       'objInfo' => self::getObjectData($config, false),
+      'geofenceInfo' => self::getGeofencesData($eqLogic, false),
       'links' => JeedomConnectUtils::getLinks(),
       // check timelineclass for old jeedom core
       'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
@@ -756,7 +768,7 @@ class apiHelper {
     $returnType = 'AVAILABLE_EQUIPEMENT';
 
     /** @var array<JeedomConnect> $eqLogics */
-    $eqLogics = eqLogic::byType('JeedomConnect');
+    $eqLogics = JeedomConnect::getAllJCequipment();
 
     if (is_null($eqLogics)) {
       throw new Exception(__("No equipment available", __FILE__), -32699);
@@ -766,7 +778,6 @@ class apiHelper {
     $userConnected = user::byHash($userHash);
     $userConnectedProfil = is_object($userConnected) ? $userConnected->getProfils() : null;
     foreach ($eqLogics as $eqLogic) {
-
       $userOnEquipment = user::byId($eqLogic->getConfiguration('userId'));
       if (is_object($userOnEquipment)) {
         $userOnEquipmentHash = $userOnEquipment->getHash();
@@ -891,6 +902,15 @@ class apiHelper {
       $averageHistoryValue = round($historyStatistique['avg'], 1);
       $minHistoryValue = round($historyStatistique['min'], 1);
       $maxHistoryValue = round($historyStatistique['max'], 1);
+
+      $tendanceData = $cmd->getTendance($startHist, date('Y-m-d H:i:s'));
+      if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
+        $tendance = "up";
+      } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
+        $tendance = "down";
+      } else {
+        $tendance = "stable";
+      }
     }
 
 
@@ -898,6 +918,7 @@ class apiHelper {
       'averageValue' => $averageHistoryValue ?? 0,
       'minValue' => $minHistoryValue ?? 0,
       'maxValue' => $maxHistoryValue ?? 0,
+      'tendance' => $tendance ?? null,
     );
   }
 
@@ -1066,33 +1087,30 @@ class apiHelper {
    * @param JeedomConnect $eqLogic
    * @return (string|array)[]|null
    */
-  private static function getGeofencesData($eqLogic) {
-    $result = array(
-      'type' => 'SET_GEOFENCES',
-      'payload' => array(
-        'geofences' => array()
-      )
-    );
+  private static function getGeofencesData($eqLogic, $withType = true) {
+    $returnType = 'SET_GEOFENCES';
+
+    $result = array();
     foreach ($eqLogic->getCmd('info') as $cmd) {
       if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
-        array_push($result['payload']['geofences'], array(
+        array_push($result, array(
           'identifier' => substr($cmd->getLogicalId(), 9),
           'extras' => array(
             'name' => $cmd->getName()
           ),
-          'radius' => $cmd->getConfiguration('radius'),
-          'latitude' => $cmd->getConfiguration('latitude'),
-          'longitude' => $cmd->getConfiguration('longitude'),
+          'radius' => doubleval($cmd->getConfiguration('radius')),
+          'latitude' => doubleval($cmd->getConfiguration('latitude')),
+          'longitude' => doubleval($cmd->getConfiguration('longitude')),
           'notifyOnEntry' => true,
           'notifyOnExit' => true
         ));
       }
     }
 
-    if (count($result['payload']['geofences']) > 0) {
-      return $result;
-    }
-    return null;
+    $payload = array(
+      'geofences' => $result
+    );
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   //PLUGIN CONF FUNCTIONS
@@ -1426,6 +1444,10 @@ class apiHelper {
   private static function setCustomWidgetList($eqLogic, $customWidgetList) {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
+      if (!key_exists('widgetId', $customWidget)) {
+        JCLog::error('no widgetId found - skip');
+        continue;
+      }
       JCLog::debug('save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));
       config::save('customData::' . $apiKey . '::' . $customWidget['widgetId'], json_encode($customWidget), 'JeedomConnect');
     }
@@ -2016,7 +2038,7 @@ class apiHelper {
 
     foreach ($config['payload']['widgets'] as $widget) {
       $name = $widget['name'];
-      $subtitle = $widget['subtitle'];
+      $subtitle = $widget['subtitle'] ?? '';
       foreach ($widget as $item => $value) {
         if (is_array($value)) {
           if (array_key_exists('type', $value)) {
@@ -2054,7 +2076,7 @@ class apiHelper {
   }
 
   private static function hasHistoricFunction($id, $string) {
-    $match = array("average(#$id#)", "min(#$id#)", "max(#$id#)", "collect(#$id#)");
+    $match = array("average(#$id#)", "min(#$id#)", "max(#$id#)", "collect(#$id#)", "tendance(#$id#)");
     foreach ($match as $key) {
       if (strpos($string, $key) !== FALSE) {
         return true;
@@ -2577,7 +2599,7 @@ class apiHelper {
           if ($options['withLog'] ?? true) {
             return self::raiseException('Vous n\'avez pas le droit d\'exécuter cette commande ' . $cmd->getHumanName());
           } else {
-            return false;
+            return "unauthorized";
           }
         }
       }
@@ -2594,15 +2616,35 @@ class apiHelper {
   }
 
   private static function execMultipleCmd($cmdList) {
+    $unauthorized = array();
     $error = array();
     foreach ($cmdList as $cmd) {
       $temp = self::execCmd($cmd['id'], array_merge($cmd['options'] ?? array(), array('withLog' => false)));
+      if ($temp == 'unauthorized') {
+        array_push($unauthorized, $cmd['id']);
+        continue;
+      }
       if (!is_null($temp)) array_push($error, $cmd['id']);
+    }
+
+    $exception = '';
+    $errorIds = array();
+    if (count($unauthorized) > 0) {
+      $cmdUnauthorizedName = JeedomConnectUtils::getCmdName($unauthorized, true);
+      $command = (count($unauthorized) == 1) ? 'la commande' : 'les commandes';
+      $exception .= 'Vous n\'avez pas le droit d\'exécuter ' . $command . ' ' . implode(", ", $cmdUnauthorizedName) . '. ';
+      $errorIds = array_merge($errorIds, $unauthorized);
     }
 
     if (count($error) > 0) {
       $cmdErrorName = JeedomConnectUtils::getCmdName($error, true);
-      return self::raiseException('Vous n\'avez pas le droit d\'exécuter les commandes ' . implode(", ", $cmdErrorName), '', array("cmd_ids" => $error));
+      $cmdName = implode(", ", $cmdErrorName);
+      $exception .= (count($error) == 1) ? "La commande $cmdName n'a pas pu être exécutée. " : "Les commandes $cmdName n'ont pas pu être exécutées. ";
+      $errorIds = array_merge($errorIds, $error);
+    }
+
+    if ($exception != '') {
+      return self::raiseException($exception, '', array("cmd_ids" => $errorIds));
     }
 
     return null;
@@ -2687,7 +2729,7 @@ class apiHelper {
   }
 
   // INTERACTION
-  public static function queryInteract($query, $options) {
+  public static function queryInteract($query, $options, $keywordIndex) {
     $param = array();
     if (isset($options['reply_cmd'])) {
       $reply_cmd = cmd::byId($options['reply_cmd']);
@@ -2696,10 +2738,14 @@ class apiHelper {
         $param['force_reply_cmd'] = 1;
       }
     }
+    if (isset($options['user_login'])) {
+      $param['profile'] = $options['user_login'];
+    }
+    $param['plugin'] = 'JeedomConnect';
     $result = interactQuery::tryToReply($query, $param);
     return  array(
       'type' => 'QUERY_ANSWER',
-      'payload' => $result
+      'payload' => array_merge($result, array('keywordIndex' => $keywordIndex))
     );
   }
 
@@ -2833,6 +2879,21 @@ class apiHelper {
         "polling" => $value ? '1' : '0'
       )
     );
+  }
+
+  private static function setPicoKey($eqLogic, $value) {
+    $eqLogic->setConfiguration('picovoiceKey', $value);
+    $eqLogic->save(true);
+  }
+
+  private static function getPicoKey($eqLogic, $withType = true) {
+    $returnType = 'SET_PICOKEY';
+
+    $payload = array(
+      'picovoiceKey' => $eqLogic->getConfiguration('picovoiceKey', null)
+    );
+
+    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
   /**

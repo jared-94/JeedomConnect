@@ -26,7 +26,7 @@ if (isConnect()) {
 sendVarToJS('userHash', $userHash);
 
 /** @var array<JeedomConnect> $eqLogics */
-$eqLogics = eqLogic::byType($plugin->getId());
+$eqLogics = JeedomConnect::getAllJCequipment();;
 
 list($widgetInError, $roomInError) = JeedomConnectWidget::checkCmdSetupInWidgets();
 
@@ -128,13 +128,16 @@ foreach ($widgetTypeArray as $key => $value) {
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
-
 $infoPlugin = JeedomConnectUtils::getInstallDetails();
 
 $displayWarningConf = config::byKey('displayWarning', 'JeedomConnect');
 $warningAlreadyDisplayedToday = strpos($displayWarningConf, strval(date('Y-m-d'))) !== false;
 $countAlreadyPass = count(explode(';', $displayWarningConf));
 $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
+
+$hasDNSConnexion = JeedomConnectUtils::hasDNSConnexion();
+$pollingDefault = $hasDNSConnexion ? 'checked' : '';
+$wsDisable = $hasDNSConnexion ? 'disabled' : '';
 
 ?>
 
@@ -143,7 +146,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
 
 		<div class="row">
-			<div class="col-sm-10">
+			<div class="col-sm-10" style="min-height:200px">
 				<legend><i class="fas fa-cog"></i> {{Gestion}}</legend>
 				<!-- Boutons de gestion du plugin -->
 				<div class="eqLogicThumbnailContainer">
@@ -165,7 +168,12 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
 						<i class="fas fa-tasks"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Vue d'ensemble}}</span>
+						<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
+					</div>
+					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
+						<i class="mdi mdi-devices"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
 					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
 						<i class="fas fa-comment-dots"></i>
@@ -182,11 +190,19 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 						<span style="color:var(--txt-color)">{{Config types génériques}}</span>
 					</div>
 					<!-- End Generic Types -->
+
+					<div class="cursor eqLogicAction " data-action="showMaps" style="color:rgb(27,161,242);">
+						<i class="fas fa-map-marked-alt"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Localisation}}</span>
+					</div>
+
 					<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 						<i class="fas fa-wrench"></i>
 						<br>
 						<span>{{Configuration}}</span>
 					</div>
+
 					<?php if ($hasErrorPage) { ?>
 						<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
 							<i class="fas fa-exclamation-circle"></i>
@@ -195,6 +211,12 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 							<sup>
 								<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
 							</sup>
+						</div>
+					<?php }
+
+					if (config::byKey('showQrCodeMainPage', 'JeedomConnect', false)) { ?>
+						<div class="showqrcode-content">
+							<img class="showqrcode" src='' width='150px' height="150px" style="display:none;">
 						</div>
 					<?php } ?>
 				</div>
@@ -247,19 +269,31 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 		<!-- Liste des équipements du plugin -->
 		<div class="eqLogicThumbnailContainer">
 			<?php
+			$allEqToDisplay = '';
 			foreach ($eqLogics as $eqLogic) {
+
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-				// echo '<div class="eqLogicDisplayCardParent">';
-				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				echo '<img src="' . JeedomConnectUtils::getCustomPathIcon($eqLogic) . '"/>';
-				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-				echo '<span>';
-				// echo '</div>';
-				echo '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
-				echo '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>';
-				echo '</span>';
-				echo '</div>';
+				// $allEqToDisplay .= '<div class="eqLogicDisplayCardParent">';
+				$allEqToDisplay .= '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
+
+				$imgPlugin = JeedomConnectUtils::getCustomPathIcon($eqLogic);
+				$apiKey = $eqLogic->getConfiguration('apiKey');
+				$imgQrCode = 'plugins/JeedomConnect/data/qrcodes/' . $apiKey . '.png';
+				if (!file_exists('/var/www/html/' . $imgQrCode)) {
+					$eqLogic->generateQRCode();
+				}
+				$allEqToDisplay .= '<img class="eqlogic-qrcode" data-qrcode="' . $imgQrCode . '" data-plugin="' . $imgPlugin . '" src="' . $imgPlugin . '"/>';
+				$allEqToDisplay .= '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+				$allEqToDisplay .= '<span>';
+				// $allEqToDisplay .= '</div>';
+				$allEqToDisplay .= '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
+				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>&nbsp;';
+				$allEqToDisplay .= '<a class="btn btn-success btnGeofencing" title="Gérer le geofencing"><i class="fas fa-crosshairs"></i></a>';
+				$allEqToDisplay .= '</span>';
+				$allEqToDisplay .= '</div>';
 			}
+
+			echo $allEqToDisplay;
 			?>
 		</div>
 		<!--  FIN --- PANEL DES EQUIPEMENTS  -->
@@ -269,14 +303,14 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 			<div class="pull-right">
 				<span style="margin-right:10px">{{Trie}}
-					<select id="widgetOrder" onchange="updateOrderWidget()" style="width:100px">
+					<select id="widgetOrder" class="updateOrderWidget" style="width:100px">
 						<?php
 						echo $optionsOrderBy;
 						?>
 					</select>
 				</span>
 				<span>{{Filtre}}
-					<select id="widgetTypeSelect" style="width:auto">
+					<select id="widgetTypeSelect" class="JC" style="width:auto">
 						<?php
 						echo $typeSelection;
 						?>
@@ -335,7 +369,7 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
 								<div class="col-sm-7">
 									<input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
-									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement}}" />
+									<input type="text" class="eqLogicAttr form-control needJCRefresh" data-l1key="name" placeholder="{{Nom de l'équipement}}" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -384,11 +418,13 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 							<br>
 
 							<legend><i class="fa fa-cogs"></i> {{Paramètres}}</legend>
-
+							<!-- ELT TO KNOW IF IMPORTANT DATA HAS BEEN CHANGED -->
+							<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="qrRefresh" type="checkbox" style="display:none;">
+							<!-- END -->
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Activer la connexion par Websocket}}</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control checkJcConnexionOption needJCRefresh" data-l1key="configuration" data-l2key="useWs" type="checkbox" placeholder="{{}}" <?= $wsDisable ?>>
 								</div>
 							</div>
 
@@ -399,14 +435,21 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 									</sup>
 								</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control checkJcConnexionOption needJCRefresh" data-l1key="configuration" data-l2key="polling" type="checkbox" placeholder="{{}}" <?= $pollingDefault ?>>
+									<?php
+									if ($hasDNSConnexion) {
+									?>
+										<br /><span class="description">L'utilisation des DNS Jeedom semble apparaître dans votre configuration.<br />Si c'est bien le cas, pour le bon fonctionnement de l'application, l'activation du polling est recommandée/nécessaire.</span>
+									<?php
+									}
+									?>
 								</div>
 							</div>
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Utilisateur}}</label>
 								<div class="col-sm-7">
-									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="userId">
+									<select class="eqLogicAttr configuration form-control needJCRefresh" data-l1key="configuration" data-l2key="userId">
 										<option value="">{{Aucun}}</option>
 										<?php
 										foreach (user::all() as $user) {
@@ -489,13 +532,6 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Ajouter données à la position}}</label>
-								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
-								</div>
-							</div>
-
-							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Masquer la batterie sur page Equipement Jeedom}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="hideBattery" type="checkbox">
@@ -503,22 +539,48 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 							</div>
 
 
-							<legend><i class="fa fa-bug"></i> {{Partager le fichier de configuration}}</legend>
+							<legend><i class="fas fa-map-marked-alt"></i>{{Informations Position}}</legend>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
-								<div class="col-sm-7 input-group" style="display:inline-flex;">
-									<span class="input-group-btn">
-										<a class="btn btn-default" id="exportAll-btn"><i class="fa fa-file-export"></i> {{Partager}}</a>
-										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
-									</span>
+								<label class="col-sm-3 control-label">{{Ajouter données à la position}}
+									<sup>
+										<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Consulter la documentation pour connaitre le détail des données ajoutées."></i>
+									</sup>
+								</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="addAltitude" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Afficher la position sur la carte globale}}</label>
+								<div class="col-sm-7">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="displayPosition" type="checkbox" placeholder="{{}}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Personnaliser le repère}}</label>
+								<div class="col-sm-7">
+									<a class="btn btn-success roundedRight imagePicker"><i class="fas fa-check-square">
+										</i> Choisir </a>
+									<a data-id="icon-div" class="removeImage">
+										<img class="customImg" src='' style="width:25px;" />
+									</a>
+									<input class="eqLogicAttr form-control removeImage" data-l1key="configuration" data-l2key="customImg" type="text" placeholder="{{}}" value="" style="display:none">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Personnaliser les Geofencing}}</label>
+								<div class="col-sm-7">
+									<a class="btn btn-success roundedRight showGeofence"><i class="fas fa-crosshairs"></i> Voir</a>
+								</div>
+							</div>
+
 
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->
 						<!-- Affiche l'icône du plugin par défaut mais vous pouvez y afficher les informations de votre choix -->
-						<div class="col-lg-5">
+						<div class="col-lg-5 jeedomConnect">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
 							<div class="form-group">
 								<div class="alert alert-info" style="width:300px; margin: 10px auto;text-align:center;">
@@ -542,28 +604,49 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{QR Code :}}</label>
-								<div class="row">
-									<div class="col-sm-6">
-										<img id="img_config" class="img-responsive" style="margin:10px auto; max-height : 250px;" />
+								<div class="qrCodeImg">
+									<div class="row">
+										<div class="col-sm-6">
+											<img id="img_config" class="img-responsive" style="margin:10px auto; max-height : 250px;" />
+										</div>
+									</div>
+
+									<div class="row" style="margin: 0px auto;text-align:center;">
+										<span class="eqNameQrCode" style="font-size:1.2em;font-weight: bold;"></span>
+									</div>
+									<div class="row" style="margin: 10px auto;text-align:center;">
+										<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
 									</div>
 								</div>
 
-								<div class="row" style="margin: 0px auto;text-align:center;">
-									<span class="eqNameQrCode" style="font-size:1.2em;font-weight: bold;"></span>
-								</div>
-								<div class="row" style="margin: 10px auto;text-align:center;">
-									<a class="btn btn-infos" id="qrcode-regenerate"><i class="fa fa-qrcode"></i> {{Regénérer QR Code}}</a>
+
+								<div class="row">
+									<div class="alert alert-danger infoRefresh text-center" style=" margin: 10px auto; width:350px;display:none;">
+										Il semblerait que vous ayez modifié certaines données utilisées dans le QR-Code. <br />
+										Sauvegardez les modifications sur cet équipement pour accéder à un nouveau QR-Code valide !
+									</div>
 								</div>
 
 								<div class="row">
-									<div class="alert alert-danger" style=" margin: 10px auto; width:350px;">
+									<div class="alert alert-warning" style=" margin: 10px auto; width:350px;">
 										Veuillez re-générer le QR code si vous avez modifié :<br />
 										<ul>
-											<li>Les adresses dans la config du plugin</li>
+											<li>Les adresses dans la configuration du plugin</li>
 											<li>L'utilisateur de cet équipement</li>
-											<li>La connexion websocket de cet équipement</li>
+											<li>Le type de connexion de cet équipement</li>
 										</ul>
 									</div>
+								</div>
+							</div>
+
+							<legend><i class="fa fa-bug"></i> {{Partager le fichier de configuration}}</legend>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Debug Configuration}}</label>
+								<div class="col-sm-7 input-group" style="display:inline-flex;">
+									<span class="input-group-btn">
+										<a class="btn btn-default" id="exportAll-btn"><i class="fa fa-file-export"></i> {{Partager}}</a>
+										&nbsp;&nbsp;<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="A la demande du développeur, partagez votre fichier de configuration finale"></i>
+									</span>
 								</div>
 							</div>
 						</div>
@@ -628,6 +711,10 @@ $displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'widget.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'eqLogic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'css', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'md/css/materialdesignicons', 'css', 'JeedomConnect'); ?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js'); ?>

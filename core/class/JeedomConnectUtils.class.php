@@ -50,10 +50,8 @@ class JeedomConnectUtils {
         $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
-        /** @var array<JeedomConnect> $eqLogics */
-        $eqLogics = eqLogic::byType($plugin->getId());
-
-        foreach ($eqLogics as $eqLogic) {
+        /** @var JeedomConnect $eqLogic */
+        foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
             $platformOs = $eqLogic->getConfiguration('platformOs');
             $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
 
@@ -869,7 +867,11 @@ class JeedomConnectUtils {
         return  $result;
     }
 
-
+    /**
+     * Return if the connexion uses a jeedom DNS 
+     *
+     * @return boolean
+     */
     public static function hasDNSConnexion() {
         $url = config::byKey('httpUrl', 'JeedomConnect', network::getNetworkAccess('external'));
         if ((strpos($url, 'jeedom.com') !== false || strpos($url, 'eu.jeedom.link')) !== false) {
@@ -898,5 +900,45 @@ class JeedomConnectUtils {
         $cron->save();
 
         JeedomConnect::checkDaemon();
+    }
+
+
+    /**
+     * Return distance between 2 coordinates. If 2nd is not defined, by default get the one from JC, or if not defined the one from jeedom, or if not defined Paris
+     *
+     * @param int $lat1
+     * @param int $lon1
+     * @param int $lat2
+     * @param int $lon2
+     * @return int
+     */
+    public static function getDistance($lat1, $lon1, $lat2 = null, $lon2 = null) {
+        //by default the one from JC, or the one from jeedom, or Paris
+        if (is_null($lat2) || is_null($lon2)) {
+            list($lon2, $lat2) = self::getJcCoordinates();
+        }
+
+        $theta = $lon1 - $lon2;
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $dist = ($dist * 60 * 1.1515) * 1609.344;
+        return floor($dist);
+    }
+
+    public static function getJcCoordinates() {
+        list($lngDefault, $latDefault) = JeedomConnectUtils::getDefaultCoordinates();
+
+        $lng = config::bykey('longitude', 'JeedomConnect', config::bykey('info::longitude', 'core', $lngDefault));
+        $lat = config::bykey('latitude', 'JeedomConnect', config::bykey('info::latitude', 'core', $latDefault));
+
+        return array($lng, $lat);
+    }
+
+    public static function getDefaultCoordinates() {
+        $lng = 2.349903;
+        $lat = 48.852969;
+
+        return array($lng, $lat);
     }
 }

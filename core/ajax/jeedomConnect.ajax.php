@@ -107,7 +107,7 @@ try {
 
 		if (!is_null(init('eqId'))  && init('eqId') != '') {
 			/** @var JeedomConnect $eqLogic */
-			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 				$eqLogic->checkEqAndUpdateConfig(init('eqId'));
 			}
 		}
@@ -121,7 +121,7 @@ try {
 		$scope = init('scope') ?? '';
 		$more = false;
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			if (($scope == 'all') || (($scope == 'enableOnly') && $eqLogic->getIsEnable())) {
 				JCLog::info('migrate conf for equipment ' . $eqLogic->getName(), '_migration');
 				$eqLogic->moveToNewConfig();
@@ -211,7 +211,7 @@ try {
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$eqLogic->resetConfigFile();
 			$nbEq++;
 		}
@@ -232,7 +232,7 @@ try {
 
 		$widgetsByEquipment = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$item = array();
 
 			$widgetForEq = $eqLogic->getWidgetId();
@@ -402,6 +402,59 @@ try {
 		ajax::success($html);
 	}
 
+	if (init('action') == 'removeEquipmentConfig') {
+
+		$equipmentReceived = init('eqIds');
+		foreach ($equipmentReceived as $id) {
+			$eqLogic = eqLogic::byId($id);
+			JCLog::debug("removing equipment " . $eqLogic->getName() . " [" . $id . "]");
+			if (is_object($eqLogic)) $eqLogic->remove();
+		}
+		ajax::success();
+	}
+	if (init('action') == 'updateEquipmentMass') {
+
+		$equipmentReceived = init('equipementsObj');
+
+		$allNotif = config::byKey('notifAll', 'JeedomConnect', array());
+		foreach ($equipmentReceived as $eqData) {
+			// JCLog::debug("data eq received => " . json_encode($eqData));
+
+			/** @var JeedomConnect $eqLogic */
+			$eqLogic = eqLogic::byId($eqData['eqId']);
+			if (!is_object($eqLogic)) break;
+
+			$eqLogic->setName($eqData['name']);
+			$eqLogic->setObject_id($eqData['roomId']);
+			$eqLogic->setIsEnable($eqData['isEnable']);
+
+			$eqLogic->setConfiguration('polling', $eqData['polling']);
+			$eqLogic->setConfiguration('useWs', $eqData['useWs']);
+			$eqLogic->setConfiguration('userId', $eqData['userId']);
+			$eqLogic->setConfiguration('scenariosEnabled', $eqData['scenariosEnabled']);
+			$eqLogic->setConfiguration('timelineEnabled', $eqData['timelineEnabled']);
+			$eqLogic->setConfiguration('webviewEnabled', $eqData['webviewEnabled']);
+			$eqLogic->setConfiguration('addAltitude', $eqData['addAltitude']);
+			$eqLogic->setConfiguration('displayPosition', $eqData['displayPosition']);
+			$eqLogic->setConfiguration('hideBattery', $eqData['hideBattery']);
+
+			$eqLogic->save();
+
+			foreach ($eqData['NotifAll'] as $id => $value) {
+				$id = strval($id);
+				if ($value == 0) {
+					$allNotif = array_diff($allNotif, array($id));
+				} elseif ($value == 1) {
+					if (!in_array($id, $allNotif)) $allNotif[] = $id;
+				}
+			}
+		}
+
+		config::save('notifAll', json_encode($allNotif), 'JeedomConnect');
+
+		ajax::success();
+	}
+
 	if (init('action') == 'updateWidgetMass') {
 
 		$widgetReceived = init('widgetsObj');
@@ -455,7 +508,7 @@ try {
 
 			$nbEq = 0;
 			/** @var JeedomConnect $eqLogic */
-			foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 				$eqLogic->resetConfigFile();
 				$nbEq++;
 			}
@@ -505,7 +558,7 @@ try {
 		$options = '';
 		foreach ((jeeObject::buildTree(null, false)) as $object) {
 			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
-			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName()));
+			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName(), "space" =>  str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber'))));
 		}
 
 		JCLog::debug('getWidgetConfigAll ~~ result : ' . json_encode($widgets));
@@ -517,7 +570,7 @@ try {
 		$myId = init('id');
 		$arrayName = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$eqIds = $eqLogic->getWidgetId();
 			JCLog::debug('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
 			if (in_array($myId, $eqIds)) {
@@ -556,7 +609,7 @@ try {
 
 		$result = array();
 		/** @var JeedomConnect $eqLogic */
-		foreach (eqLogic::byType('JeedomConnect') as $eqLogic) {
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getConfiguration('apiKey');
 			$name = $eqLogic->getName();
 			$eqId = $eqLogic->getId();
@@ -732,15 +785,23 @@ try {
 	}
 
 	if (init('action') == 'generateQRcode') {
-		$id = init('id');
-		/** @var JeedomConnect $eqLogic */
-		$eqLogic = eqLogic::byId($id);
-		if (!is_object($eqLogic)) {
-			ajax::error('Error - no equipment found');
+		$id = init('id', 'all');
+
+		if ($id == 'all') {
+			// JCLog::debug('QRCode regen all');
+			$eqLogics = JeedomConnect::getAllJCequipment();
 		} else {
-			$eqLogic->generateQRCode();
-			ajax::success();
+			// JCLog::debug('QRCode regen unit for id=' . $id);
+			$eqTmp = eqLogic::byId($id);
+			if (!is_object($eqTmp)) ajax::error('Error - no equipment found');
+			$eqLogics = array($eqTmp);
 		}
+
+		/** @var JeedomConnect $eqLogic */
+		foreach ($eqLogics as $eqLogic) {
+			$eqLogic->generateQRCode();
+		}
+		ajax::success();
 	}
 
 	if (init('action') == 'incrementWarning') {
@@ -751,6 +812,224 @@ try {
 		ajax::success();
 	}
 
+
+	if (init('action') == 'updateEqWidgetMaps') {
+		/** @var eqLogic $eqLogic */
+		$eqLogic = eqLogic::byLogicalId('jcmapwidget', 'JeedomConnect');
+		if (!is_object($eqLogic)) ajax::error('Error - no equipment found');
+
+		$data = init('data');
+
+		switch (init('type')) {
+			case 'isVisible':
+				$eqLogic->setIsVisible(($data == "true") ? 1 : 0);
+				break;
+
+			case 'object_id':
+				$eqLogic->setObject_id($data);
+				break;
+
+			default:
+				# code...
+				break;
+		}
+
+		$eqLogic->save();
+		// JCLog::debug('eqId received =>' . json_encode(init('eqId')));
+		ajax::success();
+	}
+
+	if (init('action') == 'getDefaultPosition') {
+
+		list($lng, $lat) = JeedomConnectUtils::getJcCoordinates();
+		list($lngDefault, $latDefault) = JeedomConnectUtils::getDefaultCoordinates();
+
+		$defaultZoom = (($lat . $lng) == ($latDefault . $lngDefault)) ? 'Autour Paris' : 'Autour de mon Jeedom';
+
+		ajax::success(array('lng' => $lng, 'lat' => $lat, 'defaultText' => $defaultZoom));
+	}
+
+	if (init('action') == 'createOrUpdateCmdGeo') {
+		$data = init('data');
+		$type = init('type');
+		$eqId = init('eqId');
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($eqId);
+		if (!is_object($eqLogic)) {
+			$errEq = 'createOrUpdateCmdGeo ==> no eqLogic found [' . $eqId . ']';
+			JCLog::warning($errEq);
+			ajax::error($errEq);
+		}
+
+		switch ($type) {
+			case 'createOrUpdate':
+				/** @var cmd $cmd */
+				$cmd = cmd::byId($data['id']);
+				if (!is_object($cmd)) {
+					$cmd = new Cmd();
+				}
+
+				$cmd->setName($data['name']);
+				$cmd->setType('info');
+				$cmd->setSubType('binary');
+				$cmd->setConfiguration('latitude', doubleval($data['lat']));
+				$cmd->setConfiguration('longitude', doubleval($data['lng']));
+				$cmd->setConfiguration('radius', doubleval($data['radius']));
+				$cmd->setConfiguration('parent', $data['id']);
+				$cmd->setEqLogic_id($eqId);
+				try {
+					$cmd->save();
+					$cmd->setLogicalId('geofence_' . $cmd->getId());
+					$cmd->save();
+				} catch (Exception $err) {
+					JCLog::error($err->getMessage());
+					ajax::error('Affectation impossible');
+				}
+				$result = array('id' => $cmd->getId());
+				break;
+
+			case 'remove':
+				$cmd = cmd::byId($data['id']);
+				if (!is_object($cmd)) {
+					$err = "no cmd found with id=[" . $data['id'] . "]";
+					JCLog::error($err);
+					break;
+				}
+				$cmd->remove();
+				$result = '';
+				break;
+		}
+
+		ajax::success($result);
+	}
+
+	if (init('action') == 'createOrUpdateConfigGeo') {
+		$id = init('id');
+		$data = init('data');
+		$type = init('type');
+
+		switch ($type) {
+			case 'createOrUpdate':
+				config::save('geofence::' . $id, $data, 'JeedomConnect');
+				break;
+
+			case 'remove':
+				config::remove('geofence::' . $id, 'JeedomConnect');
+				break;
+		}
+		ajax::success();
+	}
+
+	if (init('action') == 'updateCmdParent') {
+		$cmdId = init('id');
+		$parentId = init('parentId');
+
+		$cmd = cmd::byId($cmdId);
+		if (!is_object($cmd)) ajax::error('cmd not found');
+
+		$cmd->setConfiguration('parent', $parentId);
+		$cmd->save();
+		ajax::success();
+	}
+
+	if (init('action') == 'getAllGeofences') {
+		$result = array();
+		$config = array();
+
+		$eqId = init('eqId');
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($eqId);
+		if (is_object($eqLogic)) {
+			// foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			foreach ($eqLogic->getCmd('info') as $cmd) {
+				if (substr($cmd->getLogicalId(), 0, 8) === "geofence") {
+					array_push($result, array(
+						'id' => $cmd->getId(),
+						'name' => $cmd->getName(),
+						'radius' => $cmd->getConfiguration('radius'),
+						'lat' => round($cmd->getConfiguration('latitude'), 6),
+						'lng' => round($cmd->getConfiguration('longitude'), 6),
+						'cmdId' => $cmd->getId(),
+						'eqId' => $eqLogic->getId(),
+						'parent' => $cmd->getConfiguration('parent', null),
+					));
+				}
+			}
+		}
+
+
+		foreach (config::searchKey('geofence::', 'JeedomConnect')  as $conf) {
+			array_push($config, $conf['value']);
+		}
+
+		ajax::success(array("equipment" => $result, "config" => $config));
+	}
+
+	if (init('action') == 'getAllPositions') {
+		$result = array();
+		$id = init('id', 'all');
+
+		if ($id == 'all') {
+			$eqLogics = JeedomConnect::getAllJCequipment();
+		} else {
+			/** @var cmd $cmdTmp */
+			$cmdTmp = cmd::byId($id);
+			if (!is_object($cmdTmp)) return;
+			$eqTmp = eqLogic::byId($cmdTmp->getEqLogic_id());
+			$eqLogics = array($eqTmp);
+		}
+
+		/** @var JeedomConnect $eqLogic */
+		foreach ($eqLogics as $eqLogic) {
+			if ($eqLogic->getConfiguration('displayPosition', 0) == 0) continue;
+
+			/** @var cmd $cmd */
+			$cmd = $eqLogic->getCmd(null, 'position');
+			if (!is_object($cmd)) continue;
+			// JCLog::debug("position cmd/id => " . $cmd->getId());
+
+			/** @var string $position */
+			$position = $cmd->execCmd();
+			if ($position == "") continue;
+
+			$data = explode(',', $position);
+			if (count($data) < 2) continue;
+			$cmdDistance = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),  'distance');
+			$distance = is_object($cmdDistance) ? number_format(floatval($cmdDistance->execCmd()), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
+			$img = $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png');
+			$infoImg = getimagesize('/var/www/html/' . $img);
+			$result[] = array(
+				'id' => $cmd->getId(),
+				'name' => $eqLogic->getName(),
+				'eqId' => $eqLogic->getId(),
+				'lat' => round($data[0], 6),
+				'lng' => round($data[1], 6),
+				'lastSeen' => $cmd->getCollectDate(),
+				'icon' => $img,
+				'infoImg' => $infoImg,
+				'distance' => $distance
+			);
+		}
+		ajax::success($result);
+	}
+
+	if (init('action') == 'restartDaemon') {
+
+		/** @var plugin $plugin */
+		$plugin = plugin::byId('JeedomConnect');
+		if (is_object($plugin)) {
+			$daemon_info = $plugin->deamon_info();
+			if ($daemon_info['state'] == 'ok') {
+				message::add('JeedomConnect', 'Redémarrage du démon après sauvegarde de la configuration');
+				JCLog::info('DAEMON restart after saving new setup');
+				$plugin->deamon_start(true);
+			} else {
+				JCLog::info('DAEMON not automatically restarted - daemon state KO');
+			}
+		}
+		ajax::success();
+	}
 
 	if (init('action') == 'regenerateApiKey') {
 		$id = init('eqId');

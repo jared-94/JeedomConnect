@@ -4367,6 +4367,26 @@
 					"generic_type": "GEOLOCATION"
 				},
 				{
+					"id": "pin",
+					"name": "Repère",
+					"required": false,
+					"category": "img",
+					"description": "Personnalisez l'icone du repère sur la carte",
+					"options": {
+						"hasImage": "false"
+					}
+				},
+				{
+					"id": "color",
+					"name": "Couleur",
+					"required": false,
+					"category": "color",
+					"description": "Personnalisez la couleur du tracé et du marqueur",
+					"options": {
+						"hasImage": "false"
+					}
+				},
+				{
 					"id": "zoomDistance",
 					"name": "Zoom",
 					"category": "string",
@@ -4379,6 +4399,87 @@
 					"category": "binary",
 					"description": "Déplace la carte à chaque nouvelle position",
 					"customizable": true
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-geoloc",
+			"name": "Groupe de géolocalisation",
+			"img": "groupGeo.png",
+			"description": "Permet d'afficher plusieurs géolocalisation sur une seule et même carte",
+			"hide": true,
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "room",
+							"name": "Pièce"
+						}
+					],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Géolocalisation",
+					"required": true,
+					"category": "widgets",
+					"whiteList": [
+						"geoloc"
+					],
+					"description": "Liste des Géoloc à gérer"
 				},
 				{
 					"id": "image",

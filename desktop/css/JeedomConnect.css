@@ -1,90 +1,91 @@
 .widgetDisplayCard {
-    border: none !important;
-    background: transparent !important;
-    padding-top: 0!important;
-    text-align: center;
-  }
+  border: none !important;
+  background: transparent !important;
+  padding-top: 0 !important;
+  text-align: center;
+}
 
-  .widgetDisplayCard div.cursor {
-    margin-bottom: 5px !important;
-    padding: 5px !important;
-  }
-  
-  .eqLogicThumbnailContainer{
-    min-height: 200px !important;
-  }
-  
-  .eqLogicThumbnailContainer .eqLogicDisplayCard {
-    min-height: 190px !important;
-  }
+.widgetDisplayCard div.cursor {
+  margin-bottom: 5px !important;
+  padding: 5px !important;
+}
 
-  .eqLogicThumbnailContainer .widgetDisplayCard {
-    min-height: 168px !important;
-  }
-  
-  .widgetDisplayCard {
-    margin-bottom: 10px !important;
-    height: 168px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden;
-  }
-  
-  .widgetDisplayCard .name {
-    word-break: break-word !important;
-    font-size: 12px !important;
-    position: relative;
-    top: 3px !important;
-  }
-  
-  .widgetDisplayCard > span.name strong {
-    position: relative;
-    top: 3px !important;
-    display: block;
-    height: 28px !important;
-    overflow: hidden;
-  }
-  
-  .widgetDisplayCard img {
-    max-height: 99px;
-    width: auto !important;
-    max-width: 75px !important;
-    overflow: hidden;
-    vertical-align: baseline;
-  }
+.eqLogicThumbnailContainer {
+  /* min-height: 200px !important; */
+}
 
-  /* Disabled */
-  .widgetDisplayCard:not(.disableCard) {
-    opacity: 1 !important;
-    transition-property: opacity;
-    transition-duration: 0.6s;
-  }
-  
-  .widgetDisplayCard.disableCard,
-  .widgetDisplayCard.disableCard > .name > .label {
-    opacity: 0.4;
-  }
-  .widgetDisplayCard.disableCard:hover {
-    opacity: 0.8;
-  }
+.eqLogicThumbnailContainer .eqLogicDisplayCard {
+  min-height: 190px !important;
+}
 
-.pass_show{
+.eqLogicThumbnailContainer .widgetDisplayCard {
+  min-height: 168px !important;
+}
+
+.widgetDisplayCard {
+  margin-bottom: 10px !important;
+  height: 168px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+}
+
+.widgetDisplayCard .name {
+  word-break: break-word !important;
+  font-size: 12px !important;
+  position: relative;
+  top: 3px !important;
+}
+
+.widgetDisplayCard>span.name strong {
+  position: relative;
+  top: 3px !important;
+  display: block;
+  height: 28px !important;
+  overflow: hidden;
+}
+
+.widgetDisplayCard img {
+  max-height: 99px;
+  width: auto !important;
+  max-width: 75px !important;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+
+/* Disabled */
+.widgetDisplayCard:not(.disableCard) {
+  opacity: 1 !important;
+  transition-property: opacity;
+  transition-duration: 0.6s;
+}
+
+.widgetDisplayCard.disableCard,
+.widgetDisplayCard.disableCard>.name>.label {
+  opacity: 0.4;
+}
+
+.widgetDisplayCard.disableCard:hover {
+  opacity: 0.8;
+}
+
+.pass_show {
   position: relative
-} 
+}
 
-.pass_show .eye { 
-  position: absolute; 
-  top: 60% !important; 
-  right: 20px; 
-  z-index: 1; 
-  margin-top: -10px; 
-  cursor: pointer; 
-  transition: .3s ease all; 
-} 
+.pass_show .eye {
+  position: absolute;
+  top: 60% !important;
+  right: 20px;
+  z-index: 1;
+  margin-top: -10px;
+  cursor: pointer;
+  transition: .3s ease all;
+}
 
 .description {
-  color:var(--al-info-color);
-  font-size:11px;
+  color: var(--al-info-color);
+  font-size: 11px;
 }
 
 .required:after {
@@ -92,7 +93,7 @@
   color: red;
 }
 
-  
+
 #widgetImg {
   display: block;
   margin-left: auto;
@@ -102,14 +103,19 @@
   margin-top: 15px;
 }
 
-.btn-supp {
-  background-color: var(--al-danger-color) !important;
-}
-
 .borderLef {
   border-left: 1px solid #ccc;
 }
 
 .italic {
   font-style: italic;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.description {
+  color: var(--al-info-color);
+  font-size: 11px;
 }
