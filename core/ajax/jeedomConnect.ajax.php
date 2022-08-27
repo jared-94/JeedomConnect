@@ -809,9 +809,7 @@ try {
 	}
 
 	if (init('action') == 'incrementWarning') {
-		$displayWarningConfig = config::byKey('displayWarning', 'JeedomConnect');
-		$warningData = ($displayWarningConfig == '' ? '' : $displayWarningConfig . ";") . date('Y-m-d');
-		config::save('displayWarning', $warningData, 'JeedomConnect');
+		config::save('displayWarning', date('Y-m-d'), 'JeedomConnect');
 
 		ajax::success();
 	}
