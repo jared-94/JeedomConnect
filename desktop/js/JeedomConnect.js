@@ -713,18 +713,28 @@ $('.eqLogicAction[data-action=showMaps]').off('click').on('click', function () {
 })
 
 $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function () {
-  // $('.pluginInfo').toggle("slide", { direction: "right" }, 1000);
+  showCommunity($('.txtInfoPlugin').html())
+
+});
+
+async function showCommunity(txtInfoPlugin) {
+
+  var data = {
+    action: 'getInstallDetails'
+  }
+  var infoPlugin = await asyncAjaxGenricFunction(data);
+
   getSimpleModal({
     title: "Forum",
     width: 0.5 * $(window).width(),
     fields: [{
       type: "string",
-      value: $('.txtInfoPlugin').html()
+      value: txtInfoPlugin
     },
     {
       type: "string",
       id: "infoPluginModal",
-      value: $('.infoPlugin').html()
+      value: infoPlugin.result
     }],
     buttons: {
       "Fermer": function () {
@@ -738,7 +748,7 @@ $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function
   }, function (result) { });
 
 
-});
+}
 
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
@@ -1254,3 +1264,23 @@ $(document).ready(
 
 
 updateWidgetCount();
+
+
+async function asyncAjaxGenricFunction(data) {
+  const result = await $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: data,
+    cache: false,
+    dataType: 'json',
+    async: false,
+  });
+
+  if (result.state != 'ok') {
+    $('#div_alert').showAlert({
+      message: result.result,
+      level: 'danger'
+    });
+  }
+
+  return result;
+}

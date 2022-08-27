@@ -705,6 +705,7 @@ class apiHelper {
     if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
+    $eqLogic->setConfiguration('appTypeVersion', $param['appTypeVersion'] ?? '');
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');

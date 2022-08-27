@@ -36,20 +36,27 @@ class JeedomConnectUtils {
 
         $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
 
-        $beta_version = self::isBeta();
+        $beta_version = self::isBeta(true);
+        $daemon_info = JeedomConnect::deamon_info();
 
 
-        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/>';
-        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
+        $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $beta_version  . '<br/>';
+        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/>';
+        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . $daemon_info['last_launch'] . ')<br/><br/>';
+
+
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
+        $pluginType = JeedomConnectUtils::isBeta(true);
         /** @var JeedomConnect $eqLogic */
         foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
             $platformOs = $eqLogic->getConfiguration('platformOs');
             $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
 
             $versionAppConfig = $eqLogic->getConfiguration('appVersion');
-            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
+            $versionAppTypeConfig = $eqLogic->getConfiguration('appTypeVersion');
+            $warn = ($versionAppTypeConfig != '' && $versionAppTypeConfig != $pluginType) ? ' <i class="fas fa-exclamation-triangle" style="color:red"></i> ' : '';
+            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig . ' ' . $versionAppTypeConfig . $warn  : $versionAppConfig;
 
             $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
             $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
@@ -59,7 +66,7 @@ class JeedomConnectUtils {
 
             $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
 
-            $infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
+            $infoPlugin .= '&nbsp;&nbsp;' .  $eqLogic->getName();
             if ($platform == '' && $versionApp == '') {
                 $infoPlugin .= ' : non enregistré<br/>';
             } else {

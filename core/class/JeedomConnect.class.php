@@ -189,6 +189,7 @@ class JeedomConnect extends eqLogic {
 		}
 
 		$return['launchable'] = 'ok';
+		$return['last_launch'] = config::byKey('lastDeamonLaunchTime', __CLASS__, __('Inconnue', __FILE__));
 		return $return;
 	}
 

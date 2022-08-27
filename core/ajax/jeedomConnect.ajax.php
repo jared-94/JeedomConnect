@@ -585,6 +585,10 @@ try {
 		ajax::success(array('names' => $arrayName));
 	}
 
+	if (init('action') == 'getInstallDetails') {
+		ajax::success(JeedomConnectUtils::getInstallDetails());
+	}
+
 	if (init('action') == 'humanReadableToCmd') {
 
 		$stringWithCmdId = cmd::humanReadableToCmd(init('human'));
