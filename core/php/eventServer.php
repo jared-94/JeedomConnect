@@ -109,14 +109,15 @@ try {
       if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
         JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
         $config = $newConfig;
-        sse(
-          json_encode(array('infos' => array(
-            'cmdInfo' => apiHelper::getCmdInfoData($config, false),
-            'scInfo' => apiHelper::getScenarioData($config, false, false),
-            'objInfo' => apiHelper::getObjectData($config, false)
-          )))
+        $infos = array(
+          'cmdInfo' => apiHelper::getCmdInfoData($config, false),
+          'scInfo' => apiHelper::getScenarioData($config, false, false),
+          'objInfo' => apiHelper::getObjectData($config, false)
         );
-        sse(json_encode(array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig)));
+        sse(json_encode(array(
+          'type' => 'CONFIG_AND_INFOS',
+          'payload' => array('config' => $config, 'infos' => $infos)
+        )));
         //sleep(1);
       }
 

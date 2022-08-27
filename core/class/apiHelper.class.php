@@ -369,7 +369,12 @@ class apiHelper {
             $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
             if ($newConfig != false) {
               JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-              return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
+              $infos = array(
+                'cmdInfo' => apiHelper::getCmdInfoData($newConfig, false),
+                'scInfo' => apiHelper::getScenarioData($newConfig, false, false),
+                'objInfo' => apiHelper::getObjectData($newConfig, false)
+              );
+              return array('type' => 'CONFIG_AND_INFOS', 'payload' => array('config' => $newConfig, 'infos' => $infos));
             }
           }
 
