@@ -66,6 +66,8 @@ def read_socket():
                 if toClient:
                     if method == "JEEDOM_CONFIG":
                         toClient["configVersion"] = payload["payload"]["configVersion"]
+                    if method == "CONFIG_AND_INFOS":
+                        toClient["configVersion"] = payload["config"]["payload"]["configVersion"]
                     server.send_message(toClient, msg_socket_str)
                 else:
                     raise Exception("no client found ! ")
