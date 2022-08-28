@@ -878,7 +878,7 @@ try {
 				$cmd->setConfiguration('latitude', doubleval($data['lat']));
 				$cmd->setConfiguration('longitude', doubleval($data['lng']));
 				$cmd->setConfiguration('radius', doubleval($data['radius']));
-				$cmd->setConfiguration('parent', $data['id']);
+				$cmd->setConfiguration('parent', $data['parent'] ?: $data['id']);
 				$cmd->setEqLogic_id($eqId);
 				try {
 					$cmd->save();

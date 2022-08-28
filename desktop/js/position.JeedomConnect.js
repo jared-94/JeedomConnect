@@ -217,6 +217,7 @@ function addGeofenceToTable(elt, geo, config, hide = false) {
     var tr = '<tr>';
     tr += '<td>';
     tr += '<span class="geoAttr" data-l1key="id" ></span>';
+    tr += '<span class="geoAttr" data-l1key="parent" style="display:none"></span>';
     tr += '</td>';
     tr += '<td>';
     tr += '<input class="geoAttr form-control input-sm" data-l1key="name" placeholder="{{Nom}}">';
