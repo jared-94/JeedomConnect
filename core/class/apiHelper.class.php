@@ -366,15 +366,14 @@ class apiHelper {
           }
 
           if (!is_null($param['configVersion'])) {
-            $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
+            $newConfig = self::lookForNewConfig($eqLogic, $param['configVersion']);
             if ($newConfig != false) {
-              JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-              $infos = array(
-                'cmdInfo' => apiHelper::getCmdInfoData($newConfig, false),
-                'scInfo' => apiHelper::getScenarioData($newConfig, false, false),
-                'objInfo' => apiHelper::getObjectData($newConfig, false)
-              );
-              return array('type' => 'CONFIG_AND_INFOS', 'payload' => array('config' => $newConfig, 'infos' => $infos));
+              JCLog::debug("Send new config : " . json_encode($newConfig));
+              $infos = self::getAllInformations($eqLogic, false);
+              // return array('type' => 'CONFIG_AND_INFOS', 'payload' => array('config' => $newConfig, 'infos' => $infos));
+              $ConfigAndInfos = array('type' => 'CONFIG_AND_INFOS', 'payload' => array('config' => $newConfig, 'infos' => $infos));
+              // JCLog::debug("config and info : " . json_encode($allR));
+              return $ConfigAndInfos;
             }
           }
 
@@ -502,7 +501,7 @@ class apiHelper {
   }
 
   // GENERIC FUNCTIONS
-  private static function getAllInformations($eqLogic, $withType = true) {
+  public static function getAllInformations($eqLogic, $withType = true) {
     $returnType = 'SET_INFO';
 
     if (!is_object($eqLogic)) {
@@ -511,9 +510,9 @@ class apiHelper {
 
     $config = $eqLogic->getGeneratedConfigFile();
     $payload =  array(
-      'cmds' => apiHelper::getCmdInfoData($config, false),
-      'scenarios' => apiHelper::getScenarioData($config, false, false),
-      'objects' => apiHelper::getObjectData($config, false)
+      'cmdInfo' => self::getCmdInfoData($config, false),
+      'scInfo' => self::getScenarioData($config, false, false),
+      'objInfo' => self::getObjectData($config, false)
     );
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
@@ -1234,7 +1233,7 @@ class apiHelper {
    */
   public static function lookForNewConfig($eqLogic, $prevConfig) {
     $configVersion = $eqLogic->getConfiguration('configVersion');
-    //JCLog::debug(  "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
+    // JCLog::debug("apiHelper : Look for new config, compare " . $configVersion . " and " . $prevConfig);
     if ($configVersion != $prevConfig) {
       JCLog::debug("apiHelper : New configuration");
       return $eqLogic->getGeneratedConfigFile();
@@ -2687,7 +2686,7 @@ class apiHelper {
     return null;
   }
 
-  private static function getJCActions($apiKey, $withType = true) {
+  public static function getJCActions($apiKey, $withType = true) {
     $returnType = 'ACTIONS';
 
     $actions = JeedomConnectActions::getAllActions($apiKey);

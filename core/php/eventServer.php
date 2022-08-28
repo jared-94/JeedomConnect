@@ -50,7 +50,7 @@ try {
   JCLog::debug("eventServer init client #" . $id);
 
 
-  $config = $eqLogic->getConfig(true);
+  $config = $eqLogic->getGeneratedConfigFile();
   $lastReadTimestamp = time();
   $lastHistoricReadTimestamp = time();
   $step = 0;
@@ -81,67 +81,61 @@ try {
       JCLog::debug("eventServer connexion closed for client #" . $id);
       if ($logic->getConfiguration('sessionId', 0) == $id) {
         $logic->setConfiguration('connected', 0);
-        $eqLogic->setConfiguration('appState', 'background');
+        $logic->setConfiguration('appState', 'background');
         $logic->save();
       }
       die();
     }
 
-    $actions = JeedomConnectActions::getAllActions($apiKey);
-    if (count($actions) > 0) {
-      $result = array(
-        'type' => 'ACTIONS',
-        'payload' => array()
-      );
-      foreach ($actions as $action) {
-        array_push($result['payload'], $action['value']['payload']);
-      }
-      JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
-      sse(json_encode(array($result)));
-      JeedomConnectActions::removeActions($actions);
+    $actions = apiHelper::getJCActions($apiKey);
+    if (count($actions['payload']) > 0) {
+      JCLog::debug("eventServer send action to #{$id}  " . json_encode($actions['payload']));
+      sse(json_encode($actions));
       sleep(1);
     }
 
     $sendInfo = false;
 
     if ($logic->getConfiguration('appState') == 'active') {
-      $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
-      if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
+
+      // +++ CHECKING FOR NEW CONFIGURATION 
+      // JCLog::debug("eventServer will check config " . $logic->getConfiguration('configVersion') . " to current saved : " . $config['payload']['configVersion']);
+      $newConfig = apiHelper::lookForNewConfig($logic, $config['payload']['configVersion']);
+      if ($newConfig != false) {
         JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
         $config = $newConfig;
-        $infos = array(
-          'cmdInfo' => apiHelper::getCmdInfoData($config, false),
-          'scInfo' => apiHelper::getScenarioData($config, false, false),
-          'objInfo' => apiHelper::getObjectData($config, false)
-        );
-        sse(json_encode(array(
+        $infos = apiHelper::getAllInformations($logic, false);
+        $resultInfos = array(
           'type' => 'CONFIG_AND_INFOS',
           'payload' => array('config' => $config, 'infos' => $infos)
-        )));
-        //sleep(1);
+        );
+        // JCLog::debug("eventServer CONFIG_AND_INFOS => " . json_encode($resultInfos));
+        sse(json_encode($resultInfos));
+        sleep(1);
       }
+      // --- END NEW CONFIGURATION 
 
-      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp, $lastHistoricReadTimestamp);
+      // +++ CHECKING FOR NEW EVENTS 
+      $data = apiHelper::getEventsFull($logic, $lastReadTimestamp, $lastHistoricReadTimestamp);
 
       foreach ($data as $res) {
-        if (key_exists('payload', $res)) {
-          if (is_array($res['payload']) && count($res['payload']) == 0) {
-            $sendInfo = false;
-          } else {
-            $sendInfo = true;
-          }
+        if (key_exists('payload', $res) && is_array($res['payload']) && count($res['payload']) > 0) {
+          $sendInfo = true;
           break;
         }
       }
 
+      $lastReadTimestamp = $data[0]['payload'];
+      $lastHistoricReadTimestamp = $data[1]['payload'];
+
       if ($sendInfo) {
-        //JCLog::debug("eventServer send ".json_encode($data));
+        // JCLog::debug("eventServer send " . json_encode($data));
         sse(json_encode($data));
         $step = 0;
-        $lastReadTimestamp = $data[0]['payload'];
-        $lastHistoricReadTimestamp = $data[1]['payload'];
       }
+      // --- END NEW EVENTS
     }
+
     if (!$sendInfo) {
       $step += 1;
       if ($step == 5) {
