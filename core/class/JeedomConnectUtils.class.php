@@ -331,15 +331,19 @@ class JeedomConnectUtils {
         return array('icon' => $newIconClass, 'source' => '', 'name' => '', 'color' => '');
     }
 
-    public static function isBeta() {
+    public static function isBeta($text = false) {
         $plugin = plugin::byId('JeedomConnect');
         $update = $plugin->getUpdate();
+        $isBeta = false;
         if (is_object($update)) {
             $version = $update->getConfiguration('version');
-            return ($version && $version != 'stable');
+            $isBeta = ($version && $version != 'stable');
         }
 
-        return false;
+        if ($text) {
+            return $isBeta ? 'beta' : 'stable';
+        }
+        return $isBeta;
     }
 
     public static function getLinks() {
