@@ -435,7 +435,7 @@ class JeedomConnect extends eqLogic {
 		$maxIndex = 0;
 		foreach ($jsonConfig['payload']['widgets'] as $key => $widget) {
 			$widgetData = JeedomConnectWidget::getWidgets($widget['id']);
-			$widgetId = $widget['widgetId'];
+			$widgetId = $widget['widgetId'] ?: '';
 			if (empty($widgetData)) {
 				// ajax::error('Erreur - pas d\'équipement trouvé');
 				JCLog::debug('Erreur - pas de widget trouvé avec l\'id ' . $widget['id']);

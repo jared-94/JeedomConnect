@@ -928,11 +928,19 @@ class apiHelper {
       $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
       $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
 
-      $averageHistoryValue = round($historyStatistique['avg'], 1);
-      $minHistoryValue = round($historyStatistique['min'], 1);
-      $maxHistoryValue = round($historyStatistique['max'], 1);
+      if ($historyStatistique['avg'] == 0 && $historyStatistique['min'] == 0 && $historyStatistique['max'] == 0) {
+        $val = $cmd->execCmd();
+        $averageHistoryValue = round($val, 1);
+        $minHistoryValue = round($val, 1);
+        $maxHistoryValue = round($val, 1);
+      } else {
+        $averageHistoryValue = round($historyStatistique['avg'], 1);
+        $minHistoryValue = round($historyStatistique['min'], 1);
+        $maxHistoryValue = round($historyStatistique['max'], 1);
+      }
 
-      $tendanceData = $cmd->getTendance($startHist, date('Y-m-d H:i:s'));
+      $startTendance = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculTendance') . ' hour'));
+      $tendanceData = $cmd->getTendance($startTendance, date('Y-m-d H:i:s'));
       if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
         $tendance = "up";
       } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
