@@ -1370,7 +1370,10 @@ class JeedomConnect extends eqLogic {
 	public static function getPluginInfo() {
 
 		$pluginInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'version.json'), true);
-		$branchInfo = json_decode(file_get_contents(self::$_plugin_info_dir . 'branch.json'), true);
+		$branchInfo = array(
+			"typeVersion" => JeedomConnectUtils::isBeta(true),
+			"enrollment" => "https://jared-94.github.io/JeedomConnectDoc/fr_FR/#qBeta"
+		);
 
 		$result = array_merge($pluginInfo, $branchInfo);
 
@@ -1382,8 +1385,7 @@ class JeedomConnect extends eqLogic {
 		$pluginInfo = self::getPluginInfo();
 
 		$apkVersionRequired = $pluginInfo['require'];
-		$playStoreUrl = htmlentities('<a href="' . $pluginInfo['storeUrl'] . '" target="_blank">Play Store</a>');
-		message::add('JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : ' . $apkVersionRequired . '. Si nécessaire, pensez à mettre à jour votre application depuis le ' . $playStoreUrl);
+		message::add('JeedomConnect',  'Ce plugin nécessite d\'utiliser l\'application en version minimum : ' . $apkVersionRequired . '. Si nécessaire, pensez à mettre à jour votre application depuis votre Store');
 
 		if ($pluginInfo['typeVersion'] == 'beta') {
 			$enrollmentLink = htmlentities('<a href="' . $pluginInfo['enrollment'] . '" target="_blank">en cliquant ici</a>');
