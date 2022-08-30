@@ -56,11 +56,14 @@ try {
   $step = 0;
 
   sse(
-    json_encode(array('infos' => array(
-      'cmdInfo' => apiHelper::getCmdInfoData($config, false),
-      'scInfo' => apiHelper::getScenarioData($config, false, false),
-      'objInfo' => apiHelper::getObjectData($config, false)
-    )))
+    json_encode(array(
+      'type' => 'SET_INFOS',
+      'payload' => array(
+        'cmdInfo' => apiHelper::getCmdInfoData($config, false),
+        'scInfo' => apiHelper::getScenarioData($config, false, false),
+        'objInfo' => apiHelper::getObjectData($config, false)
+      )
+    ))
   );
 
   $eqLogic->setConfiguration('sessionId', $id);
