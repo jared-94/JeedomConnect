@@ -203,9 +203,13 @@ class JeedomConnect extends eqLogic {
 			throw new Exception(__('Veuillez vérifier la configuration', __FILE__));
 		}
 
+		$daemonLogConfig = config::byKey('daemonLog', __CLASS__, 'parent');
+		$daemonLog = ($daemonLogConfig == 'parent') ? log::getLogLevel(__CLASS__) : $daemonLogConfig;
+
+
 		$path = realpath(dirname(__FILE__) . '/../../resources/JeedomConnectd'); // répertoire du démon à modifier
 		$cmd = 'python3 ' . $path . '/JeedomConnectd.py'; // nom du démon à modifier
-		$cmd .= ' --loglevel ' . log::convertLogLevel(log::getLogLevel(__CLASS__));
+		$cmd .= ' --loglevel ' . log::convertLogLevel($daemonLog); // log::convertLogLevel(log::getLogLevel(__CLASS__));
 		$cmd .= ' --socketport ' . config::byKey('socketport', __CLASS__, '58090'); // port socket - échange entre le démon en PY et l'api jeedom
 		$cmd .= ' --websocketport ' . config::byKey('port', __CLASS__, '8090'); // port d'écoute du démon pour échange avec l'application JC
 		$cmd .= ' --callback ' . network::getNetworkAccess('internal', 'proto:127.0.0.1:port:comp') . '/plugins/JeedomConnect/core/api/JeedomConnect.api.php'; // chemin de la callback url à modifier (voir ci-dessous)
@@ -666,7 +670,7 @@ class JeedomConnect extends eqLogic {
 		$cmdConfig = $cmd->getConfiguration('listValue');
 
 		if ($cmdConfig !=  '') {
-			JCLog::debug('value of listValue ' . json_encode($cmdConfig));
+			JCLog::trace('value of listValue ' . json_encode($cmdConfig));
 
 			foreach (explode(';', $cmdConfig) as $list) {
 				$selectData = explode('|', $list);
@@ -686,7 +690,7 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		JCLog::debug('final choices list => ' . json_encode($choice));
+		JCLog::trace('final choices list => ' . json_encode($choice));
 		return $choice;
 	}
 

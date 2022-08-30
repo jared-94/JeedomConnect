@@ -10,6 +10,12 @@
  */
 class JCLog {
 
+    public static function trace($message, $suffix = '') {
+        if (config::byKey('traceLog', 'JeedomConnect', 0)) {
+            log::add('JeedomConnect' . $suffix, 'debug', '[TRACE] ' . $message);
+        }
+    }
+
     public static function debug($message, $suffix = '') {
         log::add('JeedomConnect' . $suffix, 'debug', $message);
     }

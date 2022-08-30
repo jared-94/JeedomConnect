@@ -256,6 +256,39 @@ sendVarToJS('userHash', $userHash);
       </div>
 
     </div>
+
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <label class="col-lg-4 control-label">{{Logs : }}</label>
+        <label class="col-lg-2 control-label">{{Plugin Verbose}}
+          <sup>
+            <i class="fas fa-question-circle floatright" title="Affiche plus de logs que DEBUG"></i>
+          </sup>
+        </label>
+        <div class="col-lg-3">
+          <input type="checkbox" class="configKey" data-l1key="traceLog" />
+        </div>
+      </div>
+
+      <div class="form-group col-lg-6">
+        <label class="col-lg-3 control-label">{{Démon}}
+          <sup>
+            <i class="fas fa-question-circle floatright" title="Vous pouvez choisir un autre niveau de log pour le démon"></i>
+          </sup>
+        </label>
+        <div class="col-lg-6">
+          <select class="form-control configKey" data-l1key="daemonLog">
+            <option value="parent" selected>Même que le plugin</option>
+            <option value="100">Debug</option>
+            <option value="200">Infos</option>
+            <option value="300">Warning</option>
+            <option value="400">Erreur</option>
+          </select>
+        </div>
+      </div>
+
+
+    </div>
     <br />
 
     <!-- LOCALISATION ZONE -->
