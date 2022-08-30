@@ -56,14 +56,9 @@ try {
   $step = 0;
 
   sse(
-    json_encode(array(
-      'type' => 'SET_INFOS',
-      'payload' => array(
-        'cmdInfo' => apiHelper::getCmdInfoData($config, false),
-        'scInfo' => apiHelper::getScenarioData($config, false, false),
-        'objInfo' => apiHelper::getObjectData($config, false)
-      )
-    ))
+    json_encode(
+      apiHelper::getAllInformations($eqLogic)
+    )
   );
 
   $eqLogic->setConfiguration('sessionId', $id);
@@ -90,59 +85,48 @@ try {
       die();
     }
 
-    $actions = apiHelper::getJCActions($apiKey);
-    if (count($actions['payload']) > 0) {
-      JCLog::debug("eventServer send action to #{$id}  " . json_encode($actions['payload']));
-      sse(json_encode($actions));
-      sleep(1);
-    }
 
+    $params = array(
+      'configVersion' => $config['payload']['configVersion'],
+      'lastReadTimestamp' => $lastReadTimestamp,
+      'lastHistoricReadTimestamp' => $lastHistoricReadTimestamp,
+    );
+
+    $result = apiHelper::dispatch('SSE', 'GET_EVENTS', $logic, $params, $apiKey);
     $sendInfo = false;
-
-    if ($logic->getConfiguration('appState') == 'active') {
-
-      // +++ CHECKING FOR NEW CONFIGURATION 
-      // JCLog::debug("eventServer will check config " . $logic->getConfiguration('configVersion') . " to current saved : " . $config['payload']['configVersion']);
-      $newConfig = apiHelper::lookForNewConfig($logic, $config['payload']['configVersion']);
-      if ($newConfig != false) {
-        JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
-        $config = $newConfig;
-        $infos = apiHelper::getAllInformations($logic, false);
-        $resultInfos = array(
-          'type' => 'CONFIG_AND_INFOS',
-          'payload' => array('config' => $config, 'infos' => $infos)
-        );
-        // JCLog::debug("eventServer CONFIG_AND_INFOS => " . json_encode($resultInfos));
-        sse(json_encode($resultInfos));
-        sleep(1);
-      }
-      // --- END NEW CONFIGURATION 
-
-      // +++ CHECKING FOR NEW EVENTS 
-      $data = apiHelper::getEventsFull($logic, $lastReadTimestamp, $lastHistoricReadTimestamp);
-
-      foreach ($data as $res) {
-        if (key_exists('payload', $res) && is_array($res['payload']) && count($res['payload']) > 0) {
-          $sendInfo = true;
-          break;
+    if ($result != null) {
+      // JCLog::debug("receive from GET_EVENTS => " . json_encode($result));
+      if ($result['type'] ==  "SET_EVENTS") {
+        foreach ($result['payload'] as $item) {
+          if ($item['type'] == 'DATETIME') {
+            $lastReadTimestamp = floatval($item['payload']);
+          } elseif ($item['type'] == 'HIST_DATETIME') {
+            $lastHistoricReadTimestamp = floatval($item['payload']);
+          } else {
+            // check if there is at least one other item to send Cmd, Sc, Obj
+            $sendInfo = ($sendInfo || (key_exists('payload', $item) && is_array($item['payload']) && count($item['payload']) > 0));
+            // JCLog::debug("sendInfo : " . ($sendInfo ? 'true' : 'false'));
+            if ($sendInfo) break;
+          }
         }
+      } else {
+        if ($result['type'] ==  "CONFIG_AND_INFOS") {
+          // JCLog::debug("eventServer - saving new config ! => " . json_encode($result['payload']['config']));
+          $config = $result['payload']['config'];
+        }
+        $sendInfo = true;
       }
-
-      $lastReadTimestamp = $data[0]['payload'];
-      $lastHistoricReadTimestamp = $data[1]['payload'];
 
       if ($sendInfo) {
-        // JCLog::debug("eventServer send " . json_encode($data));
-        sse(json_encode($data));
-        $step = 0;
+        JCLog::debug("eventServer sending => " . json_encode($result));
+        sse(json_encode($result));
       }
-      // --- END NEW EVENTS
     }
 
     if (!$sendInfo) {
       $step += 1;
       if ($step == 5) {
-        //JCLog::debug("eventServer heartbeat to #" . $id);
+        // JCLog::debug("eventServer heartbeat to #" . $id);
         sse(json_encode(array('event' => 'heartbeat')));
         $step = 0;
       }
