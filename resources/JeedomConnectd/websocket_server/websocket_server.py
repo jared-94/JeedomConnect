@@ -199,7 +199,7 @@ class WebsocketServer(ThreadingMixIn, TCPServer, API):
     def _pong_received_(self, handler, msg):
         pass
 
-    def _new_client_(self, handler):
+    def _new_client_(self, handler, real_ip_add):
         if self._deny_clients:
             status = self._deny_clients["status"]
             reason = self._deny_clients["reason"]
@@ -212,6 +212,7 @@ class WebsocketServer(ThreadingMixIn, TCPServer, API):
             "id": self.id_counter,
             "handler": handler,
             "address": handler.client_address,
+            "realIpAdd": real_ip_add,
             "apiKey": None,
             "configVersion": None,
             "lastReadTimestamp": None,
@@ -535,11 +536,18 @@ class WebSocketHandler(StreamRequestHandler):
             self.keep_alive = False
             return
 
+        try:
+            real_ip_add = headers["x-real-ip"]
+        except KeyError:
+            # logging.warning("no real add")
+            real_ip_add = None
+            pass
+
         response = self.make_handshake_response(key)
         with self._send_lock:
             self.handshake_done = self.request.send(response.encode())
         self.valid_client = True
-        self.server._new_client_(self)
+        self.server._new_client_(self, real_ip_add)
 
     @classmethod
     def make_handshake_response(cls, key):

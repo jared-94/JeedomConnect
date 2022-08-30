@@ -158,6 +158,8 @@ def client_left(client, server):
 
 def new_client(client, server):
     logging.info(f"New connection: #{client['id']} from IP: {client['address']}")
+    if client["realIpAdd"]:
+        logging.info(f"Connection coming from real IP Address >{client['realIpAdd']}<")
     logging.info(f"Number of client connected #{len(server.clients)}")
     client["openTimestamp"] = time.time()
     # logging.debug(f"All Clients {str(server.clients)}")
