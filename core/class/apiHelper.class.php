@@ -319,7 +319,7 @@ class apiHelper {
           break;
 
         case 'SET_APP_CONFIG':
-          $result = self::setAppConfig($apiKey, $param['config']);
+          $result = self::setAppConfig($apiKey, $param['name'], $param['config']);
           return $result;
           break;
 
@@ -2390,8 +2390,10 @@ class apiHelper {
   }
 
   // BACKUPS
-  private static function setAppConfig($apiKey, $config) {
+  private static function setAppConfig($apiKey, $name, $config) {
     $_backup_dir = JeedomConnect::$_backup_dir;
+    $prefix = 'appPref';
+
     if (!is_dir($_backup_dir)) {
       mkdir($_backup_dir);
     }
@@ -2401,10 +2403,27 @@ class apiHelper {
       mkdir($eqDir);
     }
 
-    $config_file = $eqDir . urlencode('appPref-' . $config['name']) . '-' . time() . '.json';
+    $files = array_values(preg_grep('~^' . $prefix . '.*\.json$~', scandir($eqDir, SCANDIR_SORT_DESCENDING)));
+    $newestMD5 = null;
+    if (is_array($files) && count($files) > 0) {
+      $newest_file = $files[0];
+      $newestMD5 = md5_file($eqDir . $newest_file);
+      // JCLog::debug('newest file => ' . json_encode($newest_file) . ' md5 => ' . $newestMD5);
+    }
+
+    $md5Config = md5(json_encode($config, JSON_PRETTY_PRINT));
+    // JCLog::debug('md5 received => ' . $md5Config);
+
+    $config_file = $eqDir . urlencode($prefix . '-' . $name) . '-' . time() . '.json';
     try {
-      JCLog::debug('Saving backup in file : ' . $config_file);
-      file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+      JCLog::trace('Saving backup in file : ' . $config_file);
+      $createFile = file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+
+      if ($createFile !== false && ($md5Config == $newestMD5)) {
+        JCLog::trace('same AppPref as last one, removing previous one');
+        unlink($eqDir . $newest_file);
+      }
+
       return array(
         'type' => 'GET_APP_CONFIG'
       );
