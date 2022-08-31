@@ -180,12 +180,12 @@ sendVarToJS('userHash', $userHash);
 
     <div class="row">
       <div class="form-group col-lg-6">
-        <label class="col-lg-6 control-label">{{Chemin pour les images perso}}
+        <label class="col-lg-7 control-label">{{Chemin pour les images perso}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Chemin où sont stockés vos images personnelles<br/>Indiquez-le SANS la racine de votre installation jeedom [/var/www/html/]<br/>Par exemple, renseignez ' data/img/' pour le répertoire '/var/www/html/data/img/'"></i>
           </sup>
         </label>
-        <div class=" col-lg-6">
+        <div class=" col-lg-5">
           <input class="configKey form-control" type="string" data-l1key="userImgPath" placeholder="<?= config::byKey('userImgPath', 'JeedomConnect'); ?>" />
         </div>
       </div>
@@ -209,7 +209,7 @@ sendVarToJS('userHash', $userHash);
     <div class="row">
       <div class="form-group col-lg-6">
         <label class="col-lg-4 control-label">{{Qr Code : }}</label>
-        <label class="col-lg-2 control-label">{{Logo JC}}
+        <label class="col-lg-3 control-label">{{Logo JC}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Insère le logo JC à l'intérieur du qr code de chaque équipement"></i>
           </sup>
@@ -234,7 +234,7 @@ sendVarToJS('userHash', $userHash);
     <div class="row">
       <div class="form-group col-lg-6">
         <label class="col-lg-4 control-label">{{Création de widget : }}</label>
-        <label class="col-lg-2 control-label">{{Mode strict}}
+        <label class="col-lg-3 control-label">{{Mode strict}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Impose que tous les types génériques nécessaires soient correctement configurés pour la création de widget en masse mais réduit le nombre d'erreur de l'assistant"></i>
           </sup>
@@ -260,7 +260,7 @@ sendVarToJS('userHash', $userHash);
     <div class="row">
       <div class="form-group col-lg-6">
         <label class="col-lg-4 control-label">{{Logs : }}</label>
-        <label class="col-lg-2 control-label">{{Plugin Verbose}}
+        <label class="col-lg-3 control-label">{{Plugin Verbose}}
           <sup>
             <i class="fas fa-question-circle floatright" title="Affiche plus de logs que DEBUG"></i>
           </sup>

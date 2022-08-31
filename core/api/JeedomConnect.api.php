@@ -81,7 +81,11 @@ try {
   }
 
   $result = apiHelper::dispatch($connexionType, $method, $eqLogic, $params ?? array(), $apiKey);
-  if (!$skipLog) JCLog::debug('[' . $connexionType . '] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
+  if (!$skipLog) {
+    JCLog::debug('[' . $connexionType . '] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
+  } else {
+    JCLog::trace('[' . $connexionType . '] Send ' . $method . ' -> ' . JeedomConnectUtils::hideSensitiveData(json_encode($result), 'send'));
+  }
 
 
   if ($isWsConnexion & !is_null($result)) {
