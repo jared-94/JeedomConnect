@@ -94,6 +94,7 @@ try {
 
     $result = apiHelper::dispatch('SSE', 'GET_EVENTS', $logic, $params, $apiKey);
     $sendInfo = false;
+    $log = true;
     if ($result != null) {
       // JCLog::debug("receive from GET_EVENTS => " . json_encode($result));
       if ($result['type'] ==  "SET_EVENTS") {
@@ -106,7 +107,10 @@ try {
             // check if there is at least one other item to send Cmd, Sc, Obj
             $sendInfo = ($sendInfo || (key_exists('payload', $item) && is_array($item['payload']) && count($item['payload']) > 0));
             // JCLog::debug("sendInfo : " . ($sendInfo ? 'true' : 'false'));
-            if ($sendInfo) break;
+            if ($sendInfo) {
+              $log = false;
+              break;
+            }
           }
         }
       } else {
@@ -118,7 +122,11 @@ try {
       }
 
       if ($sendInfo) {
-        JCLog::debug("eventServer sending => " . json_encode($result));
+        if ($log) {
+          JCLog::debug("eventServer sending => " . json_encode($result));
+        } else {
+          JCLog::trace("eventServer sending => " . json_encode($result));
+        }
         sse(json_encode($result));
       }
     }
