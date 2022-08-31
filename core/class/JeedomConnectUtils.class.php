@@ -946,4 +946,27 @@ class JeedomConnectUtils {
 
         return array($lng, $lat);
     }
+
+    /**
+     * Retrieve the list of files into a dir, order by modification time
+     *
+     * @param string $dir
+     * @param string $prefix
+     * @return void
+     */
+    public static function scan_dir($dir, $prefix = null) {
+        $ignored = array('.', '..', '.htaccess');
+
+        $files = array();
+        foreach (scandir($dir) as $file) {
+            if (in_array($file, $ignored)) continue;
+            if (!is_null($prefix) && !preg_match('/^' . $prefix . '.*$/', $file)) continue;
+            $files[$file] = filemtime($dir . '/' . $file);
+        }
+
+        arsort($files);
+        $files = array_keys($files);
+
+        return ($files) ? $files : false;
+    }
 }

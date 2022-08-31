@@ -2403,7 +2403,8 @@ class apiHelper {
       mkdir($eqDir);
     }
 
-    $files = array_values(preg_grep('~^' . $prefix . '.*\.json$~', scandir($eqDir, SCANDIR_SORT_DESCENDING)));
+    $files = JeedomConnectUtils::scan_dir($eqDir, $prefix);
+
     $newestMD5 = null;
     if (is_array($files) && count($files) > 0) {
       $newest_file = $files[0];
