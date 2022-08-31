@@ -36,18 +36,17 @@ class JeedomConnectUtils {
 
         $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
 
-        $beta_version = self::isBeta(true);
+        $pluginType = self::isBeta(true);
         $daemon_info = JeedomConnect::deamon_info();
 
 
-        $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $beta_version  . '<br/>';
+        $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/>';
         $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/>';
         $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . $daemon_info['last_launch'] . ')<br/><br/>';
 
 
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
-        $pluginType = JeedomConnectUtils::isBeta(true);
         /** @var JeedomConnect $eqLogic */
         foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
             $platformOs = $eqLogic->getConfiguration('platformOs');
@@ -55,8 +54,10 @@ class JeedomConnectUtils {
 
             $versionAppConfig = $eqLogic->getConfiguration('appVersion');
             $versionAppTypeConfig = $eqLogic->getConfiguration('appTypeVersion');
+            $buildVersion = $eqLogic->getConfiguration('buildVersion');
             $warn = ($versionAppTypeConfig != '' && $versionAppTypeConfig != $pluginType) ? ' <i class="fas fa-exclamation-triangle" style="color:red"></i> ' : '';
-            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig . ' ' . $versionAppTypeConfig . $warn  : $versionAppConfig;
+            $buildVersionApp = ($pluginType == 'beta' && $buildVersion != '') ? ' (' . $buildVersion . ')' : '';
+            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig . $buildVersionApp . ' ' . $versionAppTypeConfig . $warn  : $versionAppConfig;
 
             $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
             $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';

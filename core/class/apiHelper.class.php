@@ -705,6 +705,7 @@ class apiHelper {
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
     $eqLogic->setConfiguration('appTypeVersion', $param['appTypeVersion'] ?? '');
+    $eqLogic->setConfiguration('buildVersion', $param['buildVersion'] ?? '');
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');
@@ -1243,7 +1244,7 @@ class apiHelper {
     $configVersion = $eqLogic->getConfiguration('configVersion');
     // JCLog::debug("apiHelper : Look for new config, compare " . $configVersion . " and " . $prevConfig);
     if ($configVersion != $prevConfig) {
-      JCLog::debug("apiHelper : New configuration");
+      // JCLog::debug("apiHelper : New configuration");
       return $eqLogic->getGeneratedConfigFile();
     }
     return false;
