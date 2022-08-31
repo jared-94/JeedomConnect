@@ -289,6 +289,29 @@ sendVarToJS('userHash', $userHash);
 
 
     </div>
+
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <label class="col-lg-4 control-label">{{Sauvegarde : }}</label>
+        <label class="col-lg-3 control-label">{{Nombre}}
+          <sup>
+            <i class="fas fa-question-circle floatright" title="Nombre de copies de sauvegarde de vos préférences applicative que vous souhaitez conserver"></i>
+          </sup>
+        </label>
+        <div class="col-lg-5">
+          <select class="form-control configKey" data-l1key="bkpCount">
+            <option value="all" selected>Toutes</option>
+            <option value="1">1</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+          </select>
+        </div>
+      </div>
+
+
+    </div>
     <br />
 
     <!-- LOCALISATION ZONE -->
