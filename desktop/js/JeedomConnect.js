@@ -1259,6 +1259,7 @@ $(document).ready(
     if ($(".displayJCWarning").length != 0 && (typeof JCwarningAlreadyDisplayed === 'undefined')) {
       displayJCWarning();
     }
+    $('#in_searchWidget').keyup();
   }
 );
 
