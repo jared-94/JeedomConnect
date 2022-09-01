@@ -295,7 +295,7 @@ sendVarToJS('userHash', $userHash);
         <label class="col-lg-4 control-label">{{Sauvegarde : }}</label>
         <label class="col-lg-3 control-label">{{Nombre}}
           <sup>
-            <i class="fas fa-question-circle floatright" title="Nombre de copies de sauvegarde de vos préférences applicative que vous souhaitez conserver"></i>
+            <i class="fas fa-question-circle floatright" title="Nombre de copies de sauvegarde de vos préférences applicatives que vous souhaitez conserver"></i>
           </sup>
         </label>
         <div class="col-lg-5">
