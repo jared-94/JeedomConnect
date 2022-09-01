@@ -301,6 +301,9 @@ class JeedomConnect extends eqLogic {
 		return;
 	}
 
+	public static function removeBackupFiles() {
+		return JeedomConnectUtils::removeBackupFiles();
+	}
 
 	public static function backup() {
 		JeedomConnectWidget::exportWidgetConf();
