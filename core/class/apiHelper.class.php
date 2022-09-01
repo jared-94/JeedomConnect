@@ -2415,7 +2415,10 @@ class apiHelper {
     $md5Config = md5(json_encode($config, JSON_PRETTY_PRINT));
     // JCLog::debug('md5 received => ' . $md5Config);
 
-    $config_file = $eqDir . urlencode($prefix . '-' . $name) . '-' . time() . '.json';
+    //if no name set, then put today info
+    $name = $name ?: date('d-m-y_H-i');
+    $config_file = $eqDir . $prefix . '-' . $name . '-' . time() . '.json';
+    // $config_file = $eqDir . urlencode($prefix . '-' . $name) . '-' . time() . '.json';
     try {
       JCLog::trace('Saving backup in file : ' . $config_file);
       $createFile = file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
