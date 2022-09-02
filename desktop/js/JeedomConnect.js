@@ -864,9 +864,6 @@ $('#eraseFilterChoice').off('click').on('click', function () {
   loadPage(url)
 })
 
-if ($('#in_searchWidget').val() != '') {
-  $('#in_searchWidget').keyup();
-}
 
 $('#bt_resetSearchWidget').on('click', function () {
   $('#in_searchWidget').val('').keyup()
@@ -1258,6 +1255,10 @@ $(document).ready(
   function () {
     if ($(".displayJCWarning").length != 0 && (typeof JCwarningAlreadyDisplayed === 'undefined')) {
       displayJCWarning();
+    }
+
+    if ($('#in_searchWidget').val() != '') {
+      $('#in_searchWidget').keyup();
     }
   }
 );
