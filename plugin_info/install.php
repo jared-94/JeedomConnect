@@ -45,7 +45,7 @@ function JeedomConnect_install() {
   $pluginInfo = JeedomConnect::getPluginInfo();
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
 
-  JeedomConnectUtils::addCronCheckDaemon();
+  JeedomConnectUtils::addCronItems();
   JeedomConnect::createMapEquipment();
 }
 
@@ -90,7 +90,7 @@ function JeedomConnect_update() {
   $pluginInfo = JeedomConnect::getPluginInfo();
   config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
 
-  JeedomConnectUtils::addCronCheckDaemon();
+  JeedomConnectUtils::addCronItems();
   JeedomConnect::createMapEquipment();
 
 
@@ -104,13 +104,5 @@ function JeedomConnect_update() {
 }
 
 function JeedomConnect_remove() {
-  try {
-    $crons = cron::searchClassAndFunction('JeedomConnect', 'checkDaemon');
-    if (is_array($crons)) {
-      foreach ($crons as $cron) {
-        $cron->remove();
-      }
-    }
-  } catch (Exception $e) {
-  }
+  JeedomConnectUtils::removeCronItems();
 }

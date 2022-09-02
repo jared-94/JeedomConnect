@@ -4367,6 +4367,13 @@
 					"generic_type": "GEOLOCATION"
 				},
 				{
+					"id": "markerTitle",
+					"name": "Titre",
+					"required": false,
+					"description": "A compléter si vous désirez qu'un titre soit au dessus de la pastille",
+					"category": "string"
+				},
+				{
 					"id": "pin",
 					"name": "Repère",
 					"required": false,
@@ -4374,7 +4381,8 @@
 					"description": "Personnalisez l'icone du repère sur la carte",
 					"options": {
 						"hasImage": "false"
-					}
+					},
+					"customizable": true
 				},
 				{
 					"id": "color",
@@ -4384,7 +4392,8 @@
 					"description": "Personnalisez la couleur du tracé et du marqueur",
 					"options": {
 						"hasImage": "false"
-					}
+					},
+					"customizable": true
 				},
 				{
 					"id": "zoomDistance",
@@ -4444,7 +4453,6 @@
 			"name": "Groupe de géolocalisation",
 			"img": "groupGeo.png",
 			"description": "Permet d'afficher plusieurs géolocalisation sur une seule et même carte",
-			"hide": true,
 			"variables": [
 				{
 					"name": "room",

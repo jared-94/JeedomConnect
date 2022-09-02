@@ -319,7 +319,7 @@ class apiHelper {
           break;
 
         case 'SET_APP_CONFIG':
-          $result = self::setAppConfig($apiKey, $param['config']);
+          $result = self::setAppConfig($apiKey, $param['name'], $param['config']);
           return $result;
           break;
 
@@ -361,19 +361,29 @@ class apiHelper {
           $eqLogic->setConfiguration('lastSeen', time());
           $eqLogic->save(true);
 
-          $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $param['configVersion']);
-          if ($newConfig != false) {
-            JCLog::debug("pollingServer send new config : " . json_encode($newConfig));
-            return array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig);
+          if ($eqLogic->getConfiguration('appState', '') != 'active') {
+            return null;
+          }
+
+          if (!is_null($param['configVersion'])) {
+            $newConfig = self::lookForNewConfig($eqLogic, $param['configVersion']);
+            if ($newConfig != false) {
+              JCLog::debug("Send new config : " . json_encode($newConfig));
+              $infos = self::getAllInformations($eqLogic, false);
+              // return array('type' => 'CONFIG_AND_INFOS', 'payload' => array('config' => $newConfig, 'infos' => $infos));
+              $ConfigAndInfos = array('type' => 'CONFIG_AND_INFOS', 'payload' => array('config' => $newConfig, 'infos' => $infos));
+              // JCLog::debug("config and info : " . json_encode($allR));
+              return $ConfigAndInfos;
+            }
           }
 
           $actions = self::getJCActions($apiKey);
           if (count($actions['payload']) > 0) {
-            return array($actions);
+            return $actions;
           }
 
           $result = self::getEventsFull($eqLogic, $param['lastReadTimestamp'], $param['lastHistoricReadTimestamp']);
-          return $result;
+          return array('type' => 'SET_EVENTS', 'payload' => $result);
 
           // TODO : target solution
           /*
@@ -398,6 +408,11 @@ class apiHelper {
         case 'CONNECT':
           $result = self::checkConnexion($eqLogic, $param);
           return $result;
+          break;
+
+        case 'DISCONNECT':
+          $result = self::disconnect($eqLogic);
+          return null;
           break;
 
         case 'GET_LOG':
@@ -486,7 +501,7 @@ class apiHelper {
   }
 
   // GENERIC FUNCTIONS
-  private static function getAllInformations($eqLogic, $withType = true) {
+  public static function getAllInformations($eqLogic, $withType = true) {
     $returnType = 'SET_INFO';
 
     if (!is_object($eqLogic)) {
@@ -495,9 +510,9 @@ class apiHelper {
 
     $config = $eqLogic->getGeneratedConfigFile();
     $payload =  array(
-      'cmds' => apiHelper::getCmdInfoData($config, false),
-      'scenarios' => apiHelper::getScenarioData($config, false, false),
-      'objects' => apiHelper::getObjectData($config, false)
+      'cmdInfo' => self::getCmdInfoData($config, false),
+      'scInfo' => self::getScenarioData($config, false, false),
+      'objInfo' => self::getObjectData($config, false)
     );
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
@@ -604,6 +619,12 @@ class apiHelper {
     return JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
+  private static function disconnect($eqLogic) {
+    $eqLogic->setConfiguration('connected', 0);
+    $eqLogic->setConfiguration('appState', 'background');
+    $eqLogic->save(true);
+  }
+
 
   /**
    * Make all the primaries checks to control if the connection can be done
@@ -633,6 +654,13 @@ class apiHelper {
     if (!$eqLogic->getIsEnable()) {
       JCLog::warning("Equipment " . $eqLogic->getName() . " is disabled");
       return array('type' => 'EQUIPMENT_DISABLE');
+    }
+
+    //check if plugin=app type version => stable/stable or beta/beta
+    $pluginType = JeedomConnectUtils::isBeta() ? 'beta' : 'stable';
+    if (config::byKey('ctrl::appTypeVersion', 'JeedomConnect', true) && key_exists('appTypeVersion', $param) &&  $param['appTypeVersion'] != $pluginType) {
+      JCLog::warning("App and Plugin not aligned : beta/beta or stable/stable. Here app=" . $param['appTypeVersion'] . "/plugin=" . $pluginType);
+      return array('type' => 'BAD_TYPE_VERSION');
     }
 
     //check version requirement
@@ -676,6 +704,8 @@ class apiHelper {
     if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
     $eqLogic->setConfiguration('platformOs', $param['platformOs']);
     $eqLogic->setConfiguration('appVersion', $param['appVersion'] ?? '#NA#');
+    $eqLogic->setConfiguration('appTypeVersion', $param['appTypeVersion'] ?? '');
+    $eqLogic->setConfiguration('buildVersion', $param['buildVersion'] ?? '');
     $eqLogic->setConfiguration('connected', 1);
     $eqLogic->setConfiguration('scAll', 0);
     $eqLogic->setConfiguration('appState', 'active');
@@ -899,11 +929,19 @@ class apiHelper {
       $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
       $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
 
-      $averageHistoryValue = round($historyStatistique['avg'], 1);
-      $minHistoryValue = round($historyStatistique['min'], 1);
-      $maxHistoryValue = round($historyStatistique['max'], 1);
+      if ($historyStatistique['avg'] == 0 && $historyStatistique['min'] == 0 && $historyStatistique['max'] == 0) {
+        $val = $cmd->execCmd();
+        $averageHistoryValue = round($val, 1);
+        $minHistoryValue = round($val, 1);
+        $maxHistoryValue = round($val, 1);
+      } else {
+        $averageHistoryValue = round($historyStatistique['avg'], 1);
+        $minHistoryValue = round($historyStatistique['min'], 1);
+        $maxHistoryValue = round($historyStatistique['max'], 1);
+      }
 
-      $tendanceData = $cmd->getTendance($startHist, date('Y-m-d H:i:s'));
+      $startTendance = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculTendance') . ' hour'));
+      $tendanceData = $cmd->getTendance($startTendance, date('Y-m-d H:i:s'));
       if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
         $tendance = "up";
       } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
@@ -1064,7 +1102,14 @@ class apiHelper {
    */
   private static function setGeofence($eqLogic, $param) {
     $ts = array_key_exists('timestampMeta', $param) ? floor($param['timestampMeta']['systemTime'] / 1000) : strtotime($param['timestamp']);
-    $eqLogic->setCoordinates($param['coords']['latitude'], $param['coords']['longitude'], $param['coords']['altitude'], $param['activity']['type'], $param['battery']['level'] * 100, $ts);
+
+    $activity = $param['activity']['type'];
+    $accuracy = $param['coords']['accuracy'];
+    if ($accuracy < 50 || ($activity == 'in_vehicle' && $accuracy && $accuracy < 400)) {
+      $eqLogic->setCoordinates($param['coords']['latitude'], $param['coords']['longitude'], $param['coords']['altitude'], $param['activity']['type'], $param['battery']['level'] * 100, $ts);
+    } else {
+      JCLog::debug("[GeoLoc] data not saved, not accurate enough");
+    }
 
     $activityCmd = $eqLogic->getCmd(null, 'activity');
     if (is_object($activityCmd)) {
@@ -1197,9 +1242,9 @@ class apiHelper {
    */
   public static function lookForNewConfig($eqLogic, $prevConfig) {
     $configVersion = $eqLogic->getConfiguration('configVersion');
-    //JCLog::debug(  "apiHelper : Look for new config, compare ".$configVersion." and ".$prevConfig);
+    // JCLog::debug("apiHelper : Look for new config, compare " . $configVersion . " and " . $prevConfig);
     if ($configVersion != $prevConfig) {
-      JCLog::debug("apiHelper : New configuration");
+      // JCLog::debug("apiHelper : New configuration");
       return $eqLogic->getGeneratedConfigFile();
     }
     return false;
@@ -2345,8 +2390,10 @@ class apiHelper {
   }
 
   // BACKUPS
-  private static function setAppConfig($apiKey, $config) {
+  private static function setAppConfig($apiKey, $name, $config) {
     $_backup_dir = JeedomConnect::$_backup_dir;
+    $prefix = 'appPref';
+
     if (!is_dir($_backup_dir)) {
       mkdir($_backup_dir);
     }
@@ -2356,10 +2403,31 @@ class apiHelper {
       mkdir($eqDir);
     }
 
-    $config_file = $eqDir . urlencode('appPref-' . $config['name']) . '-' . time() . '.json';
+    $files = JeedomConnectUtils::scan_dir($eqDir, $prefix);
+
+    $newestMD5 = null;
+    if (is_array($files) && count($files) > 0) {
+      $newest_file = $files[0];
+      $newestMD5 = md5_file($eqDir . $newest_file);
+      // JCLog::debug('newest file => ' . json_encode($newest_file) . ' md5 => ' . $newestMD5);
+    }
+
+    $md5Config = md5(json_encode($config, JSON_PRETTY_PRINT));
+    // JCLog::debug('md5 received => ' . $md5Config);
+
+    //if no name set, then put today info
+    $name = $name ?: date('d-m-y_H-i');
+    $config_file = $eqDir . $prefix . '-' . $name . '-' . time() . '.json';
+    // $config_file = $eqDir . urlencode($prefix . '-' . $name) . '-' . time() . '.json';
     try {
-      JCLog::debug('Saving backup in file : ' . $config_file);
-      file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+      JCLog::trace('Saving backup in file : ' . $config_file);
+      $createFile = file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT));
+
+      if ($createFile !== false && ($md5Config == $newestMD5)) {
+        JCLog::trace('same AppPref as last one, removing previous one');
+        unlink($eqDir . $newest_file);
+      }
+
       return array(
         'type' => 'GET_APP_CONFIG'
       );
@@ -2650,7 +2718,7 @@ class apiHelper {
     return null;
   }
 
-  private static function getJCActions($apiKey, $withType = true) {
+  public static function getJCActions($apiKey, $withType = true) {
     $returnType = 'ACTIONS';
 
     $actions = JeedomConnectActions::getAllActions($apiKey);
@@ -2850,8 +2918,12 @@ class apiHelper {
     if (isset($infos['isCharging'])) {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
-    if (isset($infos['nextAlarm']) && is_numeric($infos['nextAlarm'])) {
-      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
+    if (isset($infos['nextAlarm'])) {
+      if (is_numeric($infos['nextAlarm'])) {
+        $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
+      } else {
+        $eqLogic->checkAndUpdateCmd('nextAlarm', -1);
+      }
     }
   }
 
@@ -2862,6 +2934,12 @@ class apiHelper {
   private static function setWebsocket($eqLogic, $value) {
     $eqLogic->setConfiguration('useWs', $value ? '1' : '0');
     $eqLogic->save(true);
+
+    $deamon_info = JeedomConnect::deamon_info();
+    if ($deamon_info['launchable'] == 'ok' && $deamon_info['state'] != 'ok') {
+      JeedomConnect::deamon_start();
+    }
+
     return array(
       "type" => "GET_WEBSOCKET",
       "payload" => array(

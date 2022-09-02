@@ -36,18 +36,15 @@ class JeedomConnectUtils {
 
         $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
 
-        $beta_version = false;
-
-        $plugin = plugin::byId('JeedomConnect');
-        $update = $plugin->getUpdate();
-        if (is_object($update)) {
-            $version = $update->getConfiguration('version');
-            if ($version && $version != 'stable') $beta_version = true;
-        }
+        $pluginType = self::isBeta(true);
+        $daemon_info = JeedomConnect::deamon_info();
 
 
-        $infoPlugin .= '<b>Version JC</b> : ' . ($beta_version ? '[beta] ' : '') . config::byKey('version', 'JeedomConnect', '#NA#') . '<br/>';
-        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
+        $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/>';
+        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/>';
+        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . $daemon_info['last_launch'] . ')<br/><br/>';
+
+
         $infoPlugin .= '<b>Equipements</b> : <br/>';
 
         /** @var JeedomConnect $eqLogic */
@@ -56,7 +53,11 @@ class JeedomConnectUtils {
             $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
 
             $versionAppConfig = $eqLogic->getConfiguration('appVersion');
-            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig : $versionAppConfig;
+            $versionAppTypeConfig = $eqLogic->getConfiguration('appTypeVersion');
+            $buildVersion = $eqLogic->getConfiguration('buildVersion');
+            $warn = ($versionAppTypeConfig != '' && $versionAppTypeConfig != $pluginType) ? ' <i class="fas fa-exclamation-triangle" style="color:red"></i> ' : '';
+            $buildVersionApp = ($pluginType == 'beta' && $buildVersion != '') ? ' (' . $buildVersion . ')' : '';
+            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig . $buildVersionApp . ' ' . $versionAppTypeConfig . $warn  : $versionAppConfig;
 
             $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
             $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
@@ -66,7 +67,7 @@ class JeedomConnectUtils {
 
             $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
 
-            $infoPlugin .= '&nbsp;&nbsp;' . $eqLogic->getName();
+            $infoPlugin .= '&nbsp;&nbsp;' .  $eqLogic->getName();
             if ($platform == '' && $versionApp == '') {
                 $infoPlugin .= ' : non enregistré<br/>';
             } else {
@@ -885,12 +886,18 @@ class JeedomConnectUtils {
         return false;
     }
 
+
+    public static function addCronItems() {
+        self::addCronCheckDaemon();
+        self::addCronRemoveBackupFiles();
+    }
+
     /**
      * Add a task on jeedom crontab every monday to check if daemon is required
      *
      * @return void
      */
-    public static function addCronCheckDaemon() {
+    private static function addCronCheckDaemon() {
         $cron = cron::byClassAndFunction('JeedomConnect', 'checkDaemon');
         if (!is_object($cron)) {
             $cron = new cron();
@@ -904,6 +911,39 @@ class JeedomConnectUtils {
         $cron->save();
 
         JeedomConnect::checkDaemon();
+    }
+
+    private static function addCronRemoveBackupFiles() {
+        $cron = cron::byClassAndFunction('JeedomConnect', 'removeBackupFiles');
+        if (!is_object($cron)) {
+            $cron = new cron();
+            $cron->setClass('JeedomConnect');
+            $cron->setFunction('removeBackupFiles');
+        }
+        $cron->setEnable(1);
+        $cron->setDeamon(0);
+        $cron->setSchedule('0 23 * * *');
+        $cron->setTimeout(5);
+        $cron->save();
+    }
+
+    public static function removeCronItems() {
+        try {
+            $crons = cron::searchClassAndFunction('JeedomConnect', 'checkDaemon');
+            if (is_array($crons)) {
+                foreach ($crons as $cron) {
+                    $cron->remove();
+                }
+            }
+
+            $crons = cron::searchClassAndFunction('JeedomConnect', 'removeBackupFiles');
+            if (is_array($crons)) {
+                foreach ($crons as $cron) {
+                    $cron->remove();
+                }
+            }
+        } catch (Exception $e) {
+        }
     }
 
 
@@ -944,5 +984,69 @@ class JeedomConnectUtils {
         $lat = 48.852969;
 
         return array($lng, $lat);
+    }
+
+    /**
+     * Retrieve the list of files into a dir, order by modification time
+     *
+     * @param string $dir
+     * @param string $prefix
+     * @return void
+     */
+    public static function scan_dir($dir, $prefix = null, $withTime = false) {
+        $ignored = array('.', '..', '.htaccess');
+
+        $files = array();
+        foreach (scandir($dir) as $file) {
+            if (in_array($file, $ignored)) continue;
+            if (!is_null($prefix) && !preg_match('/^' . $prefix . '.*$/', $file)) continue;
+            $files[$file] = filemtime($dir . '/' . $file);
+        }
+
+        arsort($files);
+        if (!$withTime) $files = array_keys($files);
+
+        return ($files) ? $files : false;
+    }
+
+    /**
+     * Check backup files for the application preference, and remove oldest ones if necessary
+     *
+     * @return void
+     */
+    public static function removeBackupFiles() {
+        $_backup_dir = JeedomConnect::$_backup_dir;
+        $prefix = 'appPref';
+
+        if (!is_dir($_backup_dir))  return;
+
+        $keepMaxCount = config::byKey('bkpCount', 'JeedomConnect', 'all');
+        if ($keepMaxCount == 'all') {
+            JCLog::trace('removeBackupFiles - no remove because setup to keep them all');
+            return;
+        }
+
+        /**
+         * @param JeedomConnect $eqLogic
+         */
+        foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+            $eqDir = $_backup_dir . $eqLogic->getConfiguration('apiKey') . '/';
+            if (!is_dir($eqDir)) continue;
+
+            $files = JeedomConnectUtils::scan_dir($eqDir, $prefix);
+            JCLog::trace('all files =>' . json_encode($files));
+            if (is_array($files) && count($files)  > 0) {
+                $countFiles = count($files);
+                // JCLog::debug('file count : ' . $countFiles . ' - keeping max : ' . $keepMaxCount);
+                if ($countFiles  <= $keepMaxCount) continue;
+
+                for ($i = $keepMaxCount; $i < $countFiles; $i++) {
+                    JCLog::trace('removing old backup file : ' . $files[$i]);
+                    unlink($eqDir . $files[$i]);
+                }
+            }
+        }
+
+        return;
     }
 }
