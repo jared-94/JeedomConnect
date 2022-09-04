@@ -660,9 +660,9 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							<tr>
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">{{Nom}}</th>
-								<th style="width: 160px;">{{Sous-type}}</th>
-								<th style="width: 200px;">{{Valeur}}</th>
-								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 100px;">{{Sous-type}}</th>
+								<th style="width: 300px;">{{Valeur}}</th>
+								<th style="width: 200px;">{{Options}}</th>
 								<th style="width: 50px;">{{Ordre}}</th>
 								<th style="width: 100px;"></th>
 							</tr>
@@ -682,7 +682,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">{{Nom}}</th>
 								<th style="width: 160px;">{{Sous-type}}</th>
-								<th style="width: 200px;">{{Valeur}}</th>
 								<th style="width: 100px;">{{Options}}</th>
 								<th style="width: 50px;">{{Ordre}}</th>
 								<th style="width: 100px;"></th>
