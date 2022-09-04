@@ -689,7 +689,6 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">{{Nom}}</th>
 								<th style="width: 160px;">{{Sous-type}}</th>
-								<th style="width: 200px;">{{Valeur}}</th>
 								<th style="width: 100px;">{{Options}}</th>
 								<th style="width: 50px;">{{Ordre}}</th>
 								<th style="width: 100px;"></th>
