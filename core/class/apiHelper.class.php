@@ -2672,7 +2672,11 @@ class apiHelper {
         }
       }
 
-      $txtUser = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
+      $txtUser = '';
+      if (key_exists('user_login', $options)) {
+        $txtUser = ' par l\'utilisateur ' . $options['user_login'];
+        // $options['user_login'] = $options['user_login'] . ' via JC';
+      }
       JCLog::info('Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $txtUser);
 
       $cmd->execCmd($options);
