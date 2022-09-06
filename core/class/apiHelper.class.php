@@ -2931,9 +2931,15 @@ class apiHelper {
     $eqLogic->checkAndUpdateCmd('faceDetected', $infos['value']);
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   * @param boolean $value
+   * @return void
+   */
   private static function setWebsocket($eqLogic, $value) {
     $eqLogic->setConfiguration('useWs', $value ? '1' : '0');
     $eqLogic->save(true);
+    $eqLogic->generateQRCode();
 
     $deamon_info = JeedomConnect::deamon_info();
     if ($deamon_info['launchable'] == 'ok' && $deamon_info['state'] != 'ok') {
@@ -2948,9 +2954,16 @@ class apiHelper {
     );
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   * @param boolean $value
+   * @return void
+   */
   private static function setPolling($eqLogic, $value) {
     $eqLogic->setConfiguration('polling', $value ? '1' : '0');
     $eqLogic->save(true);
+    $eqLogic->generateQRCode();
+
     return array(
       "type" => "GET_POLLING",
       "payload" => array(
