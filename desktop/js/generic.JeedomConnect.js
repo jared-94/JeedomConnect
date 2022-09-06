@@ -262,3 +262,23 @@ function getCmdDetail(_params, _callback) {
     };
     $.ajax(paramsAJAX);
 };
+
+
+// countdown function
+function countDown(time, update, complete) {
+    var start = new Date().getTime();
+    window.interval = setInterval(function () {
+        var now = time - (new Date().getTime() - start);
+        if (now <= 0) {
+            clearInterval(window.interval);
+            complete();
+        }
+        else update(Math.floor(now / 1000));
+    }, 100); // the smaller this number, the more accurate the timer will be
+}
+
+if (typeof jeedom.cmd.addUpdateFunction !== 'function') {
+    jeedom.cmd.addUpdateFunction = function (id, func) {
+        jeedom.cmd.update[id] = func;
+    }
+}

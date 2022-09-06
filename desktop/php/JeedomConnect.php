@@ -134,6 +134,9 @@ $hasDNSConnexion = JeedomConnectUtils::hasDNSConnexion();
 $pollingDefault = $hasDNSConnexion ? 'checked' : '';
 $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 
+$jeedomVersion  = jeedom::version() ?? '0';
+$displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
+
 ?>
 
 <div class="row row-overflow">
@@ -660,9 +663,13 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 							<tr>
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">{{Nom}}</th>
-								<th style="width: 160px;">{{Sous-type}}</th>
-								<th style="width: 200px;">{{Valeur}}</th>
-								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 100px;">{{Sous-type}}</th>
+								<?php
+								if ($displayInfoValue) {
+								?>
+									<th style="width: 300px;">{{Valeur}}</th>
+								<?php } ?>
+								<th style="width: 200px;">{{Options}}</th>
 								<th style="width: 50px;">{{Ordre}}</th>
 								<th style="width: 100px;"></th>
 							</tr>
