@@ -43,11 +43,11 @@ $eqLogic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
 try {
   if (!is_object($eqLogic)) {
-    JCLog::debug("Can't find eqLogic");
+    JCLog::debug("[SSE] Can't find eqLogic");
     throw new Exception(__("Can't find eqLogic", __FILE__), -32699);
   }
   $id = rand(0, 1000);
-  JCLog::debug("eventServer init client #" . $id);
+  JCLog::debug("[SSE] eventServer init client #" . $id);
 
 
   $config = $eqLogic->getGeneratedConfigFile();
@@ -72,11 +72,16 @@ try {
     $logic = eqLogic::byLogicalId($apiKey, 'JeedomConnect');
 
     if (!is_object($logic)) {
-      throw new Exception("EqLogic not found anymore");
+      throw new Exception("[SSE] EqLogic not found anymore");
+    }
+
+    if ($logic->getConfiguration('useWs', 0) == 1) {
+      JCLog::debug("[SSE] connexion switched to WS - stop sse for client #" . $id . '  -- die');
+      die();
     }
 
     if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
-      JCLog::debug("eventServer connexion closed for client #" . $id);
+      JCLog::debug("[SSE] eventServer connexion closed for client #" . $id);
       if ($logic->getConfiguration('sessionId', 0) == $id) {
         $logic->setConfiguration('connected', 0);
         $logic->setConfiguration('appState', 'background');
@@ -123,9 +128,9 @@ try {
 
       if ($sendInfo) {
         if ($log) {
-          JCLog::debug("eventServer sending => " . json_encode($result));
+          JCLog::debug("[SSE] eventServer sending => " . json_encode($result));
         } else {
-          JCLog::trace("eventServer sending => " . json_encode($result));
+          JCLog::trace("[SSE] eventServer sending => " . json_encode($result));
         }
         sse(json_encode($result));
       }
