@@ -80,6 +80,16 @@ try {
       die();
     }
 
+    if ($logic->getConfiguration('polling', 0) == 1) {
+      JCLog::debug("[SSE] connexion switched to Polling - stop sse for client #" . $id . '  -- die');
+      die();
+    }
+
+    if ($logic->getConfiguration('sessionId', 0) != $id) {
+      JCLog::debug("[SSE] new sse client is active - stop sse for client #" . $id . '  -- die');
+      die();
+    }
+
     if (connection_aborted() || connection_status() != CONNECTION_NORMAL) {
       JCLog::debug("[SSE] eventServer connexion closed for client #" . $id);
       if ($logic->getConfiguration('sessionId', 0) == $id) {
