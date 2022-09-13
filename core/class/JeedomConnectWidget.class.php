@@ -332,9 +332,8 @@ class JeedomConnectWidget extends config {
 		JCLog::debug('uploading widgets conf');
 
 		try {
-			$allConf = json_decode($dataJson, true);
 
-			foreach ($allConf as $conf) {
+			foreach ($dataJson as $conf) {
 				JCLog::debug(' import key => ' . $conf['key'] . ' // value ==> ' . json_encode($conf['value']));
 
 				if (!is_int($conf['value'])) $conf['value'] = json_encode($conf['value']);
