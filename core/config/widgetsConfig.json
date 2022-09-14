@@ -3388,6 +3388,11 @@
 					"description": "Etat de la commande"
 				},
 				{
+					"id": "showGauge",
+					"name": "Afficher la jauge",
+					"category": "binary"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
