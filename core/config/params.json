@@ -234,7 +234,7 @@
             },
             {
                 "logicalId": "nextAlarm",
-                "name": "Prochain réveil",
+                "name": "Prochaine Alarme",
                 "type": "info",
                 "subtype": "numeric",
                 "isVisible": 1,
