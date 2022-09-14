@@ -1161,7 +1161,7 @@ function openAssistantNotificationModal(id, event) {
  * *************
  */
 
-$("#commandtab").sortable({
+$(".commandtab").sortable({
   axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true
 });
 
@@ -1221,8 +1221,10 @@ function addCmdToTable(_cmd) {
   tr += '</td>';
   tr += '</tr>';
 
-  $('#table_cmd tbody.cmd_' + _cmd.type).append(tr);
-  var tr = $('#table_cmd tbody.cmd_' + _cmd.type + ' tr').last();
+  cpltOnglet = (($.inArray(_cmd.logicalId, ["distance", "position", "activity"]) != -1) || ((_cmd.logicalId).indexOf('geofence_') >= 0)) ? 'Position' : '';
+
+  $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet).append(tr);
+  var tr = $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet + ' tr').last();
 
   jeedom.eqLogic.builSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),

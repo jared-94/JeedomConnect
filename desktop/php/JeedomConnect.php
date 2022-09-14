@@ -348,7 +348,9 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 		<ul class="nav nav-tabs" role="tablist">
 			<li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fas fa-arrow-circle-left"></i></a></li>
 			<li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-tachometer-alt"></i><span class="hidden-xs"> {{Équipement}}</span></a></li>
-			<li role="presentation"><a href="#commandtab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-list"></i><span class="hidden-xs"> {{Commandes}}</span></a></li>
+			<li role="presentation"><a href="#commandtabInfo" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-info-circle"></i><span class="hidden-xs"> {{Commandes Infos}}</span></a></li>
+			<li role="presentation"><a href="#commandtabPosition" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-map-marker-alt"></i><span class="hidden-xs"> {{Commandes Position}}</span></a></li>
+			<li role="presentation"><a href="#commandtabAction" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-play-circle"></i><span class="hidden-xs"> {{Commandes Actions}}</span></a></li>
 		</ul>
 		<div class="tab-content">
 			<!-- Onglet de configuration de l'équipement -->
@@ -649,15 +651,10 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				<hr>
 			</div><!-- /.tabpanel #eqlogictab-->
 
-			<!-- Onglet des commandes de l'équipement -->
-			<div role="tabpanel" class="tab-pane" id="commandtab">
+			<!-- Onglet des commandes INFO de l'équipement -->
+			<div role="tabpanel" class="tab-pane" id="commandtabInfo" class="commandtab">
 				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
-				<br /><br />
 				<div class="table-responsive">
-
-					<div class="col-lg-6">
-						<legend><i class="fas fa-info-circle"></i> {{Commandes de type info}}</legend>
-					</div>
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
 							<tr>
@@ -678,11 +675,35 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						</tbody>
 					</table>
 				</div>
-				<br /><br />
+			</div><!-- /.tabpanel #commandtabInfo-->
+
+			<div role="tabpanel" class="tab-pane" id="commandtabPosition" class="commandtab">
 				<div class="table-responsive">
-					<div class="col-lg-6">
-						<legend><i class="fas fa-play-circle"></i> {{Commandes de type action}}</legend>
-					</div>
+					<table id="table_cmd" class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 50px;">#</th>
+								<th style="width: 300px;">{{Nom}}</th>
+								<th style="width: 100px;">{{Sous-type}}</th>
+								<?php
+								if ($displayInfoValue) {
+								?>
+									<th style="width: 300px;">{{Valeur}}</th>
+								<?php } ?>
+								<th style="width: 200px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody class="cmd_infoPosition">
+						</tbody>
+					</table>
+				</div>
+			</div><!-- /.tabpanel #commandtab-->
+
+			<!-- Onglet des commandes ACTION -->
+			<div role="tabpanel" class="tab-pane" id="commandtabAction" class="commandtab">
+				<div class="table-responsive">
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
 							<tr>
