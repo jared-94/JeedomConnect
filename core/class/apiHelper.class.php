@@ -2922,12 +2922,14 @@ class apiHelper {
     if (isset($infos['isCharging'])) {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
-    if (isset($infos['nextAlarm'])) {
-      if (is_numeric($infos['nextAlarm'])) {
-        $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
-      } else {
-        $eqLogic->checkAndUpdateCmd('nextAlarm', -1);
-      }
+    if (isset($infos['nextAlarm']) && is_numeric($infos['nextAlarm'])) {
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
+    } else {
+      $eqLogic->checkAndUpdateCmd('nextAlarm', -1);
+    }
+
+    if (isset($infos['alarmFiltered']) && $infos['alarmFiltered']) {
+      JCLog::debug("La prochaine Alarme est émise par un package que vous n'avez pas filtré [" . ($infos['alarmPackage'] ?? 'N/A') . "], elle n'est donc pas retenue");
     }
   }
 
