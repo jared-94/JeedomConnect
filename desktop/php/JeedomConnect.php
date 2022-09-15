@@ -351,6 +351,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 			<li role="presentation"><a href="#commandtabInfo" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-info-circle"></i><span class="hidden-xs"> {{Commandes Infos}}</span></a></li>
 			<li role="presentation"><a href="#commandtabPosition" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-map-marker-alt"></i><span class="hidden-xs"> {{Commandes Position}}</span></a></li>
 			<li role="presentation"><a href="#commandtabAction" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-play-circle"></i><span class="hidden-xs"> {{Commandes Actions}}</span></a></li>
+			<li role="presentation"><a href="#commandtabNotification" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-comment-dots"></i><span class="hidden-xs"> {{Commandes Notifications}}</span></a></li>
 		</ul>
 		<div class="tab-content">
 			<!-- Onglet de configuration de l'équipement -->
@@ -719,7 +720,27 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						</tbody>
 					</table>
 				</div>
-			</div><!-- /.tabpanel #commandtab-->
+			</div><!-- /.tabpanel #commandtabAction-->
+
+			<!-- Onglet des commandes NOTIFICATION -->
+			<div role="tabpanel" class="tab-pane" id="commandtabNotification" class="commandtab">
+				<div class="table-responsive">
+					<table id="table_cmd" class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 50px;">#</th>
+								<th style="width: 300px;">{{Nom}}</th>
+								<th style="width: 160px;">{{Sous-type}}</th>
+								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody class="cmd_actionNotification">
+						</tbody>
+					</table>
+				</div>
+			</div><!-- /.tabpanel #commandtabNotification-->
 
 		</div><!-- /.tab-content -->
 	</div><!-- /.eqLogic -->

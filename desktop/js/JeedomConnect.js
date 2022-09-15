@@ -1221,7 +1221,16 @@ function addCmdToTable(_cmd) {
   tr += '</td>';
   tr += '</tr>';
 
-  cpltOnglet = (($.inArray(_cmd.logicalId, ["distance", "position", "activity"]) != -1) || ((_cmd.logicalId).indexOf('geofence_') >= 0)) ? 'Position' : '';
+
+
+  cpltOnglet = '';
+  if (($.inArray(_cmd.logicalId, ["distance", "position", "activity"]) != -1) || ((_cmd.logicalId).indexOf('geofence_') >= 0)) {
+    cpltOnglet = 'Position';
+  }
+  else if (($.inArray(_cmd.logicalId, ["defaultNotif"]) != -1) || ((_cmd.logicalId).indexOf('notif') >= 0)) {
+    cpltOnglet = 'Notification';
+  }
+
 
   $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet).append(tr);
   var tr = $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet + ' tr').last();
