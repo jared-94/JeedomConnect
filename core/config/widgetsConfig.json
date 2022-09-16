@@ -4498,7 +4498,7 @@
 					"id": "zoomFactor",
 					"name": "Facteur de zoom",
 					"category": "string",
-					"description": "Nombre positif indiquant le zoom caluler entre les points extrêmes (par défaut 1.2)"
+					"description": "Nombre positif indiquant le zoom calculé entre les points extrêmes (par défaut 1.2)"
 				},
 				{
 					"id": "image",
