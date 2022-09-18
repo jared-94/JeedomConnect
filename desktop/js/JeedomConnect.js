@@ -201,7 +201,7 @@ $("#room-input").html(roomListOptions);
 
 
 
-function refreshCmdData(name, id, value) {
+function refreshCmdData(name, id, value, concat = false) {
   if (name == '' || id == '') return;
   getCmd({
     id: id,
@@ -227,9 +227,14 @@ function refreshCmdData(name, id, value) {
         return;
       }
 
+      let prev = '';
+      if (concat) {
+        let prev = $("#" + name + "-input").val();
+        prev = (prev != '') ? prev + ' ' : prev;
+      }
+      $("#" + name + "-input").val(prev + '#' + data.result.humanName + '#');
 
       $("#" + name + "-input").attr('cmdId', data.result.id);
-      $("#" + name + "-input").val('#' + data.result.humanName + '#');
       $("#" + name + "-input").attr('title', '#' + data.result.humanName + '#');
       $("#" + name + "-input").attr('cmdType', data.result.type);
       $("#" + name + "-input").attr('cmdSubType', data.result.subType);
@@ -420,7 +425,7 @@ function refreshCmdListOption(optionsJson) {
 
 
 function infoSelected(value, el) {
-  let inputId = $(el).parent().attr("input")
+  let inputId = $(el).parent().attr("input");
   //$("#"+inputId).val( $("#"+inputId).val() + value);
   let input = $("#" + inputId);
   input.val([input.val().slice(0, input[0].selectionStart), value, input.val().slice(input[0].selectionStart)].join(''));

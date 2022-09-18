@@ -603,7 +603,7 @@ try {
 
 		$cmdIdToHuman = cmd::cmdToHumanReadable(init('strWithCmdId'));
 		if (strcmp($cmdIdToHuman, init('strWithCmdId')) == 0) {
-			JCLog::debug('ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no cmdId => ' . $cmdIdToHuman);
+			JCLog::debug('ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no humanCmdString => ' . $cmdIdToHuman);
 			// ajax::error('La commande n\'existe pas');
 		}
 		ajax::success($cmdIdToHuman);

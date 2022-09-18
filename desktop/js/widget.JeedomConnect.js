@@ -58,6 +58,8 @@ function getWidgetModal(_options, _callback) {
         return;
     }
     $("#widgetModal").dialog('destroy').remove();
+    $("#simpleModal").dialog('destroy').remove();
+
     if ($("#widgetModal").length == 0) {
         $('body').append('<div id="widgetModal"></div>');
 
@@ -137,6 +139,20 @@ function setWidgetModalData(options) {
         //Room
         if (options.widget.room !== undefined) {
             $('#room-input option[value="' + options.widget.room + '"]').prop('selected', true);
+        }
+
+        // visible
+        var visibleCond = options.widget.visibleCond || '';
+        if (visibleCond != '') {
+            const match = visibleCond.match(/#.*?#/g);
+            if (match) {
+                match.forEach(item => {
+                    getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: item }, function (humanResult, _params) {
+                        visibleCond = visibleCond.replace(item, humanResult);
+                    });
+                });
+            }
+            $('#widgetModal #visible-cond-input').val(visibleCond);
         }
 
         moreInfos = options.widget.moreInfos || [];
@@ -312,6 +328,33 @@ function refreshAddWidgets() {
     option = `<li><div class='form-group'>
   	<label class='col-xs-3 '>Actif</label>
   	<div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="enable-input" checked></div></div></div></li>`;
+    items.push(option);
+
+    //visible
+    option = `<li><div class='form-group'>
+  	<label class='col-xs-3 '>Visible sous condition
+        <sup>
+            <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
+        </sup>
+    </label>
+  	<div class='col-xs-9'>
+    <div class='input-group'>
+    <input style="width:340px;" class="roundedLeft" id="visible-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
+        
+        <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visible-cond', 'info', 'undefined', 'undefined', true);">
+        <i class='fas fa-list-alt'></i></a>
+        
+        <div class="dropdown" id="visible-cond-select" style="display:inline !important;" >
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        <i class="fas fa-plus-square"></i> </a>
+        <ul class="dropdown-menu infos-select" input="visible-cond-input">`;
+    if (widget.variables) {
+        widget.variables.forEach(v => {
+            option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+        });
+    }
+    option += `</ul></div >
+    </div></div></div></li>`;
     items.push(option);
 
     //Room
@@ -752,7 +795,7 @@ function getCmdOptions(item) {
 }
 
 
-function selectCmd(name, type, subtype, value) {
+function selectCmd(name, type, subtype, value, concat = false) {
     var cmd = { type: type }
     if (subtype != 'undefined') {
         cmd = { type: type, subType: subtype }
@@ -766,7 +809,7 @@ function selectCmd(name, type, subtype, value) {
         },
         cmd: cmd
     }, function (result) {
-        refreshCmdData(name, result.cmd.id, value);
+        refreshCmdData(name, result.cmd.id, value, concat);
     })
 }
 
@@ -1270,6 +1313,13 @@ $(".widgetMenu .saveWidget").click(function () {
 
         widgetEnable = $('#enable-input').is(":checked");
         result.enable = widgetEnable;
+
+        visibleCondData = $('#widgetModal #visible-cond-input').val();
+        if (visibleCondData != '') {
+            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibleCondData }, function (cmdResult, _params) {
+                result.visibleCond = cmdResult;
+            });
+        }
 
         widgetRoom = $('#room-input :selected').val();
         widgetRoomName = $('#room-input :selected').text();
