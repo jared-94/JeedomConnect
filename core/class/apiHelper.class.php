@@ -2946,8 +2946,10 @@ class apiHelper {
     }
     if (isset($infos['nextAlarm']) && is_numeric($infos['nextAlarm'])) {
       $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
+      $eqLogic->checkAndUpdateCmd('nextAlarmPackage', $infos['alarmPackage']);
     } else {
       $eqLogic->checkAndUpdateCmd('nextAlarm', -1);
+      $eqLogic->checkAndUpdateCmd('nextAlarmPackage', $infos['alarmPackage']);
     }
 
     if (isset($infos['alarmFiltered']) && $infos['alarmFiltered']) {

@@ -239,6 +239,14 @@
                 "subtype": "numeric",
                 "isVisible": 1,
                 "order": 3
+            },
+            {
+                "logicalId": "nextAlarmPackage",
+                "name": "Package Prochaine Alarme",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 0,
+                "order": 4
             }
         ],
         "ios": []
