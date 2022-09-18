@@ -859,7 +859,7 @@ class apiHelper {
             }
           }
         }
-        if ($item == 'visibleCond') {
+        if ($item == 'visibilityCond') {
           array_push($conditionsArr, $value);
         }
       }
@@ -873,12 +873,12 @@ class apiHelper {
     }
     if (array_key_exists('tabs', $config['payload'])) {
       foreach ($config['payload']['tabs'] as $menu) {
-        if (isset($menu['visibleCond'])) array_push($conditionsArr, $menu['visibleCond']);
+        if (isset($menu['visibilityCond'])) array_push($conditionsArr, $menu['visibilityCond']);
       }
     }
     if (array_key_exists('sections', $config['payload'])) {
       foreach ($config['payload']['sections'] as $menu) {
-        if (isset($menu['visibleCond'])) array_push($conditionsArr, $menu['visibleCond']);
+        if (isset($menu['visibilityCond'])) array_push($conditionsArr, $menu['visibilityCond']);
       }
     }
     JCLog::debug("conditionsArr" . json_encode($conditionsArr));

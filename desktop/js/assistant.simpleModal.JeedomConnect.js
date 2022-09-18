@@ -156,15 +156,15 @@ function setSimpleModalData(options) {
         });
       }
 
-    } else if (option.type == "visibleCond") {
+    } else if (option.type == "visibilityCond") {
 
-      var visibleCond = option.value || '';
-      if (visibleCond != '') {
-        const match = visibleCond.match(/#.*?#/g);
+      var visibilityCond = option.value || '';
+      if (visibilityCond != '') {
+        const match = visibilityCond.match(/#.*?#/g);
         if (match) {
           match.forEach(item => {
             getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: item }, function (humanResult, _params) {
-              visibleCond = visibleCond.replace(item, humanResult);
+              visibilityCond = visibilityCond.replace(item, humanResult);
             });
           });
         }
@@ -177,9 +177,9 @@ function setSimpleModalData(options) {
 						</sup>
          </label>
 			   <div class='col-xs-9'>
-            <input style="width:385px;" class="roundedLeft" id="visible-cond-input" value="${visibleCond}" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
+            <input style="width:385px;" class="roundedLeft" id="visibility-cond-input" value="${visibilityCond}" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
           
-          <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('simpleModal #visible-cond', 'info', 'undefined', 'undefined', true);">
+          <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('simpleModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
           <i class='fas fa-list-alt'></i></a>
     
          </div>
