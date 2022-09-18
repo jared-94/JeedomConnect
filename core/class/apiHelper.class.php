@@ -844,6 +844,7 @@ class apiHelper {
   // CMD FUNCTIONS
   private static function getInfoCmdList($config) {
     $return = array();
+    $conditionsArr = array();
     foreach ($config['payload']['widgets'] as $widget) {
       foreach ($widget as $item => $value) {
         if (is_array($value)) {
@@ -858,22 +859,43 @@ class apiHelper {
             }
           }
         }
+        if ($item == 'visibleCond') {
+          array_push($conditionsArr, $value);
+        }
       }
     }
+
+    //** CHECK FIELDS WITH CONDITIONS */
     if (array_key_exists('background', $config['payload'])) {
       foreach ($config['payload']['background']['condBackgrounds'] as $cond) {
-        preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
-        if (count($matches) > 0) {
-          $matches = array_unique($matches[0]);
-          foreach ($matches as $match) {
-            $cmd = cmd::byId(str_replace('#', '', $match));
-            if (is_object($cmd)) {
-              array_push($return, str_replace('#', '', $match));
-            }
+        if (isset($cond['condition'])) array_push($conditionsArr, $cond['condition']);
+      }
+    }
+    if (array_key_exists('tabs', $config['payload'])) {
+      foreach ($config['payload']['tabs'] as $menu) {
+        if (isset($menu['visibleCond'])) array_push($conditionsArr, $menu['visibleCond']);
+      }
+    }
+    if (array_key_exists('sections', $config['payload'])) {
+      foreach ($config['payload']['sections'] as $menu) {
+        if (isset($menu['visibleCond'])) array_push($conditionsArr, $menu['visibleCond']);
+      }
+    }
+    JCLog::debug("conditionsArr" . json_encode($conditionsArr));
+    foreach ($conditionsArr as $cond) {
+      preg_match_all("/#([a-zA-Z0-9]*)#/", $cond, $matches);
+      if (count($matches) > 0) {
+        $matches = array_unique($matches[0]);
+        foreach ($matches as $match) {
+          $cmd = cmd::byId(str_replace('#', '', $match));
+          if (is_object($cmd)) {
+            array_push($return, str_replace('#', '', $match));
           }
         }
       }
     }
+    //**-------- END CHECK CONDITIONS -------*/
+
     if (array_key_exists('weather', $config['payload']) && count($config['payload']['weather']) > 0) {
       $return = array_merge($return, array(
         $config['payload']['weather']['condition'],
