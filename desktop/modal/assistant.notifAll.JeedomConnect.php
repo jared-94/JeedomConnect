@@ -39,9 +39,11 @@ $index = 0;
 foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
   $tmpTxt = '';
   foreach ($eqLogic->getCmd('action') as $cmd) {
-    if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
-      if ($cmd->getLogicalId() == 'notifall') continue;
-
+    if (
+      strpos(strtolower($cmd->getLogicalId()), 'notif') !== false  //si c'est une notif
+      &&
+      (strpos(strtolower($cmd->getLogicalId()), 'notifall') === false) // mais que ca n'est pas une notifALL
+    ) {
       $tmpTxt .= '<label class="checkbox-inline"><input type="checkbox" class="notifAllOptions" value="' . $cmd->getId() . '"/> ' . $cmd->getName() . '</label> ';
     }
   }
