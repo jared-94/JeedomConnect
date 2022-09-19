@@ -697,6 +697,38 @@ try {
 		}
 	}
 
+	if (init('action') == 'removeNotifAll') {
+		$key = init('key');
+		// JCLog::debug('Trying to remove all cmd with logicalId : ' . $key);
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$cmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), $key);
+			if (is_object($cmd)) {
+				// JCLog::debug('Removed for eqLogic : ' . $eqLogic->getName());
+				$cmd->remove();
+			}
+		}
+
+		config::remove($key, 'JeedomConnect');
+		ajax::success();
+	}
+
+	if (init('action') == 'editNotifAll') {
+		$key = init('key');
+		// $oldName = init('oldName');
+		$newName = init('newName');
+		// JCLog::debug('Trying to remove all cmd with logicalId : ' . $key);
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$cmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), $key);
+			if (is_object($cmd)) {
+				// JCLog::debug('Removed for eqLogic : ' . $eqLogic->getName());
+				$cmd->setName($newName);
+				$cmd->save();
+			}
+		}
+
+		ajax::success();
+	}
+
 	if (init('action') == 'saveNotifAll') {
 		$cmdList = init('cmdList', array());
 		$key = init('key');
@@ -717,7 +749,7 @@ try {
 				$eqLogic->createCommandsFromConfigFile($notifConf, null);
 			}
 		} catch (Exception $e) {
-			JCLog::error("Exception while creating cmd on saveNotifAll => " . $e->getMessage());
+			JCLog::warning("Exception while creating cmd on saveNotifAll => " . $e->getMessage());
 			ajax::error('Création de la commande en erreur');
 		}
 

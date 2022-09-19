@@ -73,10 +73,16 @@ foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 ?>
 
 <div id="alert_JcWidgetNotifAll"></div>
-<div>
-  <a class="btn btn-success btn-sm pull-right" id="bt_saveJcNotifAll"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
-  <a class="btn btn-info btn-sm pull-right" id="bt_addJcNotifAll"><i class="fa fa-plus-circle"></i> {{Ajouter}}</a>
+<div class="row">
+  <div class="input-group pull-right" style="display:inline-flex;">
+    <!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
+    <a class="btn btn-sm roundedLeft" id="bt_editJcNotifAll"><i class="fa fa-pencil-alt"></i> {{Editer}}
+    </a><a class="btn btn-info btn-sm" id="bt_addJcNotifAll"><i class="fa fa-plus-circle"></i> {{Ajouter}}
+    </a><a class="btn btn-success btn-sm" id="bt_saveJcNotifAll"><i class="fa fa-check-circle"></i> {{Sauvegarder}}
+    </a><a class="btn btn-danger btn-sm roundedRight" id="bt_removeJcNotifAll"><i class="fa fa-minus-circle"></i> {{Supprimer}}
+    </a>
 
+  </div>
 </div>
 
 <div class="row">
