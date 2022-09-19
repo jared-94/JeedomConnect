@@ -790,7 +790,7 @@ $('.eqLogicAction[data-action=showEquipmentSummary]').off('click').on('click', f
 $('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function () {
   $('body').append('<div id="notifAllModal"></div>');
   $('#notifAllModal').dialog({
-    title: "{{Configuration de la notification de \"tous\" les équipements}}",
+    title: "{{Configurer les notifications multiples}}",
     autoOpen: false,
     modal: true,
     closeText: '',

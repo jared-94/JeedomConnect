@@ -698,10 +698,29 @@ try {
 	}
 
 	if (init('action') == 'saveNotifAll') {
-		$cmdList = init('cmdList');
-		if ($cmdList == "") $cmdList = array();
-		JCLog::debug('saveNotifAll - info received : ' . json_encode($cmdList));
-		config::save('notifAll', json_encode($cmdList), 'JeedomConnect');
+		$cmdList = init('cmdList', array());
+		$key = init('key');
+		$name = init('name');
+		$value = array("name" => $name, "cmd" => $cmdList);
+
+		JCLog::trace('saveNotifAll - info received : ' . json_encode($value) . ']');
+		config::save($key, json_encode($value), 'JeedomConnect');
+
+		$notifConf = array(array(
+			"logicalId" => $key,
+			"name" => $name,
+			"type" => "action",
+			"subtype" => "message"
+		));
+		try {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+				$eqLogic->createCommandsFromConfigFile($notifConf, null);
+			}
+		} catch (Exception $e) {
+			JCLog::error("Exception while creating cmd on saveNotifAll => " . $e->getMessage());
+			ajax::error('Création de la commande en erreur');
+		}
+
 		ajax::success();
 	}
 

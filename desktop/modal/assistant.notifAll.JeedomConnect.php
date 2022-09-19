@@ -22,9 +22,19 @@ if (!isConnect()) {
 require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.php';
 
 
-$alreadyChecked = config::byKey('notifAll', 'JeedomConnect', array());
+$allNotifAll = config::searchKey('notifAll', 'JeedomConnect');
+$notifOptions = '';
+foreach ($allNotifAll as $item) {
+  if (in_array($item['key'], array('migration::notifAll', 'migration::notifAll2'))) continue;
+  // JCLog::debug('value => ' . json_encode($item['value']));
+  $conf = $item['value'];
+
+  $notifOptions .= '<option value="' . $item['key'] . '" data-cmd="' . implode(",", $conf['cmd']) . '"  data-text="' . strtolower($conf['name'])  . '">' . $conf['name'] . '</option>';
+}
+
 
 $txt = '';
+$index = 0;
 /** @var JeedomConnect $eqLogic */
 foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
   $tmpTxt = '';
@@ -32,15 +42,26 @@ foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
     if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
       if ($cmd->getLogicalId() == 'notifall') continue;
 
-      $checked = in_array($cmd->getId(), $alreadyChecked) ? 'checked' : '';
-      $tmpTxt .= '<label class="checkbox-inline"><input type="checkbox" class="notifAllOptions" value="' . $cmd->getId() . '"  ' . $checked . '/> ' . $cmd->getName() . '</label> ';
+      $tmpTxt .= '<label class="checkbox-inline"><input type="checkbox" class="notifAllOptions" value="' . $cmd->getId() . '"/> ' . $cmd->getName() . '</label> ';
     }
   }
 
   if ($tmpTxt != '') {
-    $txt .= '<div class="col-lg-7"><legend>' . $eqLogic->getName() . '</legend><div class="form-group">';
-    $txt .= '<div class="col-sm-7">' . $tmpTxt . '</div>';
-    $txt .= '</div></div>';
+
+    if ($index == 0) {
+      $txt .= '<div class="row">';
+      $index = 0;
+    }
+
+    $txt .= '<div class="col-lg-4"><legend class="underline">' . $eqLogic->getName() . '</legend>';
+    $txt .= '<div class="form-group">' . $tmpTxt . '</div>';
+    $txt .= '</div>';
+    $index++;
+
+    if (($index % 3) == 0) {
+      $txt .= '</div>';
+      $index = 0;
+    }
   }
 }
 
@@ -50,8 +71,29 @@ foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 ?>
 
 <div id="alert_JcWidgetNotifAll"></div>
-<a class="btn btn-success btn-sm pull-right" id="bt_saveJcWidgetNotifAll"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
-<span style="color:var(--al-info-color);font-size:11px;">Note : tous les équipements que vous cocherez ici seront notifiés dès lors que vous utiliserez une commande 'Notifier les appareils JC'.</span>
+<div>
+  <a class="btn btn-success btn-sm pull-right" id="bt_saveJcNotifAll"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
+  <a class="btn btn-info btn-sm pull-right" id="bt_addJcNotifAll"><i class="fa fa-plus-circle"></i> {{Ajouter}}</a>
+
+</div>
+
+<div class="row">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">
+      <legend><i class="fa fa-cogs"></i> {{Configurer la commande :}}</legend>
+    </label>
+    <div class="col-sm-7 control-label">
+      <select id="notifAllSelect" class="JC" style="width:auto">
+        <?= $notifOptions; ?>
+      </select>
+
+    </div>
+  </div>
+</div>
+
+
+<legend><i class="fas fa-comment-dots"></i> {{Notifier les équipements :}}</legend>
+<span style="color:var(--al-info-color);font-size:11px;">Note : tous les équipements que vous cocherez ici seront notifiés dès lors que vous utiliserez la commande définie plus haut.</span>
 <div id="table_JcWidgetNotifAll">
   <?= $txt; ?>
 
@@ -59,4 +101,5 @@ foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 
 
 <?php include_file('desktop', 'notifAll.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop/common', 'utils', 'js'); ?>

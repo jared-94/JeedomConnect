@@ -1714,8 +1714,17 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		config::save('notifAll', json_encode($result), 'JeedomConnect');
+		config::save('notifAll', json_encode(array("name" => "Notifier les appareils JC", "cmd" => $result)), 'JeedomConnect');
 		config::save('migration::notifAll', 'done', 'JeedomConnect');
+	}
+
+	public static function migrationAllNotif2() {
+		$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
+
+		if (!isset($cmdNotif['name'])) {
+			config::save('notifAll', json_encode(array("name" => "Notifier les appareils JC", "cmd" => $cmdNotif)), 'JeedomConnect');
+		}
+		config::save('migration::notifAll2', 'done', 'JeedomConnect');
 	}
 
 
@@ -1879,18 +1888,18 @@ class JeedomConnectCmd extends cmd {
 
 		// JCLog::debug( 'start for : ' . $this->getLogicalId());
 
-		$logicalId = ($this->getLogicalId() === 'notifall') ? 'notifall' : ((strpos(strtolower($this->getLogicalId()), 'notif') !== false) ? 'notif' : $this->getLogicalId());
+		$logicalId = (strpos(strtolower($this->getLogicalId()), 'notifall') !== false) ? 'notifAll' : ((strpos(strtolower($this->getLogicalId()), 'notif') !== false) ? 'notif' : $this->getLogicalId());
 
 		// JCLog::debug( 'will execute action : ' . $logicalId . ' -- with option ' . json_encode($_options));
 
 		switch ($logicalId) {
-			case 'notifall':
-				$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
+			case 'notifAll':
+				$cmdNotif = config::byKey($this->getLogicalId(), 'JeedomConnect', array());
 				$orignalCmdId = $this->getId();
 				$timestamp = round(microtime(true) * 10000);
 				// JCLog::debug( ' all cmd notif all : ' . json_encode($cmdNotif));
 
-				foreach ($cmdNotif as $cmdId) {
+				foreach ($cmdNotif['cmd'] as $cmdId) {
 					$cmd = cmd::byId($cmdId);
 					$_options['orignalCmdId'] = $orignalCmdId;
 					$_options['notificationId'] = $timestamp;

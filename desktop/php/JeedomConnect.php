@@ -174,9 +174,9 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
 					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
-						<i class="fas fa-comment-dots"></i>
+						<i class="fas fa-comments"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
+						<span style="color:var(--txt-color)">{{Notifications multiples}}</span>
 					</div>
 					<!--
 						Start Generic Types
