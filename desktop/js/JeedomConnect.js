@@ -727,7 +727,7 @@ async function showCommunity(txtInfoPlugin) {
   var data = {
     action: 'getInstallDetails'
   }
-  var infoPlugin = await asyncAjaxGenricFunction(data);
+  var infoPlugin = await asyncAjaxGenericFunction(data);
 
   getSimpleModal({
     title: "Forum",
@@ -1288,7 +1288,9 @@ $(document).ready(
 updateWidgetCount();
 
 
-async function asyncAjaxGenricFunction(data) {
+async function asyncAjaxGenericFunction(data) {
+  $('#div_alert').hideAlert();
+
   const result = await $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: data,
