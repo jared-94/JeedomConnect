@@ -112,6 +112,11 @@ async function saveJcNotifAll() {
 		return this.value;
 	}).get();
 
+	if (checkedVals.length == 0) {
+		$('#alert_JcWidgetNotifAll').showAlert({ message: 'Aucune notification sélectionée', level: 'warning' });
+		return;
+	}
+
 	data = {
 		'action': 'saveNotifAll',
 		'key': $('#notifAllSelect').find('option:selected').val(),
