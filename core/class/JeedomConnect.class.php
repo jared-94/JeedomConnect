@@ -206,6 +206,9 @@ class JeedomConnect extends eqLogic {
 		$daemonLogConfig = config::byKey('daemonLog', __CLASS__, 'parent');
 		$daemonLog = ($daemonLogConfig == 'parent') ? log::getLogLevel(__CLASS__) : $daemonLogConfig;
 
+		$JCapiKey = jeedom::getApiKey(__CLASS__);
+		$JCapiKeySize = strlen($JCapiKey);
+
 
 		$path = realpath(dirname(__FILE__) . '/../../resources/JeedomConnectd'); // répertoire du démon à modifier
 		$cmd = 'python3 ' . $path . '/JeedomConnectd.py'; // nom du démon à modifier
@@ -213,9 +216,9 @@ class JeedomConnect extends eqLogic {
 		$cmd .= ' --socketport ' . config::byKey('socketport', __CLASS__, '58090'); // port socket - échange entre le démon en PY et l'api jeedom
 		$cmd .= ' --websocketport ' . config::byKey('port', __CLASS__, '8090'); // port d'écoute du démon pour échange avec l'application JC
 		$cmd .= ' --callback ' . network::getNetworkAccess('internal', 'proto:127.0.0.1:port:comp') . '/plugins/JeedomConnect/core/api/JeedomConnect.api.php'; // chemin de la callback url à modifier (voir ci-dessous)
-		$cmd .= ' --apikey ' . jeedom::getApiKey(__CLASS__); // l'apikey pour authentifier les échanges suivants
+		$cmd .= ' --apikey ' . $JCapiKey; // l'apikey pour authentifier les échanges suivants
 		$cmd .= ' --pid ' . jeedom::getTmpFolder(__CLASS__) . '/deamon.pid'; // et on précise le chemin vers le pid file (ne pas modifier)
-		log::add(__CLASS__, 'debug', 'Starting daemon with cmd >>' . $cmd . '<<');
+		JCLog::debug('Starting daemon with cmd >>' . str_replace($JCapiKey, str_repeat('*', $JCapiKeySize), $cmd) . '<<');
 		exec($cmd . ' >> ' . log::getPathToLog('JeedomConnect_daemon') . ' 2>&1 &'); // 'template_daemon' est le nom du log pour votre démon, vous devez nommer votre log en commençant par le pluginid pour que le fichier apparaisse dans la page de config
 
 		$i = 0;
