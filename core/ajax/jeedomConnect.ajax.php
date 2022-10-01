@@ -268,25 +268,12 @@ try {
 			$html .= '</td>';
 			// ****************************************
 
-			$html .= '<td style="width:40px;"><input type="text" class="objectAttr" data-l1key="name" value="' . cmd::cmdToHumanReadable($widget['name']) . '" /></td>';
+			$html .= '<td><input type="text" class="objectAttr" data-l1key="name" value="' . cmd::cmdToHumanReadable($widget['name']) . '"  style="width:250px;"/></td>';
 
 
 			// **********   SUBTITLE    ****************
-			/*
-			$hasSubTitle = false;
-			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
-			{
-				if ($opt['id'] != 'subtitle') continue;
-				$hasSubTitle = true;
-				break;
-			}
-			*/
-			if (isset($widgetJC['subtitle'])) {
-				// if ( $hasSubTitle && isset($widgetJC['subtitle']) ){
-				$html .= '<td style="width:40px;"><input type="text" class="objectAttr"  data-l1key="subtitle" value="' . cmd::cmdToHumanReadable($widgetJC['subtitle']) . '" /></td>';
-			} else {
-				$html .= '<td style="width:40px;"></td>';
-			}
+			$sub =  isset($widgetJC['subtitle']) ? cmd::cmdToHumanReadable($widgetJC['subtitle'])  : '';
+			$html .= '<td><textarea  type="text" class="objectAttr"  data-l1key="subtitle" style="width:500px;">' . $sub . '</textarea>';
 
 			// **********  END SUBTITLE ****************
 
@@ -303,8 +290,8 @@ try {
 				$dataDisplayMode = $opt['choices'];
 				break;
 			}
-			$html .= '<td style="width:150px;">';
-			$html .= '<select class="objectAttr"  data-l1key="display">';
+			$html .= '<td>';
+			$html .= '<select class="objectAttr"  data-l1key="display" style="width:130px;">';
 			$html .= '<option value="none">Aucun</option>';
 
 			foreach ($dataDisplayMode as $display) {
@@ -318,55 +305,55 @@ try {
 
 
 			// **********    HIDE OTIONS    ****************
-			$hideOptions = array();
-			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt) {
-				if ($opt['id'] != 'hideItem') continue;
+			// $hideOptions = array();
+			// foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt) {
+			// 	if ($opt['id'] != 'hideItem') continue;
 
-				foreach ($opt['choices'] as $choice) {
-					$hideOptions[] = $choice['id'];
-				}
-				break;
-			}
+			// 	foreach ($opt['choices'] as $choice) {
+			// 		$hideOptions[] = $choice['id'];
+			// 	}
+			// 	break;
+			// }
 
-			if (in_array('hideTitle', $hideOptions)) {
-				if (isset($widgetJC['hideTitle']) && $widgetJC['hideTitle']) {
-					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideTitle" /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" disabled /></td>';
-			}
+			// if (in_array('hideTitle', $hideOptions)) {
+			// 	if (isset($widgetJC['hideTitle']) && $widgetJC['hideTitle']) {
+			// 		$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideTitle" /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" disabled /></td>';
+			// }
 
-			if (in_array('hideSubTitle', $hideOptions)) {
-				if (isset($widgetJC['hideSubTitle']) && $widgetJC['hideSubTitle']) {
-					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideSubTitle"  /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" disabled /></td>';
-			}
+			// if (in_array('hideSubTitle', $hideOptions)) {
+			// 	if (isset($widgetJC['hideSubTitle']) && $widgetJC['hideSubTitle']) {
+			// 		$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideSubTitle"  /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" disabled /></td>';
+			// }
 
-			if (in_array('hideStatus', $hideOptions)) {
-				if (isset($widgetJC['hideStatus']) && $widgetJC['hideStatus']) {
-					$html .= '<td align="center" style="max-width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideStatus" /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" disabled /></td>';
-			}
+			// if (in_array('hideStatus', $hideOptions)) {
+			// 	if (isset($widgetJC['hideStatus']) && $widgetJC['hideStatus']) {
+			// 		$html .= '<td align="center" style="max-width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideStatus" /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" disabled /></td>';
+			// }
 
-			if (in_array('hideIcon', $hideOptions)) {
-				if (isset($widgetJC['hideIcon']) && $widgetJC['hideIcon']) {
-					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideIcon" /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" disabled /></td>';
-			}
+			// if (in_array('hideIcon', $hideOptions)) {
+			// 	if (isset($widgetJC['hideIcon']) && $widgetJC['hideIcon']) {
+			// 		$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideIcon" /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" disabled /></td>';
+			// }
 			// **********    END HIDE OTIONS    ****************
 
 
@@ -390,7 +377,8 @@ try {
 					$label = ' label-success';
 				}
 			}
-			$html .= '<td style="width:60px;" class=""><span class="label ' . $label . ' nbEquipIncluded" data-title="' . $names . '" title="' . $names . '">' . $nb . '</span></td>';
+			$titleEqInclusion = $names != '' ? 'title="' . $names . '"' : '';
+			$html .= '<td style="width:60px;" class=""><span class="label ' . $label . ' nbEquipIncluded" data-title="' . $names . '" ' . $titleEqInclusion . '>' . $nb . '</span></td>';
 
 			//************************************/
 
