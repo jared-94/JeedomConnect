@@ -102,6 +102,40 @@
                     "title_placeholder": "Volume (0-100)",
                     "title_disable": 0
                 }
+            },
+            {
+                "logicalId": "display_menu",
+                "name": "Visibilité Menu",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "configuration": {
+                    "listValueToCreate": "hide;show"
+                },
+                "order": 11,
+                "display": {
+                    "title_with_list": "1",
+                    "title_placeholder": "Visibilité",
+                    "title_disable": "1",
+                    "message_placeholder": "Id du Menu"
+                }
+            },
+            {
+                "logicalId": "display_widget",
+                "name": "Visibilité Widget",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "configuration": {
+                    "listValueToCreate": "hide;show"
+                },
+                "order": 12,
+                "display": {
+                    "title_with_list": "1",
+                    "title_placeholder": "Visibilité",
+                    "title_disable": "1",
+                    "message_placeholder": "Id du Widget"
+                }
             }
         ],
         "android": [
@@ -257,6 +291,8 @@
         "tracking": "Activer le tracking",
         "rtspServer": "Activer le serveur de streaming",
         "updateData": "Recharger les données",
-        "jcService": "Service JC"
+        "jcService": "Service JC",
+        "hide": "Masquer",
+        "show": "Afficher"
     }
 }

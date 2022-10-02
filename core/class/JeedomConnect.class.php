@@ -2073,6 +2073,76 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 
+			case 'display_menu':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$pageId = $_options['message'];
+				$setVisible = $_options['title'] == 'show' ? true : false;
+
+				$hasChange = false;
+
+				$conf = $eqLogic->getConfig();
+
+				// check "menu haut"
+				if (key_exists('payload', $conf) && key_exists('tabs', $conf['payload'])) {
+					foreach ($conf['payload']['tabs'] as $key => $menu) {
+						if (key_exists('id', $menu) && $menu['id'] == $pageId) {
+							$menu['enable'] = $setVisible;
+							$conf['payload']['tabs'][$key] = $menu;
+							$hasChange = true;
+						}
+					}
+				}
+
+				// check "menu bas"
+				if (key_exists('payload', $conf) && key_exists('sections', $conf['payload'])) {
+					foreach ($conf['payload']['sections'] as $key => $menu) {
+						if (key_exists('id', $menu) && $menu['id'] == $pageId) {
+							$menu['enable'] = $setVisible;
+							$conf['payload']['sections'][$key] = $menu;
+							$hasChange = true;
+						}
+					}
+				}
+
+				if ($hasChange) {
+					$configVersion = $conf['payload']['configVersion'] + 1;
+					$conf['payload']['configVersion'] =  $configVersion;
+					JCLog::debug("saving new conf => " . json_encode($conf));
+					$eqLogic->saveConfig($conf);
+					$eqLogic->getConfig(true, true);
+					$eqLogic->setConfiguration('configVersion', $configVersion);
+					$eqLogic->save();
+				} else {
+					JCLog::debug("nothing to change...");
+				}
+
+				break;
+
+			case 'display_widget':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$widgetId = $_options['message'];
+				$setVisible = $_options['title'] == 'show' ? true : false;
+
+				JeedomConnectWidget::updateConfig($widgetId, 'enable', $setVisible);
+
+				break;
+
 			case 'update_pref_app':
 				if (empty($_options['title'])) {
 					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
