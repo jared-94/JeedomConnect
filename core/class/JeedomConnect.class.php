@@ -2083,7 +2083,7 @@ class JeedomConnectCmd extends cmd {
 					return;
 				}
 
-				$pageId = $_options['message'];
+				$pageIds = explode(',', $_options['message']);
 				$setVisible = $_options['title'] == 'show' ? true : false;
 
 				$hasChange = false;
@@ -2093,7 +2093,7 @@ class JeedomConnectCmd extends cmd {
 				// check "menu haut"
 				if (key_exists('payload', $conf) && key_exists('tabs', $conf['payload'])) {
 					foreach ($conf['payload']['tabs'] as $key => $menu) {
-						if (key_exists('id', $menu) && $menu['id'] == $pageId) {
+						if (key_exists('id', $menu) && in_array($menu['id'], $pageIds)) {
 							$menu['enable'] = $setVisible;
 							$conf['payload']['tabs'][$key] = $menu;
 							$hasChange = true;
@@ -2104,7 +2104,7 @@ class JeedomConnectCmd extends cmd {
 				// check "menu bas"
 				if (key_exists('payload', $conf) && key_exists('sections', $conf['payload'])) {
 					foreach ($conf['payload']['sections'] as $key => $menu) {
-						if (key_exists('id', $menu) && $menu['id'] == $pageId) {
+						if (key_exists('id', $menu) && in_array($menu['id'], $pageIds)) {
 							$menu['enable'] = $setVisible;
 							$conf['payload']['sections'][$key] = $menu;
 							$hasChange = true;
@@ -2136,10 +2136,12 @@ class JeedomConnectCmd extends cmd {
 					return;
 				}
 
-				$widgetId = $_options['message'];
+				$widgetIds = explode(',', $_options['message']);
 				$setVisible = $_options['title'] == 'show' ? true : false;
 
-				JeedomConnectWidget::updateConfig($widgetId, 'enable', $setVisible);
+				foreach ($widgetIds as $widgetId) {
+					JeedomConnectWidget::updateConfig($widgetId, 'enable', $setVisible);
+				}
 
 				break;
 
