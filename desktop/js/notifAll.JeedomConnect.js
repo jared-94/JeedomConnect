@@ -16,6 +16,8 @@ $('#bt_addJcNotifAll').off('click').on('click', function () {
 	$('#alert_JcWidgetNotifAll').hideAlert();
 
 	bootbox.prompt("Nom de la nouvelle commande ?", function (result) {
+		if (result == null) return; //if cancelled
+
 		let inputName = $.trim(result);
 		if (inputName == '') {
 			$('#alert_JcWidgetNotifAll').showAlert({ message: 'Le nom doit être renseigné', level: 'danger' });
@@ -42,6 +44,8 @@ $('#bt_editJcNotifAll').off('click').on('click', function () {
 		title: "Nouveau nom pour cette commande ?",
 		value: currentName,
 		callback: function (result) {
+			if (result == null) return; //if cancelled
+
 			let inputName = $.trim(result);
 
 			if (currentName == inputName) return;
