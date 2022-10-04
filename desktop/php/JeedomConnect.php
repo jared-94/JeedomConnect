@@ -250,7 +250,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				if (config::byKey('showQrCodeMainPage', 'JeedomConnect', false)) { ?>
 					<div class="showqrcode-content" style="display:none;">
 						<legend><i class="mdi mdi-qrcode-scan"></i> {{Qr Code}}</legend>
-						<img class="showqrcode" src='' width='130px' height="130px">
+						<img class="showqrcode" src='' width='150px' height="150px">
 					</div>
 				<?php } ?>
 			</div>
