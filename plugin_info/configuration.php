@@ -277,7 +277,7 @@ sendVarToJS('userHash', $userHash);
           </sup>
         </label>
         <div class="col-lg-6">
-          <select class="form-control configKey" data-l1key="daemonLog">
+          <select class="form-control configKey needJCRefresh" data-l1key="daemonLog">
             <option value="parent" selected>Même que le plugin</option>
             <option value="100">Debug</option>
             <option value="200">Infos</option>
