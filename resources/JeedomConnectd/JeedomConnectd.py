@@ -236,8 +236,8 @@ def async_worker():
 
                     result["params"] = params
 
-                    jeedomCom.send_change_immediate(result)
-                    # jeedomCom.send_change_immediate(result, True)
+                    # jeedomCom.send_change_immediate(result)
+                    jeedomCom.send_change_immediate(result, True)
                 else:
                     logging.warning(f"no api key found for client ${str(client)}")
             time.sleep(1)
