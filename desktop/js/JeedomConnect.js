@@ -1259,10 +1259,12 @@ function addCmdToTable(_cmd) {
 
 $(".eqlogic-qrcode").hover(function () {
   $('.showqrcode').attr('src', $(this).data('qrcode') + '?' + new Date().getTime());
-  $('.showqrcode').show();
+  $('.hideWhileShowqrcode').hide();
+  $('.showqrcode-content').show();
 }, function () {
+  $('.showqrcode-content').hide();
   $('.showqrcode').attr('src', '');
-  $('.showqrcode').hide();
+  $('.hideWhileShowqrcode').show();
 });
 
 
@@ -1289,7 +1291,7 @@ updateWidgetCount();
 
 
 async function asyncAjaxGenericFunction(data) {
-  $('#div_alert').hideAlert();
+  $.fn.hideAlert();
 
   const result = await $.post({
     url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
@@ -1300,7 +1302,7 @@ async function asyncAjaxGenericFunction(data) {
   });
 
   if (result.state != 'ok') {
-    $('#div_alert').showAlert({
+    $.fn.showAlert({
       message: result.result,
       level: 'danger'
     });
