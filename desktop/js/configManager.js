@@ -267,9 +267,16 @@ function getWidgetsParents() {
 	});
 	$.each(configData.payload.sections, function (key, val) {
 		var tab = configData.payload.tabs.find(t => t.id == val.parentId);
-		if (tab === undefined & configData.payload.tabs.length == 0) {
-			items.push({ id: val.id, name: val.name, index: 0 - val.index }); // move section without tab (is it possible?) on top with a virtual negative index
-		} else {
+		if (typeof tab === 'undefined') {
+			if (configData.payload.tabs.length == 0) {
+				items.push({ id: val.id, name: val.name, index: 0 - val.index }); // move section without tab (is it possible?) on top with a virtual negative index
+			}
+			else {
+				//do nothing : sections without a tab
+				console.log('item not displayed : ', val);
+			}
+		}
+		else {
 			items.push({ id: val.id, name: tab.name + " / " + val.name, index: tab.index });
 		}
 	});
