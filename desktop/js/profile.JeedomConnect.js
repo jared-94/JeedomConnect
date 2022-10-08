@@ -107,11 +107,21 @@ async function saveJcProfile() {
     }
     let dataProfile = await asyncAjaxGenericFunction(data);
 
-    console.log('save - dataProfile', dataProfile);
+    // console.log('save - dataProfile', dataProfile);
     if (dataProfile.state != 'ok') return;
 
     $('.infoSave').hide();
     $('.infoSave').attr('data-change', 'false');
+
+
+    var data = {
+        action: 'broadcastAppProfilChanged',
+        key: myKey,
+    }
+    let broadcastChanges = await asyncAjaxGenericFunction(data);
+    if (dataProfile.state == 'ok') {
+        console.log('info partagée ! ');
+    }
 
 }
 

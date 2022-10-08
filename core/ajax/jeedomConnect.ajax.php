@@ -62,6 +62,24 @@ try {
 		}
 	}
 
+	if (init('action') == 'broadcastAppProfilChanged') {
+		$profilKey = init('key');
+
+		/** @var JeedomConnect $eqLogic   */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			if ($eqLogic->getConfiguration('appProfil') == $profilKey && $eqLogic->isConnected()) {
+				$payload = array(
+					'action' => 'update_app_profil',
+					'payload' => JeedomConnectUtils::getAppProfil($profilKey),
+				);
+				JCLog::debug('Broadcast app profil changes (' . $profilKey . ') to ' . $eqLogic->getName());
+				JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+			}
+		}
+
+		ajax::success();
+	}
+
 	if (init('action') == 'removeStandardConfig') {
 		$save = config::remove(init('key'), 'JeedomConnect');
 		if ($save) {
