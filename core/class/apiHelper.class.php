@@ -744,6 +744,7 @@ class apiHelper {
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
       'notifsVersion' => $notifsConfig['idCounter'],
       'appProfil' => JeedomConnectUtils::getAppProfil($eqLogic->getConfiguration('appProfil')),
+      'appProfilName' => JeedomConnectUtils::getAppProfilName($eqLogic->getConfiguration('appProfil')),
       // 'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
       // 'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
       // 'editEnabled' => $userConnected->getProfils() == 'admin', //$eqLogic->getConfiguration('editEnabled') == '1',

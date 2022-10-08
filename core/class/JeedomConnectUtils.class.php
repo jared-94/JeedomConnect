@@ -1089,6 +1089,22 @@ class JeedomConnectUtils {
     }
 
     /**
+     * Get all application profil created
+     *
+     * @return array
+     */
+    public static function getAppProfilName($profilId) {
+        $profilesConf = config::byKey($profilId, 'JeedomConnect');
+        if ($profilesConf == '') {
+            $result = null;
+            JCLog::warning('Empty application profil [id=' . $profilId . ']');
+        } else {
+            $result = $profilesConf['name'];
+        }
+        return $result;
+    }
+
+    /**
      * Retrieve the appProfil configuration
      *
      * @return array
