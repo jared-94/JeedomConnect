@@ -484,7 +484,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Profil Applicatif}}</label>
 								<div class="col-sm-7">
-									<select class="eqLogicAttr configuration form-control needJCRefresh" data-l1key="configuration" data-l2key="appProfil">
+									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="appProfil">
 										<?php
 										foreach (JeedomConnectUtils::getAllAppProfil() as $profil) {
 											echo '<option value="' . $profil['key'] . '" >' . $profil['name'] . '</option>';
@@ -544,7 +544,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								</div>
 							</div>
 
-							<div class="form-group">
+							<!-- <div class="form-group">
 								<label class="col-sm-3 control-label">{{Accès scénarios}}</label>
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="scenariosEnabled" type="checkbox" placeholder="{{}}">
@@ -563,7 +563,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								<div class="col-sm-7">
 									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="webviewEnabled" type="checkbox" placeholder="{{}}">
 								</div>
-							</div>
+							</div> -->
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Masquer la batterie sur page Equipement Jeedom}}</label>
