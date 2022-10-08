@@ -11,6 +11,15 @@ function saveEqLogic(_eqLogic) {
         _eqLogic.configuration = {};
     }
 
+    // abort save if no user on enable equipment
+    if (_eqLogic.configuration.userId == '' && _eqLogic.isEnable == 1) {
+        bootbox.alert(
+            "La sauvegarde n'est pas possible tant qu'aucun utilisateur n'a pas été sélectionné alors que l'équipement est actif !"
+        );
+        $('.eqLogicAttr[data-l1key=configuration][data-l2key=userId]').attr('style', 'background-color:red!important;color:white!important;');
+        return false;
+    }
+
     currentPwd = $("#actionPwd").val();
     if (originalPwd !== null && originalPwd != currentPwd) {
         _eqLogic.configuration.pwdChanged = 'true';

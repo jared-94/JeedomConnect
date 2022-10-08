@@ -258,9 +258,3 @@ $("#table_JcEquipmentSummary").on('click', '.selectBox', function () {
         $checkboxes.css('display', "none");
     }
 });
-
-function getMultiCheckboxOptionTitle(nb) {
-    var needPlurial = (nb > 1) ? 's' : '';
-    var titleSelect = (nb == 0) ? 'Sélectionnez une commande' : (nb + ' commande' + needPlurial + ' sélectionnée' + needPlurial);
-    return titleSelect;
-}

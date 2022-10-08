@@ -163,31 +163,17 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						<br>
 						<span style="color:var(--txt-color)">{{Création de widgets en masse}}</span>
 					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
-						<i class="fas fa-tasks"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
-					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
-						<i class="mdi mdi-devices"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
-					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
 						<i class="fas fa-comments"></i>
 						<br>
 						<span style="color:var(--txt-color)">{{Notifications multiples}}</span>
 					</div>
-					<!--
-						Start Generic Types
-						HACK Remove when gentype config in plugin is not needed anymore
-					-->
-					<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
-						<i class="fas fa-building"></i>
+
+					<div class="cursor eqLogicAction logoSecondary" data-action="gotoProfilApp" style="color:rgb(27,161,242);">
+						<i class="fas fa-address-card"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Config types génériques}}</span>
+						<span style="color:var(--txt-color)">{{Profil Applicatif}}</span>
 					</div>
-					<!-- End Generic Types -->
 
 					<div class="cursor eqLogicAction" data-action="showMaps" style="color:rgb(27,161,242);">
 						<i class="fas fa-map-marked-alt"></i>
@@ -212,7 +198,40 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						</div>
 					<?php }
 					?>
+
+					<div class="cursor eqLogicAction logoSecondary" data-action="moreJcOptions" style="color:rgb(27,161,242);">
+						<i class="fas fa-ellipsis-h"></i>
+						<br>
+						<span style="color:var(--txt-color)" id="spanMoreJcOptions" data-type="more">{{Plus d'options}}</span>
+					</div>
 				</div>
+				<br />
+				<div class="hideOptionMenu" style="display:none;">
+					<div class="eqLogicThumbnailContainer">
+						<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
+							<i class="fas fa-tasks"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
+						</div>
+						<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
+							<i class="mdi mdi-devices"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
+						</div>
+
+						<!--
+						Start Generic Types
+						HACK Remove when gentype config in plugin is not needed anymore
+						-->
+						<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
+							<i class="fas fa-building"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Config types génériques}}</span>
+						</div>
+						<!-- End Generic Types -->
+					</div>
+				</div>
+
 			</div>
 			<div class="col-sm-2">
 				<div class="hideWhileShowqrcode">
@@ -220,7 +239,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 					<!-- Boutons de gestion du plugin -->
 					<div class="eqLogicThumbnailContainer">
 						<div class="cursor eqLogicAction logoSecondary" data-action="showCommunity" style="color:rgb(27,161,242);">
-							<i class="fas fa-exclamation-circle"></i>
+							<i class="fas fa-question-circle"></i>
 							<br>
 							<span>{{Infos}}</span>
 							<div style="display:none">
@@ -456,6 +475,19 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 										<?php
 										foreach (user::all() as $user) {
 											echo '<option value="' . $user->getId() . '">' . $user->getLogin() . '</option>';
+										}
+										?>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Profil Applicatif}}</label>
+								<div class="col-sm-7">
+									<select class="eqLogicAttr configuration form-control needJCRefresh" data-l1key="configuration" data-l2key="appProfil">
+										<?php
+										foreach (JeedomConnectUtils::getAllAppProfil() as $profil) {
+											echo '<option value="' . $profil['key'] . '" >' . $profil['name'] . '</option>';
 										}
 										?>
 									</select>

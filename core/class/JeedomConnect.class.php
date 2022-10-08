@@ -852,12 +852,14 @@ class JeedomConnect extends eqLogic {
 		if (!is_dir(self::$_qr_dir)) {
 			mkdir(self::$_qr_dir);
 		}
+
+		$filepath = self::$_qr_dir . $this->getConfiguration('apiKey') . '.png';
+
 		$user = user::byId($this->getConfiguration('userId'));
 		if ($user == null) {
-			// $user = user::all()[0];
-			// $this->setConfiguration('userId', $user->getId());
-			// $this->save(true);  //save manquant ! info non persistée
-			JCLog::error('Aucun utilisateur sélectionné sur [' . $this->getName() . ']');
+			JCLog::error("No user selected on [" . $this->getName() . '] - QRCode generation aborted');
+			if (file_exists($filepath)) unlink($filepath);
+			return;
 		}
 
 		$connectData = array(
@@ -878,7 +880,6 @@ class JeedomConnect extends eqLogic {
 
 		require_once dirname(__FILE__) . '/../php/phpqrcode.php';
 		try {
-			$filepath = self::$_qr_dir . $this->getConfiguration('apiKey') . '.png';
 			QRcode::png(json_encode($connectData), $filepath);
 
 			if (config::byKey('withQrCode', 'JeedomConnect', true)) {
@@ -907,6 +908,15 @@ class JeedomConnect extends eqLogic {
 		} catch (Exception $e) {
 			JCLog::error('Unable to generate a QR code : ' . $e->getMessage());
 		}
+	}
+
+	public function cleanUpEqConfiguration() {
+		$this->setConfiguration('scenariosEnabled', null);
+		$this->setConfiguration('webviewEnabled', null);
+		$this->setConfiguration('editEnabled', null);
+		$this->setConfiguration('type', null);
+		$this->setConfiguration('timelineEnabled', null);
+		$this->save();
 	}
 
 	public function registerDevice($id, $name) {
@@ -1079,7 +1089,8 @@ class JeedomConnect extends eqLogic {
 	public function postInsert() {
 		if ($this->isWidgetMap()) return;
 
-		$this->setIsEnable(1);
+		//disable equipment by default, as there won't be any 'user' selected
+		$this->setIsEnable(0);
 		if ($this->getConfiguration('configVersion') == '') {
 			$this->setConfiguration('configVersion', 0);
 		}

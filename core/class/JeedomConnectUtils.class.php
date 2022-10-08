@@ -1050,6 +1050,163 @@ class JeedomConnectUtils {
         return;
     }
 
+
+    /**
+     * Get all application profil created
+     *
+     * @return array
+     */
+    public static function getAllAppProfil() {
+        $allProfilesConf = config::searchKey('profile', 'JeedomConnect');
+        $allProfiles = array();
+        // get config data
+        foreach ($allProfilesConf as $item) {
+            $conf = $item['value'];
+            array_push($allProfiles, array('key' => $item['key'], 'name' => $conf['name']));
+        }
+        //sort by name
+        usort($allProfiles, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        return $allProfiles;
+    }
+
+    /**
+     * Get all application profil created
+     *
+     * @return array
+     */
+    public static function getAppProfil($profilId) {
+        $profilesConf = config::byKey($profilId, 'JeedomConnect');
+        if ($profilesConf == '') {
+            $result = null;
+            JCLog::warning('Empty application profil [id=' . $profilId . ']');
+        } else {
+            $result = $profilesConf['profile'];
+        }
+        return $result;
+    }
+
+    /**
+     * Retrieve the appProfil configuration
+     *
+     * @return array
+     * 
+     */
+    public static function getAppProfilConfig() {
+        $configFile = JeedomConnectUtils::getFileContent(JeedomConnect::$_plugin_config_dir . '/params.json');
+
+        $config = array();
+
+        foreach ($configFile['appMenu'] as $menuId => $menu) {
+            foreach ($menu as $groupNameId => $groupData) {
+                foreach ($groupData['credentials'] as $id => $credentialData) {
+                    $current = array(
+                        'groupNameId' => $groupNameId,
+                        'groupName' => $groupData['groupName'],
+                        'credentialId' => $id,
+                        'credentialName' => $credentialData['name'],
+                        'excluded' => $credentialData['excluded'],
+                        'description' => $credentialData['description'] ?? null
+                    );
+                    array_push($config, $current);
+                }
+            }
+        }
+
+        return $config;
+    }
+
+    public static function attachAppProfilToEquipment() {
+        foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+            $userId = $eqLogic->getConfiguration('userId');
+            $user = user::byId($userId);
+            if (!is_object($user)) {
+                JCLog::warning('Issue on user choice with equipement "' . $eqLogic->getName() . '"');
+                $eqLogic->setConfiguration('appProfil', 'profile_UserLimited');
+                $eqLogic->save();
+                continue;
+            }
+
+            switch ($user->getProfils()) {
+                case 'admin':
+                    $appProfil = "profile_Admin";
+                    break;
+
+                case 'user':
+                    $appProfil = "profile_User";
+                    break;
+
+                case 'restrict':
+                    $appProfil = "profile_UserLimited";
+                    break;
+
+                default:
+                    JCLog::warning('not abble to find the type of user, applying restricted app profile');
+                    $appProfil = "profile_UserLimited";
+                    break;
+            }
+
+            JCLog::debug('saving app profil to ' . $appProfil . ' for eq:' . $eqLogic->getName());
+            $eqLogic->setConfiguration('appProfil', $appProfil);
+            $eqLogic->save();
+            $eqLogic->cleanUpEqConfiguration();
+        }
+        config::save('migration::attachAppProfil', 'done', 'JeedomConnect');
+    }
+
+    public static function createDefaultAppProfil() {
+        try {
+
+            $appProfilConfig = JeedomConnectUtils::getAppProfilConfig();
+
+            $credAdmin = array();
+            $credUser = array();
+            $credUserLimited = array();
+            foreach ($appProfilConfig as $cred) {
+                // if (!in_array('admin', $cred['excluded'])) $credAdmin[$cred['credentialId']] = '1';
+                // if (!in_array('user', $cred['excluded'])) $credUser[$cred['credentialId']] = '1';
+                // if (!in_array('limited_user', $cred['excluded'])) $credUserLimited[$cred['credentialId']] = '1';
+                $credAdmin[$cred['credentialId']] = in_array('admin', $cred['excluded']) ? '0' : '1';
+                $credUser[$cred['credentialId']] = in_array('user', $cred['excluded']) ? '0' : '1';
+                $credUserLimited[$cred['credentialId']] = in_array('limited_user', $cred['excluded']) ? '0' : '1';
+            }
+
+            $appProfilAdmin = array(
+                "name" => "Admin",
+                "profile" => $credAdmin
+            );
+            $appProfilAdminKey = "profile_Admin";
+            config::save($appProfilAdminKey, json_encode($appProfilAdmin), 'JeedomConnect');
+
+
+            $appProfilUser = array(
+                "name" => "Utilisateur",
+                "profile" => $credUser
+            );
+            $appProfilUserKey = "profile_User";
+            config::save($appProfilUserKey, json_encode($appProfilUser), 'JeedomConnect');
+
+
+            $appProfilUserLimited = array(
+                "name" => "Utilisateur limité",
+                "profile" => $credUserLimited
+            );
+            $appProfilUserLimitedKey = "profile_UserLimited";
+            config::save($appProfilUserLimitedKey, json_encode($appProfilUserLimited), 'JeedomConnect');
+
+            config::save('install::createAppProfil', 'done', 'JeedomConnect');
+        } catch (Exception $e) {
+            JCLog::error('createDefaultAppProfil - ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Main function for all install and migrations script
+     *
+     * @return void
+     */
     public static function installAndMigration() {
 
         if (config::byKey('userImgPath',   'JeedomConnect') == '') {
@@ -1084,6 +1241,14 @@ class JeedomConnectUtils {
 
         if (config::byKey('migration::appPref',   'JeedomConnect') == '') {
             JeedomConnect::migrateAppPref();
+        }
+
+        if (config::byKey('install::createAppProfil',   'JeedomConnect') == '') {
+            JeedomConnectUtils::createDefaultAppProfil();
+        }
+
+        if (config::byKey('migration::attachAppProfil',   'JeedomConnect') == '') {
+            JeedomConnectUtils::attachAppProfilToEquipment();
         }
 
         $pluginInfo = JeedomConnect::getPluginInfo();

@@ -93,6 +93,10 @@
   color: red;
 }
 
+.jcRed {
+  color: red;
+}
+
 
 #widgetImg {
   display: block;
@@ -122,4 +126,9 @@
 
 .underline {
   text-decoration: underline;
+}
+
+.mini {
+  font-size: 0.8em !important;
+  font-style: italic !important;
 }

@@ -294,5 +294,492 @@
         "jcService": "Service JC",
         "hide": "Masquer",
         "show": "Afficher"
+    },
+    "appMenu": {
+        "main": {
+            "webInterface": {
+                "groupName": "Interface web",
+                "credentials": {
+                    "webInterfaceAccess": {
+                        "name": "Accès à l'interface web",
+                        "excluded": []
+                    }
+                }
+            },
+            "notifications": {
+                "groupName": "Notifications",
+                "credentials": {
+                    "notificationsAccess": {
+                        "name": "Accès aux notifications",
+                        "excluded": []
+                    },
+                    "notificationsDelete": {
+                        "name": "Suppression des notifications",
+                        "excluded": []
+                    }
+                }
+            },
+            "scenarios": {
+                "groupName": "Scenarios",
+                "credentials": {
+                    "scenariosAccess": {
+                        "name": "Accès aux scénarios",
+                        "excluded": []
+                    },
+                    "scenariosLaunch": {
+                        "name": "Lancer des scénarios",
+                        "excluded": []
+                    },
+                    "scenariosEdit": {
+                        "name": "Editer les scénarios",
+                        "description": "permet de rendre actif/inactif un scénario",
+                        "excluded": []
+                    },
+                    "scenariosLog": {
+                        "name": "Accès aux logs des scénarios",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    }
+                }
+            },
+            "timeline": {
+                "groupName": "Timeline",
+                "credentials": {
+                    "timelineAccess": {
+                        "name": "Accès à la timeline",
+                        "excluded": []
+                    }
+                }
+            },
+            "batteries": {
+                "groupName": "Batteries",
+                "credentials": {
+                    "batteriesAccess": {
+                        "name": "Accès aux batteries",
+                        "excluded": []
+                    }
+                }
+            },
+            "health": {
+                "groupName": "Santé",
+                "credentials": {
+                    "healthAccess": {
+                        "name": "Accès à la page Santé",
+                        "excluded": [
+                            "limited_user"
+                        ]
+                    },
+                    "healthDaemonAccess": {
+                        "name": "Accès à l'onglet Plugins/Démons",
+                        "excluded": [
+                            "limited_user"
+                        ]
+                    },
+                    "healthRunDaemon": {
+                        "name": "Action sur l'état des démons",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    }
+                }
+            },
+            "plugins": {
+                "groupName": "Plugins",
+                "credentials": {
+                    "pluginsAccess": {
+                        "name": "Accès aux plugins",
+                        "excluded": [
+                            "limited_user"
+                        ]
+                    },
+                    "pluginsUpdate": {
+                        "name": "Mettre à jour les plugins",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    },
+                    "pluginsLogs": {
+                        "name": "Accès aux logs des plugins",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    }
+                }
+            },
+            "messages": {
+                "groupName": "Messages",
+                "credentials": {
+                    "messagesAccess": {
+                        "name": "Accès aux messages",
+                        "excluded": [
+                            "limited_user"
+                        ]
+                    },
+                    "messagesDelete": {
+                        "name": "Suppression des messages",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    }
+                }
+            },
+            "rooms": {
+                "groupName": "Pièces",
+                "credentials": {
+                    "roomsAccess": {
+                        "name": "Accès aux pièces",
+                        "excluded": []
+                    }
+                }
+            }
+        },
+        "preferences": {
+            "connexionSetup": {
+                "groupName": "Paramètres de connexion",
+                "credentials": {
+                    "connexionInfo": {
+                        "name": "Informations sur la connexion",
+                        "excluded": []
+                    },
+                    "equipmentSwitch": {
+                        "name": "Option Changer d'équipement",
+                        "excluded": []
+                    },
+                    "websocketOption": {
+                        "name": "Option websocket",
+                        "excluded": []
+                    },
+                    "pollingOption": {
+                        "name": "Option polling",
+                        "description": "A activer en cas de problkème de remontée d'infos",
+                        "excluded": []
+                    }
+                }
+            },
+            "dataSetup": {
+                "groupName": "Gestion des données",
+                "credentials": {
+                    "configReload": {
+                        "name": "Recharger la configuration",
+                        "description": "Recharge la configuration de l'équipement",
+                        "excluded": []
+                    },
+                    "dataReload": {
+                        "name": "Recharger les données",
+                        "description": "Recharge les objets, équipements, commandes et scénarios Jeedom",
+                        "excluded": []
+                    },
+                    "dataReloadAuto": {
+                        "name": "Rechargement auto",
+                        "description": "Recharge les données Jeedom automatiquement tous les X jours",
+                        "excluded": []
+                    },
+                    "imgSetup": {
+                        "name": "Gestion des images",
+                        "description": "Gérer les images perso",
+                        "excluded": []
+                    },
+                    "imgSetupAdd": {
+                        "name": "Ajouter d'images perso",
+                        "excluded": [
+                            "limited_user"
+                        ]
+                    },
+                    "imgSetupRemove": {
+                        "name": "Supprimer des images perso",
+                        "description": "/!\\ peut impacter tous les équipements",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    },
+                    "clearCache": {
+                        "name": "Vider le cache",
+                        "description": "Vide le cache de l'application (pas les données)",
+                        "excluded": []
+                    },
+                    "systemSetup": {
+                        "name": "Paramètres système",
+                        "excluded": []
+                    }
+                }
+            },
+            "theme": {
+                "groupName": "Thème",
+                "credentials": {
+                    "themeColor": {
+                        "name": "Couleur du thème",
+                        "excluded": []
+                    },
+                    "themeDark": {
+                        "name": "Thème sombre",
+                        "excluded": []
+                    },
+                    "language": {
+                        "name": "Langue",
+                        "excluded": []
+                    }
+                }
+            },
+            "topMenu": {
+                "groupName": "Barre du haut",
+                "credentials": {
+                    "displayTopMenu": {
+                        "name": "Afficher la barre du haut",
+                        "excluded": []
+                    },
+                    "displayClock": {
+                        "name": "Afficher l'horloge",
+                        "excluded": []
+                    },
+                    "clockStyle": {
+                        "name": "Style de l'horloge",
+                        "excluded": []
+                    },
+                    "topMenuVisibility": {
+                        "name": "Boutons de la barre du haut",
+                        "excluded": []
+                    }
+                }
+            },
+            "menu": {
+                "groupName": "Menus",
+                "credentials": {
+                    "menuSetup": {
+                        "name": "Gestion des menus",
+                        "description": "Ajouter, supprimer ou éditer des menus de la configuration de l'appareil",
+                        "excluded": []
+                    },
+                    "menuOptions": {
+                        "name": "Options des menus",
+                        "description": "Options d'affichage des menus",
+                        "excluded": []
+                    }
+                }
+            },
+            "widget": {
+                "groupName": "Widgets et grilles",
+                "credentials": {
+                    "widgetSetup": {
+                        "name": "Gestion des widgets",
+                        "description": "Ajouter, supprimer ou éditer des widgets (/!\\ peut impacter tous les équipements",
+                        "excluded": [
+                            "user",
+                            "limited_user"
+                        ]
+                    },
+                    "widgetOptions": {
+                        "name": "Options des widgets",
+                        "description": "Options d'affichage des widgets",
+                        "excluded": []
+                    },
+                    "advancedGrid": {
+                        "name": "Grille avancée",
+                        "description": "Permet le déplacement et redimensionnement des éléments",
+                        "excluded": []
+                    },
+                    "gridReinit": {
+                        "name": "Réinitialiser les grilles",
+                        "description": "Efface les données de mis en page des grilles",
+                        "excluded": []
+                    }
+                }
+            },
+            "appearance": {
+                "groupName": "Apparence",
+                "credentials": {
+                    "fullScreen": {
+                        "name": "Mode immersif",
+                        "description": "Masque les barres de statut et de navigation",
+                        "excluded": []
+                    },
+                    "backgroundMenu": {
+                        "name": "Fond d'écran",
+                        "description": "Gestion des arrières plans dans l'application",
+                        "excluded": []
+                    },
+                    "curvedItem": {
+                        "name": "Arrondi des éléments",
+                        "excluded": []
+                    },
+                    "swipeLeftRight": {
+                        "name": "Mode Droite vers Gauche",
+                        "description": "Option pour les gauchers",
+                        "excluded": []
+                    }
+                }
+            },
+            "behaviour": {
+                "groupName": "Comportement",
+                "credentials": {
+                    "hapticFeeling": {
+                        "name": "Retour haptique sur actions",
+                        "excluded": []
+                    },
+                    "actionOnIcon": {
+                        "name": "Action sur icônes",
+                        "excluded": []
+                    }
+                }
+            },
+            "security": {
+                "groupName": "Securité",
+                "credentials": {
+                    "securityOnStartup": {
+                        "name": "Authentification au démarrage",
+                        "excluded": []
+                    },
+                    "securityCanceledIfAuthenticated": {
+                        "name": "Annuler sécurité si authentifié",
+                        "description": "Annule les demandes de sécurité des actions si authentifié au démarrage",
+                        "excluded": []
+                    },
+                    "securityForPreferences": {
+                        "name": "Sécuriser préférences",
+                        "description": "Demande une authentification pour accéder au menu de l'aplication",
+                        "excluded": []
+                    },
+                    "securityForWebInterface": {
+                        "name": "Sécuriser interface web",
+                        "description": "Demande une authentification pour accéder à l'interface web",
+                        "excluded": []
+                    },
+                    "securityDelay": {
+                        "name": "Délai de sécurisation",
+                        "description": "Temps minimum entre deux authentifications (ou après mise en arrière plan)",
+                        "excluded": []
+                    },
+                    "securityInterfaceLocked": {
+                        "name": "Verrouiller interface",
+                        "excluded": []
+                    }
+                }
+            },
+            "roomsAndSummries": {
+                "groupName": "Pièces et résumés",
+                "credentials": {
+                    "roomSetup": {
+                        "name": "Gestion des pièces",
+                        "excluded": []
+                    },
+                    "summarySetup": {
+                        "name": "Gestion des résumés",
+                        "excluded": []
+                    }
+                }
+            },
+            "history": {
+                "groupName": "Historique",
+                "credentials": {
+                    "historyDisplayed": {
+                        "name": "Afficher historique dans les détails",
+                        "excluded": []
+                    },
+                    "historyZoomDefault": {
+                        "name": "Zoom par défaut",
+                        "excluded": []
+                    }
+                }
+            },
+            "geoloc": {
+                "groupName": "Géolocalisation",
+                "credentials": {
+                    "geolocActivation": {
+                        "name": "Activer le geofencing",
+                        "description": "Permet d'activer des zones géographiques",
+                        "excluded": []
+                    },
+                    "trackingActivation": {
+                        "name": "Activer le tracking",
+                        "description": "Permet un suivi permanent de l'appareil",
+                        "excluded": []
+                    },
+                    "placeSetup": {
+                        "name": "Gestions des lieux",
+                        "excluded": []
+                    },
+                    "geolocAdvancedOptions": {
+                        "name": "Paramètres avancés",
+                        "excluded": []
+                    }
+                }
+            },
+            "notification": {
+                "groupName": "Notifications",
+                "credentials": {
+                    "notificationRemoveAuto": {
+                        "name": "Suppression auto",
+                        "description": "Option pour supprimer automatiquement les notifications tous les X jours",
+                        "excluded": []
+                    }
+                }
+            },
+            "servicesAndOptions": {
+                "groupName": "Services et actions",
+                "credentials": {
+                    "servicesSetup": {
+                        "name": "Gestion du service",
+                        "description": "Service d'arrière plan qui permet de communiquer avec Jeedom même appli fermée",
+                        "excluded": []
+                    },
+                    "actionsSetup": {
+                        "name": "Actions",
+                        "description": "Autorisations des actions sur l'appareil",
+                        "excluded": []
+                    },
+                    "speechRecognitionSetup": {
+                        "name": "Reconnaissance vocales",
+                        "excluded": []
+                    },
+                    "shortcutSetup": {
+                        "name": "Raccourcis d'application",
+                        "excluded": []
+                    }
+                }
+            },
+            "backupAndRestore": {
+                "groupName": "Sauvegarde et restauration",
+                "credentials": {
+                    "backupOption": {
+                        "name": "Sauvegarder",
+                        "description": "Enregistre la configuration de l'application dans Jeedom",
+                        "excluded": []
+                    },
+                    "backupAuto": {
+                        "name": "Sauvegarde auto",
+                        "description": "Réalise la sauvegarde de l'application automatiquement tous les X jours",
+                        "excluded": []
+                    },
+                    "restoreOption": {
+                        "name": "Restaurer et gérer les sauvegardes",
+                        "description": "Restaure ou supprime les configurations précédentes de l'appareil",
+                        "excluded": []
+                    },
+                    "factoryReset": {
+                        "name": "Réinitialiser la configuration par défaut",
+                        "excluded": []
+                    }
+                }
+            },
+            "debug": {
+                "groupName": "Debug",
+                "credentials": {
+                    "logOption": {
+                        "name": "Activer les logs",
+                        "excluded": []
+                    },
+                    "logAccess": {
+                        "name": "Accès aux logs",
+                        "excluded": []
+                    }
+                }
+            }
+        }
     }
 }

@@ -677,14 +677,14 @@ class apiHelper {
       return array('type' => 'PLUGIN_VERSION_ERROR');
     }
 
+    $userConnected = user::byHash($param['userHash']);
+
     $user = user::byId($eqLogic->getConfiguration('userId'));
-    if ($user == null) {
-      $user = user::all()[0];
-      $eqLogic->setConfiguration('userId', $user->getId());
+    if ($user == null && is_object($userConnected)) {
+      $eqLogic->setConfiguration('userId', $userConnected->getId());
       $eqLogic->save(true);
     }
 
-    $userConnected = user::byHash($param['userHash']);
     if (!is_object($userConnected)) $userConnected = $user;
 
     $config = $eqLogic->getGeneratedConfigFile();
@@ -743,10 +743,11 @@ class apiHelper {
       'userImgPath' => config::byKey('userImgPath',   'JeedomConnect'),
       'configVersion' => $eqLogic->getConfiguration('configVersion'),
       'notifsVersion' => $notifsConfig['idCounter'],
-      'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
-      'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
-      'editEnabled' => $userConnected->getProfils() == 'admin', //$eqLogic->getConfiguration('editEnabled') == '1',
-      'getLogAllowed' => $userConnected->getProfils() == "admin",
+      'appProfil' => JeedomConnectUtils::getAppProfil($eqLogic->getConfiguration('appProfil')),
+      // 'scenariosEnabled' => $eqLogic->getConfiguration('scenariosEnabled') == '1',
+      // 'webviewEnabled' => $eqLogic->getConfiguration('webviewEnabled') == '1',
+      // 'editEnabled' => $userConnected->getProfils() == 'admin', //$eqLogic->getConfiguration('editEnabled') == '1',
+      // 'getLogAllowed' => $userConnected->getProfils() == "admin",
       'pluginConfig' => self::getPluginConfig($eqLogic, false),
       'cmdInfo' => self::getCmdInfoData($config, false),
       'scInfo' => self::getScenarioData($config, false, false),
@@ -754,7 +755,8 @@ class apiHelper {
       'geofenceInfo' => self::getGeofencesData($eqLogic, false),
       'links' => JeedomConnectUtils::getLinks(),
       // check timelineclass for old jeedom core
-      'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
+      'timelineFolders' => (class_exists('timeline')) ?  JeedomConnectUtils::getTimelineFolders() : null,
+      // 'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
     );
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);

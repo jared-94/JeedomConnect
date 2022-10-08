@@ -25,6 +25,60 @@ try {
 		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
 
+	if (init('action') == 'getStandardConfig') {
+
+		$key = init('key');
+		$result = config::byKey($key, 'JeedomConnect', null);
+
+		ajax::success($result);
+	}
+
+	if (init('action') == 'editStandardConfig') {
+		$key = init('key');
+		$newValue = init('newValue');
+		$object = init('object', null);
+
+		if (is_null($object)) {
+			$value = $newValue;
+		} else {
+			$originalData = config::byKey($key, 'JeedomConnect', null);
+			$value = utils::setJsonAttr($originalData, $object, $newValue);
+		}
+
+		$save = config::save($key, $value, 'JeedomConnect');
+		if ($save) {
+			ajax::success();
+		} else {
+			ajax::error("problème lors de l'édition de la config");
+		}
+	}
+
+	if (init('action') == 'saveStandardConfig') {
+		$save = config::save(init('key'), init('value'), 'JeedomConnect');
+		if ($save) {
+			ajax::success();
+		} else {
+			ajax::error('problème lors de la sauvegarde de la configuration');
+		}
+	}
+
+	if (init('action') == 'removeStandardConfig') {
+		$save = config::remove(init('key'), 'JeedomConnect');
+		if ($save) {
+			ajax::success();
+		} else {
+			ajax::error('problème lors de la suppression de la configuration');
+		}
+	}
+
+	if (init('action') == 'getAppProfilCount') {
+		$appProfil = init('appProfil');
+		$count = 0;
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			if ($eqLogic->getConfiguration('appProfil') == $appProfil) $count++;
+		}
+		ajax::success($count);
+	}
 	if (init('action') == 'orderWidget') {
 
 		$widgetArray = JeedomConnectWidget::getWidgets();

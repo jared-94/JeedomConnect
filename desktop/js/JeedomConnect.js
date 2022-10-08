@@ -813,6 +813,41 @@ $('.eqLogicAction[data-action=gotoGenTypeConfig]').off('click').on('click', func
 })
 // End Generic Types
 
+$('.eqLogicAction[data-action=moreJcOptions]').off('click').on('click', function () {
+  $('.hideOptionMenu').show();
+
+  var display = ($('#spanMoreJcOptions').attr('data-type') == 'more') ? true : false;
+  if (display) {
+    $('.hideOptionMenu').show();
+    $('#spanMoreJcOptions').text("Moins d'options");
+    $('#spanMoreJcOptions').attr('data-type', 'less')
+  }
+  else {
+    $('.hideOptionMenu').hide();
+    $('#spanMoreJcOptions').text("Plus d'options");
+    $('#spanMoreJcOptions').attr('data-type', 'more');
+  }
+
+})
+
+$('.eqLogicAction[data-action=gotoProfilApp]').off('click').on('click', function () {
+  gotoProfilApp();
+})
+function gotoProfilApp() {
+  $('body').append('<div id="modal_appProfil"></div>');
+  $('#modal_appProfil').dialog({
+    title: "{{Profils applicatifs}}",
+    autoOpen: false,
+    modal: true,
+    closeText: '',
+    width: 900,
+    height: 0.9 * $(window).height(),
+    closeOnEscape: false
+  });
+  $('#modal_appProfil').load('index.php?v=d&plugin=JeedomConnect&modal=profile.JeedomConnect').dialog('open');
+}
+
+
 // ------------- END TOP ACTION BUTTON
 
 

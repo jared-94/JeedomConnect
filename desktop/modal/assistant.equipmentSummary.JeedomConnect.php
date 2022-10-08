@@ -32,9 +32,9 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
     <tr>
       <th colspan="5" data-sorter="false" data-filter="false">&nbsp;</th>
       <th colspan="2" data-sorter="false" data-filter="false" class="text-center">Connexion</th>
-      <th colspan="5" data-sorter="false" data-filter="false" class="text-center">Accès à</th>
+      <th colspan="2" data-sorter="false" data-filter="false" class="text-center">Accès à</th>
       <th data-sorter="false" data-filter="false" class="text-center">Masquer</th>
-      <th colspan="4" data-sorter="false" data-filter="false">&nbsp;</th>
+      <th colspan="5" data-sorter="false" data-filter="false">&nbsp;</th>
     </tr>
     <tr>
       <th>{{ID}}</th>
@@ -53,7 +53,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="polling" style="width:22px;"><i class="fas fa-check"></i></a>
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="polling" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
-      <th data-sorter="checkbox" data-filter="false">{{Scenario}}
+      <!-- <th data-sorter="checkbox" data-filter="false">{{Scenario}}
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="scenariosEnabled" style="width:22px;"><i class="fas fa-check"></i></a>
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="scenariosEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
@@ -64,7 +64,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       <th data-sorter="checkbox" data-filter="false">{{WebView}}
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="webviewEnabled" style="width:22px;"><i class="fas fa-check"></i></a>
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="webviewEnabled" style="width:22px;"><i class="fas fa-times"></i></a>
-      </th>
+      </th> -->
       <th data-sorter="checkbox" data-filter="false">{{Altitude}}
         <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-check"></i></a>
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="addAltitude" style="width:22px;"><i class="fas fa-times"></i></a>
@@ -78,6 +78,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
         <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="hideBattery" style="width:22px;"><i class="fas fa-times"></i></a>
       </th>
       <th data-sorter="select-text">{{Utilisateur}}</th>
+      <th data-sorter="select-text">{{Profil App}}</th>
       <th data-sorter="false" data-filter="false">QrCode</th> <!-- info qr code -->
       <th data-sorter="false" data-filter="false">Notifier tous</th> <!-- info qr code -->
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
@@ -136,17 +137,17 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr checkJcConnexionOption" ' . $wsEnable . ' data-l1key="useWs" ' . $wsForbidden . '/></td>';
       $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr checkJcConnexionOption" ' . $pollingEnable . ' data-l1key="polling" ' . $pollingForbidden . '/></td>';
 
-      // **********    scenariosEnabled    ****************
-      $scenariosEnabled = $eqLogic->getConfiguration('scenariosEnabled', false) ? 'checked' : '';
-      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $scenariosEnabled . ' data-l1key="scenariosEnabled" /></td>';
+      // // **********    scenariosEnabled    ****************
+      // $scenariosEnabled = $eqLogic->getConfiguration('scenariosEnabled', false) ? 'checked' : '';
+      // $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $scenariosEnabled . ' data-l1key="scenariosEnabled" /></td>';
 
-      // **********    timelineEnabled    ****************
-      $timelineEnabled = $eqLogic->getConfiguration('timelineEnabled', false) ? 'checked' : '';
-      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $timelineEnabled . ' data-l1key="timelineEnabled" /></td>';
+      // // **********    timelineEnabled    ****************
+      // $timelineEnabled = $eqLogic->getConfiguration('timelineEnabled', false) ? 'checked' : '';
+      // $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $timelineEnabled . ' data-l1key="timelineEnabled" /></td>';
 
-      // **********    webviewEnabled    ****************
-      $webviewEnabled = $eqLogic->getConfiguration('webviewEnabled', false) ? 'checked' : '';
-      $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $webviewEnabled . ' data-l1key="webviewEnabled" /></td>';
+      // // **********    webviewEnabled    ****************
+      // $webviewEnabled = $eqLogic->getConfiguration('webviewEnabled', false) ? 'checked' : '';
+      // $html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" ' . $webviewEnabled . ' data-l1key="webviewEnabled" /></td>';
 
       // **********    addAltitude    ****************
       $addAltitude = $eqLogic->getConfiguration('addAltitude', false) ? 'checked' : '';
@@ -164,11 +165,23 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnect.class.php';
       $currentUser = $eqLogic->getConfiguration('userId');
       $html .= '<td style="width:100px;">';
       $html .= '<select  class="objectAttr"  data-l1key="userId">';
-      $html .= '<option value="none">Aucun</option>';
 
       foreach (user::all() as $user) {
         $userSelected = ($currentUser == $user->getId()) ? 'selected' : '';
         $html .= ' <option value="' . $user->getId() . '" ' . $userSelected . '>' . $user->getLogin() . '</option>';
+      }
+
+      $html .= '</select>';
+      $html .= '</td>';
+
+      // **********    Profil App    ****************
+      $currentProfil = $eqLogic->getConfiguration('appProfil');
+      $html .= '<td style="width:200px;">';
+      $html .= '<select  class="objectAttr"  data-l1key="appProfil">';
+
+      foreach (JeedomConnectUtils::getAllAppProfil() as $profil) {
+        $profilSelected = ($profil['key'] == $currentProfil) ? 'selected' : '';
+        $html .= ' <option value="' . $profil['key'] . '" ' . $profilSelected . '>' . $profil['name'] . '</option>';
       }
 
       $html .= '</select>';
