@@ -141,7 +141,7 @@ async function removeJcProfile() {
         );
         return;
     }
-    bootbox.confirm("Etes vous sûr de vouloir supprimer ce profil ?", function (result) {
+    bootbox.confirm("Etes vous sûr de vouloir supprimer ce profil ?", async function (result) {
         if (result) {
 
             let myKey = $('#profileAllSelect').find('option:selected');
@@ -151,7 +151,7 @@ async function removeJcProfile() {
                 action: 'removeStandardConfig',
                 key: myKeyValue
             }
-            // let dataProfile = await asyncAjaxGenericFunction(data);
+            let dataProfile = await asyncAjaxGenericFunction(data);
 
             if (dataProfile.state != 'ok') return;
 
