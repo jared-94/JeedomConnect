@@ -416,12 +416,14 @@
                 "credentials": {
                     "messagesAccess": {
                         "name": "Accès aux messages",
+                        "description": "Messages disponibles dans le centre de message de Jeedom",
                         "excluded": [
                             "limited_user"
                         ]
                     },
                     "messagesDelete": {
                         "name": "Suppression des messages",
+                        "description": "Messages du centre de message de Jeedom",
                         "excluded": [
                             "user",
                             "limited_user"
