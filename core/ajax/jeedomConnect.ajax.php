@@ -497,6 +497,7 @@ try {
 			$eqLogic->setConfiguration('addAltitude', $eqData['addAltitude']);
 			$eqLogic->setConfiguration('displayPosition', $eqData['displayPosition']);
 			$eqLogic->setConfiguration('hideBattery', $eqData['hideBattery']);
+			$eqLogic->setConfiguration('appProfil', $eqData['appProfil']);
 
 			$eqLogic->save();
 
