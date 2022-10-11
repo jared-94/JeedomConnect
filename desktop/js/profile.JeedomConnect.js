@@ -186,7 +186,7 @@ async function getAppProfilCount() {
 $('#bt_createJcProfil').off('click').on('click', function () {
     $.fn.hideAlert();
 
-    bootbox.prompt("Nom du nouveau profile ?", function (result) {
+    bootbox.prompt("Nom du nouveau profil ?", function (result) {
         if (result == null) return; // cancel
 
 
@@ -210,12 +210,56 @@ $('#bt_createJcProfil').off('click').on('click', function () {
 
 
 
+$('#bt_duplicateJcProfil').off('click').on('click', function () {
+    $.fn.hideAlert();
+
+    bootbox.prompt("Nom du nouveau profil ?", function (result) {
+        if (result == null) return; //if cancelled
+
+        let inputName = $.trim(result);
+
+        if (inputName == '') {
+            $.fn.showAlert({ message: 'Le nom doit être renseigné', level: 'danger' });
+            return;
+        }
+
+        if ($('#profileAllSelect option[data-text="' + inputName.toLowerCase() + '"]').length > 0) {
+            $.fn.showAlert({ message: 'Ce nom existe déjà', level: 'danger' });
+            return;
+        }
+
+        let key = $('#profileAllSelect').find('option:selected').val();
+        duplicateJcProfile(key, inputName);
+
+    }
+    );
+})
+
+
+async function duplicateJcProfile(keyFrom, newName) {
+    var optionVal = 'profile_' + makeid();
+    var data = {
+        action: 'duplicateProfilConfig',
+        key: keyFrom,
+        newKey: optionVal,
+        newName: newName
+    }
+    let dataDuplicate = await asyncAjaxGenericFunction(data);
+
+    if (dataDuplicate.state != 'ok') return;
+    $.fn.showAlert({ message: 'Elément dupliqué', level: 'success' });
+
+    $('#profileAllSelect').append('<option value="' + optionVal + '" data-text="' + newName.toLowerCase() + '">' + newName + '</option>');
+    $('#profileAllSelect option[value=' + optionVal + ']').prop("selected", true).trigger('change');
+
+}
+
 $('#bt_editJcProfil').off('click').on('click', function () {
     $.fn.hideAlert();
 
     let currentName = $('#profileAllSelect').find('option:selected').text();
     bootbox.prompt({
-        title: "Nouveau nom pour cette commande ?",
+        title: "Nouveau nom pour cet profil ?",
         value: currentName,
         callback: function (result) {
             if (result == null) return; //if cancelled
@@ -235,13 +279,13 @@ $('#bt_editJcProfil').off('click').on('click', function () {
             }
 
             let key = $('#profileAllSelect').find('option:selected').val();
-            editJcProfile(key, currentName, inputName);
+            editJcProfile(key, inputName);
 
         }
     });
 })
 
-async function editJcProfile(key, oldData, newData) {
+async function editJcProfile(key, newData) {
     var data = {
         action: 'editStandardConfig',
         key: key,

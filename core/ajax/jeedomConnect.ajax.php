@@ -62,6 +62,19 @@ try {
 		}
 	}
 
+	if (init('action') == 'duplicateProfilConfig') {
+
+		$originalData = config::byKey(init('key'), 'JeedomConnect', null);
+		$value = utils::setJsonAttr($originalData, 'name', init('newName'));
+
+		$duplicate = config::save(init('newKey'), $value, 'JeedomConnect');
+		if ($duplicate) {
+			ajax::success();
+		} else {
+			ajax::error('problème lors de la sauvegarde de la configuration');
+		}
+	}
+
 	if (init('action') == 'broadcastAppProfilChanged') {
 		$profilKey = init('key');
 
