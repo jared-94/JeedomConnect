@@ -105,10 +105,14 @@ try {
 	if (init('action') == 'getAppProfilCount') {
 		$appProfil = init('appProfil');
 		$count = 0;
+		$eqName = array();
 		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
-			if ($eqLogic->getConfiguration('appProfil') == $appProfil) $count++;
+			if ($eqLogic->getConfiguration('appProfil') == $appProfil) {
+				$count++;
+				$eqName[] = $eqLogic->getName();
+			}
 		}
-		ajax::success($count);
+		ajax::success(array('nb' => $count, 'name' => $eqName));
 	}
 	if (init('action') == 'orderWidget') {
 

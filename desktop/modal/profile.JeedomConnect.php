@@ -18,48 +18,59 @@ foreach ($allProfiles as $item) {
 
 
 ?>
-<div class="row">
-	<div class="input-group pull-right" style="display:inline-flex;">
-		<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-		<a class="btn btn-sm roundedLeft" id="bt_editJcProfil"><i class="fa fa-pencil-alt"></i> {{Editer}}
-		</a><a class="btn btn-warning btn-sm roundedLeft" id="bt_duplicateJcProfil"><i class="fa fa-clone"></i> {{Dupliquer}}
-		</a><a class="btn btn-info btn-sm" id="bt_createJcProfil"><i class="fa fa-plus-circle"></i> {{Ajouter}}
-		</a><a class="btn btn-success btn-sm" id="bt_saveJcProfil"><i class="fa fa-check-circle"></i> {{Sauvegarder}}
-		</a><a class="btn btn-danger btn-sm roundedRight" id="bt_removeJcProfil"><i class="fa fa-minus-circle"></i> {{Supprimer}}
-		</a>
-	</div>
-
-
-</div>
-<div class="input-group pull-right">
-	<span class="infoSave jcRed" style="display:none;" data-change="false">Pensez à sauvegarder !</span>
-</div>
-
-<div class=" row">
-	<div class="form-group">
-		<label class="col-sm-4 control-label">
-			<legend><i class="fa fa-cogs"></i> {{Configurer le profil :}}
-				<sup><i class="fas fa-question-circle  showInfoAppProfil"></i></sup>
-			</legend>
-		</label>
-		<div class="col-sm-7 control-label">
-			<select id="profileAllSelect" class="JC" style="width:auto">
-				<?= $profileOptions; ?>
-			</select>
-			&nbsp;&nbsp;&nbsp;
-
-
+<div style="position:sticky;top:-13px;padding-top:13px;background-color: var(--bg-modal-color) !important;">
+	<div class="row">
+		<div class="form-group col-sm-6">
+			<label class="col-sm-6 control-label">
+				<legend><i class="fa fa-cogs"></i> {{Profil :}}
+					<sup><i class="fas fa-question-circle  showInfoAppProfil"></i></sup>
+				</legend>
+			</label>
+			<div class="col-sm-6 control-label">
+				<select id="profileAllSelect" class="JC" style="width:auto; max-width:230px;">
+					<?= $profileOptions; ?>
+				</select>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="input-group pull-right" style="display:inline-flex;">
+				<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
+				<a class="btn btn-sm roundedLeft" id="bt_editJcProfil"><i class="fa fa-pencil-alt"></i> {{Editer}}
+				</a><a class="btn btn-warning btn-sm roundedLeft" id="bt_duplicateJcProfil"><i class="fa fa-clone"></i> {{Dupliquer}}
+				</a><a class="btn btn-info btn-sm" id="bt_createJcProfil"><i class="fa fa-plus-circle"></i> {{Ajouter}}
+				</a><a class="btn btn-success btn-sm" id="bt_saveJcProfil"><i class="fa fa-check-circle"></i> {{Sauvegarder}}
+				</a><a class="btn btn-danger btn-sm roundedRight" id="bt_removeJcProfil"><i class="fa fa-minus-circle"></i> {{Supprimer}}
+				</a>
+			</div>
 		</div>
 	</div>
-</div>
+	<div class=" row">
+		<div class="form-group">
+			<div class="col-sm-6 text-center" id="infoProfilUsage">
+				<i>Profil utilisé sur <span id="infoProfilUsageNb"></span> équipement<span id="infoProfilUsageNbPlurial"></span> <i class="fas fa-question-circle" id="infoProfilUsageName"></i></i>
+			</div>
+			<div class="col-sm-6 text-center">
+				<span class="infoSave jcRed" style="display:none;" data-change="false">Pensez à sauvegarder !</span>
+			</div>
+		</div>
+	</div>
 
 
-<div class="input-group" style="margin-bottom:5px;">
-	<input class="form-control roundedLeft" placeholder="{{Rechercher une autorisation}}" id="in_searchObject" />
-	<div class="input-group-btn">
-		<a class="btn" id="bt_resetObjectSearch" style="width:30px"><i class="fas fa-times"></i>
-		</a><a class="btn" id="bt_openAll"><i class="fas fa-folder-open"></i>
-		</a><a class="btn roundedRight" id="bt_closeAll"><i class="fas fa-folder"></i></a>
+	<div class="input-group" style="margin:5px 0px;">
+		<input class="form-control roundedLeft" placeholder="{{Rechercher une autorisation}}" id="in_searchObject" />
+		<div class="input-group-btn">
+			<a class="btn" id="bt_resetObjectSearch" style="width:30px"><i class="fas fa-times"></i>
+			</a><a class="btn" id="bt_openAll"><i class="fas fa-folder-open"></i>
+			</a><a class="btn roundedRight" id="bt_closeAll"><i class="fas fa-folder"></i></a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class='form-group col-sm-12 description infoAppProfil' style='display:none;'>
+			Les accès que vous définissez ici permettent d'afficher ou masquer les menus/options dans le menu de l'application de chaque équipement.<br />
+			En aucun cas cela ne réalise l'option/action elle même au moment où vous cochez la case !<br />
+			Vous pouvez donc définir plusieurs profils applicatifs (Parent, Enfant, Amis, Restreint, Locataire, ...) que vous lierez à vos équipements de façon à autoriser/restreindre certains accès.
+		</div>
 	</div>
 </div>
 
@@ -68,10 +79,6 @@ foreach ($allProfiles as $item) {
 
 $appProfilConfig = JeedomConnectUtils::getAppProfilConfig();
 echo '<span class="mini">Sélectionner : <a href="#" id="btn_selectAll">Tous</a> / <a href="#" id="btn_deselectAll">Aucun</a></span><br/><br/>';
-echo
-"<div class='description infoAppProfil' style='display:none;'>Les accès que vous définissez ici permettent d'afficher ou masquer les menus/options dans le menu de l'application de chaque équipement.<br/> 
-En aucun cas cela ne réalise l'option/action elle même au moment où vous cochez la case !<br/>
-Vous pouvez donc définir plusieurs profils applicatifs (Parent, Enfant, Amis, Restreint, Locataire, ...) que vous lierez à vos équipements de façon à autoriser/restreindre certains accès.<br/><br/></div>";
 // echo "Par exemple si vous cochez 'Recharger les données' :<br/>
 // l'utilisateur aura la possibilité d'utiliser cette option dans le menu de son app ; 
 // mais vous ne réalisez pas l'opération vous même à cet instant<br/><br/>

@@ -45,6 +45,21 @@ async function getJcProfile(id) {
     $('#accordionProfil').setValues(dataProfile.result.profile, '.profilAttr');
     recalculateSelected();
 
+    usage = await getAppProfilCount();
+    let nb = usage.nb;
+    if (nb > 0) {
+        $('#infoProfilUsageNb').text(nb);
+        $('#infoProfilUsageNbPlurial').text(getPlurial(nb));
+        $('#infoProfilUsageName').show();
+        $('#infoProfilUsageName').attr('title', usage.name.join(', '));
+    }
+    else {
+        $('#infoProfilUsageNb').text('0');
+        $('#infoProfilUsageNbPlurial').text('');
+        $('#infoProfilUsageName').hide();
+    }
+
+
 }
 
 function recalculateSelected() {
@@ -133,11 +148,11 @@ $('#bt_removeJcProfil').off('click').on('click', function () {
 
 async function removeJcProfile() {
 
-    usage = await getAppProfilCount();
+    nb = $('#infoProfilUsageNb').text();
 
-    if (usage > 0) {
+    if (nb > 0) {
         bootbox.alert(
-            "Suppression impossible : ce profil est actuellement utilisé par " + usage + " équipement" + getPlurial(usage) + "."
+            "Suppression impossible : ce profil est actuellement utilisé par " + nb + " équipement" + getPlurial(nb) + "."
         );
         return;
     }
