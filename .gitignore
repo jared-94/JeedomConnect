@@ -5,9 +5,7 @@ data/backups/
 data/img/user_files/
 test/
 
-3rdparty/composer.phar
-3rdparty/composer.json
-3rdparty/composer.lock
+resources/*/*/__pycache__
 
 .bash*
 .vscode/

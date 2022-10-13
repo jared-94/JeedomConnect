@@ -396,6 +396,10 @@ function refreshCmdListOption(optionsJson) {
     if (['message', 'slider', 'color'].indexOf(item.subtype) > -1 && item.options != null) {
       Object.entries(item.options).forEach(entry => {
         const [key, value] = entry;
+        if ($.inArray(key, ['displayTitle', 'keepLastMsg']) != -1) {
+          $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').prop('checked', value);
+          return true;
+        }
         if (value != '') {
           getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: value, id: item.id, index: item.index }, function (result, _params) {
             $('.jcCmdListOptions[data-id="' + key + '-' + _params.id + '"][data-index="' + _params.index + '"]').val(result);
@@ -709,18 +713,28 @@ $('.eqLogicAction[data-action=showMaps]').off('click').on('click', function () {
 })
 
 $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function () {
-  // $('.pluginInfo').toggle("slide", { direction: "right" }, 1000);
+  showCommunity($('.txtInfoPlugin').html())
+
+});
+
+async function showCommunity(txtInfoPlugin) {
+
+  var data = {
+    action: 'getInstallDetails'
+  }
+  var infoPlugin = await asyncAjaxGenricFunction(data);
+
   getSimpleModal({
     title: "Forum",
     width: 0.5 * $(window).width(),
     fields: [{
       type: "string",
-      value: $('.txtInfoPlugin').html()
+      value: txtInfoPlugin
     },
     {
       type: "string",
       id: "infoPluginModal",
-      value: $('.infoPlugin').html()
+      value: infoPlugin.result
     }],
     buttons: {
       "Fermer": function () {
@@ -734,7 +748,7 @@ $('.eqLogicAction[data-action=showCommunity]').off('click').on('click', function
   }, function (result) { });
 
 
-});
+}
 
 $('.eqLogicAction[data-action=showSummary]').off('click').on('click', function () {
   $('body').append('<div id="widgetSummaryModal"></div>');
@@ -850,9 +864,6 @@ $('#eraseFilterChoice').off('click').on('click', function () {
   loadPage(url)
 })
 
-if ($('#in_searchWidget').val() != '') {
-  $('#in_searchWidget').keyup();
-}
 
 $('#bt_resetSearchWidget').on('click', function () {
   $('#in_searchWidget').val('').keyup()
@@ -1245,8 +1256,46 @@ $(document).ready(
     if ($(".displayJCWarning").length != 0 && (typeof JCwarningAlreadyDisplayed === 'undefined')) {
       displayJCWarning();
     }
+
+    if ($('#in_searchWidget').val() != '') {
+      $('#in_searchWidget').keyup();
+    }
   }
 );
 
 
 updateWidgetCount();
+
+
+async function asyncAjaxGenricFunction(data) {
+  const result = await $.post({
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+    data: data,
+    cache: false,
+    dataType: 'json',
+    async: false,
+  });
+
+  if (result.state != 'ok') {
+    $('#div_alert').showAlert({
+      message: result.result,
+      level: 'danger'
+    });
+  }
+
+  return result;
+}
+
+
+// countdown function
+function countDown(time, update, complete) {
+  var start = new Date().getTime();
+  window.interval = setInterval(function () {
+    var now = time - (new Date().getTime() - start);
+    if (now <= 0) {
+      clearInterval(window.interval);
+      complete();
+    }
+    else update(Math.floor(now / 1000));
+  }, 100); // the smaller this number, the more accurate the timer will be
+}

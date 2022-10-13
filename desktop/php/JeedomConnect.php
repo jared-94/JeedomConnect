@@ -128,12 +128,7 @@ foreach ($widgetTypeArray as $key => $value) {
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
 
-$infoPlugin = JeedomConnectUtils::getInstallDetails();
-
-$displayWarningConf = config::byKey('displayWarning', 'JeedomConnect');
-$warningAlreadyDisplayedToday = strpos($displayWarningConf, strval(date('Y-m-d'))) !== false;
-$countAlreadyPass = count(explode(';', $displayWarningConf));
-$displayWarning = !$warningAlreadyDisplayedToday && ($countAlreadyPass < 3);
+$displayWarning = config::byKey('displayWarning', 'JeedomConnect', 'false') == 'false';
 
 $hasDNSConnexion = JeedomConnectUtils::hasDNSConnexion();
 $pollingDefault = $hasDNSConnexion ? 'checked' : '';
@@ -237,7 +232,8 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 									de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de la page principale de JeedomConnect (JC pour les intimes) !
 									<br /><br />
 									Ces informations nous permettent de savoir quelle version vous utilisez afin de mieux répondre à votre demande.
-
+									<br /><br />
+									<span class="description timerSpan">Affichage des boutons dans : <span class="timer"></span> sec</span>
 								</span>
 							<?php } ?>
 							<span class="txtInfoPlugin">
@@ -245,11 +241,6 @@ $wsDisable = $hasDNSConnexion ? 'disabled' : '';
 								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
 								<br /><br />Appuyez sur le bouton 'copier' en bas de la fenêtre pour récupérer l'ensemble des informations affichées, et partagez/collez-les à chaque nouveau post sur le forum !
 								<br /><br />
-							</span>
-							<span class="infoPlugin">
-								<span id="infoPlugin">
-									<?= $infoPlugin; ?>
-								</span>
 							</span>
 						</div>
 					</div>

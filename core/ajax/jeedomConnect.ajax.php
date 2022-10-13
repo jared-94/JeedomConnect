@@ -572,17 +572,21 @@ try {
 		/** @var JeedomConnect $eqLogic */
 		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			$eqIds = $eqLogic->getWidgetId();
-			JCLog::debug('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
+			JCLog::trace('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
 			if (in_array($myId, $eqIds)) {
-				JCLog::debug($myId . ' exist in [' . $eqLogic->getName() . ']');
+				JCLog::trace($myId . ' exist in [' . $eqLogic->getName() . ']');
 				array_push($arrayName, $eqLogic->getName());
 			} else {
-				JCLog::debug($myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
+				JCLog::trace($myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
 			}
 		}
 
-		JCLog::debug('ajax -- all name final -- ' . json_encode($arrayName));
+		JCLog::trace('ajax -- all name final -- ' . json_encode($arrayName));
 		ajax::success(array('names' => $arrayName));
+	}
+
+	if (init('action') == 'getInstallDetails') {
+		ajax::success(JeedomConnectUtils::getInstallDetails());
 	}
 
 	if (init('action') == 'humanReadableToCmd') {
@@ -805,9 +809,7 @@ try {
 	}
 
 	if (init('action') == 'incrementWarning') {
-		$displayWarningConfig = config::byKey('displayWarning', 'JeedomConnect');
-		$warningData = ($displayWarningConfig == '' ? '' : $displayWarningConfig . ";") . date('Y-m-d');
-		config::save('displayWarning', $warningData, 'JeedomConnect');
+		config::save('displayWarning', date('Y-m-d'), 'JeedomConnect');
 
 		ajax::success();
 	}
@@ -837,16 +839,6 @@ try {
 		$eqLogic->save();
 		// JCLog::debug('eqId received =>' . json_encode(init('eqId')));
 		ajax::success();
-	}
-
-	if (init('action') == 'getDefaultPosition') {
-
-		list($lng, $lat) = JeedomConnectUtils::getJcCoordinates();
-		list($lngDefault, $latDefault) = JeedomConnectUtils::getDefaultCoordinates();
-
-		$defaultZoom = (($lat . $lng) == ($latDefault . $lngDefault)) ? 'Autour Paris' : 'Autour de mon Jeedom';
-
-		ajax::success(array('lng' => $lng, 'lat' => $lat, 'defaultText' => $defaultZoom));
 	}
 
 	if (init('action') == 'createOrUpdateCmdGeo') {
@@ -964,54 +956,6 @@ try {
 		}
 
 		ajax::success(array("equipment" => $result, "config" => $config));
-	}
-
-	if (init('action') == 'getAllPositions') {
-		$result = array();
-		$id = init('id', 'all');
-
-		if ($id == 'all') {
-			$eqLogics = JeedomConnect::getAllJCequipment();
-		} else {
-			/** @var cmd $cmdTmp */
-			$cmdTmp = cmd::byId($id);
-			if (!is_object($cmdTmp)) return;
-			$eqTmp = eqLogic::byId($cmdTmp->getEqLogic_id());
-			$eqLogics = array($eqTmp);
-		}
-
-		/** @var JeedomConnect $eqLogic */
-		foreach ($eqLogics as $eqLogic) {
-			if ($eqLogic->getConfiguration('displayPosition', 0) == 0) continue;
-
-			/** @var cmd $cmd */
-			$cmd = $eqLogic->getCmd(null, 'position');
-			if (!is_object($cmd)) continue;
-			// JCLog::debug("position cmd/id => " . $cmd->getId());
-
-			/** @var string $position */
-			$position = $cmd->execCmd();
-			if ($position == "") continue;
-
-			$data = explode(',', $position);
-			if (count($data) < 2) continue;
-			$cmdDistance = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),  'distance');
-			$distance = is_object($cmdDistance) ? number_format(floatval($cmdDistance->execCmd()), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
-			$img = $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png');
-			$infoImg = getimagesize('/var/www/html/' . $img);
-			$result[] = array(
-				'id' => $cmd->getId(),
-				'name' => $eqLogic->getName(),
-				'eqId' => $eqLogic->getId(),
-				'lat' => round($data[0], 6),
-				'lng' => round($data[1], 6),
-				'lastSeen' => $cmd->getCollectDate(),
-				'icon' => $img,
-				'infoImg' => $infoImg,
-				'distance' => $distance
-			);
-		}
-		ajax::success($result);
 	}
 
 	if (init('action') == 'restartDaemon') {

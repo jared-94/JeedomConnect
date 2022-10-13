@@ -396,9 +396,19 @@ function getSimpleModal(_options, _callback) {
 	if (_options.hideActionButton) {
 
 		$(".ui-dialog-buttonset").hide();
-		setTimeout(function () {
-			$(".ui-dialog-buttonset").show();// or fade, css display however you'd like.
-		}, 10000);
+
+		var timeleft = 10 * 1000;
+		countDown(
+			timeleft, // milliseconds
+			function (restant) { // called every step to update the visible countdown
+				$('.timer').html(restant);
+			},
+			function () { // what to do after
+				$('.timerSpan').hide();
+				$(".ui-dialog-buttonset").show();
+			}
+		);
+
 	}
 
 	$('#simpleModal').keydown(function (e) {

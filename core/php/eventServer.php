@@ -50,17 +50,15 @@ try {
   JCLog::debug("eventServer init client #" . $id);
 
 
-  $config = $eqLogic->getConfig(true);
+  $config = $eqLogic->getGeneratedConfigFile();
   $lastReadTimestamp = time();
   $lastHistoricReadTimestamp = time();
   $step = 0;
 
   sse(
-    json_encode(array('infos' => array(
-      'cmdInfo' => apiHelper::getCmdInfoData($config, false),
-      'scInfo' => apiHelper::getScenarioData($config, false, false),
-      'objInfo' => apiHelper::getObjectData($config, false)
-    )))
+    json_encode(
+      apiHelper::getAllInformations($eqLogic)
+    )
   );
 
   $eqLogic->setConfiguration('sessionId', $id);
@@ -81,70 +79,62 @@ try {
       JCLog::debug("eventServer connexion closed for client #" . $id);
       if ($logic->getConfiguration('sessionId', 0) == $id) {
         $logic->setConfiguration('connected', 0);
-        $eqLogic->setConfiguration('appState', 'background');
+        $logic->setConfiguration('appState', 'background');
         $logic->save();
       }
       die();
     }
 
-    $actions = JeedomConnectActions::getAllActions($apiKey);
-    if (count($actions) > 0) {
-      $result = array(
-        'type' => 'ACTIONS',
-        'payload' => array()
-      );
-      foreach ($actions as $action) {
-        array_push($result['payload'], $action['value']['payload']);
-      }
-      JCLog::debug("send action to #{$id}  " . json_encode(array($result)));
-      sse(json_encode(array($result)));
-      JeedomConnectActions::removeActions($actions);
-      sleep(1);
-    }
 
+    $params = array(
+      'configVersion' => $config['payload']['configVersion'],
+      'lastReadTimestamp' => $lastReadTimestamp,
+      'lastHistoricReadTimestamp' => $lastHistoricReadTimestamp,
+    );
+
+    $result = apiHelper::dispatch('SSE', 'GET_EVENTS', $logic, $params, $apiKey);
     $sendInfo = false;
-
-    if ($logic->getConfiguration('appState') == 'active') {
-      $newConfig = apiHelper::lookForNewConfig(eqLogic::byLogicalId($apiKey, 'JeedomConnect'), $config['payload']['configVersion']);
-      if ($newConfig != false && $newConfig['payload']['configVersion'] != $config['payload']['configVersion']) {
-        JCLog::debug("eventServer send new config : " .  $newConfig['payload']['configVersion'] . ", old=" .  $config['payload']['configVersion']);
-        $config = $newConfig;
-        sse(
-          json_encode(array('infos' => array(
-            'cmdInfo' => apiHelper::getCmdInfoData($config, false),
-            'scInfo' => apiHelper::getScenarioData($config, false, false),
-            'objInfo' => apiHelper::getObjectData($config, false)
-          )))
-        );
-        sse(json_encode(array('type' => 'JEEDOM_CONFIG', 'payload' => $newConfig)));
-        //sleep(1);
-      }
-
-      $data = apiHelper::getEventsFull($eqLogic, $lastReadTimestamp, $lastHistoricReadTimestamp);
-
-      foreach ($data as $res) {
-        if (key_exists('payload', $res)) {
-          if (is_array($res['payload']) && count($res['payload']) == 0) {
-            $sendInfo = false;
+    $log = true;
+    if ($result != null) {
+      // JCLog::debug("receive from GET_EVENTS => " . json_encode($result));
+      if ($result['type'] ==  "SET_EVENTS") {
+        foreach ($result['payload'] as $item) {
+          if ($item['type'] == 'DATETIME') {
+            $lastReadTimestamp = floatval($item['payload']);
+          } elseif ($item['type'] == 'HIST_DATETIME') {
+            $lastHistoricReadTimestamp = floatval($item['payload']);
           } else {
-            $sendInfo = true;
+            // check if there is at least one other item to send Cmd, Sc, Obj
+            $sendInfo = ($sendInfo || (key_exists('payload', $item) && is_array($item['payload']) && count($item['payload']) > 0));
+            // JCLog::debug("sendInfo : " . ($sendInfo ? 'true' : 'false'));
+            if ($sendInfo) {
+              $log = false;
+              break;
+            }
           }
-          break;
         }
+      } else {
+        if ($result['type'] ==  "CONFIG_AND_INFOS") {
+          // JCLog::debug("eventServer - saving new config ! => " . json_encode($result['payload']['config']));
+          $config = $result['payload']['config'];
+        }
+        $sendInfo = true;
       }
 
       if ($sendInfo) {
-        //JCLog::debug("eventServer send ".json_encode($data));
-        sse(json_encode($data));
-        $step = 0;
-        $lastReadTimestamp = $data[0]['payload'];
-        $lastHistoricReadTimestamp = $data[1]['payload'];
+        if ($log) {
+          JCLog::debug("eventServer sending => " . json_encode($result));
+        } else {
+          JCLog::trace("eventServer sending => " . json_encode($result));
+        }
+        sse(json_encode($result));
       }
     }
+
     if (!$sendInfo) {
       $step += 1;
       if ($step == 5) {
-        //JCLog::debug("eventServer heartbeat to #" . $id);
+        // JCLog::debug("eventServer heartbeat to #" . $id);
         sse(json_encode(array('event' => 'heartbeat')));
         $step = 0;
       }

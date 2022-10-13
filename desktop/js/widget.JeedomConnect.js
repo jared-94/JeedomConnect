@@ -673,6 +673,7 @@ function getCmdOptions(item) {
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Titre</span>
             <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' type="string" data-id="title-${item.id}" data-index="${item.index}" value="${optionTitle}" />
+            <input style="margin-left:20px;" class="jcCmdListOptions" type="checkbox" data-id="displayTitle-${item.id}" data-index="${item.index}" title="Afficher le champ titre" checked/>
         </div>
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Message</span>
@@ -680,7 +681,7 @@ function getCmdOptions(item) {
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
             </span>
-
+            <input style="margin-left:20px;" class="jcCmdListOptions" type="checkbox" data-id="keepLastMsg-${item.id}" data-index="${item.index}" title="Garder le dernier message"/>
         <script>
           $('.listEquipementInfo[data-uid=${customUid}]').on('click', function() {
               jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function(result) {
@@ -811,6 +812,8 @@ function saveCmdList() {
         if (item.subtype == 'message') {
             item['options']['title'] = $('.jcCmdListOptions[data-id="title-' + item.id + '"][data-index="' + item.index + '"]').val();
             item['options']['message'] = $('.jcCmdListOptions[data-id="message-' + item.id + '"][data-index="' + item.index + '"]').val();
+            item['options']['displayTitle'] = $('.jcCmdListOptions[data-id="displayTitle-' + item.id + '"][data-index="' + item.index + '"]').is(':checked');
+            item['options']['keepLastMsg'] = $('.jcCmdListOptions[data-id="keepLastMsg-' + item.id + '"][data-index="' + item.index + '"]').is(':checked');
         }
         else if (item.subtype == 'select') {
             item['options'][item.subtype] = $('.jcCmdListOptions[data-id="select-' + item.id + '"][data-index="' + item.index + '"] option:selected').val();
@@ -1194,7 +1197,7 @@ $(".widgetMenu .saveWidget").click(function () {
                         item['name'] = $('.jcCmdListOptions[data-id="custom-name-' + item.id + '"][data-index="' + item.index + '"]').val() || "";
 
                         if (item.subtype != undefined && item.subtype != 'other') {
-                            var optionsForSubtype = { 'message': ['title', 'message'], 'slider': ['slider'], 'color': ['color'] };
+                            var optionsForSubtype = { 'message': ['title', 'message', 'displayTitle', 'keepLastMsg'], 'slider': ['slider'], 'color': ['color'] };
 
                             item['options'] = {};
 
@@ -1205,14 +1208,20 @@ $(".widgetMenu .saveWidget").click(function () {
 
                                 var currentArray = optionsForSubtype[item.subtype];
                                 currentArray.forEach(key => {
-                                    var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
-                                    if (tmpData != '') {
-                                        getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
-                                            item['options'][_params.subtype] = result;
-                                        });
+                                    if ($.inArray(key, ['displayTitle', 'keepLastMsg']) != -1) {
+                                        item['options'][key] = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').is(':checked');
                                     }
                                     else {
-                                        item['options'][key] = '';
+                                        var tmpData = $('.jcCmdListOptions[data-id="' + key + '-' + item.id + '"][data-index="' + item.index + '"]').val();
+
+                                        if (tmpData != '') {
+                                            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: tmpData, subtype: key }, function (result, _params) {
+                                                item['options'][_params.subtype] = result;
+                                            });
+                                        }
+                                        else {
+                                            item['options'][key] = '';
+                                        }
                                     }
                                 });
 
