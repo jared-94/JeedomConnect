@@ -143,4 +143,5 @@ if (!$forGeo) {
 
 
 <!-- Fichiers Javascript -->
+<?php include_file('desktop', 'generic.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'position.JeedomConnect', 'js', 'JeedomConnect'); ?>
