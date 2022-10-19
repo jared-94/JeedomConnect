@@ -534,10 +534,10 @@ async function refreshJcPositionData(cmdId, position) {
 
 function addJcMapListener(cmdId) {
     let script = `<script>
-        jeedom.cmd.update['${cmdId}'] = function (_options) {
-             refreshJcPositionData(${cmdId}, _options.value);
-            }
-            jeedom.cmd.update['${cmdId}']({ value: "#state#" })
+        jeedom.cmd.addUpdateFunction('${cmdId}',function(_options) {
+             refreshJcPositionData(${cmdId}, _options.display_value);
+            });    
+        jeedom.cmd.refreshValue([{cmd_id :'${cmdId}',display_value: '#state#', valueDate: '#valueDate#', collectDate: '#collectDate#'}])
     </script>`
 
     $('#jcMapScript').append(script);

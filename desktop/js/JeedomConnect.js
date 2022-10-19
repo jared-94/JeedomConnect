@@ -1194,16 +1194,21 @@ function addCmdToTable(_cmd) {
   tr += '<span class="type" style="display:none;" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType() + '</span>';
   tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span>';
   tr += '</td>';
-  tr += '<td style="min-width:120px;width:140px;">';
-  tr += '<div><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isVisible" checked/>{{Afficher}}</label> ';
-  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isHistorized" checked/>{{Historiser}}</label> ';
-  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary"/>{{Inverser}}</label></div>';
-  tr += '</td>';
-  tr += '<td style="min-width:180px;">';
-  tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="minValue" placeholder="{{Min.}}" title="{{Min.}}" style="width:30%;display:inline-block;"/> ';
-  tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="maxValue" placeholder="{{Max.}}" title="{{Max.}}" style="width:30%;display:inline-block;"/> ';
-  tr += '<input class="cmdAttr form-control input-sm" data-l1key="unite" placeholder="{{Unité}}" title="{{Unité}}" style="width:30%;display:inline-block;"/>';
-  tr += '</td>';
+  if (init(_cmd.type) == 'info' && typeof jeeFrontEnd !== 'undefined' && jeeFrontEnd.jeedomVersion !== 'undefined') {
+    tr += '<td >';
+    tr += '<span class="cmdAttr" data-l1key="htmlstate"></span> ';
+    tr += '</td>';
+  }
+  tr += '<td>'
+  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="isVisible" checked/>{{Afficher}}</label> '
+  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" checked/>{{Historiser}}</label> '
+  tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary"/>{{Inverser}}</label> '
+  tr += '<div style="margin-top:7px;">'
+  tr += '<input class="tooltips cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="minValue" placeholder="{{Min}}" title="{{Min}}" style="width:30%;max-width:80px;display:inline-block;margin-right:2px;">'
+  tr += '<input class="tooltips cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="maxValue" placeholder="{{Max}}" title="{{Max}}" style="width:30%;max-width:80px;display:inline-block;margin-right:2px;">'
+  tr += '<input class="tooltips cmdAttr form-control input-sm" data-l1key="unite" placeholder="Unité" title="{{Unité}}" style="width:30%;max-width:80px;display:inline-block;margin-right:2px;">'
+  tr += '</div>'
+  tr += '</td>'
   tr += '<td >';
   tr += '<input style="min-width:30px;width:50px;" class="cmdAttr" data-l1key="order" placeholder="{{Ordre affichage}}"/> ';
   tr += '</td>';
@@ -1284,18 +1289,4 @@ async function asyncAjaxGenricFunction(data) {
   }
 
   return result;
-}
-
-
-// countdown function
-function countDown(time, update, complete) {
-  var start = new Date().getTime();
-  window.interval = setInterval(function () {
-    var now = time - (new Date().getTime() - start);
-    if (now <= 0) {
-      clearInterval(window.interval);
-      complete();
-    }
-    else update(Math.floor(now / 1000));
-  }, 100); // the smaller this number, the more accurate the timer will be
 }
