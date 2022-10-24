@@ -139,6 +139,6 @@ async function saveJcNotifAll() {
 
 $(document).ready(
 	function () {
-		$('#notifAllSelect option[value=notifAll]').prop("selected", true).trigger('change');;
+		$('#notifAllSelect option:first').prop("selected", true).trigger('change');;
 	}
 );
