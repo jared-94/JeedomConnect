@@ -28,9 +28,8 @@ sendVarToJS('userImgPath', $customPath);
 
 include_file('desktop', 'notifs.JeedomConnect', 'js', 'JeedomConnect');
 include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
+include_file('desktop', 'md/css/materialdesignicons', 'css', 'JeedomConnect');
 ?>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.5.55/css/materialdesignicons.min.css">
 
 <div class="container-modal">
 
