@@ -38,7 +38,7 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
       <th data-sorter="select-text" style="width:150px;">{{Pièce}}</th>
       <th data-sorter="false" data-filter="false">{{Nom}}</th>
       <th data-sorter="false" data-filter="false">{{Sous-titre}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Visible}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Actif}}</th>
       <th data-sorter="select-text" data-filter="false" style="width:140px;">{{Affichage forcé}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Bloquer détails}}</th>
       <th>{{Nb Eq}}</th>
