@@ -342,19 +342,19 @@ function refreshAddWidgets() {
     <input style="width:340px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
         
         <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
-        <i class='fas fa-list-alt'></i></a>
-        
-        <div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
-        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-        <i class="fas fa-plus-square"></i> </a>
-        <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
-    if (widget.variables) {
-        widget.variables.forEach(v => {
-            option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-        });
-    }
-    option += `</ul></div >
-    </div></div></div></li>`;
+        <i class='fas fa-list-alt'></i></a>`;
+
+    // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
+    //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+    //     <i class="fas fa-plus-square"></i> </a>
+    //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
+    // if (widget.variables) {
+    //     widget.variables.forEach(v => {
+    //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+    //     });
+    // }
+    // option += `</ul></div >
+    option += `</div></div></div></li>`;
     items.push(option);
 
     //Room
