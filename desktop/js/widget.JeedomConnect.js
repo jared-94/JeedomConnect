@@ -714,12 +714,12 @@ function getCmdOptions(item) {
 
         curOption = `
         <div class="input-group input-group-sm" style="width: 100%">
-            <span class="input-group-addon roundedLeft" style="width: 100px">Titre</span>
+            <span class="input-group-addon roundedLeft jcCmdListOptions titlePlaceholder" data-id="title-${item.id}" data-index="${item.index}" style="width: 100px">Titre</span>
             <input style="width:240px;" class='input-sm form-control roundedRight title jcCmdListOptions' type="string" data-id="title-${item.id}" data-index="${item.index}" value="${optionTitle}" />
             <input style="margin-left:20px;" class="jcCmdListOptions" type="checkbox" data-id="displayTitle-${item.id}" data-index="${item.index}" title="Afficher le champ titre" checked/>
         </div>
         <div class="input-group input-group-sm" style="width: 100%">
-            <span class="input-group-addon roundedLeft" style="width: 100px">Message</span>
+            <span class="input-group-addon roundedLeft jcCmdListOptions messagePlaceholder" style="width: 100px" data-id="message-${item.id}" data-index="${item.index}">Message</span>
             <textarea class="message form-control ta_autosize jcCmdListOptions" data-l1key="options" data-l2key="message" rows="1" style="resize:vertical;"  data-id="message-${item.id}" data-index="${item.index}" data-uid="${customUid}">${optionMessage}</textarea>
             <span class="input-group-addon hasBtn roundedRight">
               <button class="btn btn-default roundedRight listEquipementInfo" type="button" tooltip="Sélectionner la commande" data-cmd_id="${item.id}" data-index="${item.index}" data-uid="${customUid}" ><i class="fas fa-list-alt"></i></button>
@@ -734,6 +734,35 @@ function getCmdOptions(item) {
 
         </script>
         </div>`;
+
+        // get the real title and message placeholder, if defined on the cmd
+        getCmdDetail({ id: item.id }, function (_result, _param) {
+            item.display = _result.display;
+
+            var displayTitle_placeholder = item.display.title_placeholder || '';
+            var displayMessage_placeholder = item.display.message_placeholder || '';
+
+            var displayTitle_disable = item.display.title_disable || '0';
+            var displayMessage_disable = item.display.message_disable || '0';
+
+            var eltTitle = $('.jcCmdListOptions.titlePlaceholder[data-id=title-' + item.id + '][data-index=' + item.index + ']');
+            var eltMsg = $('.jcCmdListOptions.messagePlaceholder[data-id=message-' + item.id + '][data-index=' + item.index + ']');
+
+            if (displayTitle_disable == '0') {
+                if (displayTitle_placeholder != '') eltTitle.text(displayTitle_placeholder);
+            } else {
+                eltTitle.parent().hide();
+
+            }
+
+            if (displayMessage_disable == '0') {
+                if (displayMessage_disable != '') eltMsg.text(displayMessage_placeholder);
+            }
+            else {
+                eltMsg.parent().hide();
+            }
+
+        });
     }
 
     if (item.subtype == 'slider') {
