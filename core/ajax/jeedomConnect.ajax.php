@@ -883,7 +883,7 @@ try {
 	if (init('action') == 'getCmd') {
 		$id = init('id');
 		if ($id == '') throw new Exception("id est obligatoire");
-
+		/** @var cmd $cmd */
 		$cmd = (preg_match("/^\d+$/", $id)) ? cmd::byId($id) : cmd::byString($id);
 		if (!is_object($cmd)) {
 			throw new Exception(__('Commande inconnue : ', __FILE__) . $id);
@@ -898,7 +898,8 @@ try {
 			'maxValue' => $cmd->getConfiguration('maxValue'),
 			'unit' => $cmd->getUnite(),
 			'value' => $cmd->getValue(),
-			'icon' => $cmd->getDisplay('icon')
+			'icon' => $cmd->getDisplay('icon'),
+			'display' => $cmd->getDisplay()
 		));
 	}
 
