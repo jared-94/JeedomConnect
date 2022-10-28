@@ -286,7 +286,7 @@
         "ios": []
     },
     "dictionary": {
-        "themeColor": "Couleur thème",
+        "themeColor": "Schéma thème",
         "darkMode": "Activer mode sombre",
         "tracking": "Activer le tracking",
         "rtspServer": "Activer le serveur de streaming",
