@@ -171,7 +171,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
 						<i class="mdi mdi-devices"></i>
 						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
+						<span style="color:var(--txt-color)">{{Synthèse des équipements JC}}</span>
 					</div>
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
 						<i class="fas fa-comments"></i>
