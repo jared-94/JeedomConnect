@@ -201,7 +201,7 @@ $("#room-input").html(roomListOptions);
 
 
 
-function refreshCmdData(name, id, value) {
+function refreshCmdData(name, id, value, concat = false) {
   if (name == '' || id == '') return;
   getCmd({
     id: id,
@@ -227,9 +227,14 @@ function refreshCmdData(name, id, value) {
         return;
       }
 
+      let prev = '';
+      if (concat) {
+        let prev = $("#" + name + "-input").val();
+        prev = (prev != '') ? prev + ' ' : prev;
+      }
+      $("#" + name + "-input").val(prev + '#' + data.result.humanName + '#');
 
       $("#" + name + "-input").attr('cmdId', data.result.id);
-      $("#" + name + "-input").val('#' + data.result.humanName + '#');
       $("#" + name + "-input").attr('title', '#' + data.result.humanName + '#');
       $("#" + name + "-input").attr('cmdType', data.result.type);
       $("#" + name + "-input").attr('cmdSubType', data.result.subType);
@@ -420,7 +425,7 @@ function refreshCmdListOption(optionsJson) {
 
 
 function infoSelected(value, el) {
-  let inputId = $(el).parent().attr("input")
+  let inputId = $(el).parent().attr("input");
   //$("#"+inputId).val( $("#"+inputId).val() + value);
   let input = $("#" + inputId);
   input.val([input.val().slice(0, input[0].selectionStart), value, input.val().slice(input[0].selectionStart)].join(''));
@@ -722,7 +727,7 @@ async function showCommunity(txtInfoPlugin) {
   var data = {
     action: 'getInstallDetails'
   }
-  var infoPlugin = await asyncAjaxGenricFunction(data);
+  var infoPlugin = await asyncAjaxGenericFunction(data);
 
   getSimpleModal({
     title: "Forum",
@@ -785,7 +790,7 @@ $('.eqLogicAction[data-action=showEquipmentSummary]').off('click').on('click', f
 $('.eqLogicAction[data-action=showNotifAll]').off('click').on('click', function () {
   $('body').append('<div id="notifAllModal"></div>');
   $('#notifAllModal').dialog({
-    title: "{{Configuration de la notification de \"tous\" les équipements}}",
+    title: "{{Configurer les notifications multiples}}",
     autoOpen: false,
     modal: true,
     closeText: '',
@@ -1161,7 +1166,7 @@ function openAssistantNotificationModal(id, event) {
  * *************
  */
 
-$("#commandtab").sortable({
+$(".commandtab").sortable({
   axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true
 });
 
@@ -1221,8 +1226,19 @@ function addCmdToTable(_cmd) {
   tr += '</td>';
   tr += '</tr>';
 
-  $('#table_cmd tbody.cmd_' + _cmd.type).append(tr);
-  var tr = $('#table_cmd tbody.cmd_' + _cmd.type + ' tr').last();
+
+
+  cpltOnglet = '';
+  if (($.inArray(_cmd.logicalId, ["distance", "position", "activity"]) != -1) || ((_cmd.logicalId).indexOf('geofence_') >= 0)) {
+    cpltOnglet = 'Position';
+  }
+  else if (($.inArray(_cmd.logicalId, ["defaultNotif"]) != -1) || ((_cmd.logicalId).indexOf('notif') >= 0)) {
+    cpltOnglet = 'Notification';
+  }
+
+
+  $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet).append(tr);
+  var tr = $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet + ' tr').last();
 
   jeedom.eqLogic.builSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),
@@ -1243,10 +1259,12 @@ function addCmdToTable(_cmd) {
 
 $(".eqlogic-qrcode").hover(function () {
   $('.showqrcode').attr('src', $(this).data('qrcode') + '?' + new Date().getTime());
-  $('.showqrcode').show();
+  $('.hideWhileShowqrcode').hide();
+  $('.showqrcode-content').show();
 }, function () {
+  $('.showqrcode-content').hide();
   $('.showqrcode').attr('src', '');
-  $('.showqrcode').hide();
+  $('.hideWhileShowqrcode').show();
 });
 
 
@@ -1270,23 +1288,3 @@ $(document).ready(
 
 
 updateWidgetCount();
-
-
-async function asyncAjaxGenricFunction(data) {
-  const result = await $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: data,
-    cache: false,
-    dataType: 'json',
-    async: false,
-  });
-
-  if (result.state != 'ok') {
-    $('#div_alert').showAlert({
-      message: result.result,
-      level: 'danger'
-    });
-  }
-
-  return result;
-}

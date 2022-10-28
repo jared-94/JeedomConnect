@@ -236,8 +236,8 @@ def async_worker():
 
                     result["params"] = params
 
-                    jeedomCom.send_change_immediate(result)
-                    # jeedomCom.send_change_immediate(result, True)
+                    # jeedomCom.send_change_immediate(result)
+                    jeedomCom.send_change_immediate(result, True)
                 else:
                     logging.warning(f"no api key found for client ${str(client)}")
             time.sleep(1)
@@ -286,17 +286,21 @@ signal.signal(signal.SIGINT, handler)
 signal.signal(signal.SIGTERM, handler)
 
 try:
+    logging.debug("** Starting Jeedom daemon **")
     jeedom_utils.write_pid(str(_pidfile))
     # Socket to connect daemon <=> jeedom
     jeedomSocket = jeedom_socket(port=_socket_port, address=_socket_host)
     jeedomCom = jeedom_com(apikey=_apikey, url=_callback)
+    logging.info("** Jeedom daemon started **")
 
     # Websocket to connect to JC app
+    logging.debug("** Starting JC Websocket daemon **")
     server = WebsocketServer(host="0.0.0.0", port=_websocket_port)
     server.set_fn_message_received(onMessageReceived)
     server.set_fn_new_client(new_client)
     server.set_fn_client_left(client_left)
     server.run_forever(True)
+    logging.info("** JC Websocket daemon started **")
 
     async_GET_EVENTS = threading.Thread(target=async_worker, daemon=True)
     async_GET_EVENTS.start()

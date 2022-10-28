@@ -3388,6 +3388,11 @@
 					"description": "Etat de la commande"
 				},
 				{
+					"id": "showGauge",
+					"name": "Afficher la jauge",
+					"category": "binary"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -4490,6 +4495,12 @@
 					"description": "Liste des Géoloc à gérer"
 				},
 				{
+					"id": "zoomFactor",
+					"name": "Facteur de zoom",
+					"category": "string",
+					"description": "Nombre positif indiquant le zoom calculé entre les points extrêmes (par défaut 1.2)"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -4964,13 +4975,13 @@
 				},
 				{
 					"id": "histMinValue",
-					"name": "Valeur min (axe vertival)",
+					"name": "Valeur min (axe vertical)",
 					"description": "Laisser vide pour le mode auto",
 					"category": "string"
 				},
 				{
 					"id": "histMaxValue",
-					"name": "Valeur max (axe vertival)",
+					"name": "Valeur max (axe vertical)",
 					"description": "Laisser vide pour le mode auto",
 					"category": "string"
 				},

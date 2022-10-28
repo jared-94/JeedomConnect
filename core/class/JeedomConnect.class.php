@@ -206,6 +206,9 @@ class JeedomConnect extends eqLogic {
 		$daemonLogConfig = config::byKey('daemonLog', __CLASS__, 'parent');
 		$daemonLog = ($daemonLogConfig == 'parent') ? log::getLogLevel(__CLASS__) : $daemonLogConfig;
 
+		$JCapiKey = jeedom::getApiKey(__CLASS__);
+		$JCapiKeySize = strlen($JCapiKey);
+
 
 		$path = realpath(dirname(__FILE__) . '/../../resources/JeedomConnectd'); // répertoire du démon à modifier
 		$cmd = 'python3 ' . $path . '/JeedomConnectd.py'; // nom du démon à modifier
@@ -213,9 +216,9 @@ class JeedomConnect extends eqLogic {
 		$cmd .= ' --socketport ' . config::byKey('socketport', __CLASS__, '58090'); // port socket - échange entre le démon en PY et l'api jeedom
 		$cmd .= ' --websocketport ' . config::byKey('port', __CLASS__, '8090'); // port d'écoute du démon pour échange avec l'application JC
 		$cmd .= ' --callback ' . network::getNetworkAccess('internal', 'proto:127.0.0.1:port:comp') . '/plugins/JeedomConnect/core/api/JeedomConnect.api.php'; // chemin de la callback url à modifier (voir ci-dessous)
-		$cmd .= ' --apikey ' . jeedom::getApiKey(__CLASS__); // l'apikey pour authentifier les échanges suivants
+		$cmd .= ' --apikey ' . $JCapiKey; // l'apikey pour authentifier les échanges suivants
 		$cmd .= ' --pid ' . jeedom::getTmpFolder(__CLASS__) . '/deamon.pid'; // et on précise le chemin vers le pid file (ne pas modifier)
-		log::add(__CLASS__, 'debug', 'Starting daemon with cmd >>' . $cmd . '<<');
+		JCLog::debug('Starting daemon with cmd >>' . str_replace($JCapiKey, str_repeat('*', $JCapiKeySize), $cmd) . '<<');
 		exec($cmd . ' >> ' . log::getPathToLog('JeedomConnect_daemon') . ' 2>&1 &'); // 'template_daemon' est le nom du log pour votre démon, vous devez nommer votre log en commençant par le pluginid pour que le fichier apparaisse dans la page de config
 
 		$i = 0;
@@ -1714,8 +1717,17 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 
-		config::save('notifAll', json_encode($result), 'JeedomConnect');
+		config::save('notifAll', json_encode(array("name" => "Notifier les appareils JC", "cmd" => $result)), 'JeedomConnect');
 		config::save('migration::notifAll', 'done', 'JeedomConnect');
+	}
+
+	public static function migrationAllNotif2() {
+		$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
+
+		if (!isset($cmdNotif['name'])) {
+			config::save('notifAll', json_encode(array("name" => "Notifier les appareils JC", "cmd" => $cmdNotif)), 'JeedomConnect');
+		}
+		config::save('migration::notifAll2', 'done', 'JeedomConnect');
 	}
 
 
@@ -1879,18 +1891,18 @@ class JeedomConnectCmd extends cmd {
 
 		// JCLog::debug( 'start for : ' . $this->getLogicalId());
 
-		$logicalId = ($this->getLogicalId() === 'notifall') ? 'notifall' : ((strpos(strtolower($this->getLogicalId()), 'notif') !== false) ? 'notif' : $this->getLogicalId());
+		$logicalId = (strpos(strtolower($this->getLogicalId()), 'notifall') !== false) ? 'notifAll' : ((strpos(strtolower($this->getLogicalId()), 'notif') !== false) ? 'notif' : $this->getLogicalId());
 
 		// JCLog::debug( 'will execute action : ' . $logicalId . ' -- with option ' . json_encode($_options));
 
 		switch ($logicalId) {
-			case 'notifall':
-				$cmdNotif = config::byKey('notifAll', 'JeedomConnect', array());
+			case 'notifAll':
+				$cmdNotif = config::byKey($this->getLogicalId(), 'JeedomConnect', array());
 				$orignalCmdId = $this->getId();
 				$timestamp = round(microtime(true) * 10000);
 				// JCLog::debug( ' all cmd notif all : ' . json_encode($cmdNotif));
 
-				foreach ($cmdNotif as $cmdId) {
+				foreach ($cmdNotif['cmd'] as $cmdId) {
 					$cmd = cmd::byId($cmdId);
 					$_options['orignalCmdId'] = $orignalCmdId;
 					$_options['notificationId'] = $timestamp;
@@ -2060,6 +2072,78 @@ class JeedomConnectCmd extends cmd {
 				$eqLogic->removeDevice();
 				break;
 
+
+			case 'display_menu':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$pageIds = explode(',', $_options['message']);
+				$setVisible = $_options['title'] == 'show' ? true : false;
+
+				$hasChange = false;
+
+				$conf = $eqLogic->getConfig();
+
+				// check "menu haut"
+				if (key_exists('payload', $conf) && key_exists('tabs', $conf['payload'])) {
+					foreach ($conf['payload']['tabs'] as $key => $menu) {
+						if (key_exists('id', $menu) && in_array($menu['id'], $pageIds)) {
+							$menu['enable'] = $setVisible;
+							$conf['payload']['tabs'][$key] = $menu;
+							$hasChange = true;
+						}
+					}
+				}
+
+				// check "menu bas"
+				if (key_exists('payload', $conf) && key_exists('sections', $conf['payload'])) {
+					foreach ($conf['payload']['sections'] as $key => $menu) {
+						if (key_exists('id', $menu) && in_array($menu['id'], $pageIds)) {
+							$menu['enable'] = $setVisible;
+							$conf['payload']['sections'][$key] = $menu;
+							$hasChange = true;
+						}
+					}
+				}
+
+				if ($hasChange) {
+					$configVersion = $conf['payload']['configVersion'] + 1;
+					$conf['payload']['configVersion'] =  $configVersion;
+					JCLog::debug("saving new conf => " . json_encode($conf));
+					$eqLogic->saveConfig($conf);
+					$eqLogic->getConfig(true, true);
+					$eqLogic->setConfiguration('configVersion', $configVersion);
+					$eqLogic->save();
+				} else {
+					JCLog::debug("nothing to change...");
+				}
+
+				break;
+
+			case 'display_widget':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$widgetIds = explode(',', $_options['message']);
+				$setVisible = $_options['title'] == 'show' ? true : false;
+
+				foreach ($widgetIds as $widgetId) {
+					JeedomConnectWidget::updateConfig($widgetId, 'enable', $setVisible);
+				}
+
+				break;
 
 			case 'update_pref_app':
 				if (empty($_options['title'])) {

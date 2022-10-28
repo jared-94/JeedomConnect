@@ -157,7 +157,17 @@ function refreshWidgetsContent() {
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}','${value.parentId}','${value.index}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
 			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
-		} else { //it's a group
+		}
+		else if (value.name === undefined) {  //if not found on widgets, and dont get a name, then it's a previous config -- remove the item
+			// console.log(" maybe an old widget because it's not a group ! ", value);
+
+			// update config : remove the unexisting config
+			configData.payload.widgets = configData.payload.widgets.filter(function (obj) {
+				return obj.id !== value.id;
+			});
+			return true;
+		}
+		else { //it's a group
 			items.push(`<li class="widgetItem widgetGroup" data-id="${value.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a  onclick="editGroupModal('${value.id}');"><i class="fa fa-list"></i> ${value.name}</a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
@@ -257,9 +267,16 @@ function getWidgetsParents() {
 	});
 	$.each(configData.payload.sections, function (key, val) {
 		var tab = configData.payload.tabs.find(t => t.id == val.parentId);
-		if (tab === undefined & configData.payload.tabs.length == 0) {
-			items.push({ id: val.id, name: val.name, index: 0 - val.index }); // move section without tab (is it possible?) on top with a virtual negative index
-		} else {
+		if (typeof tab === 'undefined') {
+			if (configData.payload.tabs.length == 0) {
+				items.push({ id: val.id, name: val.name, index: 0 - val.index }); // move section without tab (is it possible?) on top with a virtual negative index
+			}
+			else {
+				//do nothing : sections without a tab
+				console.log('item not displayed : ', val);
+			}
+		}
+		else {
 			items.push({ id: val.id, name: tab.name + " / " + val.name, index: tab.index });
 		}
 	});
@@ -299,8 +316,9 @@ function reIndexArray(array) {
 
 function addBottomTabModal() {
 	getSimpleModal({
-		title: "Ajouter un menu bas", fields: [{ type: "enable", value: true }, { type: "name" },
-		{ type: "icon" }, { type: 'advancedGrid' }, { type: "swipeUp" }, { type: "swipeDown" }, { type: "action" }]
+		title: "Ajouter un menu bas", width: 600, fields: [{ type: "enable", value: true }, { type: "visibilityCond" },
+		{ type: "name" }, { type: "icon" }, { type: 'advancedGrid' },
+		{ type: "swipeUp" }, { type: "swipeDown" }, { type: "action" }]
 	}, function (result) {
 		var name = result.name;
 		var icon = result.icon;
@@ -316,6 +334,7 @@ function addBottomTabModal() {
 		if (result.swipeUp) { newTab.swipeUp = result.swipeUp; }
 		if (result.swipeDown) { newTab.swipeDown = result.swipeDown; }
 		if (result.action) { newTab.action = result.action; }
+		if (result.visibilityCond) { newTab.visibilityCond = result.visibilityCond; }
 		newTab.enable = result.enable;
 		newTab.index = maxIndex + 1;
 		newTab.id = configData.idCounter;
@@ -341,8 +360,9 @@ function addBottomTabModal() {
 function editBottomTabModal(tabId) {
 	var tabToEdit = configData.payload.tabs.find(tab => tab.id == tabId);
 	getSimpleModal({
-		title: "Editer un menu bas",
-		fields: [{ type: "enable", value: tabToEdit.enable }, { type: "name", value: tabToEdit.name }, { type: "icon", value: tabToEdit.icon },
+		title: "Editer un menu bas", width: 600,
+		fields: [{ type: "enable", value: tabToEdit.enable }, { type: "visibilityCond", value: tabToEdit.visibilityCond },
+		{ type: "name", value: tabToEdit.name }, { type: "icon", value: tabToEdit.icon },
 		{ type: 'advancedGrid', value: tabToEdit.advancedGrid },
 		{ type: 'swipeUp', value: tabToEdit.swipeUp }, { type: 'swipeDown', value: tabToEdit.swipeDown }, { type: 'action', value: tabToEdit.action },
 		]
@@ -351,6 +371,7 @@ function editBottomTabModal(tabId) {
 			tabToEdit.name = result.name;
 			tabToEdit.icon = result.icon;
 			if (result.advancedGrid !== undefined) tabToEdit.advancedGrid = result.advancedGrid;
+			if (result.visibilityCond) { tabToEdit.visibilityCond = result.visibilityCond; }
 			tabToEdit.swipeUp = result.swipeUp;
 			tabToEdit.swipeDown = result.swipeDown;
 			tabToEdit.action = result.action;
@@ -420,7 +441,7 @@ function deleteBottomTab(tabId) {
 /* TOP TAB FUNCTIONS */
 
 function addTopTabModal() {
-	getSimpleModal({ title: "Ajouter un menu haut", fields: [{ type: "enable", value: true }, { type: "name" }, { type: 'advancedGrid' }] }, function (result) {
+	getSimpleModal({ title: "Ajouter un menu haut", width: 600, fields: [{ type: "enable", value: true }, { type: "visibilityCond" }, { type: "name" }, { type: 'advancedGrid' }] }, function (result) {
 		var name = result.name;
 		var parentId = $("#topTabParents-select option:selected").attr('value');
 		if (name == '') { return; }
@@ -431,6 +452,7 @@ function addTopTabModal() {
 		var newTab = {};
 		newTab.name = name;
 		if (result.advancedGrid !== undefined) newTab.advancedGrid = result.advancedGrid;
+		if (result.visibilityCond !== undefined) newTab.visibilityCond = result.visibilityCond;
 		newTab.enable = result.enable;
 		newTab.parentId = parentId && parseInt(parentId);
 		newTab.index = maxIndex + 1;
@@ -455,13 +477,15 @@ function addTopTabModal() {
 function editTopTabModal(tabId) {
 	var tabToEdit = configData.payload.sections.find(tab => tab.id == tabId);
 	getSimpleModal({
-		title: "Editer un menu haut", fields: [
+		title: "Editer un menu haut", width: 600, fields: [
 			{ type: "enable", value: tabToEdit.enable },
+			{ type: "visibilityCond", value: tabToEdit.visibilityCond },
 			{ type: "name", value: tabToEdit.name },
 			{ type: 'advancedGrid', value: tabToEdit.advancedGrid }]
 	}, function (result) {
 		tabToEdit.name = result.name;
 		if (result.advancedGrid !== undefined) tabToEdit.advancedGrid = result.advancedGrid;
+		tabToEdit.visibilityCond = result.visibilityCond;
 		tabToEdit.enable = result.enable;
 		refreshTopTabContent();
 	});

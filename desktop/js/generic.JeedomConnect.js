@@ -282,3 +282,35 @@ if (typeof jeedom.cmd.addUpdateFunction !== 'function') {
         jeedom.cmd.update[id] = func;
     }
 }
+
+
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+async function asyncAjaxGenericFunction(data) {
+    $.fn.hideAlert();
+
+    const result = await $.post({
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+        data: data,
+        cache: false,
+        dataType: 'json',
+        async: false,
+    });
+
+    if (result.state != 'ok') {
+        $.fn.showAlert({
+            message: result.result,
+            level: 'danger'
+        });
+    }
+
+    return result;
+}
