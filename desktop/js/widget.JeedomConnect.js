@@ -752,11 +752,10 @@ function getCmdOptions(item) {
                 if (displayTitle_placeholder != '') eltTitle.text(displayTitle_placeholder);
             } else {
                 eltTitle.parent().hide();
-
             }
 
             if (displayMessage_disable == '0') {
-                if (displayMessage_disable != '') eltMsg.text(displayMessage_placeholder);
+                if (displayMessage_placeholder != '') eltMsg.text(displayMessage_placeholder);
             }
             else {
                 eltMsg.parent().hide();
