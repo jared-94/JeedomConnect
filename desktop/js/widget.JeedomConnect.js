@@ -669,7 +669,7 @@ function getCmdOptions(item) {
     }
 
 
-    if (item.subtype == 'select') {
+    if (item.subtype == 'select' || item.subType == 'select') {
         var optionSelect = optionSelect || '';
 
         getCmdDetail({ id: item.id, item: item, optionSelect: optionSelect }, function (_result, _param) {
@@ -707,7 +707,7 @@ function getCmdOptions(item) {
     }
 
 
-    if (item.subtype == 'message') {
+    if (item.subtype == 'message' || item.subType == 'message') {
 
         var optionTitle = optionTitle || '';
         var optionMessage = optionMessage || '';
@@ -765,7 +765,7 @@ function getCmdOptions(item) {
         });
     }
 
-    if (item.subtype == 'slider') {
+    if (item.subtype == 'slider' || item.subType == 'slider') {
         var optionSlider = optionSlider || '';
 
         curOption = `
