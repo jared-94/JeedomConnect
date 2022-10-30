@@ -752,7 +752,7 @@ function getCmdOptions(item) {
                 if (displayTitle_placeholder != '') eltTitle.text(displayTitle_placeholder);
             } else {
                 eltTitle.parent().hide();
-                $('.jcCmdListOptions[data-id="displayTitle-' + item.id + '"][data-index="' + item.index + '"]').attr('checked', true);
+                $('.jcCmdListOptions[data-id="displayTitle-' + item.id + '"][data-index="' + item.index + '"]').attr('checked', false);
             }
 
             if (displayMessage_disable == '0') {
