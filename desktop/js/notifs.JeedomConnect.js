@@ -397,6 +397,8 @@ function addChannelTabModal() {
 		var newId = 'channel-' + idCounter
 		var newElt = createElementNotifChannel({ id: newId, name: newName }, 'channel', false);
 		$('#channelsUL').append(newElt);
+
+		result['id'] = newId
 		$('#channelsUL .editChannel[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
 
 		incrementIdCounter();
@@ -435,7 +437,7 @@ function addNotifModal() {
 		$('#notifsUL').append(newElt);
 
 		incrementIdCounter();
-
+		result['id'] = newId
 		$('#notifsUL .editNotif[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
 	});
 }
