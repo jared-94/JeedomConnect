@@ -804,7 +804,7 @@ class JeedomConnect extends eqLogic {
 			if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
 				$remove = true;
 				foreach ($config['notifs'] as $notif) {
-					if ($cmd->getLogicalId() == $notif['id'] || $cmd->getLogicalId() == 'notifall') {
+					if ($cmd->getLogicalId() == $notif['id'] || strpos(strtolower($cmd->getLogicalId()), 'notifall') !== false) {
 						$remove = false;
 						break;
 					}
