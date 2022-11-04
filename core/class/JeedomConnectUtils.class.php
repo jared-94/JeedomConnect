@@ -1086,6 +1086,10 @@ class JeedomConnectUtils {
             JeedomConnect::migrateAppPref();
         }
 
+        if (config::byKey('fix::notifID',   'JeedomConnect') == '') {
+            JeedomConnect::fixNotif();
+        }
+
         $pluginInfo = JeedomConnect::getPluginInfo();
         config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
     }
