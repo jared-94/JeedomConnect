@@ -818,22 +818,34 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function addCmd($notif) {
-		$cmdNotif = $this->getCmd(null, $notif['id']);
-		if (!is_object($cmdNotif)) {
-			JCLog::debug('add new cmd ' . $notif['name']);
-			$cmdNotif = new JeedomConnectCmd();
-		}
-		$cmdNotif->setLogicalId($notif['id']);
-		$cmdNotif->setName(__($notif['name'], __FILE__));
-		$cmdNotif->setOrder(0);
-		$cmdNotif->setEqLogic_id($this->getId());
-		$cmdNotif->setDisplay('generic_type', 'GENERIC_ACTION');
-		$cmdNotif->setType('action');
-		$cmdNotif->setSubType('message');
-		$cmdNotif->setIsVisible(1);
-		$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
+		try {
+			$cmdNotif = $this->getCmd(null, $notif['id']);
+			if (!is_object($cmdNotif)) {
+				//if cmd does not exist, check if a cmd with the same name and without logicalId (null) exists --> if yes update it
+				$cmdNotif_bis = cmd::byEqLogicIdCmdName($this->getId(), $notif['name']);
+				$cmdBisLogicalId = is_object($cmdNotif_bis) ? $cmdNotif_bis->getLogicalId() : 'newNotifToCreate';
+				if (is_null($cmdBisLogicalId)) {
+					JCLog::debug('updating cmd with empty logicalId => ' . json_encode(utils::o2a($cmdNotif_bis)));
+					$cmdNotif = $cmdNotif_bis;
+				} else {
+					JCLog::debug('add new cmd ' . $notif['name']);
+					$cmdNotif = new JeedomConnectCmd();
+				}
+			}
+			$cmdNotif->setLogicalId($notif['id']);
+			$cmdNotif->setName(__($notif['name'], __FILE__));
+			$cmdNotif->setOrder(0);
+			$cmdNotif->setEqLogic_id($this->getId());
+			$cmdNotif->setDisplay('generic_type', 'GENERIC_ACTION');
+			$cmdNotif->setType('action');
+			$cmdNotif->setSubType('message');
+			$cmdNotif->setIsVisible(1);
+			$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
 
-		$cmdNotif->save();
+			$cmdNotif->save();
+		} catch (Exception $e) {
+			JCLog::error('Notif creation error ' . $e->getMessage());
+		}
 	}
 
 	public function getNotifs() {
