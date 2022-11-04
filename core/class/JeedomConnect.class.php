@@ -821,16 +821,8 @@ class JeedomConnect extends eqLogic {
 		try {
 			$cmdNotif = $this->getCmd(null, $notif['id']);
 			if (!is_object($cmdNotif)) {
-				//if cmd does not exist, check if a cmd with the same name and without logicalId (null) exists --> if yes update it
-				$cmdNotif_bis = cmd::byEqLogicIdCmdName($this->getId(), $notif['name']);
-				$cmdBisLogicalId = is_object($cmdNotif_bis) ? $cmdNotif_bis->getLogicalId() : 'newNotifToCreate';
-				if (is_null($cmdBisLogicalId)) {
-					JCLog::debug('updating cmd with empty logicalId => ' . json_encode(utils::o2a($cmdNotif_bis)));
-					$cmdNotif = $cmdNotif_bis;
-				} else {
-					JCLog::debug('add new cmd ' . $notif['name']);
-					$cmdNotif = new JeedomConnectCmd();
-				}
+				JCLog::debug('add new cmd ' . $notif['name']);
+				$cmdNotif = new JeedomConnectCmd();
 			}
 			$cmdNotif->setLogicalId($notif['id']);
 			$cmdNotif->setName(__($notif['name'], __FILE__));
@@ -846,6 +838,66 @@ class JeedomConnect extends eqLogic {
 		} catch (Exception $e) {
 			JCLog::error('Notif creation error ' . $e->getMessage());
 		}
+	}
+
+	public static function fixNotif() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$change = false;
+			$config_file = self::$_notif_dir . $eqLogic->getConfiguration('apiKey') . ".json";
+			if (!file_exists($config_file)) continue;
+
+			$config = json_decode(file_get_contents($config_file), true);
+			// JCLog::debug('FIX NOTIF // config ' . json_encode($config));
+			$idCounter = $config['idCounter'];
+
+			//Update cmds
+			foreach ($config['notifs'] as $key => $notif) {
+				if (!key_exists('id', $notif) || $notif['id'] == '') {
+					$change = true;
+
+					JCLog::debug('Notif Id not found : ' . json_encode($notif));
+					$newId = 'notif-' . $idCounter;
+					$config['notifs'][$key]['id'] = $newId;
+					$idCounter++;
+
+					/** @var cmd $cmdNotif */
+					$cmdNotif = cmd::byEqLogicIdCmdName($eqLogic->getId(), $notif['name']);
+					// if cmd is an object as an action/msg and logicalId is null, then it's the same cmd 
+					// --> update the logicalId with the new id set
+					if (
+						is_object($cmdNotif) &&
+						$cmdNotif->getType() == 'action' &&
+						$cmdNotif->getSubType() == 'message' &&
+						is_null($cmdNotif->getLogicalId())
+					) {
+						try {
+							JCLog::debug('updating cmd with empty logicalId => ' . json_encode(utils::o2a($cmdNotif)));
+							$cmdNotif->setLogicalId($newId);
+							$cmdNotif->save();
+						} catch (Exception $e) {
+							JCLog::error('Notif error ' . $e->getMessage());
+						}
+					} else {
+						JCLog::debug('cmd already OK');
+					}
+				}
+			}
+
+			if ($change) {
+				$config['idCounter'] = $idCounter;
+				file_put_contents($config_file, json_encode($config));
+
+				$data = array(
+					"type" => "SET_NOTIFS_CONFIG",
+					"payload" => $config
+				);
+
+				$eqLogic->sendNotif('defaultNotif', $data);
+			}
+		}
+		config::save('fix::notifID', 'done', 'JeedomConnect');
+		JCLog::debug('END fixNotif');
 	}
 
 	public function getNotifs() {
