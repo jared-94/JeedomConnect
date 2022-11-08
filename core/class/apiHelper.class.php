@@ -2674,8 +2674,7 @@ class apiHelper {
   private static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      JCLog::error("Can't find command [id=" . $id . "]");
-      return self::raiseException("La commande $id n'existe pas");
+      return self::raiseException("Can't find command [id=" . $id . "]");
     }
 
     $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
