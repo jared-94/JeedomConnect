@@ -347,6 +347,11 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_NOTIFS_CONFIG':
+          self::setNotifConfig($eqLogic, $param['notifsConfig']);
+          return null;
+          break;
+
         case 'GEOLOC':
           self::setGeofence($eqLogic, $param);
           return null;
@@ -1091,6 +1096,10 @@ class apiHelper {
     $payload =  $eqLogic->getNotifs();
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function setNotifConfig($eqLogic, $notifsConfig) {
+    $eqLogic->saveNotifs($notifsConfig, false);
   }
 
   // GEOFENCE FUNCTIONS

@@ -783,7 +783,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function saveNotifs($config) {
+	public function saveNotifs($config, $sendToApp = true) {
 		//update channels
 		$data = array(
 			"type" => "SET_NOTIFS_CONFIG",
@@ -796,7 +796,9 @@ class JeedomConnect extends eqLogic {
 		}
 		$config_file = self::$_notif_dir . $this->getConfiguration('apiKey') . ".json";
 		file_put_contents($config_file, json_encode($config));
-		$this->sendNotif('defaultNotif', $data);
+		if ($sendToApp) {
+			$this->sendNotif('defaultNotif', $data);
+		}
 
 		//Update cmds
 		foreach ($config['notifs'] as $notif) {
