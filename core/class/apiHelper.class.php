@@ -352,6 +352,11 @@ class apiHelper {
           return null;
           break;
 
+        case 'TEST_NOTIF':
+          self::testNotif($eqLogic, $param['notifId']);
+          return null;
+          break;
+
         case 'GEOLOC':
           self::setGeofence($eqLogic, $param);
           return null;
@@ -1100,6 +1105,19 @@ class apiHelper {
 
   private static function setNotifConfig($eqLogic, $notifsConfig) {
     $eqLogic->saveNotifs($notifsConfig, false);
+  }
+
+  private static function testNotif($eqLogic, $notifId) {
+    $cmd = $eqLogic->getCmd(null, $notifId);
+    if (!is_object($cmd)) {
+      return self::raiseException("Can't find command [logicalId=" . $notifId . "]");
+    }
+    try {
+      $cmd->execCmd();
+    } catch (Exception $e) {
+      JCLog::error($e->getMessage());
+      return self::raiseException($e->getMessage());
+    }
   }
 
   // GEOFENCE FUNCTIONS
