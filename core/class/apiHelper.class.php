@@ -1115,7 +1115,6 @@ class apiHelper {
     try {
       $cmd->execCmd();
     } catch (Exception $e) {
-      JCLog::error($e->getMessage());
       return self::raiseException($e->getMessage());
     }
   }

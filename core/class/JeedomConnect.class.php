@@ -1953,6 +1953,8 @@ class JeedomConnectCmd extends cmd {
 		if ($this->getType() != 'action') {
 			return;
 		}
+
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = $this->getEqLogic();
 
 		// JCLog::debug( 'start for : ' . $this->getLogicalId());
