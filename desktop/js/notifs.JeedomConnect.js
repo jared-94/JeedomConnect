@@ -308,7 +308,7 @@ function createElementNotifChannel(item, type = 'notif', movable = true) {
 		incrementIdCounter();
 	}
 
-	var itemHtml = `<li class="notifItem" ><a class="${editClass}" data-id="${item.id}" data-object='${JSON.stringify(item)}'>${item.name}</a>`;
+	var itemHtml = `<li class="notifItem" ><a class="${editClass}" data-id="${item.id}" data-object='${escapeHtml(JSON.stringify(item))}'>${item.name}</a>`;
 	if (movable && !isDefault) {
 		itemHtml += '<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;"></i>';
 	}
@@ -459,3 +459,20 @@ $('body').off('click', '.editNotif').on('click', '.editNotif', function () {
 
 	});
 })
+
+var entityMap = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+	"'": '&#39;',
+	'/': '&#x2F;',
+	'`': '&#x60;',
+	'=': '&#x3D;'
+};
+
+function escapeHtml(string) {
+	return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+		return entityMap[s];
+	});
+}
