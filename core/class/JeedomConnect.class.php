@@ -900,6 +900,19 @@ class JeedomConnect extends eqLogic {
 		JCLog::debug('END fixNotif');
 	}
 
+	public static function fixNotifCmdDummy() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+
+			// remove bad cmd named '{'
+			/** @var cmd $cmdDummy */
+			$cmdDummy = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), '{');
+			if (is_object($cmdDummy)) $cmdDummy->remove();
+		}
+		config::save('fix::notifCmdDummy', 'done', 'JeedomConnect');
+		JCLog::debug('END fixNotifCmdDummy');
+	}
+
 	public function getNotifs() {
 		$config_file = self::$_notif_dir . $this->getConfiguration('apiKey') . ".json";
 		if (!file_exists($config_file)) {
