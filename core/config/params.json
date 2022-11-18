@@ -104,6 +104,19 @@
                 }
             },
             {
+                "logicalId": "setVolume",
+                "name": "Volume",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "display": {
+                    "message_placeholder": "Volume (0-100)",
+                    "title_placeholder": "Type Android (music, call, system, ring, alarm, notification)",
+                    "title_disable": 0
+                }
+            },
+            {
                 "logicalId": "display_menu",
                 "name": "Visibilité Menu",
                 "type": "action",
@@ -281,6 +294,18 @@
                 "subtype": "string",
                 "isVisible": 0,
                 "order": 4
+            },
+            {
+                "logicalId": "ringerMode",
+                "name": "Mode sonnerie",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1",
+                    "message_placeholder": "Mode (silence,normal,vibreur)"
+                },
+                "order": 8
             }
         ],
         "ios": []

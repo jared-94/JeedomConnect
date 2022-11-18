@@ -4394,6 +4394,7 @@
 					"name": "Couleur",
 					"required": false,
 					"category": "color",
+					"defaultColor": "#FF0000",
 					"description": "Personnalisez la couleur du tracé et du marqueur",
 					"options": {
 						"hasImage": "false"
@@ -4963,7 +4964,7 @@
 					"name": "Couleur du graphe",
 					"required": false,
 					"category": "color",
-					"description": "Laisser vide pour utiliser la couleur du thème",
+					"defaultColor": "primary",
 					"customizable": true
 				},
 				{

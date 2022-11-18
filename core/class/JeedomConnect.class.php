@@ -783,7 +783,7 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public function saveNotifs($config) {
+	public function saveNotifs($config, $sendToApp = true) {
 		//update channels
 		$data = array(
 			"type" => "SET_NOTIFS_CONFIG",
@@ -796,7 +796,9 @@ class JeedomConnect extends eqLogic {
 		}
 		$config_file = self::$_notif_dir . $this->getConfiguration('apiKey') . ".json";
 		file_put_contents($config_file, json_encode($config));
-		$this->sendNotif('defaultNotif', $data);
+		if ($sendToApp) {
+			$this->sendNotif('defaultNotif', $data);
+		}
 
 		//Update cmds
 		foreach ($config['notifs'] as $notif) {
@@ -901,6 +903,19 @@ class JeedomConnect extends eqLogic {
 		}
 		config::save('fix::notifID', 'done', 'JeedomConnect');
 		JCLog::debug('END fixNotif');
+	}
+
+	public static function fixNotifCmdDummy() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+
+			// remove bad cmd named '{'
+			/** @var cmd $cmdDummy */
+			$cmdDummy = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), '{');
+			if (is_object($cmdDummy)) $cmdDummy->remove();
+		}
+		config::save('fix::notifCmdDummy', 'done', 'JeedomConnect');
+		JCLog::debug('END fixNotifCmdDummy');
 	}
 
 	public function getNotifs() {
@@ -1915,7 +1930,7 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('useWs', 0) == 0 && $this->getConfiguration('polling', 0) == 1) {
 			return time() - $this->getConfiguration('lastSeen', 0) < 3;
 		} else {
-			return $this->getConfiguration('connected', 0) == 1;
+			return $this->getConfiguration('appState', 0) == 'active';
 		}
 	}
 }
@@ -1951,6 +1966,8 @@ class JeedomConnectCmd extends cmd {
 		if ($this->getType() != 'action') {
 			return;
 		}
+
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = $this->getEqLogic();
 
 		// JCLog::debug( 'start for : ' . $this->getLogicalId());
@@ -2101,6 +2118,39 @@ class JeedomConnectCmd extends cmd {
 				$payload = array(
 					'action' => 'playSound',
 					'sound' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'ringerMode':
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+				$payload = array(
+					'action' => 'ringerMode',
+					'mode' => $_options['message']
+				);
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+				}
+				break;
+
+			case 'setVolume':
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+				$payload = array(
+					'action' => 'setVolume',
+					'volume' => $_options['message'],
+					'type' => $_options['title']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());

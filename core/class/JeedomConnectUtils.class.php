@@ -1089,6 +1089,9 @@ class JeedomConnectUtils {
         if (config::byKey('fix::notifID',   'JeedomConnect') == '') {
             JeedomConnect::fixNotif();
         }
+        if (config::byKey('fix::notifCmdDummy',   'JeedomConnect') == '') {
+            JeedomConnect::fixNotifCmdDummy();
+        }
 
         $pluginInfo = JeedomConnect::getPluginInfo();
         config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');

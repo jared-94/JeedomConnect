@@ -8,7 +8,7 @@ function setNotifModalData(options) {
     var value = notif ? notif.name : '';
     var nameHtml = `<li><div class='form-group'>
     <label class='col-xs-3  required' >Nom</label>
-    <div class='col-xs-9'><div class='input-group'><input style="width:250px;" id="mod-notifName-input" value='${value}'></div></div></div></li>`;
+    <div class='col-xs-9'><div class='input-group'><input style="width:250px;" id="mod-notifName-input" value="${value}"></div></div></div></li>`;
     items.push(nameHtml);
 
 

@@ -347,6 +347,16 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_NOTIFS_CONFIG':
+          self::setNotifConfig($eqLogic, $param['notifsConfig']);
+          return null;
+          break;
+
+        case 'TEST_NOTIF':
+          self::testNotif($eqLogic, $param['notifId']);
+          return null;
+          break;
+
         case 'GEOLOC':
           self::setGeofence($eqLogic, $param);
           return null;
@@ -1091,6 +1101,22 @@ class apiHelper {
     $payload =  $eqLogic->getNotifs();
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function setNotifConfig($eqLogic, $notifsConfig) {
+    $eqLogic->saveNotifs($notifsConfig, false);
+  }
+
+  private static function testNotif($eqLogic, $notifId) {
+    $cmd = $eqLogic->getCmd(null, $notifId);
+    if (!is_object($cmd)) {
+      return self::raiseException("Can't find command [logicalId=" . $notifId . "]");
+    }
+    try {
+      $cmd->execCmd();
+    } catch (Exception $e) {
+      return self::raiseException($e->getMessage());
+    }
   }
 
   // GEOFENCE FUNCTIONS
@@ -2674,8 +2700,7 @@ class apiHelper {
   private static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      JCLog::error("Can't find command [id=" . $id . "]");
-      return self::raiseException("La commande $id n'existe pas");
+      return self::raiseException("Can't find command [id=" . $id . "]");
     }
 
     $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));

@@ -35,54 +35,65 @@ def read_socket():
             if eqApiKey:
                 toClient = server.apiKey_to_client(eqApiKey)
             else:
-                raise Exception("no apiKey found ! ")
+                # raise Exception("no apiKey found ! ")
+                logging.warning("no apiKey found ! -- skip msg " + method)
+                return
 
-            if toClient and method == "WELCOME":
-                toClient["configVersion"] = payload.get("configVersion", None)
-                toClient["lastReadTimestamp"] = time.time()
-                toClient["lastHistoricReadTimestamp"] = time.time()
-                # logging.debug("all data client =>" + str(toClient))
-
-            if method == "SET_EVENTS":
-                for elt in msg_socket.get("payload", None):
-                    # logging.debug("checking elt =>" + str(elt))
-                    if elt.get("type", None) == "DATETIME":
-                        toClient["lastReadTimestamp"] = elt.get("payload", None)
-
-                    elif elt.get("type", None) == "HIST_DATETIME":
-                        toClient["lastHistoricReadTimestamp"] = elt.get("payload", None)
-
-                    else:
-                        if (
-                            "payload" in elt
-                            and hasattr(elt, "__len__")
-                            and len(elt["payload"]) > 0
-                        ):
-                            logging.debug(
-                                f"Broadcast to {toClient['id']} : " + str(elt)
-                            )
-                            server.send_message(toClient, json.dumps(elt))
+            if not toClient:
+                # raise Exception("no client found ! ")
+                logging.warning("no client found ! -- skip msg " + method)
+                return
             else:
-                if toClient:
-                    if method == "CONFIG_AND_INFOS":
-                        toClient["configVersion"] = payload["config"]["payload"][
-                            "configVersion"
-                        ]
-                    server.send_message(toClient, msg_socket_str)
-                else:
-                    raise Exception("no client found ! ")
+                if method in [
+                    "BAD_DEVICE",
+                    "EQUIPMENT_DISABLE",
+                    "APP_VERSION_ERROR",
+                    "PLUGIN_VERSION_ERROR",
+                    "EMPTY_CONFIG_FILE",
+                    "FORMAT_VERSION_ERROR",
+                    "BAD_TYPE_VERSION",
+                ]:
+                    logging.debug("Bad configuration closing connexion")
+                    server.close_client(toClient)
 
-            if toClient and method in [
-                "BAD_DEVICE",
-                "EQUIPMENT_DISABLE",
-                "APP_VERSION_ERROR",
-                "PLUGIN_VERSION_ERROR",
-                "EMPTY_CONFIG_FILE",
-                "FORMAT_VERSION_ERROR",
-                "BAD_TYPE_VERSION",
-            ]:
-                logging.debug("Bad configuration closing connexion")
-                server.close_client(toClient)
+                else:
+
+                    if method == "SET_EVENTS":
+                        for elt in msg_socket.get("payload", None):
+                            # logging.debug("checking elt =>" + str(elt))
+                            if elt.get("type", None) == "DATETIME":
+                                toClient["lastReadTimestamp"] = elt.get("payload", None)
+
+                            elif elt.get("type", None) == "HIST_DATETIME":
+                                toClient["lastHistoricReadTimestamp"] = elt.get(
+                                    "payload", None
+                                )
+
+                            else:
+                                if (
+                                    "payload" in elt
+                                    and hasattr(elt, "__len__")
+                                    and len(elt["payload"]) > 0
+                                ):
+                                    logging.debug(
+                                        f"Broadcast to {toClient['id']} : " + str(elt)
+                                    )
+                                    server.send_message(toClient, json.dumps(elt))
+                    else:
+                        if method == "WELCOME":
+                            toClient["configVersion"] = payload.get(
+                                "configVersion", None
+                            )
+                            toClient["lastReadTimestamp"] = time.time()
+                            toClient["lastHistoricReadTimestamp"] = time.time()
+                            # logging.debug("all data client =>" + str(toClient))
+
+                        if method == "CONFIG_AND_INFOS":
+                            toClient["configVersion"] = payload["config"]["payload"][
+                                "configVersion"
+                            ]
+
+                        server.send_message(toClient, msg_socket_str)
 
         except Exception as e:
             logging.exception(e)
