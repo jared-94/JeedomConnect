@@ -22,29 +22,7 @@ function JeedomConnect_install() {
 
   JeedomConnect::displayMessageInfo();
 
-  if (config::byKey('userImgPath',   'JeedomConnect') == '') {
-    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
-  }
-
-  if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
-    mkdir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'));
-  }
-
-  if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
-    JeedomConnect::migrateCondImg();
-  }
-
-  if (config::byKey('migration::customData',   'JeedomConnect') == '') {
-    JeedomConnect::migrateCustomData();
-  }
-
-  if (config::byKey('migration::notifAll',   'JeedomConnect') == '') {
-    JeedomConnect::migrationAllNotif();
-  }
-
-  $pluginInfo = JeedomConnect::getPluginInfo();
-  config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
-
+  JeedomConnectUtils::installAndMigration();
   JeedomConnectUtils::addCronItems();
   JeedomConnect::createMapEquipment();
 }
@@ -57,39 +35,7 @@ function JeedomConnect_update() {
     $eqLogic->generateNewConfigVersion();
   }
 
-  if (config::byKey('userImgPath',   'JeedomConnect') == '') {
-    config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
-  } else {
-    $userImgPath = ltrim(config::byKey('userImgPath',   'JeedomConnect'), "/");
-    if (substr($userImgPath, -1) != "/") {
-      $userImgPath .= "/";
-    }
-    config::save('userImgPath', $userImgPath, 'JeedomConnect');
-  }
-
-  if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
-    mkdir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'));
-  }
-
-  if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
-    JeedomConnect::migrateCondImg();
-  }
-
-  if (config::byKey('migration::customData',   'JeedomConnect') == '') {
-    JeedomConnect::migrateCustomData();
-  }
-
-  if (config::byKey('migration::notifAll',   'JeedomConnect') == '') {
-    JeedomConnect::migrationAllNotif();
-  }
-
-  if (config::byKey('migration::appPref',   'JeedomConnect') == '') {
-    JeedomConnect::migrateAppPref();
-  }
-
-  $pluginInfo = JeedomConnect::getPluginInfo();
-  config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
-
+  JeedomConnectUtils::installAndMigration();
   JeedomConnectUtils::addCronItems();
   JeedomConnect::createMapEquipment();
 

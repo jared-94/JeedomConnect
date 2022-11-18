@@ -303,7 +303,12 @@ function createElementNotifChannel(item, type = 'notif', movable = true) {
 
 	var isDefault = (item.id == 'default' || item.id == 'defaultNotif')
 
-	var itemHtml = `<li class="notifItem" ><a class="${editClass}" data-id="${item.id}" data-object='${JSON.stringify(item)}'>${item.name}</a>`;
+	if (typeof item.id === 'undefined') {
+		item['id'] = type + '-' + idCounter
+		incrementIdCounter();
+	}
+
+	var itemHtml = `<li class="notifItem" ><a class="${editClass}" data-id="${item.id}" data-object='${escapeHtml(JSON.stringify(item))}'>${item.name}</a>`;
 	if (movable && !isDefault) {
 		itemHtml += '<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;"></i>';
 	}
@@ -397,7 +402,9 @@ function addChannelTabModal() {
 		var newId = 'channel-' + idCounter
 		var newElt = createElementNotifChannel({ id: newId, name: newName }, 'channel', false);
 		$('#channelsUL').append(newElt);
-		$('#channelsUL editChannel[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
+
+		result['id'] = newId
+		$('#channelsUL .editChannel[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
 
 		incrementIdCounter();
 	});
@@ -435,8 +442,8 @@ function addNotifModal() {
 		$('#notifsUL').append(newElt);
 
 		incrementIdCounter();
-
-		$('#notifsUL editNotif[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
+		result['id'] = newId
+		$('#notifsUL .editNotif[data-id=' + newId + ']').attr('data-object', JSON.stringify(result));
 	});
 }
 
@@ -452,3 +459,20 @@ $('body').off('click', '.editNotif').on('click', '.editNotif', function () {
 
 	});
 })
+
+var entityMap = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+	"'": '&#39;',
+	'/': '&#x2F;',
+	'`': '&#x60;',
+	'=': '&#x3D;'
+};
+
+function escapeHtml(string) {
+	return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+		return entityMap[s];
+	});
+}

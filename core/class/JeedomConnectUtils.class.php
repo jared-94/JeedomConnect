@@ -1049,4 +1049,52 @@ class JeedomConnectUtils {
 
         return;
     }
+
+    public static function installAndMigration() {
+
+        if (config::byKey('userImgPath',   'JeedomConnect') == '') {
+            config::save('userImgPath', 'plugins/JeedomConnect/data/img/user_files/', 'JeedomConnect');
+        } else {
+            $userImgPath = ltrim(config::byKey('userImgPath',   'JeedomConnect'), "/");
+            if (substr($userImgPath, -1) != "/") {
+                $userImgPath .= "/";
+            }
+            config::save('userImgPath', $userImgPath, 'JeedomConnect');
+        }
+
+        if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
+            mkdir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'));
+        }
+
+        if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
+            JeedomConnect::migrateCondImg();
+        }
+
+        if (config::byKey('migration::customData',   'JeedomConnect') == '') {
+            JeedomConnect::migrateCustomData();
+        }
+
+        if (config::byKey('migration::notifAll',   'JeedomConnect') == '') {
+            JeedomConnect::migrationAllNotif();
+        }
+
+        // TODO remove comment when conflict with next merge from BETA 
+        // if (config::byKey('migration::notifAll2',   'JeedomConnect') == '') {
+        //     JeedomConnect::migrationAllNotif2();
+        // }
+
+        if (config::byKey('migration::appPref',   'JeedomConnect') == '') {
+            JeedomConnect::migrateAppPref();
+        }
+
+        if (config::byKey('fix::notifID',   'JeedomConnect') == '') {
+            JeedomConnect::fixNotif();
+        }
+        if (config::byKey('fix::notifCmdDummy',   'JeedomConnect') == '') {
+            JeedomConnect::fixNotifCmdDummy();
+        }
+
+        $pluginInfo = JeedomConnect::getPluginInfo();
+        config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
+    }
 }

@@ -804,7 +804,7 @@ class JeedomConnect extends eqLogic {
 			if (strpos(strtolower($cmd->getLogicalId()), 'notif') !== false) {
 				$remove = true;
 				foreach ($config['notifs'] as $notif) {
-					if ($cmd->getLogicalId() == $notif['id'] || $cmd->getLogicalId() == 'notifall') {
+					if ($cmd->getLogicalId() == $notif['id'] || strpos(strtolower($cmd->getLogicalId()), 'notifall') !== false) {
 						$remove = false;
 						break;
 					}
@@ -818,22 +818,99 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function addCmd($notif) {
-		$cmdNotif = $this->getCmd(null, $notif['id']);
-		if (!is_object($cmdNotif)) {
-			JCLog::debug('add new cmd ' . $notif['name']);
-			$cmdNotif = new JeedomConnectCmd();
-		}
-		$cmdNotif->setLogicalId($notif['id']);
-		$cmdNotif->setName(__($notif['name'], __FILE__));
-		$cmdNotif->setOrder(0);
-		$cmdNotif->setEqLogic_id($this->getId());
-		$cmdNotif->setDisplay('generic_type', 'GENERIC_ACTION');
-		$cmdNotif->setType('action');
-		$cmdNotif->setSubType('message');
-		$cmdNotif->setIsVisible(1);
-		$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
+		try {
+			$cmdNotif = $this->getCmd(null, $notif['id']);
+			if (!is_object($cmdNotif)) {
+				JCLog::debug('add new cmd ' . $notif['name']);
+				$cmdNotif = new JeedomConnectCmd();
+			}
+			$cmdNotif->setLogicalId($notif['id']);
+			$cmdNotif->setName(__($notif['name'], __FILE__));
+			$cmdNotif->setOrder(0);
+			$cmdNotif->setEqLogic_id($this->getId());
+			$cmdNotif->setDisplay('generic_type', 'GENERIC_ACTION');
+			$cmdNotif->setType('action');
+			$cmdNotif->setSubType('message');
+			$cmdNotif->setIsVisible(1);
+			$cmdNotif->setDisplay('title_placeholder', __('Titre/Options', __FILE__));
 
-		$cmdNotif->save();
+			$cmdNotif->save();
+		} catch (Exception $e) {
+			JCLog::error('Notif creation error ' . $e->getMessage());
+		}
+	}
+
+	public static function fixNotif() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$change = false;
+			$config_file = self::$_notif_dir . $eqLogic->getConfiguration('apiKey') . ".json";
+			if (!file_exists($config_file)) continue;
+
+			$config = json_decode(file_get_contents($config_file), true);
+			// JCLog::debug('FIX NOTIF // config ' . json_encode($config));
+			$idCounter = $config['idCounter'];
+
+			//Update cmds
+			foreach ($config['notifs'] as $key => $notif) {
+				if (!key_exists('id', $notif) || $notif['id'] == '') {
+					$change = true;
+
+					JCLog::debug('Notif Id not found : ' . json_encode($notif));
+					$newId = 'notif-' . $idCounter;
+					$config['notifs'][$key]['id'] = $newId;
+					$idCounter++;
+
+					/** @var cmd $cmdNotif */
+					$cmdNotif = cmd::byEqLogicIdCmdName($eqLogic->getId(), $notif['name']);
+					// if cmd is an object as an action/msg and logicalId is null, then it's the same cmd 
+					// --> update the logicalId with the new id set
+					if (
+						is_object($cmdNotif) &&
+						$cmdNotif->getType() == 'action' &&
+						$cmdNotif->getSubType() == 'message' &&
+						is_null($cmdNotif->getLogicalId())
+					) {
+						try {
+							JCLog::debug('updating cmd with empty logicalId => ' . json_encode(utils::o2a($cmdNotif)));
+							$cmdNotif->setLogicalId($newId);
+							$cmdNotif->save();
+						} catch (Exception $e) {
+							JCLog::error('Notif error ' . $e->getMessage());
+						}
+					} else {
+						JCLog::debug('cmd already OK');
+					}
+				}
+			}
+
+			if ($change) {
+				$config['idCounter'] = $idCounter;
+				file_put_contents($config_file, json_encode($config));
+
+				$data = array(
+					"type" => "SET_NOTIFS_CONFIG",
+					"payload" => $config
+				);
+
+				$eqLogic->sendNotif('defaultNotif', $data);
+			}
+		}
+		config::save('fix::notifID', 'done', 'JeedomConnect');
+		JCLog::debug('END fixNotif');
+	}
+
+	public static function fixNotifCmdDummy() {
+		/** @var JeedomConnect $eqLogic */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+
+			// remove bad cmd named '{'
+			/** @var cmd $cmdDummy */
+			$cmdDummy = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), '{');
+			if (is_object($cmdDummy)) $cmdDummy->remove();
+		}
+		config::save('fix::notifCmdDummy', 'done', 'JeedomConnect');
+		JCLog::debug('END fixNotifCmdDummy');
 	}
 
 	public function getNotifs() {
