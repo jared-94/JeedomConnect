@@ -813,6 +813,26 @@ $('.eqLogicAction[data-action=gotoGenTypeConfig]').off('click').on('click', func
 })
 // End Generic Types
 
+
+$('.eqLogicAction[data-action=moreJcOptions]').off('click').on('click', function () {
+  $('.hideOptionMenu').show();
+
+  var display = ($('#spanMoreJcOptions').attr('data-type') == 'more') ? true : false;
+  if (display) {
+    $('.hideOptionMenu').show();
+    $('#spanMoreJcOptions').text("Moins d'options");
+    $('#spanMoreJcOptions').attr('data-type', 'less')
+  }
+  else {
+    $('.hideOptionMenu').hide();
+    $('#spanMoreJcOptions').text("Plus d'options");
+    $('#spanMoreJcOptions').attr('data-type', 'more');
+  }
+
+})
+
+
+
 // ------------- END TOP ACTION BUTTON
 
 

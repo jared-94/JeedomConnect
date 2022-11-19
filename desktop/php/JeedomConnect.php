@@ -163,31 +163,13 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						<br>
 						<span style="color:var(--txt-color)">{{Création de widgets en masse}}</span>
 					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
-						<i class="fas fa-tasks"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
-					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
-						<i class="mdi mdi-devices"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des équipements JC}}</span>
-					</div>
+
 					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
 						<i class="fas fa-comments"></i>
 						<br>
 						<span style="color:var(--txt-color)">{{Notifications multiples}}</span>
 					</div>
-					<!--
-						Start Generic Types
-						HACK Remove when gentype config in plugin is not needed anymore
-					-->
-					<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
-						<i class="fas fa-building"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Config types génériques}}</span>
-					</div>
-					<!-- End Generic Types -->
+
 
 					<div class="cursor eqLogicAction" data-action="showMaps" style="color:rgb(27,161,242);">
 						<i class="fas fa-map-marked-alt"></i>
@@ -212,6 +194,38 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						</div>
 					<?php }
 					?>
+					<div class="cursor eqLogicAction logoSecondary" data-action="moreJcOptions" style="color:rgb(27,161,242);">
+						<i class="fas fa-ellipsis-h"></i>
+						<br>
+						<span style="color:var(--txt-color)" id="spanMoreJcOptions" data-type="more">{{Plus d'options}}</span>
+					</div>
+				</div>
+				<br />
+				<div class="hideOptionMenu" style="display:none;">
+					<div class="eqLogicThumbnailContainer">
+						<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
+							<i class="fas fa-tasks"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
+						</div>
+
+						<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
+							<i class="mdi mdi-devices"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
+						</div>
+
+						<!--
+						Start Generic Types
+						HACK Remove when gentype config in plugin is not needed anymore
+						-->
+						<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
+							<i class="fas fa-building"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Config types génériques}}</span>
+						</div>
+						<!-- End Generic Types -->
+					</div>
 				</div>
 			</div>
 			<div class="col-sm-2">
@@ -220,7 +234,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 					<!-- Boutons de gestion du plugin -->
 					<div class="eqLogicThumbnailContainer">
 						<div class="cursor eqLogicAction logoSecondary" data-action="showCommunity" style="color:rgb(27,161,242);">
-							<i class="fas fa-exclamation-circle"></i>
+							<i class="fas fa-question-circle"></i>
 							<br>
 							<span>{{Infos}}</span>
 							<div style="display:none">
@@ -286,7 +300,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				$allEqToDisplay .= '<span>';
 				// $allEqToDisplay .= '</div>';
 				$allEqToDisplay .= '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
-				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>&nbsp;';
+				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notification"><i class="fas fa-comment-dots"></i></a>&nbsp;';
 				$allEqToDisplay .= '<a class="btn btn-success btnGeofencing" title="Gérer le geofencing"><i class="fas fa-crosshairs"></i></a>';
 				$allEqToDisplay .= '</span>';
 				$allEqToDisplay .= '</div>';
