@@ -2149,7 +2149,7 @@ class JeedomConnectCmd extends cmd {
 				}
 				$payload = array(
 					'action' => 'setVolume',
-					'volume' => $_options['message'],
+					'volume' => intval($_options['message']),
 					'type' => $_options['title']
 				);
 				if ($eqLogic->isConnected()) {
