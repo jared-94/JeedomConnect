@@ -110,10 +110,14 @@
                 "subtype": "message",
                 "isVisible": 1,
                 "order": 7,
+                "configuration": {
+                    "listValueToCreate": "music;call;system;ring;alarm;notification"
+                },
                 "display": {
                     "message_placeholder": "Volume (0-100)",
-                    "title_placeholder": "Type Android (music, call, system, ring, alarm, notification)",
-                    "title_disable": 0
+                    "title_placeholder": "Type Android",
+                    "title_disable": 1,
+                    "title_with_list": 1
                 }
             },
             {
@@ -301,9 +305,14 @@
                 "type": "action",
                 "subtype": "message",
                 "isVisible": 1,
+                "configuration": {
+                    "listValueToCreate": "silent;normal;vibrate"
+                },
                 "display": {
+                    "title_with_list": "1",
                     "title_disable": "1",
-                    "message_placeholder": "Mode (silence,normal,vibreur)"
+                    "message_disable": "1",
+                    "title_placeholder": "Mode"
                 },
                 "order": 8
             }
@@ -318,6 +327,15 @@
         "updateData": "Recharger les données",
         "jcService": "Service JC",
         "hide": "Masquer",
-        "show": "Afficher"
+        "show": "Afficher",
+        "silent": "Silencieux",
+        "normal": "Normal",
+        "vibrate": "Vibreur",
+        "music": "Musique",
+        "call": "Appel",
+        "system": "Système",
+        "ring": "Sonnerie",
+        "alarm": "Alarme",
+        "notification": "Notification"
     }
 }

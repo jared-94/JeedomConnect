@@ -2127,13 +2127,13 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'ringerMode':
-				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
 				$payload = array(
 					'action' => 'ringerMode',
-					'mode' => $_options['message']
+					'mode' => $_options['title']
 				);
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
