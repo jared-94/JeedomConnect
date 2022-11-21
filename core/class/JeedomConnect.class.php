@@ -991,6 +991,39 @@ class JeedomConnect extends eqLogic {
 
 				// Save QR code again, but with logo on it
 				imagepng($QR, $filepath);
+
+				//------------------------------------
+				////// ADD EQUIPMENT NAME TO THE QR CODE
+				//------------------------------------
+
+				// Create Image From Existing File
+				$jpg_image = imagecreatefrompng($filepath);
+				$orig_width = imagesx($jpg_image);
+				$orig_height = imagesy($jpg_image);
+
+				// Create your canvas containing both image and text
+				$canvas = imagecreatetruecolor($orig_width, ($orig_height + 40));
+				// Allocate A Color For The background
+				$bcolor = imagecolorallocate($canvas, 255, 255, 255);
+				// Add background colour into the canvas
+				imagefilledrectangle($canvas, 0, 0, $orig_width, ($orig_height + 40), $bcolor);
+
+				// Save image to the new canvas
+				imagecopyresampled($canvas, $jpg_image, 0, 0, 0, 0, $orig_width, $orig_height, $orig_width, $orig_height);
+
+				// Set Path to Font File
+				$font_path = realpath(dirname(__FILE__)) . '/../../resources/arial.ttf';
+
+				// Set Text to Be Printed On Image
+				$text = $this->getName();
+
+				// Allocate A Color For The Text
+				$color = imagecolorallocate($canvas, 0, 0, 0);
+
+				// Print Text On Image
+				imagettftext($canvas,  16, 0, 10, $orig_height + 15, $color, $font_path, $text);
+
+				imagepng($canvas, $filepath);
 			}
 		} catch (Exception $e) {
 			JCLog::error('Unable to generate a QR code : ' . $e->getMessage());
@@ -2156,11 +2189,13 @@ class JeedomConnectCmd extends cmd {
 					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
+
 				$payload = array(
 					'action' => 'setVolume',
 					'volume' => intval($_options['message']),
 					'type' => $_options['title']
 				);
+
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
