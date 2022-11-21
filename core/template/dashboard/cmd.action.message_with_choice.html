@@ -12,9 +12,9 @@
     <a class='btn btn-xs execute'>#name_display#</a>
   </div>
   <script>
-    $('.titleWithChoice[data-uid=#uid#]').on('change', function (e) {
+    $('.cmd[data-cmd_uid=#uid#] .titleWithChoice').on('change', function (e) {
       let sel = $(this).find(':selected').val();
-      $('.title[data-uid=#uid#]').value(sel);
+      $('.cmd[data-cmd_uid=#uid#] .title').value(sel);
     });
 
     if ('#title_disable#' == '1') {
