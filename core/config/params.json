@@ -104,23 +104,6 @@
                 }
             },
             {
-                "logicalId": "setVolume",
-                "name": "Modifier Volume",
-                "type": "action",
-                "subtype": "message",
-                "isVisible": 1,
-                "order": 7,
-                "configuration": {
-                    "listValueToCreate": "call;alarm;music;notification;ring;system"
-                },
-                "display": {
-                    "message_placeholder": "Volume (0-100)",
-                    "title_placeholder": "Type Android",
-                    "title_disable": 1,
-                    "title_with_list": 1
-                }
-            },
-            {
                 "logicalId": "volume",
                 "name": "Volume actuel",
                 "type": "info",
@@ -323,9 +306,39 @@
                     "title_placeholder": "Mode"
                 },
                 "order": 8
+            },
+            {
+                "logicalId": "setVolume",
+                "name": "Modifier Volume",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "configuration": {
+                    "listValueToCreate": "call;alarm;music;notification;ring;system"
+                },
+                "display": {
+                    "message_placeholder": "Volume (0-100)",
+                    "title_placeholder": "Type Android",
+                    "title_disable": 1,
+                    "title_with_list": 1
+                }
             }
         ],
-        "ios": []
+        "ios": [
+            {
+                "logicalId": "setVolume",
+                "name": "Modifier Volume",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "display": {
+                    "message_placeholder": "Volume (0-100)",
+                    "title_disable": 1
+                }
+            }
+        ]
     },
     "dictionary": {
         "themeColor": "Schéma thème",
