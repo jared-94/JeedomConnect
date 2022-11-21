@@ -501,11 +501,6 @@ class apiHelper {
           return self::getPicoKey($eqLogic);
           break;
 
-        case 'SET_VOLUME':
-          self::setVolume($eqLogic, $param['volumes']);
-          return null;
-          break;
-
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -2984,6 +2979,10 @@ class apiHelper {
 
     if (isset($infos['alarmFiltered']) && $infos['alarmFiltered']) {
       JCLog::debug("La prochaine Alarme est émise par un package que vous n'avez pas filtré [" . ($infos['alarmPackage'] ?? 'N/A') . "], elle n'est donc pas retenue");
+    }
+
+    if (isset($infos['volumes'])) {
+      self::setVolume($eqLogic, $infos['volumes']);
     }
   }
 
