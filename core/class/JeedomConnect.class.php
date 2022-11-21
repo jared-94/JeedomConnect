@@ -2452,11 +2452,12 @@ class JeedomConnectCmd extends cmd {
 
 	public function getWidgetTemplateCode($_version = 'dashboard', $_clean = true, $_widgetName = '') {
 
-		if ($_version != 'scenario') return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+		// if ($_version != 'scenario') return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
 
 		if ($this->getDisplay('title_with_list', '') != 1) return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
 
-		$template = getTemplate('core', 'scenario', 'cmd.action.message_with_choice', 'JeedomConnect');
+		// $template = getTemplate('core', 'scenario', 'cmd.action.message_with_choice', 'JeedomConnect');
+		$template = getTemplate('core', $_version, 'cmd.action.message_with_choice', 'JeedomConnect');
 
 		if (!empty($template)) {
 			if (version_compare(jeedom::version(), '4.2.0', '>=')) {

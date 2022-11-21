@@ -1,0 +1,32 @@
+<div class="cmd cmd-widget reportModeHidden" data-type="action" data-subtype="message" data-template="default"
+  data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#" data-eqLogic_id="#eqLogic_id#">
+  <div class="content-lg">
+
+    <select class="form-control input-sm titleWithChoice" data-l1key="options" data-l2key="select" data-cmd_id="#id#"
+      data-uid="#uid#">#listValue#</select>
+
+    <input class="form-control input-sm title" placeholder="#title_placeholder#" data-cmd_id="#id#" value="#title#"
+      data-uid="#uid#" />
+    <textarea class="form-control input-sm message" rows="2" placeholder="#message_placeholder#" data-cmd_uid="#uid#"
+      data-cmd_id="#id#">#message#</textarea>
+    <a class='btn btn-xs execute'>#name_display#</a>
+  </div>
+  <script>
+    $('.titleWithChoice[data-uid=#uid#]').on('change', function (e) {
+      let sel = $(this).find(':selected').val();
+      $('.title[data-uid=#uid#]').value(sel);
+    });
+
+    if ('#title_disable#' == '1') {
+      $('.cmd[data-cmd_uid=#uid#] .title').hide()
+    }
+
+    if ('#message_disable#' == '1') {
+      $('.cmd[data-cmd_uid=#uid#] .message').hide()
+    }
+
+    $('.cmd[data-cmd_uid=#uid#]:last .execute').on('click', function () {
+      jeedom.cmd.execute({ id: '#id#', value: { title: $('.cmd[data-cmd_uid=#uid#] .title').value(), message: $('.cmd[data-cmd_uid=#uid#] .message').value() } })
+    })
+  </script>
+</div>
