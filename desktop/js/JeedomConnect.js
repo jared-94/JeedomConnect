@@ -1287,6 +1287,17 @@ $(".eqlogic-qrcode").hover(function () {
   $('.hideWhileShowqrcode').show();
 });
 
+$('.eqLogicAttr[data-l1key=configuration][data-l2key=volume]').on('change', function () {
+  console.log('on change', $(this).find(":selected"))
+  if ($(this).find(":selected").val() == 'all') {
+    $('.descConfigVolume').show();
+  }
+  else {
+    $('.descConfigVolume').hide();
+  }
+
+});
+
 
 /**
  * *************

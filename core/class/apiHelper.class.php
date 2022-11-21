@@ -501,6 +501,11 @@ class apiHelper {
           return self::getPicoKey($eqLogic);
           break;
 
+        case 'SET_VOLUME':
+          self::setVolume($eqLogic, $param['volumes']);
+          return null;
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -3087,5 +3092,35 @@ class apiHelper {
     }
 
     $cmd->event($message);
+  }
+
+  /**
+   * Set the cmd Info Volume base on the setting set by user
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $volume list of volume set
+   * @return void
+   */
+  public static function setVolume($eqLogic, $volume) {
+    $volumeType = array_keys(JeedomConnect::$_volumeType);
+
+    /** @var cmd $cmdInfoVolume */
+    $cmdInfoVolume = $eqLogic->getCmd('info', 'volume');
+    if (!is_object($cmdInfoVolume)) return;
+
+    $volumeOption = $eqLogic->getConfiguration('volume', 'all');
+
+    if ($volumeOption == 'all') {
+      $volumeFinal = '';
+      foreach ($volumeType as $item) {
+        $volumeFinal .= ($volume[$item] ?? '-1') . ';';
+      }
+    } else {
+      $volumeFinal = $volume[$volumeOption] ?? '-1';
+    }
+
+    JCLog::debug("Final volume set to => " . $volumeFinal);
+    $cmdInfoVolume->event($volumeFinal);
+    return;
   }
 }

@@ -160,6 +160,15 @@ class JeedomConnect extends eqLogic {
 	public static $_notif_dir = __DIR__ . '/../../data/notifs/';
 	public static $_backup_dir = __DIR__ . '/../../data/backups/';
 
+	public static $_volumeType = array(
+		"alarm" => "Alarme",
+		"call" => "Appel",
+		"music" => "Musique",
+		"notification" => "Notification",
+		"ring" => "Sonnerie",
+		"system" => "Système",
+	);
+
 	/*     * ***********************Methode static*************************** */
 
 	/*     * ********************** DAEMON MANAGEMENT *************************** */

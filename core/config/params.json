@@ -105,7 +105,7 @@
             },
             {
                 "logicalId": "setVolume",
-                "name": "Volume",
+                "name": "Modifier Volume",
                 "type": "action",
                 "subtype": "message",
                 "isVisible": 1,
@@ -119,6 +119,14 @@
                     "title_disable": 1,
                     "title_with_list": 1
                 }
+            },
+            {
+                "logicalId": "volume",
+                "name": "Volume actuel",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+                "order": 8
             },
             {
                 "logicalId": "display_menu",

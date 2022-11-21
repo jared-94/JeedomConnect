@@ -554,6 +554,21 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								</div>
 							</div>
 
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Commande info Volume}}</label>
+								<div class="col-sm-7">
+									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="volume">
+										<option value="all" selected>{{Toutes}}</option>
+										<?php
+										foreach (JeedomConnect::$_volumeType as $key => $value) {
+											echo '<option value="' . $key . '">' . $value . '</option>';
+										}
+										?>
+									</select>
+									<span class="description italic descConfigVolume"><?= "Si 'Toutes', format de la commande : " . join(";", array_values(JeedomConnect::$_volumeType)) . ";" ?></span>
+								</div>
+							</div>
+
 
 							<legend><i class="fas fa-map-marked-alt"></i>{{Informations Position}}</legend>
 							<div class="form-group">
