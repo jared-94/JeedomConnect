@@ -111,7 +111,7 @@
                 "isVisible": 1,
                 "order": 7,
                 "configuration": {
-                    "listValueToCreate": "music;call;system;ring;alarm;notification"
+                    "listValueToCreate": "call;alarm;music;notification;ring;system"
                 },
                 "display": {
                     "message_placeholder": "Volume (0-100)",
