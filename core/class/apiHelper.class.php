@@ -2980,6 +2980,10 @@ class apiHelper {
     if (isset($infos['alarmFiltered']) && $infos['alarmFiltered']) {
       JCLog::debug("La prochaine Alarme est émise par un package que vous n'avez pas filtré [" . ($infos['alarmPackage'] ?? 'N/A') . "], elle n'est donc pas retenue");
     }
+
+    if (isset($infos['volumes'])) {
+      self::setVolume($eqLogic, $infos['volumes']);
+    }
   }
 
   private static function setFaceDetected($eqLogic, $infos) {
@@ -3087,5 +3091,35 @@ class apiHelper {
     }
 
     $cmd->event($message);
+  }
+
+  /**
+   * Set the cmd Info Volume base on the setting set by user
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $volume list of volume set
+   * @return void
+   */
+  public static function setVolume($eqLogic, $volume) {
+    $volumeType = array_keys(JeedomConnect::$_volumeType);
+
+    /** @var cmd $cmdInfoVolume */
+    $cmdInfoVolume = $eqLogic->getCmd('info', 'volume');
+    if (!is_object($cmdInfoVolume)) return;
+
+    $volumeOption = $eqLogic->getConfiguration('volume', 'all');
+
+    if ($volumeOption == 'all') {
+      $volumeFinal = '';
+      foreach ($volumeType as $item) {
+        $volumeFinal .= ($volume[$item] ?? '-1') . ';';
+      }
+    } else {
+      $volumeFinal = $volume[$volumeOption] ?? '-1';
+    }
+
+    JCLog::debug("Final volume set to => " . $volumeFinal);
+    $cmdInfoVolume->event($volumeFinal);
+    return;
   }
 }

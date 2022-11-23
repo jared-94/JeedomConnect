@@ -160,6 +160,15 @@ class JeedomConnect extends eqLogic {
 	public static $_notif_dir = __DIR__ . '/../../data/notifs/';
 	public static $_backup_dir = __DIR__ . '/../../data/backups/';
 
+	public static $_volumeType = array(
+		"alarm" => "Alarme",
+		"call" => "Appel",
+		"music" => "Musique",
+		"notification" => "Notification",
+		"ring" => "Sonnerie",
+		"system" => "Système",
+	);
+
 	/*     * ***********************Methode static*************************** */
 
 	/*     * ********************** DAEMON MANAGEMENT *************************** */
@@ -982,6 +991,39 @@ class JeedomConnect extends eqLogic {
 
 				// Save QR code again, but with logo on it
 				imagepng($QR, $filepath);
+
+				//------------------------------------
+				////// ADD EQUIPMENT NAME TO THE QR CODE
+				//------------------------------------
+
+				// Create Image From Existing File
+				$jpg_image = imagecreatefrompng($filepath);
+				$orig_width = imagesx($jpg_image);
+				$orig_height = imagesy($jpg_image);
+
+				// Create your canvas containing both image and text
+				$canvas = imagecreatetruecolor($orig_width, ($orig_height + 40));
+				// Allocate A Color For The background
+				$bcolor = imagecolorallocate($canvas, 255, 255, 255);
+				// Add background colour into the canvas
+				imagefilledrectangle($canvas, 0, 0, $orig_width, ($orig_height + 40), $bcolor);
+
+				// Save image to the new canvas
+				imagecopyresampled($canvas, $jpg_image, 0, 0, 0, 0, $orig_width, $orig_height, $orig_width, $orig_height);
+
+				// Set Path to Font File
+				$font_path = realpath(dirname(__FILE__)) . '/../../resources/arial.ttf';
+
+				// Set Text to Be Printed On Image
+				$text = $this->getName();
+
+				// Allocate A Color For The Text
+				$color = imagecolorallocate($canvas, 0, 0, 0);
+
+				// Print Text On Image
+				imagettftext($canvas,  16, 0, 10, $orig_height + 15, $color, $font_path, $text);
+
+				imagepng($canvas, $filepath);
 			}
 		} catch (Exception $e) {
 			JCLog::error('Unable to generate a QR code : ' . $e->getMessage());
@@ -2127,31 +2169,41 @@ class JeedomConnectCmd extends cmd {
 				break;
 
 			case 'ringerMode':
-				if (empty($_options['message'])) {
-					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
+
 				$payload = array(
 					'action' => 'ringerMode',
-					'mode' => $_options['message']
+					'mode' => $_options['title']
 				);
+
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
 					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
 				}
+
 				break;
 
 			case 'setVolume':
+				if (empty($_options['title']) && $eqLogic->getConfiguration('platformOs') == 'android') {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
 				if (empty($_options['message'])) {
 					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
 					return;
 				}
+
 				$payload = array(
 					'action' => 'setVolume',
-					'volume' => $_options['message'],
+					'volume' => intval($_options['message']),
 					'type' => $_options['title']
 				);
+
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
@@ -2408,11 +2460,12 @@ class JeedomConnectCmd extends cmd {
 
 	public function getWidgetTemplateCode($_version = 'dashboard', $_clean = true, $_widgetName = '') {
 
-		if ($_version != 'scenario') return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
+		// if ($_version != 'scenario') return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
 
 		if ($this->getDisplay('title_with_list', '') != 1) return parent::getWidgetTemplateCode($_version, $_clean, $_widgetName);
 
-		$template = getTemplate('core', 'scenario', 'cmd.action.message_with_choice', 'JeedomConnect');
+		// $template = getTemplate('core', 'scenario', 'cmd.action.message_with_choice', 'JeedomConnect');
+		$template = getTemplate('core', $_version, 'cmd.action.message_with_choice', 'JeedomConnect');
 
 		if (!empty($template)) {
 			if (version_compare(jeedom::version(), '4.2.0', '>=')) {
