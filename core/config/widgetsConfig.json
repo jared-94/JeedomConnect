@@ -5691,6 +5691,7 @@
 		{
 			"type": "component",
 			"name": "Composant",
+			"hide": true,
 			"img": "tools.png",
 			"description": "Permet d'afficher des composants personnalisés",
 			"options": [
