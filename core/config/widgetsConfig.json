@@ -5687,6 +5687,272 @@
 					"description": "Affichage forcé du widget"
 				}
 			]
+		},
+		{
+			"type": "component",
+			"name": "Composant",
+			"img": "tools.png",
+			"description": "Permet d'afficher des composants personnalisés",
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				}
+			]
+		}
+	],
+	"components": [
+		{
+			"id": "separator",
+			"name": "Séparateur",
+			"description": "Affiche une ligne de séparation avec texte",
+			"img": {
+				"source": "fa",
+				"name": "grip-lines"
+			},
+			"options": [
+				{
+					"id": "text",
+					"name": "Titre",
+					"category": "string"
+				},
+				{
+					"id": "color",
+					"name": "Couleur",
+					"category": "color",
+					"defaultColor": "onSurfaceTint"
+				},
+				{
+					"id": "centerText",
+					"name": "Centrer titre",
+					"category": "binary"
+				},
+				{
+					"id": "width",
+					"name": "Largeur",
+					"category": "numeric",
+					"min": 1,
+					"max": 10,
+					"default": 1
+				}
+			]
+		},
+		{
+			"id": "text",
+			"name": "Texte",
+			"description": "Affiche un texte",
+			"img": {
+				"source": "md",
+				"name": "format-text"
+			},
+			"options": [
+				{
+					"id": "text",
+					"name": "Texte",
+					"category": "string",
+					"multiline": true,
+					"useCmd": true
+				},
+				{
+					"id": "color",
+					"name": "Couleur",
+					"category": "color",
+					"defaultColor": "onSurfaceTint"
+				},
+				{
+					"id": "fontSize",
+					"name": "Taille de la police",
+					"category": "numeric",
+					"min": 6,
+					"max": 40,
+					"default": 14
+				},
+				{
+					"id": "textAlign",
+					"name": "Alignement",
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "center",
+							"name": "Centré"
+						},
+						{
+							"id": "justify",
+							"name": "Justifié"
+						},
+						{
+							"id": "left",
+							"name": "Gauche"
+						},
+						{
+							"id": "right",
+							"name": "Droite"
+						}
+					],
+					"defaultChoice": "left"
+				},
+				{
+					"id": "moreInfos",
+					"name": "Commandes infos",
+					"description": "Commandes utilisables dans le texte",
+					"category": "cmdList",
+					"options": {
+						"type": "info",
+						"hasIcon": false,
+						"hasImage": false,
+						"hasName": false
+					}
+				}
+			]
+		},
+		{
+			"id": "image",
+			"name": "Image",
+			"description": "Affiche une image",
+			"img": {
+				"source": "md",
+				"name": "image"
+			},
+			"options": [
+				{
+					"id": "image",
+					"name": "Image",
+					"required": true,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"category": "ifImgs"
+				},
+				{
+					"id": "opacity",
+					"name": "Transparence",
+					"category": "numeric",
+					"min": 0,
+					"max": 100,
+					"default": 100
+				},
+				{
+					"id": "resizeMode",
+					"name": "Mode de redimensionnement",
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "contain",
+							"name": "Contenu"
+						},
+						{
+							"id": "cover",
+							"name": "Couvert"
+						},
+						{
+							"id": "stretch",
+							"name": "Etire"
+						},
+						{
+							"id": "center",
+							"name": "Centre"
+						}
+					],
+					"defaultChoice": "contain"
+				},
+				{
+					"id": "moreInfos",
+					"name": "Commandes infos",
+					"description": "Commandes utilisables dans le texte",
+					"category": "cmdList",
+					"options": {
+						"type": "info",
+						"hasIcon": false,
+						"hasImage": false,
+						"hasName": false
+					}
+				}
+			]
+		},
+		{
+			"id": "switch",
+			"name": "Switch",
+			"description": "Affiche un switch à 2 états",
+			"img": {
+				"source": "md",
+				"name": "toggle-switch"
+			},
+			"options": [
+				{
+					"id": "onAction",
+					"name": "Action ON",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande ON"
+				},
+				{
+					"id": "offAction",
+					"name": "Action OFF",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "other",
+					"value": "statusInfo",
+					"description": "Commande OFF"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "binary",
+					"description": "Etat de la commande"
+				},
+				{
+					"id": "color",
+					"name": "Couleur",
+					"category": "color",
+					"defaultColor": "primary"
+				}
+			]
+		},
+		{
+			"id": "slider",
+			"name": "Slider",
+			"description": "Affiche un slider",
+			"img": {
+				"source": "md",
+				"name": "tune"
+			},
+			"options": [
+				{
+					"id": "sliderAction",
+					"name": "Action",
+					"required": true,
+					"category": "cmd",
+					"type": "action",
+					"subtype": "slider",
+					"value": "statusInfo"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric",
+					"description": "Etat du slider (numérique)"
+				},
+				{
+					"id": "sliderOptions",
+					"name": "Options du slider",
+					"description": "Personnalisation du slider",
+					"category": "slider"
+				}
+			]
 		}
 	],
 	"summaries": [
