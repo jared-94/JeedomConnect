@@ -45,10 +45,10 @@ if (!isConnect('admin')) {
 			</a>
 		</span>
 	</div>
-	<div class="col-sm-12">
+	<div class="col-sm-12 jcItemModal">
 		<div class="col-xs-2">
 			<div class="form-group">
-				<h3>Choix du widget</h3>
+				<h3>Choix du <span class="itemType">widget</span></h3>
 				<select name="widgetsList" id="widgetsList-select">
 				</select>
 			</div>
@@ -67,7 +67,7 @@ if (!isConnect('admin')) {
 		</div>
 
 		<div class="col-xs-10 borderLef">
-			<h3 style="margin-left:25px;">Options du widget</h3><br>
+			<h3 style="margin-left:25px;">Options du <span class="itemType">widget</span></h3><br>
 			<div style="margin-left:25px; font-size:12px; margin-top:-20px; margin-bottom:15px;">Les options marquées d'une étoile sont obligatoires.</div>
 			<form class="form-horizontal widgetForm" style="overflow: hidden;">
 				<ul id="widgetOptions" style="padding-left:10px; list-style-type:none;">

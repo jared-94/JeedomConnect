@@ -1476,7 +1476,7 @@ class JeedomConnect extends eqLogic {
 		$count_widget_types = count($widget_types);
 
 		$result = array();
-		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+		foreach (array_merge($widgetsConfigJonFile['widgets'], $widgetsConfigJonFile['components']) as $config) {
 			if ($count_widget_types > 0 && !in_array($config['type'], $widget_types)) continue;
 
 			$result[$config['type']] = $only_name ? $config['name'] : $config;

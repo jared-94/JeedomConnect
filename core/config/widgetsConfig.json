@@ -5691,7 +5691,6 @@
 		{
 			"type": "component",
 			"name": "Composant",
-			"hide": true,
 			"img": "tools.png",
 			"description": "Permet d'afficher des composants personnalisés",
 			"options": [
@@ -5707,13 +5706,21 @@
 	"components": [
 		{
 			"id": "separator",
+			"type": "separator",
 			"name": "Séparateur",
 			"description": "Affiche une ligne de séparation avec texte",
-			"img": {
+			"img": "component-separator.png",
+			"icone": {
 				"source": "fa",
 				"name": "grip-lines"
 			},
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
 				{
 					"id": "text",
 					"name": "Titre",
@@ -5733,7 +5740,8 @@
 				{
 					"id": "width",
 					"name": "Largeur",
-					"category": "numeric",
+					"category": "string",
+					"subtype": "number",
 					"min": 1,
 					"max": 10,
 					"default": 1
@@ -5742,18 +5750,26 @@
 		},
 		{
 			"id": "text",
+			"type": "text",
 			"name": "Texte",
 			"description": "Affiche un texte",
-			"img": {
+			"img": "component-txt.png",
+			"icone": {
 				"source": "md",
 				"name": "format-text"
 			},
 			"options": [
 				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
 					"id": "text",
 					"name": "Texte",
 					"category": "string",
-					"multiline": true,
+					"subtype": "multiline",
 					"useCmd": true
 				},
 				{
@@ -5765,7 +5781,8 @@
 				{
 					"id": "fontSize",
 					"name": "Taille de la police",
-					"category": "numeric",
+					"category": "string",
+					"subtype": "number",
 					"min": 6,
 					"max": 40,
 					"default": 14
@@ -5793,30 +5810,26 @@
 						}
 					],
 					"defaultChoice": "left"
-				},
-				{
-					"id": "moreInfos",
-					"name": "Commandes infos",
-					"description": "Commandes utilisables dans le texte",
-					"category": "cmdList",
-					"options": {
-						"type": "info",
-						"hasIcon": false,
-						"hasImage": false,
-						"hasName": false
-					}
 				}
 			]
 		},
 		{
 			"id": "image",
+			"type": "image",
 			"name": "Image",
 			"description": "Affiche une image",
-			"img": {
+			"img": "component-img.png",
+			"icone": {
 				"source": "md",
 				"name": "image"
 			},
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
 				{
 					"id": "image",
 					"name": "Image",
@@ -5831,7 +5844,8 @@
 				{
 					"id": "opacity",
 					"name": "Transparence",
-					"category": "numeric",
+					"category": "string",
+					"subtype": "number",
 					"min": 0,
 					"max": 100,
 					"default": 100
@@ -5859,30 +5873,26 @@
 						}
 					],
 					"defaultChoice": "contain"
-				},
-				{
-					"id": "moreInfos",
-					"name": "Commandes infos",
-					"description": "Commandes utilisables dans le texte",
-					"category": "cmdList",
-					"options": {
-						"type": "info",
-						"hasIcon": false,
-						"hasImage": false,
-						"hasName": false
-					}
 				}
 			]
 		},
 		{
 			"id": "switch",
+			"type": "switch",
 			"name": "Switch",
 			"description": "Affiche un switch à 2 états",
-			"img": {
+			"img": "component-switch.png",
+			"icone": {
 				"source": "md",
 				"name": "toggle-switch"
 			},
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
 				{
 					"id": "onAction",
 					"name": "Action ON",
@@ -5922,13 +5932,21 @@
 		},
 		{
 			"id": "slider",
+			"type": "slider",
 			"name": "Slider",
 			"description": "Affiche un slider",
-			"img": {
+			"img": "component-slider.png",
+			"icone": {
 				"source": "md",
 				"name": "tune"
 			},
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
 				{
 					"id": "sliderAction",
 					"name": "Action",

@@ -125,7 +125,19 @@ function getWidgetModal(_options, _callback) {
 function setWidgetModalData(options) {
     $('#summaryModal').dialog('destroy').remove();
 
+    if (options.itemType == 'component') {
+        $('#widgetsList-select option:not(.component)').hide();
+        $('#widgetsList-select option.component:first').prop("selected", "selected");
+        $('.jcItemModal .itemType').text('composant');
+    }
+    else {
+        $('#widgetsList-select option:not(.widget)').hide();
+        $('#widgetsList-select option.widget:first').prop("selected", "selected");
+
+    }
+
     refreshAddWidgets();
+
 
     if (options.widget !== undefined) {
         $('#widgetsList-select option[value="' + options.widget.type + '"]').prop('selected', true);
@@ -160,7 +172,8 @@ function setWidgetModalData(options) {
 
         $("#widgetOptions").attr('widget-id', options.eqId ?? '');
 
-        var widgetConfig = widgetsList.widgets.find(i => i.type == options.widget.type);
+        var itemList = (options.itemType == 'component') ? widgetsList.components : widgetsList.widgets
+        var widgetConfig = itemList.find(i => i.type == options.widget.type);
         //  console.log("widgetsList => ", widgetsList) ;
         //  console.log("widgetConfig => ", widgetConfig) ;
         widgetConfig.options.forEach(option => {
@@ -301,7 +314,10 @@ function refreshAddWidgets() {
     imgCat = [];
     moreInfos = [];
     var type = $("#widgetsList-select").val();
-    var widget = widgetsList.widgets.find(i => i.type == type);
+    var itemType = $("#widgetsList-select").find("option:selected").hasClass('widget') ? 'widget' : 'component';
+
+    var listItems = (itemType == 'widget') ? widgetsList.widgets : widgetsList.components
+    var widget = listItems.find(i => i.type == type);
     showAutoFillWidgetCmds();
 
     (type == 'jc') ? $('.searchForJCeq').show() : $('.searchForJCeq').hide();
@@ -331,44 +347,48 @@ function refreshAddWidgets() {
     items.push(option);
 
     //visible
-    option = `<li><div class='form-group'>
-  	<label class='col-xs-3 '>Visible sous condition
-        <sup>
-            <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
-        </sup>
-    </label>
-  	<div class='col-xs-9'>
-    <div class='input-group'>
-    <input style="width:340px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
+    if (itemType == 'widget') {
+        option = `<li><div class='form-group'>
+        <label class='col-xs-3 '>Visible sous condition
+            <sup>
+                <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
+            </sup>
+        </label>
+        <div class='col-xs-9'>
+        <div class='input-group'>
+        <input style="width:340px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
         
         <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
         <i class='fas fa-list-alt'></i></a>`;
 
-    // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
-    //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-    //     <i class="fas fa-plus-square"></i> </a>
-    //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
-    // if (widget.variables) {
-    //     widget.variables.forEach(v => {
-    //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-    //     });
-    // }
-    // option += `</ul></div >
-    option += `</div></div></div></li>`;
-    items.push(option);
+        // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
+        //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        //     <i class="fas fa-plus-square"></i> </a>
+        //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
+        // if (widget.variables) {
+        //     widget.variables.forEach(v => {
+        //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+        //     });
+        // }
+        // option += `</ul></div >
+        option += `</div></div></div></li>`;
+        items.push(option);
+    }
 
     //Room
-    option = `<li><div class='form-group'>
-    <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
-    <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
-    <option value="none">Sélection  d'une pièce</option>`;
-    option += roomListOptions;
+    if (itemType == 'widget') {
+        option = `<li><div class='form-group'>
+        <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
+        <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
+        <option value="none">Sélection  d'une pièce</option>`;
+        option += roomListOptions;
 
-    if (type == 'room') {
-        option += `<option value="global">Global</option>`;
+        if (type == 'room') {
+            option += `<option value="global">Global</option>`;
+        }
+        option += `</select></div></div></div></li>`;
+        items.push(option);
     }
-    option += `</select></div></div></div></li>`;
-    items.push(option);
 
     widget.options.forEach(option => {
         var required = (option.required) ? "required" : "";
@@ -430,11 +450,14 @@ function refreshAddWidgets() {
                 curOption += `<div class='input-group'>
         <div style="display:flex"><textarea style="width:340px;" id="${option.id}-input" value=''></textarea>`;
             } else {
+                var min = (option.min || false) ? `min="${option.min}"` : '';
+                var max = (option.max || false) ? `max="${option.max}"` : '';
+
                 curOption += `<div class='input-group'>
-        <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
+        <div style="display:flex"><input type="${type}" style="width:340px;" ${min} ${max} id="${option.id}-input" value='${option.default || ''}'>`;
             }
 
-            if (option.id == 'name') {
+            if (option.id == 'name' || (option.useCmd != 'undefined' && option.useCmd)) {
                 curOption += `
               <div class="dropdown" id="name-select">
               <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
@@ -567,7 +590,7 @@ function refreshAddWidgets() {
     });
 
     //More infos
-    if (!["widgets-summary", "room", "favorites"].includes(widget.type)) {
+    if (!["widgets-summary", "room", "favorites", "separator", "switch", "slider"].includes(widget.type)) {
         moreDiv = `<li><div class='form-group'>
       <label class='col-xs-3 '>Ajouter des infos</label>
       <div class='col-xs-9'>
@@ -583,11 +606,13 @@ function refreshAddWidgets() {
         items.push(moreDiv);
     }
 
-    //Details access
-    option = `<li><div class='form-group'>
-    <label class='col-xs-3 '>Bloquer vue détails</label>
-    <div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="blockDetail-input" ></div></div></div></li>`;
-    items.push(option);
+    if (itemType == 'widget') {
+        //Details access
+        option = `<li><div class='form-group'>
+        <label class='col-xs-3 '>Bloquer vue détails</label>
+        <div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="blockDetail-input" ></div></div></div></li>`;
+        items.push(option);
+    }
 
     $("#widgetOptions").html(items.join(""));
     loadSortable('all');
@@ -1161,7 +1186,12 @@ $(".widgetMenu .saveWidget").click(function () {
     try {
 
         var result = {};
-        var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+
+        var itemType = $("#widgetsList-select").find("option:selected").hasClass('widget') ? 'widget' : 'component';
+
+        var listItems = (itemType == 'widget') ? widgetsList.widgets : widgetsList.components
+        var widgetConfig = listItems.find(i => i.type == $("#widgetsList-select").val());
+        // var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
         let infoCmd = moreInfos.slice();
 
         $('input[cmdType="info"]').each((i, el) => {
@@ -1220,13 +1250,28 @@ $(".widgetMenu .saveWidget").click(function () {
                 if ($("#" + option.id + "-input").val() == '' & option.required) {
                     throw 'La commande ' + option.name + ' est obligatoire';
                 }
-                result[option.id] = parseString($("#" + option.id + "-input").val(), infoCmd);
+                if ($("#" + option.id + "-input").prop('type') == 'number') {
+                    let itemVal = $("#" + option.id + "-input").val();
+                    var min = $("#" + option.id + "-input").attr('min');
+                    var max = $("#" + option.id + "-input").attr('max');
+                    if (typeof min !== 'undefined' && min !== false && min > itemVal) {
+                        itemVal = min;
+                    }
+                    else if (typeof max !== 'undefined' && max !== false && max < itemVal) {
+                        itemVal = max;
+                    }
+                    result[option.id] = parseInt(itemVal);
+                }
+                else {
+                    result[option.id] = parseString($("#" + option.id + "-input").val(), infoCmd);
+                }
             }
             else if (option.category == "binary") {
                 result[option.id] = $("#" + option.id + "-input").is(':checked');
             }
             else if (option.category == "color") {
-                result[option.id] = $("#" + option.id + "-input").val();
+                let itemVal = $("#" + option.id + "-input").val();
+                if (itemVal != '') result[option.id] = itemVal;
             }
             else if (option.category == "stringList") {
                 if ($("#" + option.id + "-input").val() == 'none' & option.required) {
@@ -1336,19 +1381,26 @@ $(".widgetMenu .saveWidget").click(function () {
 
         // ----- END forEach ----
 
-        result.type = $("#widgetsList-select").val();
+        if (itemType == 'widget') {
+            result.type = $("#widgetsList-select").val();
+            result.blockDetail = $("#blockDetail-input").is(':checked');
+
+            visibilityCondData = $('#widgetModal #visibility-cond-input').val();
+            if (visibilityCondData != '') {
+                getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
+                    result.visibilityCond = cmdResult;
+                });
+            }
+
+        }
+        else {
+            result.type = 'component';
+            result.component = $("#widgetsList-select").val();
+        }
         widgetType = $("#widgetsList-select").val();
-        result.blockDetail = $("#blockDetail-input").is(':checked');
 
         widgetEnable = $('#enable-input').is(":checked");
         result.enable = widgetEnable;
-
-        visibilityCondData = $('#widgetModal #visibility-cond-input').val();
-        if (visibilityCondData != '') {
-            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
-                result.visibilityCond = cmdResult;
-            });
-        }
 
         widgetRoom = $('#room-input :selected').val();
         widgetRoomName = $('#room-input :selected').text();
@@ -1360,7 +1412,6 @@ $(".widgetMenu .saveWidget").click(function () {
                 result.room = parseInt(widgetRoom);
             }
         }
-
 
         if (moreInfos.length > 0) {
             result.moreInfos = [];

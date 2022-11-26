@@ -225,7 +225,7 @@ try {
 
 		$jsonConfig = json_decode(file_get_contents(__DIR__ . '/../config/widgetsConfig.json'), true);
 		$widgetArrayConfig = array();
-		foreach ($jsonConfig['widgets'] as $config) {
+		foreach (array_merge($jsonConfig['widgets'], $jsonConfig['components']) as $config) {
 			$widgetArrayConfig[$config['type']] =  $config;
 		}
 
@@ -247,11 +247,14 @@ try {
 		$html = '';
 		foreach ($allWidgets as $widget) {
 			$widgetJC = json_decode($widget['widgetJC'], true);
-			$html .= ($ids == 'all') ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" >' : '';
+			$itemType = ($widget['type'] == 'component') ? 'component' : 'widget';
+			$html .= ($ids == 'all') ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" data-item_type="' . $itemType . '">' : '';
 			$html .= '<td style="width:40px;"><span class="label label-info objectAttr bt_openWidget" data-l1key="widgetId" style="cursor: pointer !important;">' . $widget['id'] . '</span></td>';
 
 			// **********    TYPE    ****************
-			$html .= '<td style="width:40px;"><span class="label objectAttr" data-l1key="type" data-l2key="' . $widget['type'] . '">' . str_replace('de génériques ', '',  $widgetArrayConfig[$widget['type']]['name']) . '</span></td>';
+			$tmpType = ($widget['type'] == 'component') ? $widget['component'] : $widget['type'];
+			$html .= '<td style="width:40px;"><span class="label objectAttr" data-l1key="type" data-l2key="' . $tmpType . '">' . str_replace('de génériques ', '',  $widgetArrayConfig[$tmpType]['name']) . '</span></td>';
+			// $html .= '<td style="width:40px;"><span class="label objectAttr" data-l1key="type" data-l2key="' . $tmpType . '">' . str_replace('de génériques ', '',  $widgetArrayConfig[$widget['type']]['name']) . '</span></td>';
 
 
 			// **********    ROOM    ****************
