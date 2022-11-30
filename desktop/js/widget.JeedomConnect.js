@@ -61,7 +61,7 @@ function getWidgetModal(_options, _callback) {
     $("#simpleModal").dialog('destroy').remove();
 
     if ($("#widgetModal").length == 0) {
-        $('body').append('<div id="widgetModal"></div>');
+        $('body').append('<div id="widgetModal" widgetOld="' + JSON.stringify(_options.widget).replace(/"/g, '&quot;') + '"></div>');
 
         $("#widgetModal").dialog({
             title: _options.title,
@@ -1184,7 +1184,7 @@ $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
     try {
-
+        var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
 
         var itemType = $("#widgetsList-select").find("option:selected").hasClass('widget') ? 'widget' : 'component';
@@ -1376,9 +1376,10 @@ $(".widgetMenu .saveWidget").click(function () {
                 option.choices.forEach(v => {
                     result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
                 });
+            } else if (widgetOld?.[option.id]) { // Keep options with no supported category
+                result[option.id] = widgetOld[option.id];
             }
         });
-
         // ----- END forEach ----
 
         if (itemType == 'widget') {
