@@ -156,7 +156,37 @@ function setSimpleModalData(options) {
         });
       }
 
-    } else if (option.type == "advancedGrid") {
+    } else if (option.type == "visibilityCond") {
+
+      var visibilityCond = option.value || '';
+      if (visibilityCond != '') {
+        const match = visibilityCond.match(/#.*?#/g);
+        if (match) {
+          match.forEach(item => {
+            getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: item }, function (humanResult, _params) {
+              visibilityCond = visibilityCond.replace(item, humanResult);
+            });
+          });
+        }
+      }
+
+      swipe = `<li><div class='form-group'>
+			   <label class='col-xs-3' >Visible sous condition
+            <sup>
+								<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
+						</sup>
+         </label>
+			   <div class='col-xs-9'>
+            <input style="width:385px;" class="roundedLeft" id="visibility-cond-input" value="${visibilityCond}" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
+          
+          <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('simpleModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
+          <i class='fas fa-list-alt'></i></a>
+    
+         </div>
+         </div></li>`;
+      items.push(swipe);
+    }
+    else if (option.type == "advancedGrid") {
       swipe = `<li><div class='form-group'>
 			   <label class='col-xs-3' >Mode de grille</label>
 			   <div class='col-xs-9'>

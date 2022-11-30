@@ -163,33 +163,15 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						<br>
 						<span style="color:var(--txt-color)">{{Création de widgets en masse}}</span>
 					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
-						<i class="fas fa-tasks"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
-					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
-						<i class="mdi mdi-devices"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
-					</div>
-					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
-						<i class="fas fa-comment-dots"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Config Notifier Tous}}</span>
-					</div>
-					<!--
-						Start Generic Types
-						HACK Remove when gentype config in plugin is not needed anymore
-					-->
-					<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
-						<i class="fas fa-building"></i>
-						<br>
-						<span style="color:var(--txt-color)">{{Config types génériques}}</span>
-					</div>
-					<!-- End Generic Types -->
 
-					<div class="cursor eqLogicAction " data-action="showMaps" style="color:rgb(27,161,242);">
+					<div class="cursor eqLogicAction logoSecondary" data-action="showNotifAll" style="color:rgb(27,161,242);">
+						<i class="fas fa-comments"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Notifications multiples}}</span>
+					</div>
+
+
+					<div class="cursor eqLogicAction" data-action="showMaps" style="color:rgb(27,161,242);">
 						<i class="fas fa-map-marked-alt"></i>
 						<br>
 						<span style="color:var(--txt-color)">{{Localisation}}</span>
@@ -211,43 +193,80 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 							</sup>
 						</div>
 					<?php }
-
-					if (config::byKey('showQrCodeMainPage', 'JeedomConnect', false)) { ?>
-						<div class="showqrcode-content">
-							<img class="showqrcode" src='' width='150px' height="150px" style="display:none;">
+					?>
+					<div class="cursor eqLogicAction logoSecondary" data-action="moreJcOptions" style="color:rgb(27,161,242);">
+						<i class="fas fa-ellipsis-h"></i>
+						<br>
+						<span style="color:var(--txt-color)" id="spanMoreJcOptions" data-type="more">{{Plus d'options}}</span>
+					</div>
+				</div>
+				<br />
+				<div class="hideOptionMenu" style="display:none;">
+					<div class="eqLogicThumbnailContainer">
+						<div class="cursor eqLogicAction logoSecondary" data-action="showSummary" style="color:rgb(27,161,242);">
+							<i class="fas fa-tasks"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Synthèse des widgets}}</span>
 						</div>
-					<?php } ?>
+
+						<div class="cursor eqLogicAction logoSecondary" data-action="showEquipmentSummary" style="color:rgb(27,161,242);">
+							<i class="mdi mdi-devices"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Synthèse des équipments JC}}</span>
+						</div>
+
+						<!--
+						Start Generic Types
+						HACK Remove when gentype config in plugin is not needed anymore
+						-->
+						<div class="cursor eqLogicAction logoSecondary" data-action="gotoGenTypeConfig" style="color:rgb(27,161,242);">
+							<i class="fas fa-building"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Config types génériques}}</span>
+						</div>
+						<!-- End Generic Types -->
+					</div>
 				</div>
 			</div>
 			<div class="col-sm-2">
-				<legend><i class="fas fa-comments"></i> {{Community}}</legend>
-				<!-- Boutons de gestion du plugin -->
-				<div class="eqLogicThumbnailContainer">
-					<div class="cursor eqLogicAction logoSecondary" data-action="showCommunity" style="color:rgb(27,161,242);">
-						<i class="fas fa-exclamation-circle"></i>
-						<br>
-						<span>{{Infos}}</span>
-						<div style="display:none">
-							<?php if ($displayWarning) { ?>
-								<span class="displayJCWarning">
-									Pour chacun des sujets que vous partagez sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
-									afin de vous aider le plus facilement et rapidement possible, merci de <u><strong>systématiquement</strong></u> partager les informations
-									de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de la page principale de JeedomConnect (JC pour les intimes) !
+				<div class="hideWhileShowqrcode">
+					<legend><i class=" fas fa-comments"></i> {{Community}}</legend>
+					<!-- Boutons de gestion du plugin -->
+					<div class="eqLogicThumbnailContainer">
+						<div class="cursor eqLogicAction logoSecondary" data-action="showCommunity" style="color:rgb(27,161,242);">
+							<i class="fas fa-question-circle"></i>
+							<br>
+							<span>{{Infos}}</span>
+							<div style="display:none">
+								<?php if ($displayWarning) { ?>
+									<span class="displayJCWarning">
+										Pour chacun des sujets que vous partagez sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
+										afin de vous aider le plus facilement et rapidement possible, merci de <u><strong>systématiquement</strong></u> partager les informations
+										de votre installation, qui sont disponibles en seulement un clic sur le bouton 'Community Infos' en haut à droite de la page principale de JeedomConnect (JC pour les intimes) !
+										<br /><br />
+										Ces informations nous permettent de savoir quelle version vous utilisez afin de mieux répondre à votre demande.
+										<br /><br />
+										<span class="description timerSpan">Affichage des boutons dans : <span class="timer"></span> sec</span>
+									</span>
+								<?php } ?>
+								<span class="txtInfoPlugin">
+									Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
+									<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
+									<br /><br />Appuyez sur le bouton 'copier' en bas de la fenêtre pour récupérer l'ensemble des informations affichées, et partagez/collez-les à chaque nouveau post sur le forum !
 									<br /><br />
-									Ces informations nous permettent de savoir quelle version vous utilisez afin de mieux répondre à votre demande.
-									<br /><br />
-									<span class="description timerSpan">Affichage des boutons dans : <span class="timer"></span> sec</span>
 								</span>
-							<?php } ?>
-							<span class="txtInfoPlugin">
-								Si vous avez des interrogations, postez un message sur le <a href="https://community.jeedom.com/tag/plugin-jeedomconnect" target="_blank"><span style="color:rgb(27,161,242);"> forum community</span> <i class="fas fa-external-link-alt"></i></a>
-								<br /><i>après avoir vérifié que le sujet n'a pas déjà été traité !</i>
-								<br /><br />Appuyez sur le bouton 'copier' en bas de la fenêtre pour récupérer l'ensemble des informations affichées, et partagez/collez-les à chaque nouveau post sur le forum !
-								<br /><br />
-							</span>
+							</div>
 						</div>
+
 					</div>
 				</div>
+				<?php
+				if (config::byKey('showQrCodeMainPage', 'JeedomConnect', false)) { ?>
+					<div class="showqrcode-content" style="display:none;">
+						<legend><i class="mdi mdi-qrcode-scan"></i> {{Qr Code}}</legend>
+						<img class="showqrcode" src='' width='150px' height="150px">
+					</div>
+				<?php } ?>
 			</div>
 		</div>
 
@@ -281,7 +300,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				$allEqToDisplay .= '<span>';
 				// $allEqToDisplay .= '</div>';
 				$allEqToDisplay .= '<a class="btn btn-success btnAssistant" title="Assistant configuration"><i class="fas fa-icons"></i></a>&nbsp;';
-				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notificaion"><i class="fas fa-comment-dots"></i></a>&nbsp;';
+				$allEqToDisplay .= '<a class="btn btn-success btnNotification" title="Assistant notification"><i class="fas fa-comment-dots"></i></a>&nbsp;';
 				$allEqToDisplay .= '<a class="btn btn-success btnGeofencing" title="Gérer le geofencing"><i class="fas fa-crosshairs"></i></a>';
 				$allEqToDisplay .= '</span>';
 				$allEqToDisplay .= '</div>';
@@ -348,7 +367,10 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 		<ul class="nav nav-tabs" role="tablist">
 			<li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fas fa-arrow-circle-left"></i></a></li>
 			<li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-tachometer-alt"></i><span class="hidden-xs"> {{Équipement}}</span></a></li>
-			<li role="presentation"><a href="#commandtab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-list"></i><span class="hidden-xs"> {{Commandes}}</span></a></li>
+			<li role="presentation"><a href="#commandtabInfo" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-info-circle"></i><span class="hidden-xs"> {{Commandes Infos}}</span></a></li>
+			<li role="presentation"><a href="#commandtabPosition" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-map-marker-alt"></i><span class="hidden-xs"> {{Commandes Position}}</span></a></li>
+			<li role="presentation"><a href="#commandtabAction" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-play-circle"></i><span class="hidden-xs"> {{Commandes Actions}}</span></a></li>
+			<li role="presentation"><a href="#commandtabNotification" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-comment-dots"></i><span class="hidden-xs"> {{Commandes Notifications}}</span></a></li>
 		</ul>
 		<div class="tab-content">
 			<!-- Onglet de configuration de l'équipement -->
@@ -532,6 +554,21 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								</div>
 							</div>
 
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{{Commande info Volume}}</label>
+								<div class="col-sm-7">
+									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="volume">
+										<option value="all" selected>{{Toutes}}</option>
+										<?php
+										foreach (JeedomConnect::$_volumeType as $key => $value) {
+											echo '<option value="' . $key . '">' . $value . '</option>';
+										}
+										?>
+									</select>
+									<span class="description italic descConfigVolume"><?= "Si 'Toutes', format de la commande : " . join(";", array_values(JeedomConnect::$_volumeType)) . ";" ?></span>
+								</div>
+							</div>
+
 
 							<legend><i class="fas fa-map-marked-alt"></i>{{Informations Position}}</legend>
 							<div class="form-group">
@@ -649,15 +686,10 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				<hr>
 			</div><!-- /.tabpanel #eqlogictab-->
 
-			<!-- Onglet des commandes de l'équipement -->
-			<div role="tabpanel" class="tab-pane" id="commandtab">
+			<!-- Onglet des commandes INFO de l'équipement -->
+			<div role="tabpanel" class="tab-pane" id="commandtabInfo" class="commandtab">
 				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
-				<br /><br />
 				<div class="table-responsive">
-
-					<div class="col-lg-6">
-						<legend><i class="fas fa-info-circle"></i> {{Commandes de type info}}</legend>
-					</div>
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
 							<tr>
@@ -678,11 +710,35 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						</tbody>
 					</table>
 				</div>
-				<br /><br />
+			</div><!-- /.tabpanel #commandtabInfo-->
+
+			<div role="tabpanel" class="tab-pane" id="commandtabPosition" class="commandtab">
 				<div class="table-responsive">
-					<div class="col-lg-6">
-						<legend><i class="fas fa-play-circle"></i> {{Commandes de type action}}</legend>
-					</div>
+					<table id="table_cmd" class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 50px;">#</th>
+								<th style="width: 300px;">{{Nom}}</th>
+								<th style="width: 100px;">{{Sous-type}}</th>
+								<?php
+								if ($displayInfoValue) {
+								?>
+									<th style="width: 300px;">{{Valeur}}</th>
+								<?php } ?>
+								<th style="width: 200px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody class="cmd_infoPosition">
+						</tbody>
+					</table>
+				</div>
+			</div><!-- /.tabpanel #commandtab-->
+
+			<!-- Onglet des commandes ACTION -->
+			<div role="tabpanel" class="tab-pane" id="commandtabAction" class="commandtab">
+				<div class="table-responsive">
 					<table id="table_cmd" class="table table-bordered table-condensed">
 						<thead>
 							<tr>
@@ -698,7 +754,27 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						</tbody>
 					</table>
 				</div>
-			</div><!-- /.tabpanel #commandtab-->
+			</div><!-- /.tabpanel #commandtabAction-->
+
+			<!-- Onglet des commandes NOTIFICATION -->
+			<div role="tabpanel" class="tab-pane" id="commandtabNotification" class="commandtab">
+				<div class="table-responsive">
+					<table id="table_cmd" class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 50px;">#</th>
+								<th style="width: 300px;">{{Nom}}</th>
+								<th style="width: 160px;">{{Sous-type}}</th>
+								<th style="width: 100px;">{{Options}}</th>
+								<th style="width: 50px;">{{Ordre}}</th>
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody class="cmd_actionNotification">
+						</tbody>
+					</table>
+				</div>
+			</div><!-- /.tabpanel #commandtabNotification-->
 
 		</div><!-- /.tab-content -->
 	</div><!-- /.eqLogic -->

@@ -347,6 +347,16 @@ class apiHelper {
           return $result;
           break;
 
+        case 'SET_NOTIFS_CONFIG':
+          self::setNotifConfig($eqLogic, $param['notifsConfig']);
+          return null;
+          break;
+
+        case 'TEST_NOTIF':
+          self::testNotif($eqLogic, $param['notifId']);
+          return null;
+          break;
+
         case 'GEOLOC':
           self::setGeofence($eqLogic, $param);
           return null;
@@ -844,6 +854,7 @@ class apiHelper {
   // CMD FUNCTIONS
   private static function getInfoCmdList($config) {
     $return = array();
+    $conditionsArr = array();
     foreach ($config['payload']['widgets'] as $widget) {
       foreach ($widget as $item => $value) {
         if (is_array($value)) {
@@ -858,22 +869,43 @@ class apiHelper {
             }
           }
         }
+        if ($item == 'visibilityCond') {
+          array_push($conditionsArr, $value);
+        }
       }
     }
+
+    //** CHECK FIELDS WITH CONDITIONS */
     if (array_key_exists('background', $config['payload'])) {
       foreach ($config['payload']['background']['condBackgrounds'] as $cond) {
-        preg_match_all("/#([a-zA-Z0-9]*)#/", $cond['condition'], $matches);
-        if (count($matches) > 0) {
-          $matches = array_unique($matches[0]);
-          foreach ($matches as $match) {
-            $cmd = cmd::byId(str_replace('#', '', $match));
-            if (is_object($cmd)) {
-              array_push($return, str_replace('#', '', $match));
-            }
+        if (isset($cond['condition'])) array_push($conditionsArr, $cond['condition']);
+      }
+    }
+    if (array_key_exists('tabs', $config['payload'])) {
+      foreach ($config['payload']['tabs'] as $menu) {
+        if (isset($menu['visibilityCond'])) array_push($conditionsArr, $menu['visibilityCond']);
+      }
+    }
+    if (array_key_exists('sections', $config['payload'])) {
+      foreach ($config['payload']['sections'] as $menu) {
+        if (isset($menu['visibilityCond'])) array_push($conditionsArr, $menu['visibilityCond']);
+      }
+    }
+    JCLog::trace("conditionsArr " . json_encode($conditionsArr));
+    foreach ($conditionsArr as $cond) {
+      preg_match_all("/#([a-zA-Z0-9]*)#/", $cond, $matches);
+      if (count($matches) > 0) {
+        $matches = array_unique($matches[0]);
+        foreach ($matches as $match) {
+          $cmd = cmd::byId(str_replace('#', '', $match));
+          if (is_object($cmd)) {
+            array_push($return, str_replace('#', '', $match));
           }
         }
       }
     }
+    //**-------- END CHECK CONDITIONS -------*/
+
     if (array_key_exists('weather', $config['payload']) && count($config['payload']['weather']) > 0) {
       $return = array_merge($return, array(
         $config['payload']['weather']['condition'],
@@ -1069,6 +1101,22 @@ class apiHelper {
     $payload =  $eqLogic->getNotifs();
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+  }
+
+  private static function setNotifConfig($eqLogic, $notifsConfig) {
+    $eqLogic->saveNotifs($notifsConfig, false);
+  }
+
+  private static function testNotif($eqLogic, $notifId) {
+    $cmd = $eqLogic->getCmd(null, $notifId);
+    if (!is_object($cmd)) {
+      return self::raiseException("Can't find command [logicalId=" . $notifId . "]");
+    }
+    try {
+      $cmd->execCmd();
+    } catch (Exception $e) {
+      return self::raiseException($e->getMessage());
+    }
   }
 
   // GEOFENCE FUNCTIONS
@@ -2652,8 +2700,7 @@ class apiHelper {
   private static function execCmd($id, $options = null) {
     $cmd = cmd::byId($id);
     if (!is_object($cmd)) {
-      JCLog::error("Can't find command [id=" . $id . "]");
-      return self::raiseException("La commande $id n'existe pas");
+      return self::raiseException("Can't find command [id=" . $id . "]");
     }
 
     $options = array_merge($options ?? array(), array('comingFrom' => 'JeedomConnect'));
@@ -2672,7 +2719,11 @@ class apiHelper {
         }
       }
 
-      $txtUser = key_exists('user_login', $options) ? ' par l\'utilisateur ' . $options['user_login'] : '';
+      $txtUser = '';
+      if (key_exists('user_login', $options)) {
+        $txtUser = ' par l\'utilisateur ' . $options['user_login'];
+        // $options['user_login'] = $options['user_login'] . ' via JC';
+      }
       JCLog::info('Exécution de la commande ' . $cmd->getHumanName() . ' (' . $id . ')' . $txtUser);
 
       $cmd->execCmd($options);
@@ -2918,12 +2969,20 @@ class apiHelper {
     if (isset($infos['isCharging'])) {
       $eqLogic->checkAndUpdateCmd('isCharging', $infos['isCharging'] ? 1 : 0);
     }
-    if (isset($infos['nextAlarm'])) {
-      if (is_numeric($infos['nextAlarm'])) {
-        $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
-      } else {
-        $eqLogic->checkAndUpdateCmd('nextAlarm', -1);
-      }
+    if (isset($infos['nextAlarm']) && is_numeric($infos['nextAlarm'])) {
+      $eqLogic->checkAndUpdateCmd('nextAlarm', floor(intval($infos['nextAlarm'] / 1000)));
+      $eqLogic->checkAndUpdateCmd('nextAlarmPackage', $infos['alarmPackage']);
+    } else {
+      $eqLogic->checkAndUpdateCmd('nextAlarm', -1);
+      $eqLogic->checkAndUpdateCmd('nextAlarmPackage', $infos['alarmPackage']);
+    }
+
+    if (isset($infos['alarmFiltered']) && $infos['alarmFiltered']) {
+      JCLog::debug("La prochaine Alarme est émise par un package que vous n'avez pas filtré [" . ($infos['alarmPackage'] ?? 'N/A') . "], elle n'est donc pas retenue");
+    }
+
+    if (isset($infos['volumes'])) {
+      self::setVolume($eqLogic, $infos['volumes']);
     }
   }
 
@@ -2931,9 +2990,15 @@ class apiHelper {
     $eqLogic->checkAndUpdateCmd('faceDetected', $infos['value']);
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   * @param boolean $value
+   * @return void
+   */
   private static function setWebsocket($eqLogic, $value) {
     $eqLogic->setConfiguration('useWs', $value ? '1' : '0');
     $eqLogic->save(true);
+    $eqLogic->generateQRCode();
 
     $deamon_info = JeedomConnect::deamon_info();
     if ($deamon_info['launchable'] == 'ok' && $deamon_info['state'] != 'ok') {
@@ -2948,9 +3013,16 @@ class apiHelper {
     );
   }
 
+  /**
+   * @param JeedomConnect $eqLogic
+   * @param boolean $value
+   * @return void
+   */
   private static function setPolling($eqLogic, $value) {
     $eqLogic->setConfiguration('polling', $value ? '1' : '0');
     $eqLogic->save(true);
+    $eqLogic->generateQRCode();
+
     return array(
       "type" => "GET_POLLING",
       "payload" => array(
@@ -3019,5 +3091,35 @@ class apiHelper {
     }
 
     $cmd->event($message);
+  }
+
+  /**
+   * Set the cmd Info Volume base on the setting set by user
+   *
+   * @param JeedomConnect $eqLogic
+   * @param array $volume list of volume set
+   * @return void
+   */
+  public static function setVolume($eqLogic, $volume) {
+    $volumeType = array_keys(JeedomConnect::$_volumeType);
+
+    /** @var cmd $cmdInfoVolume */
+    $cmdInfoVolume = $eqLogic->getCmd('info', 'volume');
+    if (!is_object($cmdInfoVolume)) return;
+
+    $volumeOption = $eqLogic->getConfiguration('volume', 'all');
+
+    if ($volumeOption == 'all') {
+      $volumeFinal = '';
+      foreach ($volumeType as $item) {
+        $volumeFinal .= ($volume[$item] ?? '-1') . ';';
+      }
+    } else {
+      $volumeFinal = $volume[$volumeOption] ?? '-1';
+    }
+
+    JCLog::debug("Final volume set to => " . $volumeFinal);
+    $cmdInfoVolume->event($volumeFinal);
+    return;
   }
 }

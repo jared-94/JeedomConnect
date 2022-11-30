@@ -1078,10 +1078,9 @@ class JeedomConnectUtils {
             JeedomConnect::migrationAllNotif();
         }
 
-        // TODO remove comment when conflict with next merge from BETA 
-        // if (config::byKey('migration::notifAll2',   'JeedomConnect') == '') {
-        //     JeedomConnect::migrationAllNotif2();
-        // }
+        if (config::byKey('migration::notifAll2',   'JeedomConnect') == '') {
+            JeedomConnect::migrationAllNotif2();
+        }
 
         if (config::byKey('migration::appPref',   'JeedomConnect') == '') {
             JeedomConnect::migrateAppPref();

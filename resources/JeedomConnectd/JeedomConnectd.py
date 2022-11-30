@@ -35,54 +35,65 @@ def read_socket():
             if eqApiKey:
                 toClient = server.apiKey_to_client(eqApiKey)
             else:
-                raise Exception("no apiKey found ! ")
+                # raise Exception("no apiKey found ! ")
+                logging.warning("no apiKey found ! -- skip msg " + method)
+                return
 
-            if toClient and method == "WELCOME":
-                toClient["configVersion"] = payload.get("configVersion", None)
-                toClient["lastReadTimestamp"] = time.time()
-                toClient["lastHistoricReadTimestamp"] = time.time()
-                # logging.debug("all data client =>" + str(toClient))
-
-            if method == "SET_EVENTS":
-                for elt in msg_socket.get("payload", None):
-                    # logging.debug("checking elt =>" + str(elt))
-                    if elt.get("type", None) == "DATETIME":
-                        toClient["lastReadTimestamp"] = elt.get("payload", None)
-
-                    elif elt.get("type", None) == "HIST_DATETIME":
-                        toClient["lastHistoricReadTimestamp"] = elt.get("payload", None)
-
-                    else:
-                        if (
-                            "payload" in elt
-                            and hasattr(elt, "__len__")
-                            and len(elt["payload"]) > 0
-                        ):
-                            logging.debug(
-                                f"Broadcast to {toClient['id']} : " + str(elt)
-                            )
-                            server.send_message(toClient, json.dumps(elt))
+            if not toClient:
+                # raise Exception("no client found ! ")
+                logging.warning("no client found ! -- skip msg " + method)
+                return
             else:
-                if toClient:
+                if method == "SET_EVENTS":
+                    for elt in msg_socket.get("payload", None):
+                        # logging.debug("checking elt =>" + str(elt))
+                        if elt.get("type", None) == "DATETIME":
+                            toClient["lastReadTimestamp"] = elt.get("payload", None)
+
+                        elif elt.get("type", None) == "HIST_DATETIME":
+                            toClient["lastHistoricReadTimestamp"] = elt.get(
+                                "payload", None
+                            )
+
+                        else:
+                            if (
+                                "payload" in elt
+                                and hasattr(elt, "__len__")
+                                and len(elt["payload"]) > 0
+                            ):
+                                logging.debug(
+                                    f"Broadcast to {toClient['id']} : " + str(elt)
+                                )
+                                server.send_message(toClient, json.dumps(elt))
+                else:
+
+                    # if WELCOME or CONFIG_AND_INFOS save data before sending msg
+                    if method == "WELCOME":
+                        toClient["configVersion"] = payload.get("configVersion", None)
+                        toClient["lastReadTimestamp"] = time.time()
+                        toClient["lastHistoricReadTimestamp"] = time.time()
+                        # logging.debug("all data client =>" + str(toClient))
+
                     if method == "CONFIG_AND_INFOS":
                         toClient["configVersion"] = payload["config"]["payload"][
                             "configVersion"
                         ]
-                    server.send_message(toClient, msg_socket_str)
-                else:
-                    raise Exception("no client found ! ")
 
-            if toClient and method in [
-                "BAD_DEVICE",
-                "EQUIPMENT_DISABLE",
-                "APP_VERSION_ERROR",
-                "PLUGIN_VERSION_ERROR",
-                "EMPTY_CONFIG_FILE",
-                "FORMAT_VERSION_ERROR",
-                "BAD_TYPE_VERSION",
-            ]:
-                logging.debug("Bad configuration closing connexion")
-                server.close_client(toClient)
+                    # in all cases, send the msg
+                    server.send_message(toClient, msg_socket_str)
+
+                    # if it's a "wrong msg", then close the connection after sending the msg
+                    if method in [
+                        "BAD_DEVICE",
+                        "EQUIPMENT_DISABLE",
+                        "APP_VERSION_ERROR",
+                        "PLUGIN_VERSION_ERROR",
+                        "EMPTY_CONFIG_FILE",
+                        "FORMAT_VERSION_ERROR",
+                        "BAD_TYPE_VERSION",
+                    ]:
+                        logging.debug("Bad configuration closing connexion, " + method)
+                        server.close_client(toClient)
 
         except Exception as e:
             logging.exception(e)
@@ -236,8 +247,8 @@ def async_worker():
 
                     result["params"] = params
 
-                    jeedomCom.send_change_immediate(result)
-                    # jeedomCom.send_change_immediate(result, True)
+                    # jeedomCom.send_change_immediate(result)
+                    jeedomCom.send_change_immediate(result, True)
                 else:
                     logging.warning(f"no api key found for client ${str(client)}")
             time.sleep(1)
@@ -286,17 +297,21 @@ signal.signal(signal.SIGINT, handler)
 signal.signal(signal.SIGTERM, handler)
 
 try:
+    logging.debug("** Starting Jeedom daemon **")
     jeedom_utils.write_pid(str(_pidfile))
     # Socket to connect daemon <=> jeedom
     jeedomSocket = jeedom_socket(port=_socket_port, address=_socket_host)
     jeedomCom = jeedom_com(apikey=_apikey, url=_callback)
+    logging.info("** Jeedom daemon started **")
 
     # Websocket to connect to JC app
+    logging.debug("** Starting JC Websocket daemon **")
     server = WebsocketServer(host="0.0.0.0", port=_websocket_port)
     server.set_fn_message_received(onMessageReceived)
     server.set_fn_new_client(new_client)
     server.set_fn_client_left(client_left)
     server.run_forever(True)
+    logging.info("** JC Websocket daemon started **")
 
     async_GET_EVENTS = threading.Thread(target=async_worker, daemon=True)
     async_GET_EVENTS.start()

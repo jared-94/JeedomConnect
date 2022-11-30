@@ -332,6 +332,14 @@ function getSimpleModal(_options, _callback) {
 						result.object = $("#object-select  option:selected").val();
 						result.name = $("#object-select  option:selected").text();
 					}
+					if (_options.fields.find(i => i.type == "visibilityCond")) {
+						visibilityCondData = $('#simpleModal #visibility-cond-input').val();
+						if (visibilityCondData != '') {
+							getCmdIdFromHumanName({ alert: '#div_simpleModalAlert', stringData: visibilityCondData }, function (cmdResult, _params) {
+								result.visibilityCond = cmdResult;
+							});
+						}
+					}
 					if (_options.fields.find(i => i.type == "advancedGrid")) {
 						let choice = $("#advancedGrid-select option:selected").val();
 						if (choice == 'standard') {

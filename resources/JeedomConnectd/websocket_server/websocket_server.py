@@ -525,7 +525,18 @@ class WebSocketHandler(StreamRequestHandler):
 
         try:
             assert headers["upgrade"].lower() == "websocket"
+        except KeyError:
+            logging.warning(
+                "[E-01] Client tried to connect but not with a websocket protocol - connexion aborted "
+                + str(self.client_address)
+            )
+            self.keep_alive = False
+            return
         except AssertionError:
+            logging.warning(
+                "[E-02] Client tried to connect but not with a websocket protocol - connexion aborted"
+                + str(self.client_address)
+            )
             self.keep_alive = False
             return
 

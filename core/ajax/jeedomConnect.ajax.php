@@ -268,25 +268,12 @@ try {
 			$html .= '</td>';
 			// ****************************************
 
-			$html .= '<td style="width:40px;"><input type="text" class="objectAttr" data-l1key="name" value="' . cmd::cmdToHumanReadable($widget['name']) . '" /></td>';
+			$html .= '<td><input type="text" class="objectAttr" data-l1key="name" value="' . cmd::cmdToHumanReadable($widget['name']) . '"  style="width:250px;"/></td>';
 
 
 			// **********   SUBTITLE    ****************
-			/*
-			$hasSubTitle = false;
-			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt)
-			{
-				if ($opt['id'] != 'subtitle') continue;
-				$hasSubTitle = true;
-				break;
-			}
-			*/
-			if (isset($widgetJC['subtitle'])) {
-				// if ( $hasSubTitle && isset($widgetJC['subtitle']) ){
-				$html .= '<td style="width:40px;"><input type="text" class="objectAttr"  data-l1key="subtitle" value="' . cmd::cmdToHumanReadable($widgetJC['subtitle']) . '" /></td>';
-			} else {
-				$html .= '<td style="width:40px;"></td>';
-			}
+			$sub =  isset($widgetJC['subtitle']) ? cmd::cmdToHumanReadable($widgetJC['subtitle'])  : '';
+			$html .= '<td><textarea  type="text" class="objectAttr"  data-l1key="subtitle" style="width:500px;">' . $sub . '</textarea>';
 
 			// **********  END SUBTITLE ****************
 
@@ -303,8 +290,8 @@ try {
 				$dataDisplayMode = $opt['choices'];
 				break;
 			}
-			$html .= '<td style="width:150px;">';
-			$html .= '<select class="objectAttr"  data-l1key="display">';
+			$html .= '<td>';
+			$html .= '<select class="objectAttr"  data-l1key="display" style="width:130px;">';
 			$html .= '<option value="none">Aucun</option>';
 
 			foreach ($dataDisplayMode as $display) {
@@ -318,55 +305,55 @@ try {
 
 
 			// **********    HIDE OTIONS    ****************
-			$hideOptions = array();
-			foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt) {
-				if ($opt['id'] != 'hideItem') continue;
+			// $hideOptions = array();
+			// foreach ($widgetArrayConfig[$widget['type']]['options'] as $opt) {
+			// 	if ($opt['id'] != 'hideItem') continue;
 
-				foreach ($opt['choices'] as $choice) {
-					$hideOptions[] = $choice['id'];
-				}
-				break;
-			}
+			// 	foreach ($opt['choices'] as $choice) {
+			// 		$hideOptions[] = $choice['id'];
+			// 	}
+			// 	break;
+			// }
 
-			if (in_array('hideTitle', $hideOptions)) {
-				if (isset($widgetJC['hideTitle']) && $widgetJC['hideTitle']) {
-					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideTitle" /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" disabled /></td>';
-			}
+			// if (in_array('hideTitle', $hideOptions)) {
+			// 	if (isset($widgetJC['hideTitle']) && $widgetJC['hideTitle']) {
+			// 		$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideTitle" /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideTitle" disabled /></td>';
+			// }
 
-			if (in_array('hideSubTitle', $hideOptions)) {
-				if (isset($widgetJC['hideSubTitle']) && $widgetJC['hideSubTitle']) {
-					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideSubTitle"  /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" disabled /></td>';
-			}
+			// if (in_array('hideSubTitle', $hideOptions)) {
+			// 	if (isset($widgetJC['hideSubTitle']) && $widgetJC['hideSubTitle']) {
+			// 		$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideSubTitle"  /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideSubTitle" disabled /></td>';
+			// }
 
-			if (in_array('hideStatus', $hideOptions)) {
-				if (isset($widgetJC['hideStatus']) && $widgetJC['hideStatus']) {
-					$html .= '<td align="center" style="max-width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideStatus" /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" disabled /></td>';
-			}
+			// if (in_array('hideStatus', $hideOptions)) {
+			// 	if (isset($widgetJC['hideStatus']) && $widgetJC['hideStatus']) {
+			// 		$html .= '<td align="center" style="max-width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideStatus" /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideStatus" disabled /></td>';
+			// }
 
-			if (in_array('hideIcon', $hideOptions)) {
-				if (isset($widgetJC['hideIcon']) && $widgetJC['hideIcon']) {
-					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideIcon" /></td>';
-				} else {
-					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" /></td>';
-				}
-			} else {
-				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" disabled /></td>';
-			}
+			// if (in_array('hideIcon', $hideOptions)) {
+			// 	if (isset($widgetJC['hideIcon']) && $widgetJC['hideIcon']) {
+			// 		$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideIcon" /></td>';
+			// 	} else {
+			// 		$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" /></td>';
+			// 	}
+			// } else {
+			// 	$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideIcon" disabled /></td>';
+			// }
 			// **********    END HIDE OTIONS    ****************
 
 
@@ -390,7 +377,8 @@ try {
 					$label = ' label-success';
 				}
 			}
-			$html .= '<td style="width:60px;" class=""><span class="label ' . $label . ' nbEquipIncluded" data-title="' . $names . '" title="' . $names . '">' . $nb . '</span></td>';
+			$titleEqInclusion = $names != '' ? 'title="' . $names . '"' : '';
+			$html .= '<td style="width:60px;" class=""><span class="label ' . $label . ' nbEquipIncluded" data-title="' . $names . '" ' . $titleEqInclusion . '>' . $nb . '</span></td>';
 
 			//************************************/
 
@@ -603,7 +591,7 @@ try {
 
 		$cmdIdToHuman = cmd::cmdToHumanReadable(init('strWithCmdId'));
 		if (strcmp($cmdIdToHuman, init('strWithCmdId')) == 0) {
-			JCLog::debug('ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no cmdId => ' . $cmdIdToHuman);
+			JCLog::debug('ajax -- fx cmdToHumanReadable -- string is the same with cmdId and no humanCmdString => ' . $cmdIdToHuman);
 			// ajax::error('La commande n\'existe pas');
 		}
 		ajax::success($cmdIdToHuman);
@@ -697,11 +685,62 @@ try {
 		}
 	}
 
+	if (init('action') == 'removeNotifAll') {
+		$key = init('key');
+		// JCLog::debug('Trying to remove all cmd with logicalId : ' . $key);
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$cmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), $key);
+			if (is_object($cmd)) {
+				// JCLog::debug('Removed for eqLogic : ' . $eqLogic->getName());
+				$cmd->remove();
+			}
+		}
+
+		config::remove($key, 'JeedomConnect');
+		ajax::success();
+	}
+
+	if (init('action') == 'editNotifAll') {
+		$key = init('key');
+		// $oldName = init('oldName');
+		$newName = init('newName');
+		// JCLog::debug('Trying to remove all cmd with logicalId : ' . $key);
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$cmd = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), $key);
+			if (is_object($cmd)) {
+				// JCLog::debug('Removed for eqLogic : ' . $eqLogic->getName());
+				$cmd->setName($newName);
+				$cmd->save();
+			}
+		}
+
+		ajax::success();
+	}
+
 	if (init('action') == 'saveNotifAll') {
-		$cmdList = init('cmdList');
-		if ($cmdList == "") $cmdList = array();
-		JCLog::debug('saveNotifAll - info received : ' . json_encode($cmdList));
-		config::save('notifAll', json_encode($cmdList), 'JeedomConnect');
+		$cmdList = init('cmdList', array());
+		$key = init('key');
+		$name = init('name');
+		$value = array("name" => $name, "cmd" => $cmdList);
+
+		JCLog::trace('saveNotifAll - info received : ' . json_encode($value) . ']');
+		config::save($key, json_encode($value), 'JeedomConnect');
+
+		$notifConf = array(array(
+			"logicalId" => $key,
+			"name" => $name,
+			"type" => "action",
+			"subtype" => "message"
+		));
+		try {
+			foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+				$eqLogic->createCommandsFromConfigFile($notifConf, null);
+			}
+		} catch (Exception $e) {
+			JCLog::warning("Exception while creating cmd on saveNotifAll => " . $e->getMessage());
+			ajax::error('Création de la commande en erreur');
+		}
+
 		ajax::success();
 	}
 
@@ -754,7 +793,7 @@ try {
 	if (init('action') == 'getCmd') {
 		$id = init('id');
 		if ($id == '') throw new Exception("id est obligatoire");
-
+		/** @var cmd $cmd */
 		$cmd = (preg_match("/^\d+$/", $id)) ? cmd::byId($id) : cmd::byString($id);
 		if (!is_object($cmd)) {
 			throw new Exception(__('Commande inconnue : ', __FILE__) . $id);
@@ -769,7 +808,8 @@ try {
 			'maxValue' => $cmd->getConfiguration('maxValue'),
 			'unit' => $cmd->getUnite(),
 			'value' => $cmd->getValue(),
-			'icon' => $cmd->getDisplay('icon')
+			'icon' => $cmd->getDisplay('icon'),
+			'display' => $cmd->getDisplay()
 		));
 	}
 

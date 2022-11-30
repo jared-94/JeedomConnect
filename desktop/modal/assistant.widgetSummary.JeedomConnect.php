@@ -33,26 +33,15 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
 <table id="table_JcWidgetSummary" class="table table-bordered table-condensed tablesorter stickyHead">
   <thead>
     <tr>
-      <th colspan="7" data-sorter="false" data-filter="false">&nbsp;</th>
-      <th colspan="4" data-sorter="false" data-filter="false" style="text-align:center;">Masquer</th>
-      <th data-sorter="false" data-filter="false" style="text-align:center;">Bloquer</th>
-      <th data-sorter="false" data-filter="false" style="text-align:center;">Nb</th>
-      <th data-sorter="false" data-filter="false" style="text-align:center;">&nbsp;</th>
-    </tr>
-    <tr>
       <th>{{ID}}</th>
       <th>{{Type}}</th>
-      <th data-sorter="select-text">{{Pièce}}</th>
+      <th data-sorter="select-text" style="width:150px;">{{Pièce}}</th>
       <th data-sorter="false" data-filter="false">{{Nom}}</th>
       <th data-sorter="false" data-filter="false">{{Sous-titre}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Visible}}</th>
-      <th data-sorter="select-text" data-filter="false">{{Affichage forcé}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Titre}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{ss-Titre}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Statut}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{Icône}}</th>
-      <th data-sorter="checkbox" data-filter="false">{{détails}}</th>
-      <th>{{Eq}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Actif}}</th>
+      <th data-sorter="select-text" data-filter="false" style="width:140px;">{{Affichage forcé}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Bloquer détails}}</th>
+      <th>{{Nb Eq}}</th>
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>
   </thead>

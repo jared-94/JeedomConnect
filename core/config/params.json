@@ -102,6 +102,40 @@
                     "title_placeholder": "Volume (0-100)",
                     "title_disable": 0
                 }
+            },
+            {
+                "logicalId": "display_menu",
+                "name": "Visibilité Menu",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "configuration": {
+                    "listValueToCreate": "hide;show"
+                },
+                "order": 11,
+                "display": {
+                    "title_with_list": "1",
+                    "title_placeholder": "Visibilité",
+                    "title_disable": "1",
+                    "message_placeholder": "Id du Menu"
+                }
+            },
+            {
+                "logicalId": "display_widget",
+                "name": "Visibilité Widget",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "configuration": {
+                    "listValueToCreate": "hide;show"
+                },
+                "order": 12,
+                "display": {
+                    "title_with_list": "1",
+                    "title_placeholder": "Visibilité",
+                    "title_disable": "1",
+                    "message_placeholder": "Id du Widget"
+                }
             }
         ],
         "android": [
@@ -234,21 +268,95 @@
             },
             {
                 "logicalId": "nextAlarm",
-                "name": "Prochain réveil",
+                "name": "Prochaine Alarme",
                 "type": "info",
                 "subtype": "numeric",
                 "isVisible": 1,
                 "order": 3
+            },
+            {
+                "logicalId": "nextAlarmPackage",
+                "name": "Package Prochaine Alarme",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 0,
+                "order": 4
+            },
+            {
+                "logicalId": "ringerMode",
+                "name": "Mode sonnerie",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "configuration": {
+                    "listValueToCreate": "silent;normal;vibrate"
+                },
+                "display": {
+                    "title_with_list": "1",
+                    "title_disable": "1",
+                    "message_disable": "1",
+                    "title_placeholder": "Mode"
+                },
+                "order": 8
+            },
+            {
+                "logicalId": "setVolume",
+                "name": "Modifier Volume",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "configuration": {
+                    "listValueToCreate": "call;alarm;music;notification;ring;system"
+                },
+                "display": {
+                    "message_placeholder": "Volume (0-100)",
+                    "title_placeholder": "Type Android",
+                    "title_disable": 1,
+                    "title_with_list": 1
+                }
+            },
+            {
+                "logicalId": "volume",
+                "name": "Volume actuel",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+                "order": 8
             }
         ],
-        "ios": []
+        "ios": [
+            {
+                "logicalId": "setVolume",
+                "name": "Modifier Volume",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "order": 7,
+                "display": {
+                    "message_placeholder": "Volume (0-100)",
+                    "title_disable": 1
+                }
+            }
+        ]
     },
     "dictionary": {
-        "themeColor": "Couleur thème",
+        "themeColor": "Schéma thème",
         "darkMode": "Activer mode sombre",
         "tracking": "Activer le tracking",
         "rtspServer": "Activer le serveur de streaming",
         "updateData": "Recharger les données",
-        "jcService": "Service JC"
+        "jcService": "Service JC",
+        "hide": "Masquer",
+        "show": "Afficher",
+        "silent": "Silencieux",
+        "normal": "Normal",
+        "vibrate": "Vibreur",
+        "music": "Musique",
+        "call": "Appel",
+        "system": "Système",
+        "ring": "Sonnerie",
+        "alarm": "Alarme",
+        "notification": "Notification"
     }
 }

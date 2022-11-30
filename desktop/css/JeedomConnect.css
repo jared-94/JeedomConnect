@@ -119,3 +119,7 @@
   color: var(--al-info-color);
   font-size: 11px;
 }
+
+.underline {
+  text-decoration: underline;
+}
