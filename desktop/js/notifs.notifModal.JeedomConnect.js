@@ -35,8 +35,19 @@ function setNotifModalData(options) {
     <div class='input-group'>
       <input type="checkbox" style="width:150px;" id="update-input" ${updateValue}>
     </div></div></div></li>`;
-
         items.push(updateHtml);
+
+        //Ongoing
+        var ongoingValue = notif ? notif.ongoing ? "checked" : "" : "";
+        var ongoingHtml = `<li><div class='form-group'>
+    <label class='col-xs-3'>Persistance</label>
+    <div class='col-xs-9'>
+      <div class="description">Notification non supprimable. Envoyez 'cancel' dans le message pour l'éffacer</div>
+    <div class='input-group'>
+      <input type="checkbox" style="width:150px;" id="ongoing-input" ${ongoingValue}>
+    </div></div></div></li>`;
+
+        items.push(ongoingHtml);
     } else {
         //Critical alert
         var criticalValue = notif ? notif.critical ? "checked" : "" : "";
