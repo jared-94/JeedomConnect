@@ -252,13 +252,13 @@ function setWidgetModalData(options) {
                         })
                     }
                 });
-                $('#optionScenario').css('display', 'block');
+                $('#optionScenario-' + option.id).css('display', 'block');
 
                 if (options.widget['options'] !== undefined &&
                     options.widget['options']['tags'] !== undefined &&
                     options.widget['options']['tags'] != '') {
                     getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: options.widget['options']['tags'] }, function (result, _params) {
-                        $('#tags-scenario-input').val(result);
+                        $('#tags-scenario-' + option.id + '-input').val(result);
                     });
                 }
                 if (options.widget['options'] !== undefined) {
@@ -295,6 +295,22 @@ function setWidgetModalData(options) {
                 });
             } else if (option.category == "img" & options.widget[option.id] !== undefined) {
                 $("#icon-div-" + option.id).html(iconToHtml(options.widget[option.id]));
+            } else if (option.category == "actionList") {
+                // console.log('setwidget, options', options);
+                options.widget.actions.forEach(item => {
+                    let type = item.action
+                    let index = item.index
+                    let html = getHtmlItem(type, { id: index, from: 'actionList' });
+                    // console.log('item actions ', item, index, type)
+                    $('#actionList-div').append(html);
+
+                    if (type == 'scenario') {
+                        $('#optionScenario-' + 'actionList-' + index).css('display', 'block');
+                    }
+
+                    $('#actionList-div .itemAction:last').setValues(item, '.actionListAttr');
+
+                });
             }
         });
     }
@@ -548,12 +564,12 @@ function refreshAddWidgets() {
             curOption += `</div></div></li>`;
         } else if (option.category == "scenario") {
             curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
-    <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-related="${option.id}-input">
+    <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
     <i class='fas fa-list-alt'></i></a></span></div>
-      <div id='optionScenario' style='display:none;'>
+      <div id='optionScenario-${option.id}' style='display:none;'>
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
-            <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
+            <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
         </div>
         <div class="" style="width: 100%;display: flex;">
           <div class="input-group input-group-sm">
@@ -581,6 +597,22 @@ function refreshAddWidgets() {
             });
 
             curOption += `</div></div></div></li>`;
+        } else if (option.category == "actionList") {
+            curOption += `<div class='input-group'>
+            <select class="form-control col-3 input-sm jcCmdListOptions roundedRight" id="${option.id}-select">`;
+
+            option.options.forEach(v => {
+                curOption += `<option value="${v.category}" >${v.name}</option>`;
+            });
+
+            curOption += `</select>`;
+            curOption += `<span class="col-3 input-group-btn">
+                <a class="btn btn-default roundedRight jcAddActionList" data-input="${option.id}-select">
+                <i class="fas fa-plus-square"></i> Ajouter</a>
+                </span>`;
+            curOption += `</div>
+            <div id="actionList-div"></div>
+            </div></div></div></li>`;
         } else {
             return;
         }
@@ -642,9 +674,11 @@ $('body').off('click', '#widgetModal .removeCmd').on('click', '#widgetModal .rem
 
 $("body").on('click', '.selectScenario', function () {
     var related = $(this).data('related');
+    var itemId = $(this).data('id');
     jeedom.scenario.getSelectModal({}, function (result) {
         $("#" + related).attr('value', result.human);
         $("#" + related).val(result.human);
+        $("#" + itemId + '-id').val(result.id);
         $("#" + related).attr('scId', result.id);
         if ($("#name-input").val() == "") {
             getScenarioHumanName({
@@ -659,10 +693,10 @@ $("body").on('click', '.selectScenario', function () {
             });
             $("#name-input").val(result.name);
 
-            previousData = $('#tags-scenario-input').val() || '';
-            $('#tags-scenario-input').val(previousData);
-            $('#optionScenario').css('display', 'block');
+            previousData = $('#tags-scenario-' + itemId + '-input').val() || '';
+            $('#tags-scenario-' + itemId + '-input').val(previousData);
         }
+        $('#optionScenario-' + itemId).css('display', 'block');
     })
 });
 
@@ -863,6 +897,7 @@ function selectCmd(name, type, subtype, value, concat = false) {
         },
         cmd: cmd
     }, function (result) {
+        $('#' + name + '-id').val(result.cmd.id);
         refreshCmdData(name, result.cmd.id, value, concat);
     })
 }
@@ -1168,9 +1203,122 @@ function loadSortable(elt) {
 
 }
 
+$('#widgetModal').off('click', '.jcAddActionList').on('click', '.jcAddActionList', function () {
+    var input = $(this).attr('data-input');
+    var type = $('#' + input).find('option:selected').val();
+    var index = $('#actionList-div .itemAction').length
+    var html = getHtmlItem(type, { id: index, from: 'actionList' });
+    $('#actionList-div').append(html);
+});
 
 
+function getHtmlItem(type, option) {
+    var html = '';
+    if (type == 'cmd') {
+        isDisabled = isJcExpert ? '' : 'disabled';
+        option.id = option.from + '-' + option.id;
+        html = `<table><tr class="cmd">
+            <td>
+              <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:250px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
+              <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">
+                <td>
+                 <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
+                    <i class='fas fa-list-alt'></i></a>
+                </td>
+            </td>`;
+        /*
+            <td>
+                <i class="mdi mdi-minus-circle removeCmd" id="${option.id}-remove"
+                      style="color:rgb(185, 58, 62);font-size:16px;margin-right:10px;display:${option.required ? 'none' : 'block'};" aria-hidden="true" data-cmdid="${option.id}-input"></i>
+            </td>
+            <td>
+                    <div style="width:50px;margin-left:5px; display:none;" id="invert-div-${option.id}">
+                    <i class='fa fa-sync' title="Inverser"></i><input type="checkbox" style="margin-left:5px;" id="invert-${option.id}"></div>
+            </td>
+            <td>
+                  <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
+                  <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
+            </td>
+            <td>
+                    <div style="width:50px; display:none;" id="secure-div-${option.id}">
+                    <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
+            </td>
+            <td>
+                    <div style="width:50px; display:none;" id="pwd-div-${option.id}">
+                    <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
+            </td>
+            <td>
+                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+            </td>
+            <td>
+                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+            </td>
+            <td>
+                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
+            </td>
+            <td>
+                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
+            </td>    */
+        html += ` </tr></table>`;
 
+        // html += getCmdOptions(option);
+
+
+    }
+
+    else if (type == 'scenario') {
+        option.id = option.from + '-' + option.id;
+        html = `<div class='input-group'>
+            <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-input" data-l1key="options" data-l2key="name" value='' scId='' disabled>
+            <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="scenario_id" style="display:none;">
+            <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
+                <i class='fas fa-list-alt'></i></a>
+            </span>
+        </div>
+        <div id='optionScenario-${option.id}' style='display:none;'>
+            <div class="input-group input-group-sm" style="width: 100%">
+                <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
+                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="tags" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
+            </div>
+            <div class="" style="width: 100%;display: flex;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
+                </div>
+                <div style="padding-left: 10px;">
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="options" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="options" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="options" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                </div>
+            </div>
+      </div>`;
+
+    }
+
+    else if (type == 'goToPage') {
+        html = `
+            <div class="input-group input-group-sm" style="width: 100%">
+                <span class="input-group-addon roundedLeft" style="width: 100px">Id page</span>
+                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="pageId" value="" placeholder="id de la page à afficher" />
+            </div>`;
+
+    }
+
+    else if (type == 'launchApp') {
+        html = `
+            <div class="input-group input-group-sm" style="width: 100%">
+                <span class="input-group-addon roundedLeft" style="width: 100px">Nom du package</span>
+                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="packageName" value="" placeholder="Nom du package Android de l'application" />
+            </div>`;
+
+
+    }
+
+    html = "<div class='itemAction' data-type='" + type + "' style='display:flex;border:0.5px black solid;margin: 0 5px;' >" + html + "</div>"
+
+
+    return html;
+}
 
 
 
@@ -1235,8 +1383,10 @@ $(".widgetMenu .saveWidget").click(function () {
                     result['options'] = {};
                     result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
                     result['options']['action'] = 'start';
-                    if ($('#tags-scenario-input').val() != '') {
-                        getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
+                    if ($('#tags-scenario-' + option.id + '-input').val() != '') {
+                        getCmdIdFromHumanName({
+                            alert: '#widget-alert', stringData: $('#tags-scenario-' + option.id + '-input').val()
+                        }, function (data, _params) {
                             result['options']['tags'] = data;
                         });
                     }
@@ -1376,6 +1526,18 @@ $(".widgetMenu .saveWidget").click(function () {
                 option.choices.forEach(v => {
                     result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
                 });
+            } else if (option.category == "actionList") {
+                var tmp = []
+                $('#actionList-div .itemAction').each((index, elt) => {
+                    var action = $(elt).getValues('.actionListAttr')[0];
+                    action.action = $(elt).attr('data-type');
+                    action.index = index;
+                    // console.log('item => ', action);
+                    tmp.push(action);
+                });
+                result[option.id] = tmp
+                // console.log('result => ', result);
+
             }
         });
 

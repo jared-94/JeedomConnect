@@ -5972,6 +5972,59 @@
 					"category": "slider"
 				}
 			]
+		},
+		{
+			"id": "button",
+			"type": "button",
+			"name": "Bouton",
+			"description": "Affiche un bouton",
+			"img": "component-button.png",
+			"icone": {
+				"source": "md",
+				"name": "square-circle"
+			},
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "buttonImg",
+					"name": "Boutton",
+					"required": false,
+					"category": "img",
+					"description": "Choix de l'icône du boutton"
+				},
+				{
+					"id": "actions",
+					"name": "Actions",
+					"category": "actionList",
+					"options": [
+						{
+							"id": "scenario",
+							"name": "Scénario",
+							"category": "scenario"
+						},
+						{
+							"id": "cmd",
+							"name": "Commande",
+							"category": "cmd"
+						},
+						{
+							"id": "goToPage",
+							"name": "Afficher une page",
+							"category": "goToPage"
+						},
+						{
+							"id": "launchApp",
+							"name": "Lancer une application",
+							"category": "launchApp"
+						}
+					]
+				}
+			]
 		}
 	],
 	"summaries": [
