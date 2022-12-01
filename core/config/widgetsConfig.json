@@ -5958,7 +5958,7 @@
 			"type": "button",
 			"img": "component-button.png",
 			"name": "Bouton",
-			"description": "Affiche un bouton",
+			"description": "Affiche un bouton et permet de réaliser 1 à plusieurs actions à la suite",
 			"noMoreInfos": true,
 			"options": [
 				{
