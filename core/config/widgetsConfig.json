@@ -980,6 +980,7 @@
 			"name": "Résumé",
 			"img": "summary.png",
 			"description": "Affiche un résumé de plusieurs widgets",
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
@@ -1032,6 +1033,7 @@
 			"name": "Résumé de pièce",
 			"img": "room_summary.png",
 			"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
@@ -1071,6 +1073,7 @@
 			"name": "Favoris",
 			"img": "favorites.png",
 			"description": "Affiche des widgets favoris",
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
@@ -5705,15 +5708,11 @@
 	],
 	"components": [
 		{
-			"id": "separator",
 			"type": "separator",
 			"name": "Séparateur",
 			"description": "Affiche une ligne de séparation avec texte",
 			"img": "component-separator.png",
-			"icone": {
-				"source": "fa",
-				"name": "grip-lines"
-			},
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
@@ -5749,15 +5748,10 @@
 			]
 		},
 		{
-			"id": "text",
 			"type": "text",
 			"name": "Texte",
 			"description": "Affiche un texte",
 			"img": "component-txt.png",
-			"icone": {
-				"source": "md",
-				"name": "format-text"
-			},
 			"options": [
 				{
 					"id": "name",
@@ -5814,15 +5808,10 @@
 			]
 		},
 		{
-			"id": "image",
 			"type": "image",
 			"name": "Image",
 			"description": "Affiche une image",
 			"img": "component-img.png",
-			"icone": {
-				"source": "md",
-				"name": "image"
-			},
 			"options": [
 				{
 					"id": "name",
@@ -5877,15 +5866,11 @@
 			]
 		},
 		{
-			"id": "switch",
 			"type": "switch",
 			"name": "Switch",
 			"description": "Affiche un switch à 2 états",
 			"img": "component-switch.png",
-			"icone": {
-				"source": "md",
-				"name": "toggle-switch"
-			},
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
@@ -5931,15 +5916,11 @@
 			]
 		},
 		{
-			"id": "slider",
 			"type": "slider",
 			"name": "Slider",
 			"description": "Affiche un slider",
 			"img": "component-slider.png",
-			"icone": {
-				"source": "md",
-				"name": "tune"
-			},
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
@@ -5974,15 +5955,11 @@
 			]
 		},
 		{
-			"id": "button",
 			"type": "button",
+			"img": "component-button.png",
 			"name": "Bouton",
 			"description": "Affiche un bouton",
-			"img": "component-button.png",
-			"icone": {
-				"source": "md",
-				"name": "square-circle"
-			},
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",

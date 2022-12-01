@@ -61,7 +61,7 @@ function getWidgetModal(_options, _callback) {
     $("#simpleModal").dialog('destroy').remove();
 
     if ($("#widgetModal").length == 0) {
-        $('body').append('<div id="widgetModal"></div>');
+        $('body').append('<div id="widgetModal" widgetOld="' + JSON.stringify(_options.widget).replace(/"/g, '&quot;') + '"></div>');
 
         $("#widgetModal").dialog({
             title: _options.title,
@@ -405,7 +405,7 @@ function refreshAddWidgets() {
         option += `</select></div></div></div></li>`;
         items.push(option);
     }
-
+    let missingOptions = false;
     widget.options.forEach(option => {
         var required = (option.required) ? "required" : "";
         var description = (option.description == undefined) ? '' : option.description;
@@ -614,6 +614,7 @@ function refreshAddWidgets() {
             <div id="actionList-div"></div>
             </div></div></div></li>`;
         } else {
+            missingOptions = true
             return;
         }
 
@@ -622,7 +623,7 @@ function refreshAddWidgets() {
     });
 
     //More infos
-    if (!["widgets-summary", "room", "favorites", "separator", "switch", "slider"].includes(widget.type)) {
+    if (!widget.noMoreInfos) {
         moreDiv = `<li><div class='form-group'>
       <label class='col-xs-3 '>Ajouter des infos</label>
       <div class='col-xs-9'>
@@ -644,6 +645,10 @@ function refreshAddWidgets() {
         <label class='col-xs-3 '>Bloquer vue détails</label>
         <div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="blockDetail-input" ></div></div></div></li>`;
         items.push(option);
+    }
+
+    if (missingOptions) {
+        $("#missingOptions").html("Certains paramètres ne sont disponibles que sur l'application");
     }
 
     $("#widgetOptions").html(items.join(""));
@@ -1332,7 +1337,7 @@ $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
     try {
-
+        var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
 
         var itemType = $("#widgetsList-select").find("option:selected").hasClass('widget') ? 'widget' : 'component';
@@ -1538,9 +1543,10 @@ $(".widgetMenu .saveWidget").click(function () {
                 result[option.id] = tmp
                 // console.log('result => ', result);
 
+            } else if (widgetOld?.[option.id]) { // Keep options with no supported category
+                result[option.id] = widgetOld[option.id];
             }
         });
-
         // ----- END forEach ----
 
         if (itemType == 'widget') {
