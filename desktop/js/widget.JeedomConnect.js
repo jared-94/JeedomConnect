@@ -61,7 +61,7 @@ function getWidgetModal(_options, _callback) {
     $("#simpleModal").dialog('destroy').remove();
 
     if ($("#widgetModal").length == 0) {
-        $('body').append('<div id="widgetModal" widgetOld="' + JSON.stringify(_options.widget).replace(/"/g, '&quot;') + '"></div>');
+        $('body').append('<div id="widgetModal" widgetOld="' + (_options.widget ? JSON.stringify(_options.widget).replace(/"/g, '&quot;') : '{}') + '"></div>');
 
         $("#widgetModal").dialog({
             title: _options.title,
@@ -1338,6 +1338,9 @@ $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
     try {
+        console.log($("#widgetModal").attr('widgetOld'))
+        let widgetOldString = $("#widgetModal").attr('widgetOld');
+        console.log(typeof (widgetOldString), widgetOldString)
         var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
 
