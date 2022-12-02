@@ -1338,9 +1338,6 @@ $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
     try {
-        console.log($("#widgetModal").attr('widgetOld'))
-        let widgetOldString = $("#widgetModal").attr('widgetOld');
-        console.log(typeof (widgetOldString), widgetOldString)
         var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
 
