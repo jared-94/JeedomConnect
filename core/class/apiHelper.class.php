@@ -1704,10 +1704,20 @@ class apiHelper {
 
     foreach ($widgets as $i => $widget) {
       $imgPath = '';
-      foreach ($widgetsConfigJonFile['widgets'] as $config) {
-        if ($config['type'] == $widget['type']) {
-          $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-          break;
+      if ($widget['type'] == 'component') {
+        foreach ($widgetsConfigJonFile['components'] as $config) {
+          if ($config['type'] == $widget['component']) {
+            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
+            break;
+          }
+        }
+      } else {
+
+        foreach ($widgetsConfigJonFile['widgets'] as $config) {
+          if ($config['type'] == $widget['type']) {
+            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
+            break;
+          }
         }
       }
       $newConfWidget['imgPath'] = $imgPath;
