@@ -336,7 +336,7 @@ function addBottomTabModal() {
 		if (result.swipeUp) { newTab.swipeUp = result.swipeUp; }
 		if (result.swipeDown) { newTab.swipeDown = result.swipeDown; }
 		if (result.action) { newTab.action = result.action; }
-		if (result.visibilityCond) { newTab.visibilityCond = result.visibilityCond; }
+		newTab.visibilityCond = result.visibilityCond;
 		newTab.enable = result.enable;
 		newTab.index = maxIndex + 1;
 		newTab.id = configData.idCounter;
@@ -373,7 +373,7 @@ function editBottomTabModal(tabId) {
 			tabToEdit.name = result.name;
 			tabToEdit.icon = result.icon;
 			if (result.advancedGrid !== undefined) tabToEdit.advancedGrid = result.advancedGrid;
-			if (result.visibilityCond) { tabToEdit.visibilityCond = result.visibilityCond; }
+			tabToEdit.visibilityCond = result.visibilityCond;
 			tabToEdit.swipeUp = result.swipeUp;
 			tabToEdit.swipeDown = result.swipeDown;
 			tabToEdit.action = result.action;

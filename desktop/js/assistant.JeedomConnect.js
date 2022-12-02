@@ -339,6 +339,9 @@ function getSimpleModal(_options, _callback) {
 								result.visibilityCond = cmdResult;
 							});
 						}
+						else {
+							result.visibilityCond = '';
+						}
 					}
 					if (_options.fields.find(i => i.type == "advancedGrid")) {
 						let choice = $("#advancedGrid-select option:selected").val();
