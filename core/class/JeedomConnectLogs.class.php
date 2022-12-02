@@ -31,4 +31,11 @@ class JCLog {
     public static function error($message, $suffix = '') {
         log::add('JeedomConnect' . $suffix, 'error', $message);
     }
+
+    public static function start($message, $suffix = '') {
+        log::add('JeedomConnect' . $suffix, 'warning', 'start => ' . $message);
+    }
+    public static function end($message, $suffix = '') {
+        log::add('JeedomConnect' . $suffix, 'warning', 'end => ' . $message);
+    }
 }
