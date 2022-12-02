@@ -1304,8 +1304,8 @@ function getHtmlItem(type, option) {
     else if (type == 'goToPage') {
         html = `
             <div class="input-group input-group-sm" style="width: 100%">
-                <span class="input-group-addon roundedLeft" style="width: 100px">Id page</span>
-                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="pageId" value="" placeholder="id de la page à afficher" />
+                <span class="input-group-addon roundedLeft" style="width: 100px">Page</span>
+                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="path" value="" placeholder="chemin de la page à afficher" />
             </div>`;
 
     }
