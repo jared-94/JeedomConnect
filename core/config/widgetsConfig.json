@@ -5968,11 +5968,10 @@
 					"category": "string"
 				},
 				{
-					"id": "buttonImg",
-					"name": "Boutton",
-					"required": false,
-					"category": "img",
-					"description": "Choix de l'icône du boutton"
+					"id": "button",
+					"name": "Bouton",
+					"description": "Personnaliser le bouton",
+					"category": "button"
 				},
 				{
 					"id": "actions",
