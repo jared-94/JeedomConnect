@@ -468,9 +468,10 @@ function refreshAddWidgets() {
             } else {
                 var min = (option.min || false) ? `min="${option.min}"` : '';
                 var max = (option.max || false) ? `max="${option.max}"` : '';
+                var defaultValue = (option.default || false) ? `default="${option.default}"` : '';
 
                 curOption += `<div class='input-group'>
-        <div style="display:flex"><input type="${type}" style="width:340px;" ${min} ${max} id="${option.id}-input" value='${option.default || ''}'>`;
+        <div style="display:flex"><input type="${type}" style="width:340px;" ${min} ${max} ${defaultValue} id="${option.id}-input" value='${option.default || ''}'>`;
             }
 
             if (option.id == 'name' || (option.useCmd != 'undefined' && option.useCmd)) {
@@ -1406,13 +1407,15 @@ $(".widgetMenu .saveWidget").click(function () {
                     throw 'La commande ' + option.name + ' est obligatoire';
                 }
                 if ($("#" + option.id + "-input").prop('type') == 'number') {
-                    let itemVal = $("#" + option.id + "-input").val();
-                    var min = $("#" + option.id + "-input").attr('min');
-                    var max = $("#" + option.id + "-input").attr('max');
-                    if (typeof min !== 'undefined' && min !== false && min > itemVal) {
+                    let itemVal = parseFloat($("#" + option.id + "-input").val());
+                    var min = parseFloat($("#" + option.id + "-input").attr('min'));
+                    var max = parseFloat($("#" + option.id + "-input").attr('max'));
+                    var defaultValue = parseFloat($("#" + option.id + "-input").attr('default'));
+                    if (isNaN(itemVal) && !isNaN(defaultValue)) {
+                        itemVal = defaultValue;
+                    } else if (!isNaN(min) && !isNaN(itemVal) && min > itemVal) {
                         itemVal = min;
-                    }
-                    else if (typeof max !== 'undefined' && max !== false && max < itemVal) {
+                    } else if (!isNaN(max) && !isNaN(itemVal) && max < itemVal) {
                         itemVal = max;
                     }
                     result[option.id] = parseInt(itemVal);
