@@ -42,6 +42,9 @@ $jcFilter = $_GET['jcFilter'] ?? '';
 $orderBy = $_GET['jcOrderBy'] ?? config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
 $widgetSearch = $_GET['jcSearch'] ?? '';
 
+$jcComponentFilter = $_GET['jcComponentFilter'] ?? '';
+$componentSearch = $_GET['jcComponentSearch'] ?? '';
+
 sendVarToJS('jcOrderBy', $orderBy);
 
 switch ($orderBy) {
@@ -65,9 +68,12 @@ switch ($orderBy) {
 }
 
 $allConfig = JeedomConnect::getWidgetParam();
+// JCLog::debug('--------------------- $allConfig =>' . json_encode($allConfig));
 $widgetTypeArray = array();
+$componentTypeArray = array();
 
 $listWidget = '';
+$listComponent = '';
 
 $hasErrorPage = false;
 foreach ($widgetArray as $widget) {
@@ -81,25 +87,37 @@ foreach ($widgetArray as $widget) {
 	$id = $widget['id'];
 	$widgetType = $widget['type'];
 
-	$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
-
 	if (in_array($id, $widgetInError) || $widgetName == 'inconnu' || trim($widgetName) == '') {
 		$hasError = 'hasError';
 		$tooltip = ($widgetName == 'inconnu' || trim($widgetName) == '') ? 'Nom du widget à modifier' : 'Commandes orphelines';
 		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="' . $tooltip . '"></i>';
 		$hasErrorPage =  true;
 	}
-
-	//used later by the filter select item
-	if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
-
 	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . ' ' .  $needSign . '</strong>';
 
-	$listWidget .= '<div class="widgetDisplayCard cursor  ' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
-	$listWidget .= '<img src="' . $img . '"/>';
-	$listWidget .= '<br>';
-	$listWidget .= '<span class="name">' . $name . '</span>';
-	$listWidget .= '</div>';
+	$tmpItem = '<img src="' . $img . '"/>';
+	$tmpItem .= '<br>';
+	$tmpItem .= '<span class="name">' . $name . '</span>';
+	$tmpItem .= '</div>';
+
+	if ($widgetType != 'component') {
+
+		//used later by the filter select item
+		if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
+
+		$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
+
+		$listWidget .= '<div class="widgetDisplayCard cursor  widget' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+		$listWidget .= $tmpItem;
+	} else {
+
+		if (!in_array($widget['component'], $componentTypeArray, true)) $componentTypeArray[$widget['component']] = $allConfig[$widget['component']];
+
+		$styleHide = ($jcComponentFilter == '') ? '' : ($jcComponentFilter == $widgetType ? '' : 'style="display:none;"');
+
+		$listComponent .= '<div class="componentDisplayCard cursor  component' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widget['component'] . '">';
+		$listComponent .= $tmpItem;
+	}
 }
 
 
@@ -118,6 +136,8 @@ foreach ($orderByArray as $key => $value) {
 
 
 asort($widgetTypeArray);
+asort($componentTypeArray);
+
 $typeSelection2 = '';
 $hasSelected = false;
 foreach ($widgetTypeArray as $key => $value) {
@@ -127,6 +147,16 @@ foreach ($widgetTypeArray as $key => $value) {
 }
 $sel = $hasSelected ? '' : 'selected';
 $typeSelection = '<option value="none" ' . $sel . '>Tous</option>' . $typeSelection2;
+
+$typeSelectionComponent2 = '';
+$hasSelectedComponent = false;
+foreach ($componentTypeArray as $key => $value) {
+	$selectedComponent = ($key ==  $jcComponentFilter) ? 'selected' : '';
+	$hasSelectedComponent = $hasSelectedComponent || ($key ==  $jcFilter);
+	$typeSelectionComponent2 .= '<option value="' . $key . '" ' . $selectedComponent . '>' . $value . '</option>';
+}
+$selComponent = $hasSelectedComponent ? '' : 'selected';
+$typeSelectionComponent = '<option value="none" ' . $selComponent . '>Tous</option>' . $typeSelectionComponent2;
 
 $displayWarning = config::byKey('displayWarning', 'JeedomConnect', 'false') == 'false';
 
@@ -158,6 +188,13 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						<br>
 						<span style="color:var(--txt-color)">{{Ajouter un Widget}}</span>
 					</div>
+
+					<div class="cursor eqLogicAction " data-action="addComponent" style="color:rgb(27,161,242);">
+						<i class="fas fa-tools"></i>
+						<br>
+						<span style="color:var(--txt-color)">{{Ajouter un Composant}}</span>
+					</div>
+
 					<div class="cursor eqLogicAction " data-action="addWidgetBulk" style="color:rgb(27,161,242);">
 						<i class="fas fa-magic"></i>
 						<br>
@@ -323,7 +360,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 					</select>
 				</span>
 				<span>{{Filtre}}
-					<select id="widgetTypeSelect" class="JC" style="width:auto">
+					<select id="widgetTypeSelect" class="JC jcItemSelect" data-type="widget" style="width:auto">
 						<?php
 						echo $typeSelection;
 						?>
@@ -337,9 +374,9 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 		</legend>
 		<!-- Champ de recherche widget -->
 		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
+			<input class="form-control roundedLeft jcInSearch" data-type="widget" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
 			<div class="input-group-btn">
-				<a id="bt_resetSearchWidget" class="btn roundedRight" style="width:30px"><i class="fas fa-times"></i></a>
+				<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_searchWidget" style=" width:30px"><i class="fas fa-times"></i></a>
 			</div>
 		</div>
 		<!-- Liste des widgets du plugin -->
@@ -348,8 +385,38 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 			echo $listWidget;
 			?>
 		</div>
+		<!--  FIN ---  PANEL DES WIDGETS  -->
+
+		<!--   PANEL DES COMPOSANTS  -->
+		<legend>
+			<i class="fas fa-table"></i> {{Mes composants}} <span id="coundComponent"></span>
+			<div class="pull-right">
+				<span>{{Filtre}}
+					<select id="componentTypeSelect" class="JC jcItemSelect" data-type="component" style="width:auto">
+						<?php
+						echo $typeSelectionComponent;
+						?>
+					</select>
+				</span>
+			</div>
+		</legend>
+		<!-- Champ de recherche composant -->
+		<div class="input-group" style="margin:10px 5px;">
+			<input class="form-control roundedLeft jcInSearch" data-type="component" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchComponent" value="<?= $componentSearch ?>" />
+			<div class="input-group-btn">
+				<a id="bt_resetSearchComponent" class="btn roundedRight jcResetSearch" data-input="in_searchComponent" style="width:30px"><i class="fas fa-times"></i></a>
+			</div>
+		</div>
+		<!-- Liste des composant du plugin -->
+		<div class="eqLogicThumbnailContainer" id="componentsList-div">
+			<?php
+			echo $listComponent;
+			?>
+		</div>
+		<!--  FIN ---  PANEL DES COMPOSANTS  -->
+
 	</div> <!-- /.eqLogicThumbnailDisplay -->
-	<!--  FIN ---  PANEL DES WIDGETS  -->
+
 
 	<!-- Page de présentation de l'équipement -->
 	<div class="col-xs-12 eqLogic" style="display: none;">

@@ -102,6 +102,7 @@ class JeedomConnectWidget extends config {
 					$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
 					$widgetItem['roomName'] = $widgetItem['roomId'] == 'global' ? 'Global' : (is_object($widgetRoomObjet) ? $widgetRoomObjet->getName() : 'Aucun');
 					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
+					$widgetItem['component'] = $widgetJC['component'] ?? 'none';
 				}
 
 				array_push($widgetArray, $widgetItem);
