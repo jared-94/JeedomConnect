@@ -5982,7 +5982,8 @@
 						{
 							"id": "scenario",
 							"name": "Scénario",
-							"category": "scenario"
+							"category": "scenario",
+							"noSecurity": true
 						},
 						{
 							"id": "cmd",
@@ -6000,6 +6001,13 @@
 							"category": "launchApp"
 						}
 					]
+				},
+				{
+					"id": "security",
+					"name": "Option de sécurité",
+					"required": false,
+					"category": "security",
+					"description": "Cet élément doit il être sécurisé ?"
 				}
 			]
 		}

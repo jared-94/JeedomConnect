@@ -300,7 +300,7 @@ function setWidgetModalData(options) {
                 options.widget.actions.forEach(item => {
                     let type = item.action
                     let index = item.index
-                    let html = getHtmlItem(type, { id: index, from: 'actionList' });
+                    let html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true }, true);
                     // console.log('item actions ', item, index, type)
                     $('#actionList-div').append(html);
 
@@ -308,9 +308,12 @@ function setWidgetModalData(options) {
                         $('#optionScenario-' + 'actionList-' + index).css('display', 'block');
                     }
 
-                    $('#actionList-div .itemAction:last').setValues(item, '.actionListAttr');
+                    $('#actionList-div .actionList:last').setValues(item, '.actionListAttr');
 
                 });
+            } else if (option.category == "security") {
+
+                $('.jcSecurityDiv').setValues({ security: options.widget.security }, '.jcItemAttr');
             }
         });
     }
@@ -598,6 +601,10 @@ function refreshAddWidgets() {
             });
 
             curOption += `</div></div></div></li>`;
+        } else if (option.category == "security") {
+
+            curOption += getHtmlItem(option.category, { id: 0, from: option.category, key1: option.category });
+
         } else if (option.category == "actionList") {
             curOption += `<div class='input-group'>
             <select class="form-control col-3 input-sm jcCmdListOptions roundedRight" id="${option.id}-select">`;
@@ -1212,13 +1219,13 @@ function loadSortable(elt) {
 $('#widgetModal').off('click', '.jcAddActionList').on('click', '.jcAddActionList', function () {
     var input = $(this).attr('data-input');
     var type = $('#' + input).find('option:selected').val();
-    var index = $('#actionList-div .itemAction').length
-    var html = getHtmlItem(type, { id: index, from: 'actionList' });
+    var index = $('#actionList-div .actionList').length
+    var html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true }, true);
     $('#actionList-div').append(html);
 });
 
 
-function getHtmlItem(type, option) {
+function getHtmlItem(type, option, withBorder = false) {
     var html = '';
     if (type == 'cmd') {
         isDisabled = isJcExpert ? '' : 'disabled';
@@ -1274,7 +1281,7 @@ function getHtmlItem(type, option) {
 
     else if (type == 'scenario') {
         option.id = option.from + '-' + option.id;
-        html = `<div class='input-group'>
+        html = `<div class='input-group' style="width: 300px">
             <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-input" data-l1key="options" data-l2key="name" value='' scId='' disabled>
             <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="scenario_id" style="display:none;">
             <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
@@ -1284,9 +1291,11 @@ function getHtmlItem(type, option) {
         <div id='optionScenario-${option.id}' style='display:none;'>
             <div class="input-group input-group-sm" style="width: 100%">
                 <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
-                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="tags" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
-            </div>
-            <div class="" style="width: 100%;display: flex;">
+                <input style="width:300px;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="tags" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
+            </div>`;
+
+        if (!option.noSecurity) {
+            html += ` <div class="" style="width: 100%;display: flex;">
                 <div class="input-group input-group-sm">
                     <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
                 </div>
@@ -1296,8 +1305,9 @@ function getHtmlItem(type, option) {
                     <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="options" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
                     <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
                 </div>
-            </div>
-      </div>`;
+            </div>`;
+        }
+        html += `</div>`;
 
     }
 
@@ -1308,9 +1318,22 @@ function getHtmlItem(type, option) {
                 <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="pageId" value="" placeholder="id de la page à afficher" />
             </div>`;
 
-    }
+    } else if (type == 'security') {
+        html = `
+        <div class="jcSecurityDiv" style="width: 100%;display: flex;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
+                </div>
+                <div style="padding-left: 10px;">
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                </div>
+            </div>`;
 
-    else if (type == 'launchApp') {
+
+    } else if (type == 'launchApp') {
         html = `
             <div class="input-group input-group-sm" style="width: 100%">
                 <span class="input-group-addon roundedLeft" style="width: 100px">Nom du package</span>
@@ -1320,8 +1343,9 @@ function getHtmlItem(type, option) {
 
     }
 
-    html = "<div class='itemAction' data-type='" + type + "' style='display:flex;border:0.5px black solid;margin: 0 5px;' >" + html + "</div>"
-
+    if (withBorder) {
+        html = "<div class='" + (option.from || '') + "' data-type='" + type + "' style='display:flex;border:0.5px black solid;margin: 0 5px;' >" + html + "</div>"
+    }
 
     return html;
 }
@@ -1534,9 +1558,13 @@ $(".widgetMenu .saveWidget").click(function () {
                 option.choices.forEach(v => {
                     result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
                 });
+            } else if (option.category == "security") {
+
+                result[option.id] = $('.jcSecurityDiv').getValues('.jcItemAttr')[0]['security'] || [];
+
             } else if (option.category == "actionList") {
                 var tmp = []
-                $('#actionList-div .itemAction').each((index, elt) => {
+                $('#actionList-div .actionList').each((index, elt) => {
                     var action = $(elt).getValues('.actionListAttr')[0];
                     action.action = $(elt).attr('data-type');
                     action.index = index;
