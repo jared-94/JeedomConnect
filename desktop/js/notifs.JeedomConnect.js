@@ -424,12 +424,6 @@ $('body').off('click', '.editChannel').on('click', '.editChannel', function () {
 	});
 });
 
-/* Remove channel or notif item */
-
-$('body').off('click', '.deleteItem').on('click', '.deleteItem', function () {
-	$(this).parents('li').remove();
-});
-
 
 /* NOTIFICATIONS */
 
