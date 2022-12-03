@@ -300,7 +300,7 @@ function setWidgetModalData(options) {
                 options.widget.actions.forEach(item => {
                     let type = item.action
                     let index = item.index
-                    let html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true }, true);
+                    let html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true, withBorder: true, move: true, remove: true });
                     console.log('item actions ', item, index, type)
                     $('#actionList-div').append(html);
 
@@ -1216,67 +1216,84 @@ function loadSortable(elt) {
 
     }
 
+    $("#actionList-div").sortable({
+        axis: "y", cursor: "move", items: ".actionList", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true
+    });
+
 }
 
 $('#widgetModal').off('click', '.jcAddActionList').on('click', '.jcAddActionList', function () {
     var input = $(this).attr('data-input');
     var type = $('#' + input).find('option:selected').val();
     var index = $('#actionList-div .actionList').length
-    var html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true }, true);
+    var html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true, withBorder: true, move: true, remove: true });
     $('#actionList-div').append(html);
 });
 
 
-function getHtmlItem(type, option, withBorder = false) {
+function getHtmlItem(type, option) {
+    if (!isset(option)) {
+        option = {};
+    }
+
     var html = '';
     if (type == 'cmd') {
         isDisabled = isJcExpert ? '' : 'disabled';
         option.id = option.from + '-' + option.id;
-        html = `<table><tr class="cmd">
-            <td>
+        html = `
+        <div class="input-group input-group-sm" style="width: 100%">
               <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:250px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
-              <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">
-                <td>
-                 <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
-                    <i class='fas fa-list-alt'></i></a>
-                </td>
-            </td>`;
+              <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">              
+               <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
+                    <i class='fas fa-list-alt'></i></a>  
+            </div>`;
         /*
-            <td>
-                <i class="mdi mdi-minus-circle removeCmd" id="${option.id}-remove"
-                      style="color:rgb(185, 58, 62);font-size:16px;margin-right:10px;display:${option.required ? 'none' : 'block'};" aria-hidden="true" data-cmdid="${option.id}-input"></i>
-            </td>
-            <td>
-                    <div style="width:50px;margin-left:5px; display:none;" id="invert-div-${option.id}">
-                    <i class='fa fa-sync' title="Inverser"></i><input type="checkbox" style="margin-left:5px;" id="invert-${option.id}"></div>
-            </td>
-            <td>
-                  <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
-                  <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
-            </td>
-            <td>
-                    <div style="width:50px; display:none;" id="secure-div-${option.id}">
-                    <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
-            </td>
-            <td>
-                    <div style="width:50px; display:none;" id="pwd-div-${option.id}">
-                    <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
-            </td>
-            <td>
-                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
-            </td>
-            <td>
-                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
-            </td>
-            <td>
-                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
-            </td>
-            <td>
-                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
-            </td>    */
+                <table><tr class="cmd">
+                    <td>
+                        <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:250px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
+                            <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">
+                                <td>
+                                    <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
+                                        <i class='fas fa-list-alt'></i></a>
+                                </td>
+                            </td>`;
+                /*
+                    <td>
+                                <i class="mdi mdi-minus-circle removeCmd" id="${option.id}-remove"
+                                    style="color:rgb(185, 58, 62);font-size:16px;margin-right:10px;display:${option.required ? 'none' : 'block'};" aria-hidden="true" data-cmdid="${option.id}-input"></i>
+                            </td>
+                            <td>
+                                <div style="width:50px;margin-left:5px; display:none;" id="invert-div-${option.id}">
+                                    <i class='fa fa-sync' title="Inverser"></i><input type="checkbox" style="margin-left:5px;" id="invert-${option.id}"></div>
+                            </td>
+                            <td>
+                                <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
+                                    <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
+                            </td>
+                            <td>
+                                <div style="width:50px; display:none;" id="secure-div-${option.id}">
+                                    <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
+                            </td>
+                            <td>
+                                <div style="width:50px; display:none;" id="pwd-div-${option.id}">
+                                    <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
+                            </td>
+                            <td>
+                                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+                            </td>
+                            <td>
+                                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+                            </td>
+                            <td>
+                                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
+                            </td>
+                            <td>
+                                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
+                            </td>    
         html += ` </tr></table>`;
 
         // html += getCmdOptions(option);
+        */
 
 
     }
@@ -1284,17 +1301,17 @@ function getHtmlItem(type, option, withBorder = false) {
     else if (type == 'scenario') {
         option.id = option.from + '-' + option.id;
         html = `<div class='input-group' style="width: 300px">
-            <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-input" data-l1key="options" data-l2key="name" value='' scId='' disabled>
-            <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="scenario_id" style="display:none;">
-            <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
-                <i class='fas fa-list-alt'></i></a>
-            </span>
-        </div>
-        <div id='optionScenario-${option.id}' style='display:none;'>
-            <div class="input-group input-group-sm" style="width: 100%">
-                <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
-                <input style="width:300px;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="tags" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
-            </div>`;
+                <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-input" data-l1key="options" data-l2key="name" value='' scId='' disabled>
+                    <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="scenario_id" style="display:none;">
+                        <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
+                            <i class='fas fa-list-alt'></i></a>
+                        </span>
+                    </div>
+                    <div id='optionScenario-${option.id}' style='display:none;'>
+                        <div class="input-group input-group-sm" style="width: 100%">
+                            <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
+                            <input style="width:300px;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="tags" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
+                        </div>`;
 
         if (!option.noSecurity) {
             html += ` <div class="" style="width: 100%;display: flex;">
@@ -1345,9 +1362,16 @@ function getHtmlItem(type, option, withBorder = false) {
 
     }
 
-    if (withBorder) {
-        html = "<div class='" + (option.from || '') + "' data-type='" + type + "' style='display:flex;border:0.5px black solid;margin: 0 5px;' >" + html + "</div>"
-    }
+    let movable = option.move ? `<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>` : '';
+    let remove = option.remove ? `<i class="mdi mdi-minus-circle deleteItem" style="color:rgb(185, 58, 62);font-size:24px;margin-left:5px;"></i>` : '';
+
+    let border = option.withBorder ? "style='display:flex;border:0.5px black solid;margin: 0 5px;'" : "";
+
+    html = "<div class='" + (option.from || '') + "' data-type='" + type + "' " + border + " >"
+        + html
+        + movable
+        + remove
+        + "</div>";
 
     return html;
 }
@@ -1721,7 +1745,7 @@ $(".widgetMenu .removeWidget").click(function () {
     getSimpleModal({
         title: "Confirmation", fields: [{
             type: "string",
-            value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
+            value: "Voulez-vous supprimer ce widget ?<br /><br />" + msg
         }]
     }, function (result) {
         $('#widget-alert').hideAlert();
