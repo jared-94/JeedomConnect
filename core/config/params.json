@@ -320,7 +320,7 @@
                 "logicalId": "volume",
                 "name": "Volume actuel",
                 "type": "info",
-                "subtype": "numeric",
+                "subtype": "string",
                 "isVisible": 1,
                 "order": 8
             }
