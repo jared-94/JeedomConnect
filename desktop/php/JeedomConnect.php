@@ -107,7 +107,7 @@ foreach ($widgetArray as $widget) {
 
 		$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
-		$listWidget .= '<div class="widgetDisplayCard cursor  widget' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
+		$listWidget .= '<div class="widgetDisplayCard cursor  widget ' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '">';
 		$listWidget .= $tmpItem;
 	} else {
 
@@ -115,7 +115,7 @@ foreach ($widgetArray as $widget) {
 
 		$styleHide = ($jcComponentFilter == '') ? '' : ($jcComponentFilter == $widgetType ? '' : 'style="display:none;"');
 
-		$listComponent .= '<div class="componentDisplayCard cursor  component' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widget['component'] . '">';
+		$listComponent .= '<div class="componentDisplayCard cursor  component ' . $hasError . ' ' . $opacity . '" ' . $styleHide . ' title="id=' . $id . '" data-widget_id="' . $id . '" data-widget_type="' . $widget['component'] . '">';
 		$listComponent .= $tmpItem;
 	}
 }
