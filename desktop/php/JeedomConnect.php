@@ -349,8 +349,10 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 		<!--  FIN --- PANEL DES EQUIPEMENTS  -->
 
 		<!--   PANEL DES WIDGETS  -->
-		<legend><i class="fas fa-table"></i> {{Mes widgets}} <span id="coundWidget"></span>
-
+		<legend>
+			<a class="accordion-toggle" data-toggle="collapse" href="#collapseWidgets">
+				<i class="fas fa-table"></i> {{Mes widgets}} <span id="coundWidget"></span>
+			</a>
 			<div class="pull-right">
 				<span style="margin-right:10px">{{Trie}}
 					<select id="widgetOrder" class="updateOrderWidget" style="width:100px">
@@ -360,7 +362,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 					</select>
 				</span>
 				<span>{{Filtre}}
-					<select id="widgetTypeSelect" class="JC jcItemSelect" data-type="widget" style="width:auto">
+					<select id="widgetTypeSelect" class="JC jcItemSelect widget" data-type="widget" style="width:auto">
 						<?php
 						echo $typeSelection;
 						?>
@@ -373,26 +375,30 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 			</div>
 		</legend>
 		<!-- Champ de recherche widget -->
-		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft jcInSearch" data-type="widget" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
-			<div class="input-group-btn">
-				<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_searchWidget" style=" width:30px"><i class="fas fa-times"></i></a>
+		<div id="collapseWidgets" class="panel-collapse collapse in">
+			<div class="input-group" style="margin:10px 5px;">
+				<input class="form-control roundedLeft jcInSearch" data-type="widget" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
+				<div class="input-group-btn">
+					<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_searchWidget" style=" width:30px"><i class="fas fa-times"></i></a>
+				</div>
 			</div>
-		</div>
-		<!-- Liste des widgets du plugin -->
-		<div class="eqLogicThumbnailContainer" id="widgetsList-div">
-			<?php
-			echo $listWidget;
-			?>
+			<!-- Liste des widgets du plugin -->
+			<div class="eqLogicThumbnailContainer" id="widgetsList-div" style="background-color:white">
+				<?php
+				echo $listWidget;
+				?>
+			</div>
 		</div>
 		<!--  FIN ---  PANEL DES WIDGETS  -->
 
 		<!--   PANEL DES COMPOSANTS  -->
 		<legend>
-			<i class="fas fa-table"></i> {{Mes composants}} <span id="coundComponent"></span>
+			<a class="accordion-toggle" data-toggle="collapse" href="#collapseComponents">
+				<i class="fas fa-table"></i> {{Mes composants}} <span id="coundComponent"></span>
+			</a>
 			<div class="pull-right">
 				<span>{{Filtre}}
-					<select id="componentTypeSelect" class="JC jcItemSelect" data-type="component" style="width:auto">
+					<select id="componentTypeSelect" class="JC jcItemSelect component" data-type="component" style="width:auto">
 						<?php
 						echo $typeSelectionComponent;
 						?>
@@ -400,18 +406,21 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				</span>
 			</div>
 		</legend>
-		<!-- Champ de recherche composant -->
-		<div class="input-group" style="margin:10px 5px;">
-			<input class="form-control roundedLeft jcInSearch" data-type="component" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchComponent" value="<?= $componentSearch ?>" />
-			<div class="input-group-btn">
-				<a id="bt_resetSearchComponent" class="btn roundedRight jcResetSearch" data-input="in_searchComponent" style="width:30px"><i class="fas fa-times"></i></a>
+		<div id="collapseComponents" class="panel-collapse collapse in">
+			<!-- Champ de recherche composant -->
+			<div class="input-group" style="margin:10px 5px;">
+				<input class="form-control roundedLeft jcInSearch" data-type="component" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchComponent" value="<?= $componentSearch ?>" />
+				<div class="input-group-btn">
+					<a id="bt_resetSearchComponent" class="btn roundedRight jcResetSearch" data-input="in_searchComponent" style="width:30px"><i class="fas fa-times"></i></a>
+				</div>
 			</div>
-		</div>
-		<!-- Liste des composant du plugin -->
-		<div class="eqLogicThumbnailContainer" id="componentsList-div">
-			<?php
-			echo $listComponent;
-			?>
+			<!-- Liste des composant du plugin -->
+
+			<div class="eqLogicThumbnailContainer" id="componentsList-div" style="background-color:white">
+				<?php
+				echo $listComponent;
+				?>
+			</div>
 		</div>
 		<!--  FIN ---  PANEL DES COMPOSANTS  -->
 
