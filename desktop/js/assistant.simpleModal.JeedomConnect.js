@@ -100,7 +100,7 @@ function setSimpleModalData(options) {
       items.push(expanded);
     } else if (option.type == "widget") {
 
-      var widgetTmp = '<option class="JCWidgetOption" >Select</option>';
+      var widgetTmp = '<option class="JCWidgetOption" value="none" >Select</option>';
       var widgetType = []
 
       allWidgetsDetail.forEach(item => {
