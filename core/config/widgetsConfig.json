@@ -5805,6 +5805,26 @@
 						}
 					],
 					"defaultChoice": "left"
+				},
+				{
+					"id": "justifyContent",
+					"name": "Alignement vertical",
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "flex-start",
+							"name": "Haut"
+						},
+						{
+							"id": "center",
+							"name": "Centré"
+						},
+						{
+							"id": "flex-end",
+							"name": "Bas"
+						}
+					],
+					"defaultChoice": "center"
 				}
 			]
 		},
