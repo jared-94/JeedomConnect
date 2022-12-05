@@ -159,7 +159,7 @@ foreach ($summaryConfig as $index => $summary) {
         <button class="tablinks" onclick="openTab(event, 'topTab')">Menu du haut</button>
         <button class="tablinks" onclick="openTab(event, 'roomTab')">Pièces</button>
         <button class="tablinks" onclick="openTab(event, 'summaryTab')">Résumés</button>
-        <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets</button>
+        <button class="tablinks" onclick="openTab(event, 'widgetsTab')">Widgets/Composants</button>
         <button class="tablinks" onclick="openTab(event, 'backgroundTab')">Fond d'écran</button>
         <button class="tablinks" onclick="openTab(event, 'weatherTab')">Météo</button>
         <button class="tablinks" onclick="openTab(event, 'batteryTab')">Batteries</button>
@@ -291,7 +291,7 @@ foreach ($summaryConfig as $index => $summary) {
               </div>
 
               <div class="form-group">
-                <label class="col-sm-5 control-label">{{Type de Widget}}</label>
+                <label class="col-sm-5 control-label">{{Type d'Elément}}</label>
                 <div class="col-sm-7">
                   <select id="selWidgetType" class="form-control">
                     <option value="all">{{Tous}}</option>
@@ -306,7 +306,7 @@ foreach ($summaryConfig as $index => $summary) {
 
 
               <div class="form-group">
-                <label class="col-sm-5 control-label">{{Widget}}</label>
+                <label class="col-sm-5 control-label">{{Elément}}</label>
                 <div class="col-sm-7">
                   <select id="selWidgetDetail" class="form-control">
                     <option value="none" data-widget-id="none">{{Aucun}}</option>
@@ -328,7 +328,7 @@ foreach ($summaryConfig as $index => $summary) {
               <div class="input-group " style="display:inline-flex;">
                 <span class="input-group-btn">
                   <!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-                  <a class="btn btn-success btn-sm " style="margin-top:5px;" id="btn-selectWidget" onclick="selectWidgetModal()"><i class="fa fa-plus-circle"></i> Ajouter ce widget</a>
+                  <a class="btn btn-success btn-sm " style="margin-top:5px;" id="btn-selectWidget" onclick="selectWidgetModal()"><i class="fa fa-plus-circle"></i> Ajouter cet élément</a>
                   <a class="btn btn-success btn-sm " style="margin-top:5px;margin-left:10px;" onclick="addGroupModal()"><i class="fa fa-plus-circle"></i> Ajouter un groupe</a>
                 </span>
               </div>
