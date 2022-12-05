@@ -531,6 +531,10 @@ function addImgOption(dataType) {
 
 function getWidgetPath(id) {
   var widget = allWidgetsDetail.find(w => w.id == id);
+  if (typeof widget === 'undefined') {
+    console.log('issue with getWidgetPath - widget not found with id ' + id)
+    return 'inconnu !';
+  }
   var name = (' ' + widget.name).slice(1);
 
   if (widget.parentId === undefined || widget.parentId == null || typeof configData === 'undefined') {
