@@ -191,6 +191,12 @@ function getNotifModal(_options, _callback) {
 		});
 	}
 	setNotifModalData(_options);
+	$("input[id='ongoing-input']").change(function () {
+		$("#update-input")[0].disabled = this.checked;
+		if (this.checked) {
+			$("#update-input").prop("checked", true);
+		}
+	});
 	$("#notifModal").dialog({
 		title: _options.title, buttons: {
 			"Annuler": function () {
