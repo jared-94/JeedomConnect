@@ -1062,8 +1062,9 @@ class JeedomConnectUtils {
             config::save('userImgPath', $userImgPath, 'JeedomConnect');
         }
 
-        if (!is_dir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'))) {
-            mkdir(__DIR__ . '/../../../' . config::byKey('userImgPath',   'JeedomConnect'));
+        $realPath = __DIR__ . '/../../../../' . config::byKey('userImgPath',   'JeedomConnect');
+        if (!is_dir($realPath)) {
+            if (!mkdir($realPath))  JCLog::error("mkdir FAILED for " . $realPath);
         }
 
         if (config::byKey('migration::imgCond',   'JeedomConnect') == '') {
