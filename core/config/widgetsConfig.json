@@ -5979,7 +5979,7 @@
 			"type": "gauge",
 			"name": "Jauge",
 			"description": "Affiche une gauge",
-			"img": "component-slider.png",
+			"img": "component-gauge.png",
 			"noMoreInfos": true,
 			"options": [
 				{
