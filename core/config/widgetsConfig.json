@@ -5976,6 +5976,53 @@
 			]
 		},
 		{
+			"type": "gauge",
+			"name": "Jauge",
+			"description": "Affiche une gauge",
+			"img": "component-slider.png",
+			"noMoreInfos": true,
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "gaugeOptions",
+					"name": "Options de la jauge",
+					"description": "Personnalisation de la jauge",
+					"category": "slider",
+					"defaultConfig": {
+						"isGauge": true,
+						"type": "circular",
+						"sweepAngle": 240,
+						"sliderWidth": 40,
+						"displayMarkers": true,
+						"trackBackground": {
+							"type": "gradient",
+							"options": {
+								"colors": [
+									"#2eff0c",
+									"#e3ff61",
+									"#ffae52",
+									"#ff1e11"
+								]
+							}
+						}
+					}
+				}
+			]
+		},
+		{
 			"type": "button",
 			"img": "component-button.png",
 			"name": "Bouton",
