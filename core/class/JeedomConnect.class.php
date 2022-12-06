@@ -1308,6 +1308,12 @@ class JeedomConnect extends eqLogic {
 		if (substr($userImgPath, -1) != "/") {
 			$userImgPath .= "/";
 		}
+
+		$realPath = __DIR__ . '/../../../../' . $userImgPath;
+		if (!is_dir($realPath)) {
+			if (!mkdir($realPath)) JCLog::error("mkdir FAILED for => " . $realPath);
+		}
+
 		return $userImgPath;
 	}
 
