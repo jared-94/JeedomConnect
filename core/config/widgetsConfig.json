@@ -227,7 +227,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur de l'intensité sera prise en compte",
 					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
@@ -431,7 +431,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur de l'intensité sera prise en compte",
 					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
