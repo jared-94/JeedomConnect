@@ -97,6 +97,7 @@ class JeedomConnectWidget extends config {
 					if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
 					$widgetItem['enable'] = $widgetJC['enable'];
 					$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
+					$widgetItem['nameDisplayed'] = $widgetJC['nameDisplayed'] ?? null;
 					$widgetItem['type'] = $widgetJC['type'] ?? 'none';
 					$widgetItem['roomId'] = $widgetJC['room'] ?? '';
 					$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);

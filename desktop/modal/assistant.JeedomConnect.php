@@ -69,7 +69,7 @@ foreach ($widgetArray as $widget) {
   $img = $widget['img'];
 
   $type = $widget['type'];
-  $widgetName = $widget['name'];
+  $widgetName = $widget['nameDisplayed'] ?: $widget['name'];
   $widgetRoom = $widget['roomName'] == 'Aucun' ? '' :  ' (' . $widget['roomName'] . ')';
   $id = $widget['id'];
 

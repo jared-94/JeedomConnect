@@ -27,6 +27,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -163,6 +169,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -341,6 +353,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -550,6 +568,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -652,6 +676,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -807,6 +837,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -904,6 +940,12 @@
 					"description": "Si vide, le nom du scénario sera utilisé"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -989,6 +1031,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1042,6 +1090,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1079,6 +1133,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1140,6 +1200,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1237,6 +1303,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1328,6 +1400,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1423,6 +1501,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1522,6 +1606,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1743,6 +1833,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1944,6 +2040,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2046,6 +2148,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2131,6 +2239,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2231,6 +2345,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2316,6 +2436,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2442,6 +2568,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2603,6 +2735,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2692,6 +2830,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2797,6 +2941,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2882,6 +3032,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3066,6 +3222,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3155,6 +3317,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3273,6 +3441,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3358,6 +3532,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3467,6 +3647,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3567,6 +3753,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3705,6 +3897,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3814,6 +4012,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3919,6 +4123,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4008,6 +4218,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4116,6 +4332,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4232,6 +4454,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4357,6 +4585,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4476,6 +4710,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4559,6 +4799,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4800,6 +5046,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4875,6 +5127,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5061,6 +5319,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -5154,6 +5418,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5254,6 +5524,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5573,6 +5849,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -5722,6 +6004,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "text",
 					"name": "Titre",
 					"category": "string"
@@ -5758,6 +6046,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5841,6 +6135,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": true,
@@ -5900,6 +6200,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "onAction",
 					"name": "Action ON",
 					"required": true,
@@ -5950,6 +6256,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "sliderAction",
 					"name": "Action",
 					"required": true,
@@ -5986,6 +6298,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -6033,6 +6351,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -6099,6 +6423,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{

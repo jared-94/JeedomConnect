@@ -82,7 +82,7 @@ foreach ($widgetArray as $widget) {
 	$img = $widget['img'];
 
 	$opacity = $widget['enable'] ? '' : 'disableCard';
-	$widgetName = $widget['name'];
+	$widgetName = $widget['nameDisplayed'] ?: $widget['name'];
 	$widgetRoom = $widget['roomName'];;
 	$id = $widget['id'];
 	$widgetType = $widget['type'];
