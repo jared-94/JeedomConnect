@@ -47,21 +47,7 @@ $widgetRoomAvail = [];
 $widgetArray = JeedomConnectWidget::getWidgets();
 
 $orderBy = config::byKey('jcOrderByDefault', 'JeedomConnect', 'object');
-switch ($orderBy) {
-  case 'name':
-    $widgetName = array_column($widgetArray, 'name');
-    array_multisort($widgetName, SORT_ASC, $widgetArray);
-    break;
-
-  case 'type':
-    $widgetType = array_column($widgetArray, 'type');
-    $widgetName = array_column($widgetArray, 'name');
-    array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-    break;
-
-  default:
-    break;
-}
+$widgetArray = JeedomConnectUtils::orderWidget($widgetArray, $orderBy);
 
 $listWidget = '';
 foreach ($widgetArray as $widget) {

@@ -986,6 +986,35 @@ class JeedomConnectUtils {
         return array($lng, $lat);
     }
 
+    public static function orderWidget($widgetArray, $orderBy) {
+        switch ($orderBy) {
+            case 'name':
+                usort($widgetArray, function ($a, $b) {
+                    return strcmp(strtolower($a['nameDisplayed'] ?: $a['name']),  strtolower($b['nameDisplayed'] ?: $b['name']));
+                });
+                break;
+
+            case 'type':
+                usort($widgetArray, function ($a, $b) {
+                    if (strtolower($a['type']) ==  strtolower($b['type'])) {
+                        return strcmp(strtolower($a['nameDisplayed'] ?: $a['name']),  strtolower($b['nameDisplayed'] ?: $b['name']));
+                    }
+                    return strcmp(strtolower($a['type']),  strtolower($b['type']));
+                });
+                break;
+
+            default:
+                usort($widgetArray, function ($a, $b) {
+                    if (strtolower($a['roomName']) ==  strtolower($b['roomName'])) {
+                        return strcmp(strtolower($a['nameDisplayed'] ?: $a['name']),  strtolower($b['nameDisplayed'] ?: $b['name']));
+                    }
+                    return strcmp(strtolower($a['roomName']),  strtolower($b['roomName']));
+                });
+                break;
+        }
+        return $widgetArray;
+    }
+
     /**
      * Retrieve the list of files into a dir, order by modification time
      *

@@ -110,9 +110,7 @@ class JeedomConnectWidget extends config {
 			}
 
 			if (!$_onlyConfig) {
-				$roomName  = array_column($widgetArray, 'roomName');
-				$widgetName = array_column($widgetArray, 'name');
-				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+				$widgetArray = JeedomConnectUtils::orderWidget($widgetArray, 'object');
 			}
 
 			//JCLog::debug( ' final result sent >' . json_encode($widgetArray) );

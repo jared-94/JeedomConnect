@@ -47,25 +47,7 @@ $componentSearch = $_GET['jcComponentSearch'] ?? '';
 
 sendVarToJS('jcOrderBy', $orderBy);
 
-switch ($orderBy) {
-	case 'name':
-		$widgetName = array_column($widgetArray, 'name');
-		array_multisort($widgetName, SORT_ASC, $widgetArray);
-		break;
-
-	case 'type':
-		$widgetType = array_column($widgetArray, 'type');
-		$widgetName = array_column($widgetArray, 'name');
-		array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-		break;
-
-	default:
-		// $roomName  = array_column($widgetArray, 'roomName');
-		// $widgetName = array_column($widgetArray, 'name');
-
-		// array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-		break;
-}
+$widgetArray = JeedomConnectUtils::orderWidget($widgetArray, $orderBy);
 
 $allConfig = JeedomConnect::getWidgetParam();
 // JCLog::debug('--------------------- $allConfig =>' . json_encode($allConfig));
