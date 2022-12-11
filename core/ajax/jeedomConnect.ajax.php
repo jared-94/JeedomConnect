@@ -614,15 +614,7 @@ try {
 	}
 
 	if (init('action') == 'copyConfig') {
-		$from = init('from');
-		$toArray = init('to');
-
-		$copy = JeedomConnect::copyConfig($from, $toArray);
-
-		if (init('withCustom', false)) {
-			JeedomConnectWidget::copyCustomData($from, $toArray);
-		}
-
+		$copy = JeedomConnectUtils::copyConfig(init('from'), init('to', array()), init('withCustom', false), false);
 		ajax::success($copy);
 	}
 

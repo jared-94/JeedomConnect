@@ -423,6 +423,8 @@ class JeedomConnectWidget extends config {
 				if ($removeOld) config::remove($item['key'], 'JeedomConnect');
 			}
 		}
+
+		return true;
 	}
 
 	//***************  EXPERIMENTAL ZONE  =) ****************************/

@@ -501,6 +501,11 @@ class apiHelper {
           return self::getPicoKey($eqLogic);
           break;
 
+        case 'COPY_CONFIG':
+          JeedomConnectUtils::copyConfig($param['from'], $param['to'], $param['withCustom']);
+          return null;
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;

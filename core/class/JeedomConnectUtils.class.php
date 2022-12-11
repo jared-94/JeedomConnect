@@ -1079,6 +1079,30 @@ class JeedomConnectUtils {
         return;
     }
 
+
+    /**
+     * Copy the configuration file from equipement $from to one or several equipement $toArray
+     * If $withCustom apply, then also the customsation of the equipment will be copy
+     *
+     * @param string $from
+     * @param array $toArray
+     * @param boolean $withCustom
+     * @return void
+     */
+    public static function copyConfig($from, $toArray  = array(), $withCustom = false, $throwException = true) {
+
+        $copy = JeedomConnect::copyConfig($from, $toArray);
+
+        if ($withCustom) {
+            $copy &= JeedomConnectWidget::copyCustomData($from, $toArray);
+        }
+
+        if (!$copy && $throwException) {
+            throw new Exception("Issue while copying the config");
+        }
+        return;
+    }
+
     public static function installAndMigration() {
 
         if (config::byKey('userImgPath',   'JeedomConnect') == '') {
