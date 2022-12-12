@@ -3300,7 +3300,7 @@
 		{
 			"type": "generic-info-binary",
 			"name": "Générique binaire",
-			"img": "information.png",
+			"img": "generic-binary.png",
 			"description": "Widget générique pour afficher les infos d'une commande binaire",
 			"variables": [
 				{
@@ -3515,7 +3515,7 @@
 		{
 			"type": "generic-info-numeric",
 			"name": "Générique numérique",
-			"img": "information.png",
+			"img": "generic-numeric.png",
 			"description": "Widget générique pour afficher les infos d'une commande info numérique",
 			"variables": [
 				{
@@ -3627,7 +3627,7 @@
 		{
 			"type": "generic-info-string",
 			"name": "Générique texte",
-			"img": "information.png",
+			"img": "generic-text.png",
 			"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
 			"variables": [
 				{
