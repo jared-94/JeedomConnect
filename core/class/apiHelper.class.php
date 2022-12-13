@@ -653,14 +653,8 @@ class apiHelper {
 
     $versionJson = JeedomConnect::getPluginInfo();
 
-    if ($eqLogic->getConfiguration('deviceId') != $param['deviceName']) {
-      JCLog::info("Register new device {$param['deviceName']}");
-      $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
-    }
-    $eqLogic->registerToken($param['token']);
-
     //check registered device
-    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId']) {
+    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId'] && $eqLogic->getConfiguration('deviceId') != '') {
       JCLog::warning("Try to connect to an invalid device (eq already used)");
       return array('type' => 'BAD_DEVICE');
     }
@@ -691,6 +685,12 @@ class apiHelper {
       JCLog::warning("Failed to connect : bad plugin requirement");
       return array('type' => 'PLUGIN_VERSION_ERROR');
     }
+
+    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId'] || $eqLogic->getConfiguration('deviceName') != $param['deviceName']) {
+      JCLog::info("Register new device {$param['deviceName']}");
+      $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
+    }
+    $eqLogic->registerToken($param['token']);
 
     $user = user::byId($eqLogic->getConfiguration('userId'));
     if ($user == null) {
