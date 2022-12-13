@@ -657,9 +657,8 @@ function refreshAddWidgets() {
         items.push(option);
     }
 
-    if (missingOptions) {
-        $("#missingOptions").html("Certains paramètres ne sont disponibles que sur l'application");
-    }
+
+    $("#missingOptions").html(missingOptions ? "Certains paramètres ne sont disponibles que sur l'application" : "");
 
     $("#widgetOptions").html(items.join(""));
     loadSortable('all');
