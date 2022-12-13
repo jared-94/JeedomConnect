@@ -28,7 +28,7 @@ sendVarToJS('userHash', $userHash);
 /** @var array<JeedomConnect> $eqLogics */
 $eqLogics = JeedomConnect::getAllJCequipment();;
 
-list($widgetInError, $roomInError) = JeedomConnectWidget::checkCmdSetupInWidgets();
+list($widgetInError, $widgetInWarning, $roomInError) = JeedomConnectWidget::checkCmdSetupInWidgets();
 
 foreach ($roomInError as $widgetId) {
 	JCLog::debug("removing room for widget Id " . $widgetId);
@@ -57,7 +57,7 @@ $componentTypeArray = array();
 $listWidget = '';
 $listComponent = '';
 
-$hasErrorPage = false;
+$hasErrorPage = $hasWarningPage = false;
 foreach ($widgetArray as $widget) {
 	$needSign = '';
 	$hasError = '';
@@ -74,6 +74,11 @@ foreach ($widgetArray as $widget) {
 		$tooltip = ($widgetName == 'inconnu' || trim($widgetName) == '') ? 'Nom du widget à modifier' : 'Commandes orphelines';
 		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-danger-color) !important;" title="' . $tooltip . '"></i>';
 		$hasErrorPage =  true;
+	} elseif (in_array($id, $widgetInWarning)) {
+		$hasError = 'hasWarning';
+		$tooltip =  'Equipement inexistant ou désactivé';
+		$needSign = '<i class="fas fa-exclamation-circle" style="color: var(--al-warning-color) !important;" title="' . $tooltip . '"></i>';
+		$hasWarningPage =  true;
 	}
 	$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . ' ' .  $needSign . '</strong>';
 
@@ -202,11 +207,11 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 						<span>{{Configuration}}</span>
 					</div>
 
-					<?php if ($hasErrorPage) { ?>
-						<div class="cursor eqLogicAction" data-action="showError" style="color:red;">
+					<?php if ($hasErrorPage || $hasWarningPage) { ?>
+						<div class="cursor eqLogicAction" data-action="showError" style="<?= $hasErrorPage ? 'color:red;' : 'color:orange;' ?>">
 							<i class="fas fa-exclamation-circle"></i>
 							<br>
-							<span style="color:var(--txt-color)" id="spanWidgetErreur">{{Erreur}}</span>
+							<span style="color:var(--txt-color)" id="spanWidgetErreur"><?= $hasErrorPage ? '{{Erreur}}' : '{{Warning}}' ?></span>
 							<sup>
 								<i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Il semblerait que vous ayez quelques widgets avec de mauvaises commandes configurées (ou inexistantes).<br/>Vous pouvez les filtrer en appuyant sur ce bouton"></i>
 							</sup>

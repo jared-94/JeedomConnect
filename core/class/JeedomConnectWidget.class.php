@@ -483,6 +483,7 @@ class JeedomConnectWidget extends config {
 		$widgetParam = JeedomConnect::getWidgetParam(false);
 
 		$cmdArrayError = array();
+		$cmdArrayWarning = array();
 		$roomArrayError = array();
 
 		foreach ($widgetsDb as $item) {
@@ -499,16 +500,22 @@ class JeedomConnectWidget extends config {
 				if ($option['category'] == "cmd") {
 					if (array_key_exists($option['id'], $widget)) {
 						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
-						if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+						$cmdStatus = self::isCmd($cmdWidgetId);
+						if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 							$cmdArrayError[] = $widget['id'];
+						} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
+							$cmdArrayWarning[] = $widget['id'];
 						}
 					}
 				} elseif ($option['category'] == "cmdList") {
 					if (array_key_exists('actions', $widget)) {
 						foreach ($widget['actions'] as $action) {
 							$cmdWidgetId = $action['id'] ?: null;
-							if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+							$cmdStatus = self::isCmd($cmdWidgetId);
+							if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 								$cmdArrayError[] = $widget['id'];
+							} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
+								$cmdArrayWarning[] = $widget['id'];
 							}
 						}
 					}
@@ -526,26 +533,39 @@ class JeedomConnectWidget extends config {
 			if (key_exists('moreInfos', $widget)) {
 				foreach ($widget['moreInfos'] as $info) {
 					$cmdWidgetId = $info['id'] ?: null;
-					if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+					$cmdStatus = self::isCmd($cmdWidgetId);
+					if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 						$cmdArrayError[] = $widget['id'];
+					} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
+						$cmdArrayWarning[] = $widget['id'];
 					}
 				}
 			}
 		}
 
 		// JCLog::debug(' ## all errors :    ' . json_encode($cmdArrayError));
-		return array($cmdArrayError, $roomArrayError);
+		return array($cmdArrayError, $cmdArrayWarning, $roomArrayError);
 	}
 
 
+	/**
+	 * Check if a cmd exist and/or if the equipment linked is enabled
+	 *
+	 * @param int $id
+	 * @return boolean  -1 if cmd does not exist, -2 is equipment does not exist or is disable, 0 otherwise
+	 */
 	public static function isCmd($id) {
 
 		if (!is_null($id)) {
+			/** @var cmd $cmd */
 			$cmd = cmd::byId($id);
 			if (!is_object($cmd)) {
-				return false;
+				return -1;
 			}
+			/** @var eqLogic $eqLogic  */
+			$eqLogic = $cmd->getEqLogic();
+			if (!is_object($eqLogic) || !$eqLogic->getIsEnable()) return -2;
 		}
-		return true;
+		return 0;
 	}
 }

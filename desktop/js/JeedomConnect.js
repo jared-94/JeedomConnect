@@ -684,9 +684,9 @@ $('.eqLogicAction[data-action=addComponent]').off('click').on('click', function 
 
 $('.eqLogicAction[data-action=showError]').off('click').on('click', function () {
 
-  var hide = ($('#spanWidgetErreur').text() == 'Erreur') ? true : false;
+  var hide = ($('#spanWidgetErreur').text() != 'Tous') ? true : false;
   if (hide) {
-    $('.widgetDisplayCard').not(".hasError").hide();
+    $('.widgetDisplayCard').not(".hasError,.hasWarning").hide();
   }
   else {
     $('.widgetDisplayCard').show();
@@ -707,8 +707,14 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
     $('.eqLogicAction[data-action=showError]').css('color', 'grey');
   }
   else {
-    $('#spanWidgetErreur').text('Erreur');
-    $('.eqLogicAction[data-action=showError]').css('color', 'red');
+    if ($('.widgetDisplayCard.hasError').length > 0) {
+      $('#spanWidgetErreur').text('Erreur');
+      $('.eqLogicAction[data-action=showError]').css('color', 'red');
+    }
+    else if ($('.widgetDisplayCard.hasWarning').length > 0) {
+      $('#spanWidgetErreur').text('Warning');
+      $('.eqLogicAction[data-action=showError]').css('color', 'orange');
+    }
   }
   updateWidgetCount()
 
