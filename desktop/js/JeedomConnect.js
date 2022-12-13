@@ -193,22 +193,27 @@ var widgetsList = (function () {
   return json;
 })();
 
-items = [];
+itemsConfig = [];
 widgetsList.widgets.forEach(item => {
-  items.push('<option value="' + item.type + '" class="widget">' + item.name + '</option>');
+  itemsConfig.push({ 'type': item.type, 'class': "widget", 'name': item.name });
 });
 
 widgetsList.components.forEach(item => {
-  items.push('<option value="' + item.type + '" class="component">' + item.name + '</option>');
+  itemsConfig.push({ 'type': item.type, 'class': "component", 'name': item.name });
 });
-$("#widgetsList-select").html(items.join(""));
+
+itemsConfig.sort(function (a, b) {
+  return a.name.localeCompare(b.name);
+});
+
+optionsSelect = [];
+itemsConfig.forEach(item => {
+  optionsSelect.push('<option value="' + item.type + '" class="' + item.class + '">' + item.name + '</option>');
+});
+
+
+$("#widgetsList-select").html(optionsSelect.join(""));
 $("#room-input").html(roomListOptions);
-
-
-
-
-
-
 
 
 function refreshCmdData(name, id, value, concat = false) {
