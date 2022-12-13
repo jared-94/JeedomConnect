@@ -653,7 +653,7 @@ class apiHelper {
 
     $versionJson = JeedomConnect::getPluginInfo();
 
-    if ($eqLogic->getConfiguration('deviceId') == '') {
+    if ($eqLogic->getConfiguration('deviceId') != $param['deviceName']) {
       JCLog::info("Register new device {$param['deviceName']}");
       $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
     }
