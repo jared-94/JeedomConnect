@@ -687,9 +687,11 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
   var hide = ($('#spanWidgetErreur').text() != 'Tous') ? true : false;
   if (hide) {
     $('.widgetDisplayCard').not(".hasError,.hasWarning").hide();
+    $('.componentDisplayCard').not(".hasError,.hasWarning").hide();
   }
   else {
     $('.widgetDisplayCard').show();
+    $('.componentDisplayCard').show();
   }
 
 
@@ -697,6 +699,12 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
 
   if (typeSelected != 'none') {
     $('.widgetDisplayCard').not("[data-widget_type=" + typeSelected + "]").hide();
+  }
+
+  var typeComponentSelected = $('#componentTypeSelect').val();
+
+  if (typeComponentSelected != 'none') {
+    $('.componentDisplayCard').not("[data-widget_type=" + typeComponentSelected + "]").hide();
   }
 
 
@@ -707,11 +715,11 @@ $('.eqLogicAction[data-action=showError]').off('click').on('click', function () 
     $('.eqLogicAction[data-action=showError]').css('color', 'grey');
   }
   else {
-    if ($('.widgetDisplayCard.hasError').length > 0) {
+    if (($('.widgetDisplayCard.hasError').length + $('.componentDisplayCard.hasError').length) > 0) {
       $('#spanWidgetErreur').text('Erreur');
       $('.eqLogicAction[data-action=showError]').css('color', 'red');
     }
-    else if ($('.widgetDisplayCard.hasWarning').length > 0) {
+    else if (($('.widgetDisplayCard.hasWarning').length + $('.componentDisplayCard.hasWarning').length) > 0) {
       $('#spanWidgetErreur').text('Warning');
       $('.eqLogicAction[data-action=showError]').css('color', 'orange');
     }

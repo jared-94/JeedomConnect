@@ -485,18 +485,18 @@ class JeedomConnectWidget extends config {
 		$cmdArrayError = array();
 		$cmdArrayWarning = array();
 		$roomArrayError = array();
-
+		// JCLog::debug(" all widget DB => " . json_encode($widgetsDb));
 		foreach ($widgetsDb as $item) {
 			$widget = json_decode($item['widgetJC'], true);
 
-			$config = $widgetParam[$widget['type']];
+			$widgetType = ($widget['type'] == 'component') ? $widget['component'] : $widget['type'];
+			$config = $widgetParam[$widgetType];
 			foreach ($config['options'] as $option) {
 				// will check only the cmd data
 				if (!in_array($option['category'], array("cmd", "cmdList"))) {
 					continue;
 				}
 
-				// JCLog::debug(' cmd name ' . $option['name'] . '  - matching widget data : ' . json_encode($widget[$option['id']]));
 				if ($option['category'] == "cmd") {
 					if (array_key_exists($option['id'], $widget)) {
 						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
