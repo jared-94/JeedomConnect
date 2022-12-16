@@ -918,7 +918,7 @@ $('.jcItemSelect').on('change', function () {
     $(itemId).keyup()
   }
 
-  $('.eqLogicThumbnailContainer.' + dataType).packery();
+  $('.eqLogicThumbnailContainer').packery();
 
   updateWidgetCount(dataType);
 
