@@ -706,14 +706,30 @@ class apiHelper {
 
     //check config content
     if (is_null($config)) {
-      JCLog::warning("Failed to connect : empty config file");
-      return array('type' => 'EMPTY_CONFIG_FILE');
+      $wrongFile = true;
+      $newConfig = $eqLogic->restoreConfigFile();
+      if (!is_null($newConfig)) {
+        $wrongFile = false;
+      }
+
+      if ($wrongFile) {
+        JCLog::warning("Failed to connect : empty config file");
+        return array('type' => 'EMPTY_CONFIG_FILE');
+      }
     }
 
     //check config format version
     if (!array_key_exists('formatVersion', $config)) {
-      JCLog::warning("Failed to connect : bad format version");
-      return array('type' => 'FORMAT_VERSION_ERROR');
+      $wrongFile = true;
+      $newConfig = $eqLogic->restoreConfigFile();
+      if (array_key_exists('formatVersion', $newConfig)) {
+        $wrongFile = false;
+      }
+
+      if ($wrongFile) {
+        JCLog::warning("Failed to connect : bad format version");
+        return array('type' => 'FORMAT_VERSION_ERROR');
+      }
     }
 
     if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);

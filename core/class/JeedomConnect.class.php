@@ -644,22 +644,27 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
-	public function getGeneratedConfigFile() {
+	public function getGeneratedConfigFile($forceReload = false) {
 
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
 			JCLog::error('¤¤¤¤¤ getGeneratedConfigFile for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
 		}
 
-		$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
-		if ($cacheConf != '') {
-			return json_decode($cacheConf, true);
-		}
-
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
-		if (!file_exists($config_file_path)) {
-			JCLog::warning('file ' . $config_file_path . ' does not exist  -- new try to generate one');
+		if ($forceReload) {
+			JCLog::debug('force new config generation');
 			$this->getConfig(true, true);
+		} else {
+			$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
+			if ($cacheConf != '') {
+				return json_decode($cacheConf, true);
+			}
+
+			if (!file_exists($config_file_path)) {
+				JCLog::warning('file ' . $config_file_path . ' does not exist  -- try to generate new one');
+				$this->getConfig(true, true);
+			}
 		}
 
 		try {
@@ -670,6 +675,29 @@ class JeedomConnect extends eqLogic {
 			JCLog::error('Unable to generate configuration setting : ' . $e->getMessage());
 			return null;
 		}
+	}
+
+	public function restoreConfigFile() {
+		$newConfig = null;
+		$apiKey = $this->getConfiguration('apiKey');
+		if ($apiKey == '') {
+			JCLog::warning('restoreConfigFile - apiKey empty !');
+			return $newConfig;
+		}
+
+		$bkpFile = self::$_backup_dir . $apiKey . '/config-' . $apiKey . '.json';
+		if (file_exists($bkpFile)) {
+			$fileConfigRestore = self::$_config_dir . $apiKey . '.json';
+
+			JCLog::debug('trying to restore bkp file from ' . $bkpFile . ' to ' . $fileConfigRestore);
+			$configFile = file_get_contents($bkpFile);
+			$jsonConfig = json_decode($configFile, true);
+
+			file_put_contents($fileConfigRestore, json_encode($jsonConfig['payload']));
+
+			$newConfig = $this->getGeneratedConfigFile(true);
+		}
+		return $newConfig;
 	}
 
 	public static function getChoiceData($cmdId) {
