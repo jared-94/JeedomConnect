@@ -321,7 +321,7 @@ class JeedomConnect extends eqLogic {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
 
-		foreach (\JeedomConnect::getAllJCequipment() as $eqLogic) {
+		foreach (self::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getLogicalId();
 
 			$bkpDir = self::$_backup_dir . $apiKey;
@@ -330,8 +330,13 @@ class JeedomConnect extends eqLogic {
 			$configFile = realpath(self::$_config_dir) . '/' . $apiKey . '.json';
 			if (file_exists($configFile)) {
 				$configFileContent = JeedomConnectUtils::getFileContent($configFile);
-				$content = JeedomConnectUtils::addTypeInPayload($configFileContent, 'JC_EXPORT_EQLOGIC_CONFIG');
-				file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
+
+				if (array_key_exists('formatVersion', $configFileContent)) {
+					$content = JeedomConnectUtils::addTypeInPayload($configFileContent, 'JC_EXPORT_EQLOGIC_CONFIG');
+					file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
+				} else {
+					JCLog::warning("no backup up of config file, because it's a bad one => " . json_encode($configFileContent));
+				}
 			}
 
 			$notifFile = realpath(self::$_notif_dir) . '/' . $apiKey . '.json';
