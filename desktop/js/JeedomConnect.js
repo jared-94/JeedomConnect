@@ -1302,11 +1302,13 @@ function addCmdToTable(_cmd) {
 
 
   cpltOnglet = '';
-  if (($.inArray(_cmd.logicalId, ["distance", "position", "activity"]) != -1) || ((_cmd.logicalId).indexOf('geofence_') >= 0)) {
-    cpltOnglet = 'Position';
-  }
-  else if (($.inArray(_cmd.logicalId, ["defaultNotif"]) != -1) || ((_cmd.logicalId).indexOf('notif') >= 0)) {
-    cpltOnglet = 'Notification';
+  if (_cmd.logicalId != null && _cmd.logicalId != '') {
+    if (($.inArray(_cmd.logicalId, ["distance", "position", "activity"]) != -1) || ((_cmd.logicalId).indexOf('geofence_') >= 0)) {
+      cpltOnglet = 'Position';
+    }
+    else if (($.inArray(_cmd.logicalId, ["defaultNotif"]) != -1) || ((_cmd.logicalId).indexOf('notif') >= 0)) {
+      cpltOnglet = 'Notification';
+    }
   }
 
 
