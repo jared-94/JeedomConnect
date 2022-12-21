@@ -83,6 +83,9 @@ class JeedomConnectWidget extends config {
 			}
 		}
 
+
+		$allImgPath = self::getElementImgPath();
+
 		$widgetArray = array();
 		if (!empty($widgets)) {
 			foreach ($widgets as $widget) {
@@ -91,7 +94,7 @@ class JeedomConnectWidget extends config {
 				if ($_onlyConfig) {
 					$widgetItem = json_decode($widget['conf']['widgetJC'], true) ?? '';
 				} else {
-					$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
+					// $widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 
 					$widgetJC = json_decode($widget['conf']['widgetJC'], true);
 					if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
@@ -104,6 +107,9 @@ class JeedomConnectWidget extends config {
 					$widgetItem['roomName'] = $widgetItem['roomId'] == 'global' ? 'Global' : (is_object($widgetRoomObjet) ? $widgetRoomObjet->getName() : 'Aucun');
 					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
 					$widgetItem['component'] = $widgetJC['component'] ?? 'none';
+
+					$typeImg = ($widgetJC['type'] == 'component') ? $widgetJC['component'] : $widgetJC['type'];
+					$widgetItem['img'] = $allImgPath[$typeImg] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 				}
 
 				array_push($widgetArray, $widgetItem);
@@ -116,6 +122,22 @@ class JeedomConnectWidget extends config {
 			//JCLog::debug( ' final result sent >' . json_encode($widgetArray) );
 		}
 		return $widgetArray;
+	}
+
+
+	public static function getElementImgPath() {
+
+		$widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
+
+		$imgPath = array();
+
+		foreach ($widgetsConfigJonFile['components'] as $config) {
+			$imgPath[$config['component']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+		}
+		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+			$imgPath[$config['type']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+		}
+		return $imgPath;
 	}
 
 	public static function getWidgetsList() {
