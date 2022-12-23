@@ -191,6 +191,10 @@ function getNotifModal(_options, _callback) {
 		});
 	}
 	setNotifModalData(_options);
+	$("#ongoing-input").change(function () {
+		$("#update-input").prop("disabled", this.checked);
+		$("#update-input").prop("checked", this.checked);
+	});
 	$("#notifModal").dialog({
 		title: _options.title, buttons: {
 			"Annuler": function () {
@@ -206,6 +210,7 @@ function getNotifModal(_options, _callback) {
 					result.name = $("#mod-notifName-input").val();
 					result.channel = $("#mod-channel-input").val();
 					result.update = $("#update-input").is(':checked')
+					result.ongoing = $("#ongoing-input").is(':checked');
 					result.critical = $("#critical-input").is(':checked');
 					result.criticalVolume = parseFloat($("#criticalVolume-input").val());
 					if ($("#mod-color-input").val() != '') {
@@ -421,12 +426,6 @@ $('body').off('click', '.editChannel').on('click', '.editChannel', function () {
 		$('.notifToUpdate').attr('data-object', JSON.stringify(result));
 		$('.notifToUpdate').removeClass('notifToUpdate');
 	});
-});
-
-/* Remove channel or notif item */
-
-$('body').off('click', '.deleteItem').on('click', '.deleteItem', function () {
-	$(this).parents('li').remove();
 });
 
 

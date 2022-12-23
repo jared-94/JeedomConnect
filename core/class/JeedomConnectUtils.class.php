@@ -986,6 +986,35 @@ class JeedomConnectUtils {
         return array($lng, $lat);
     }
 
+    public static function orderWidget($widgetArray, $orderBy) {
+        switch ($orderBy) {
+            case 'name':
+                usort($widgetArray, function ($a, $b) {
+                    return strcmp(strtolower($a['nameDisplayed'] ?: $a['name']),  strtolower($b['nameDisplayed'] ?: $b['name']));
+                });
+                break;
+
+            case 'type':
+                usort($widgetArray, function ($a, $b) {
+                    if (strtolower($a['type']) ==  strtolower($b['type'])) {
+                        return strcmp(strtolower($a['nameDisplayed'] ?: $a['name']),  strtolower($b['nameDisplayed'] ?: $b['name']));
+                    }
+                    return strcmp(strtolower($a['type']),  strtolower($b['type']));
+                });
+                break;
+
+            default:
+                usort($widgetArray, function ($a, $b) {
+                    if (strtolower($a['roomName']) ==  strtolower($b['roomName'])) {
+                        return strcmp(strtolower($a['nameDisplayed'] ?: $a['name']),  strtolower($b['nameDisplayed'] ?: $b['name']));
+                    }
+                    return strcmp(strtolower($a['roomName']),  strtolower($b['roomName']));
+                });
+                break;
+        }
+        return $widgetArray;
+    }
+
     /**
      * Retrieve the list of files into a dir, order by modification time
      *
@@ -1047,6 +1076,30 @@ class JeedomConnectUtils {
             }
         }
 
+        return;
+    }
+
+
+    /**
+     * Copy the configuration file from equipement $from to one or several equipement $toArray
+     * If $withCustom apply, then also the customsation of the equipment will be copy
+     *
+     * @param string $from
+     * @param array $toArray
+     * @param boolean $withCustom
+     * @return void
+     */
+    public static function copyConfig($from, $toArray  = array(), $withCustom = false, $throwException = true) {
+
+        $copy = JeedomConnect::copyConfig($from, $toArray);
+
+        if ($withCustom) {
+            $copy &= JeedomConnectWidget::copyCustomData($from, $toArray);
+        }
+
+        if (!$copy && $throwException) {
+            throw new Exception("Issue while copying the config");
+        }
         return;
     }
 

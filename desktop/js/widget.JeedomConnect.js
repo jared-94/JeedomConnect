@@ -61,7 +61,7 @@ function getWidgetModal(_options, _callback) {
     $("#simpleModal").dialog('destroy').remove();
 
     if ($("#widgetModal").length == 0) {
-        $('body').append('<div id="widgetModal"></div>');
+        $('body').append('<div id="widgetModal" widgetOld="' + (_options.widget ? JSON.stringify(_options.widget).replace(/"/g, '&quot;') : '{}') + '"></div>');
 
         $("#widgetModal").dialog({
             title: _options.title,
@@ -125,7 +125,19 @@ function getWidgetModal(_options, _callback) {
 function setWidgetModalData(options) {
     $('#summaryModal').dialog('destroy').remove();
 
+    if (options.itemType == 'component') {
+        $('#widgetsList-select option:not(.component)').hide();
+        $('#widgetsList-select option.component:first').prop("selected", "selected");
+        $('.jcItemModal .itemType').text('composant');
+    }
+    else {
+        $('#widgetsList-select option:not(.widget)').hide();
+        $('#widgetsList-select option.widget:first').prop("selected", "selected");
+
+    }
+
     refreshAddWidgets();
+
 
     if (options.widget !== undefined) {
         $('#widgetsList-select option[value="' + options.widget.type + '"]').prop('selected', true);
@@ -160,7 +172,8 @@ function setWidgetModalData(options) {
 
         $("#widgetOptions").attr('widget-id', options.eqId ?? '');
 
-        var widgetConfig = widgetsList.widgets.find(i => i.type == options.widget.type);
+        var itemList = (options.itemType == 'component') ? widgetsList.components : widgetsList.widgets
+        var widgetConfig = itemList.find(i => i.type == options.widget.type);
         //  console.log("widgetsList => ", widgetsList) ;
         //  console.log("widgetConfig => ", widgetConfig) ;
         widgetConfig.options.forEach(option => {
@@ -239,13 +252,13 @@ function setWidgetModalData(options) {
                         })
                     }
                 });
-                $('#optionScenario').css('display', 'block');
+                $('#optionScenario-' + option.id).css('display', 'block');
 
                 if (options.widget['options'] !== undefined &&
                     options.widget['options']['tags'] !== undefined &&
                     options.widget['options']['tags'] != '') {
                     getHumanNameFromCmdId({ alert: '#widget-alert', cmdIdData: options.widget['options']['tags'] }, function (result, _params) {
-                        $('#tags-scenario-input').val(result);
+                        $('#tags-scenario-' + option.id + '-input').val(result);
                     });
                 }
                 if (options.widget['options'] !== undefined) {
@@ -282,6 +295,27 @@ function setWidgetModalData(options) {
                 });
             } else if (option.category == "img" & options.widget[option.id] !== undefined) {
                 $("#icon-div-" + option.id).html(iconToHtml(options.widget[option.id]));
+            } else if (option.category == "actionList") {
+                // console.log('setwidget, options', options);
+                options.widget.actions.forEach(item => {
+                    let type = item.action
+                    let index = item.index
+                    let html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true, withBorder: true, move: true, remove: true });
+                    console.log('item actions ', item, index, type)
+                    $('#actionList-div').append(html);
+
+                    if (type == 'scenario') {
+                        $('#optionScenario-' + 'actionList-' + index).css('display', 'block');
+                    } else if (type == 'cmd') {
+                        item.options.name = '#' + item.options.id + '#'
+                    }
+
+                    $('#actionList-div .actionList:last').setValues(item, '.actionListAttr');
+
+                });
+            } else if (option.category == "security") {
+
+                $('.jcSecurityDiv').setValues({ security: options.widget.security }, '.jcItemAttr');
             }
         });
     }
@@ -301,7 +335,10 @@ function refreshAddWidgets() {
     imgCat = [];
     moreInfos = [];
     var type = $("#widgetsList-select").val();
-    var widget = widgetsList.widgets.find(i => i.type == type);
+    var itemType = $("#widgetsList-select").find("option:selected").hasClass('widget') ? 'widget' : 'component';
+
+    var listItems = (itemType == 'widget') ? widgetsList.widgets : widgetsList.components
+    var widget = listItems.find(i => i.type == type);
     showAutoFillWidgetCmds();
 
     (type == 'jc') ? $('.searchForJCeq').show() : $('.searchForJCeq').hide();
@@ -331,45 +368,49 @@ function refreshAddWidgets() {
     items.push(option);
 
     //visible
-    option = `<li><div class='form-group'>
-  	<label class='col-xs-3 '>Visible sous condition
-        <sup>
-            <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
-        </sup>
-    </label>
-  	<div class='col-xs-9'>
-    <div class='input-group'>
-    <input style="width:340px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
+    if (itemType == 'widget') {
+        option = `<li><div class='form-group'>
+        <label class='col-xs-3 '>Visible sous condition
+            <sup>
+                <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
+            </sup>
+        </label>
+        <div class='col-xs-9'>
+        <div class='input-group'>
+        <input style="width:340px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
         
         <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
         <i class='fas fa-list-alt'></i></a>`;
 
-    // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
-    //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-    //     <i class="fas fa-plus-square"></i> </a>
-    //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
-    // if (widget.variables) {
-    //     widget.variables.forEach(v => {
-    //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-    //     });
-    // }
-    // option += `</ul></div >
-    option += `</div></div></div></li>`;
-    items.push(option);
+        // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
+        //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+        //     <i class="fas fa-plus-square"></i> </a>
+        //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
+        // if (widget.variables) {
+        //     widget.variables.forEach(v => {
+        //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+        //     });
+        // }
+        // option += `</ul></div >
+        option += `</div></div></div></li>`;
+        items.push(option);
+    }
 
     //Room
-    option = `<li><div class='form-group'>
-    <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
-    <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
-    <option value="none">Sélection  d'une pièce</option>`;
-    option += roomListOptions;
+    if (itemType == 'widget') {
+        option = `<li><div class='form-group'>
+        <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
+        <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
+        <option value="none">Sélection  d'une pièce</option>`;
+        option += roomListOptions;
 
-    if (type == 'room') {
-        option += `<option value="global">Global</option>`;
+        if (type == 'room') {
+            option += `<option value="global">Global</option>`;
+        }
+        option += `</select></div></div></div></li>`;
+        items.push(option);
     }
-    option += `</select></div></div></div></li>`;
-    items.push(option);
-
+    let missingOptions = false;
     widget.options.forEach(option => {
         var required = (option.required) ? "required" : "";
         var description = (option.description == undefined) ? '' : option.description;
@@ -430,11 +471,15 @@ function refreshAddWidgets() {
                 curOption += `<div class='input-group'>
         <div style="display:flex"><textarea style="width:340px;" id="${option.id}-input" value=''></textarea>`;
             } else {
+                var min = (option.min || false) ? `min="${option.min}"` : '';
+                var max = (option.max || false) ? `max="${option.max}"` : '';
+                var defaultValue = (option.default || false) ? `default="${option.default}"` : '';
+
                 curOption += `<div class='input-group'>
-        <div style="display:flex"><input type="${type}" style="width:340px;" id="${option.id}-input" value=''>`;
+        <div style="display:flex"><input type="${type}" style="width:340px;" ${min} ${max} ${defaultValue} id="${option.id}-input" value='${option.default || ''}'>`;
             }
 
-            if (option.id == 'name') {
+            if (option.id == 'name' || (option.useCmd != 'undefined' && option.useCmd)) {
                 curOption += `
               <div class="dropdown" id="name-select">
               <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
@@ -525,12 +570,12 @@ function refreshAddWidgets() {
             curOption += `</div></div></li>`;
         } else if (option.category == "scenario") {
             curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
-    <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-related="${option.id}-input">
+    <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
     <i class='fas fa-list-alt'></i></a></span></div>
-      <div id='optionScenario' style='display:none;'>
+      <div id='optionScenario-${option.id}' style='display:none;'>
         <div class="input-group input-group-sm" style="width: 100%">
             <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
-            <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-input" value="" placeholder="Si nécessaire indiquez des tags" />
+            <input style="width:100%;" class='input-sm form-control roundedRight title' type="string" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
         </div>
         <div class="" style="width: 100%;display: flex;">
           <div class="input-group input-group-sm">
@@ -558,7 +603,28 @@ function refreshAddWidgets() {
             });
 
             curOption += `</div></div></div></li>`;
+        } else if (option.category == "security") {
+
+            curOption += getHtmlItem(option.category, { id: 0, from: option.category, key1: option.category });
+
+        } else if (option.category == "actionList") {
+            curOption += `<div class='input-group'>
+            <select class="form-control col-3 input-sm jcCmdListOptions roundedRight" id="${option.id}-select">`;
+
+            option.options.forEach(v => {
+                curOption += `<option value="${v.category}" >${v.name}</option>`;
+            });
+
+            curOption += `</select>`;
+            curOption += `<span class="col-3 input-group-btn">
+                <a class="btn btn-default roundedRight jcAddActionList" data-input="${option.id}-select">
+                <i class="fas fa-plus-square"></i> Ajouter</a>
+                </span>`;
+            curOption += `</div>
+            <div id="actionList-div"></div>
+            </div></div></div></li>`;
         } else {
+            missingOptions = true
             return;
         }
 
@@ -567,7 +633,7 @@ function refreshAddWidgets() {
     });
 
     //More infos
-    if (!["widgets-summary", "room", "favorites"].includes(widget.type)) {
+    if (!widget.noMoreInfos) {
         moreDiv = `<li><div class='form-group'>
       <label class='col-xs-3 '>Ajouter des infos</label>
       <div class='col-xs-9'>
@@ -583,11 +649,16 @@ function refreshAddWidgets() {
         items.push(moreDiv);
     }
 
-    //Details access
-    option = `<li><div class='form-group'>
-    <label class='col-xs-3 '>Bloquer vue détails</label>
-    <div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="blockDetail-input" ></div></div></div></li>`;
-    items.push(option);
+    if (itemType == 'widget') {
+        //Details access
+        option = `<li><div class='form-group'>
+        <label class='col-xs-3 '>Bloquer vue détails</label>
+        <div class='col-xs-9'><div class='input-group'><input type="checkbox" style="width:150px;" id="blockDetail-input" ></div></div></div></li>`;
+        items.push(option);
+    }
+
+
+    $("#missingOptions").html(missingOptions ? "Certains paramètres ne sont disponibles que sur l'application" : "");
 
     $("#widgetOptions").html(items.join(""));
     loadSortable('all');
@@ -617,9 +688,11 @@ $('body').off('click', '#widgetModal .removeCmd').on('click', '#widgetModal .rem
 
 $("body").on('click', '.selectScenario', function () {
     var related = $(this).data('related');
+    var itemId = $(this).data('id');
     jeedom.scenario.getSelectModal({}, function (result) {
         $("#" + related).attr('value', result.human);
         $("#" + related).val(result.human);
+        $("#" + itemId + '-id').val(result.id);
         $("#" + related).attr('scId', result.id);
         if ($("#name-input").val() == "") {
             getScenarioHumanName({
@@ -634,10 +707,10 @@ $("body").on('click', '.selectScenario', function () {
             });
             $("#name-input").val(result.name);
 
-            previousData = $('#tags-scenario-input').val() || '';
-            $('#tags-scenario-input').val(previousData);
-            $('#optionScenario').css('display', 'block');
+            previousData = $('#tags-scenario-' + itemId + '-input').val() || '';
+            $('#tags-scenario-' + itemId + '-input').val(previousData);
         }
+        $('#optionScenario-' + itemId).css('display', 'block');
     })
 });
 
@@ -838,6 +911,7 @@ function selectCmd(name, type, subtype, value, concat = false) {
         },
         cmd: cmd
     }, function (result) {
+        $('#' + name + '-id').val(result.cmd.id);
         refreshCmdData(name, result.cmd.id, value, concat);
     })
 }
@@ -1141,11 +1215,165 @@ function loadSortable(elt) {
 
     }
 
+    $("#actionList-div").sortable({
+        axis: "y", cursor: "move", items: ".actionList", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true
+    });
+
 }
 
+$('#widgetModal').off('click', '.jcAddActionList').on('click', '.jcAddActionList', function () {
+    var input = $(this).attr('data-input');
+    var type = $('#' + input).find('option:selected').val();
+    var index = $('#actionList-div .actionList').length
+    var html = getHtmlItem(type, { id: index, from: 'actionList', 'noSecurity': true, withBorder: true, move: true, remove: true });
+    $('#actionList-div').append(html);
+});
 
 
+function getHtmlItem(type, option) {
+    if (!isset(option)) {
+        option = {};
+    }
 
+    var html = '';
+    if (type == 'cmd') {
+        isDisabled = isJcExpert ? '' : 'disabled';
+        option.id = option.from + '-' + option.id;
+        html = `
+        <div class="input-group input-group-sm" style="width: 100%">
+              <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:250px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
+              <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">              
+               <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
+                    <i class='fas fa-list-alt'></i></a>  
+            </div>`;
+        /*
+                <table><tr class="cmd">
+                    <td>
+                        <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:250px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
+                            <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">
+                                <td>
+                                    <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
+                                        <i class='fas fa-list-alt'></i></a>
+                                </td>
+                            </td>`;
+                /*
+                    <td>
+                                <i class="mdi mdi-minus-circle removeCmd" id="${option.id}-remove"
+                                    style="color:rgb(185, 58, 62);font-size:16px;margin-right:10px;display:${option.required ? 'none' : 'block'};" aria-hidden="true" data-cmdid="${option.id}-input"></i>
+                            </td>
+                            <td>
+                                <div style="width:50px;margin-left:5px; display:none;" id="invert-div-${option.id}">
+                                    <i class='fa fa-sync' title="Inverser"></i><input type="checkbox" style="margin-left:5px;" id="invert-${option.id}"></div>
+                            </td>
+                            <td>
+                                <div style="width:50px;margin-left:5px; display:none;" id="confirm-div-${option.id}">
+                                    <i class='fa fa-question' title="Demander confirmation"></i><input type="checkbox" style="margin-left:5px;" id="confirm-${option.id}"></div>
+                            </td>
+                            <td>
+                                <div style="width:50px; display:none;" id="secure-div-${option.id}">
+                                    <i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i><input type="checkbox" style="margin-left:5px;" id="secure-${option.id}"  ></div>
+                            </td>
+                            <td>
+                                <div style="width:50px; display:none;" id="pwd-div-${option.id}">
+                                    <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
+                            </td>
+                            <td>
+                                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+                            </td>
+                            <td>
+                                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+                            </td>
+                            <td>
+                                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
+                            </td>
+                            <td>
+                                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
+                            </td>    
+        html += ` </tr></table>`;
+
+        // html += getCmdOptions(option);
+        */
+
+
+    }
+
+    else if (type == 'scenario') {
+        option.id = option.from + '-' + option.id;
+        html = `<div class='input-group' style="width: 300px">
+                <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-input" data-l1key="options" data-l2key="name" value='' scId='' disabled>
+                    <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="scenario_id" style="display:none;">
+                        <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
+                            <i class='fas fa-list-alt'></i></a>
+                        </span>
+                    </div>
+                    <div id='optionScenario-${option.id}' style='display:none;'>
+                        <div class="input-group input-group-sm" style="width: 100%">
+                            <span class="input-group-addon roundedLeft" style="width: 100px">Tags</span>
+                            <input style="width:300px;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="tags" id="tags-scenario-${option.id}-input" value="" placeholder="Si nécessaire indiquez des tags" />
+                        </div>`;
+
+        if (!option.noSecurity) {
+            html += ` <div class="" style="width: 100%;display: flex;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
+                </div>
+                <div style="padding-left: 10px;">
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="options" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="options" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="options" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="actionListAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                </div>
+            </div>`;
+        }
+        html += `</div>`;
+
+    }
+
+    else if (type == 'goToPage') {
+        html = `
+            <div class="input-group input-group-sm" style="width: 100%">
+                <span class="input-group-addon roundedLeft" style="width: 100px">Page</span>
+                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="path" value="" placeholder="chemin de la page à afficher" />
+            </div>`;
+
+    } else if (type == 'security') {
+        html = `
+        <div class="jcSecurityDiv" style="width: 100%;display: flex;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
+                </div>
+                <div style="padding-left: 10px;">
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                </div>
+            </div>`;
+
+
+    } else if (type == 'launchApp') {
+        html = `
+            <div class="input-group input-group-sm" style="width: 100%">
+                <span class="input-group-addon roundedLeft" style="width: 100px">Nom du package</span>
+                <input style="width:100%;" class='input-sm form-control roundedRight title actionListAttr' type="string" data-l1key="options" data-l2key="packageName" value="" placeholder="Nom du package Android de l'application" />
+            </div>`;
+
+
+    }
+
+    let movable = option.move ? `<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>` : '';
+    let remove = option.remove ? `<i class="mdi mdi-minus-circle deleteItem" style="color:rgb(185, 58, 62);font-size:24px;margin-left:5px;"></i>` : '';
+
+    let border = option.withBorder ? "style='display:flex;border:0.5px black solid;margin: 0 5px;'" : "";
+
+    html = "<div class='" + (option.from || '') + "' data-type='" + type + "' " + border + " >"
+        + html
+        + movable
+        + remove
+        + "</div>";
+
+    return html;
+}
 
 
 
@@ -1159,9 +1387,14 @@ $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
     try {
-
+        var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
-        var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
+
+        var itemType = $("#widgetsList-select").find("option:selected").hasClass('widget') ? 'widget' : 'component';
+
+        var listItems = (itemType == 'widget') ? widgetsList.widgets : widgetsList.components
+        var widgetConfig = listItems.find(i => i.type == $("#widgetsList-select").val());
+        // var widgetConfig = widgetsList.widgets.find(w => w.type == $("#widgetsList-select").val());
         let infoCmd = moreInfos.slice();
 
         $('input[cmdType="info"]').each((i, el) => {
@@ -1205,8 +1438,10 @@ $(".widgetMenu .saveWidget").click(function () {
                     result['options'] = {};
                     result['options']['scenario_id'] = $("#" + option.id + "-input").attr('scId');
                     result['options']['action'] = 'start';
-                    if ($('#tags-scenario-input').val() != '') {
-                        getCmdIdFromHumanName({ alert: '#widget-alert', stringData: $('#tags-scenario-input').val() }, function (data, _params) {
+                    if ($('#tags-scenario-' + option.id + '-input').val() != '') {
+                        getCmdIdFromHumanName({
+                            alert: '#widget-alert', stringData: $('#tags-scenario-' + option.id + '-input').val()
+                        }, function (data, _params) {
                             result['options']['tags'] = data;
                         });
                     }
@@ -1220,13 +1455,30 @@ $(".widgetMenu .saveWidget").click(function () {
                 if ($("#" + option.id + "-input").val() == '' & option.required) {
                     throw 'La commande ' + option.name + ' est obligatoire';
                 }
-                result[option.id] = parseString($("#" + option.id + "-input").val(), infoCmd);
+                if ($("#" + option.id + "-input").prop('type') == 'number') {
+                    let itemVal = parseFloat($("#" + option.id + "-input").val());
+                    var min = parseFloat($("#" + option.id + "-input").attr('min'));
+                    var max = parseFloat($("#" + option.id + "-input").attr('max'));
+                    var defaultValue = parseFloat($("#" + option.id + "-input").attr('default'));
+                    if (isNaN(itemVal) && !isNaN(defaultValue)) {
+                        itemVal = defaultValue;
+                    } else if (!isNaN(min) && !isNaN(itemVal) && min > itemVal) {
+                        itemVal = min;
+                    } else if (!isNaN(max) && !isNaN(itemVal) && max < itemVal) {
+                        itemVal = max;
+                    }
+                    result[option.id] = parseInt(itemVal);
+                }
+                else {
+                    result[option.id] = parseString($("#" + option.id + "-input").val(), infoCmd);
+                }
             }
             else if (option.category == "binary") {
                 result[option.id] = $("#" + option.id + "-input").is(':checked');
             }
             else if (option.category == "color") {
-                result[option.id] = $("#" + option.id + "-input").val();
+                let itemVal = $("#" + option.id + "-input").val();
+                if (itemVal != '') result[option.id] = itemVal;
             }
             else if (option.category == "stringList") {
                 if ($("#" + option.id + "-input").val() == 'none' & option.required) {
@@ -1331,24 +1583,48 @@ $(".widgetMenu .saveWidget").click(function () {
                 option.choices.forEach(v => {
                     result[v.id] = $("#" + v.id + "-jc-checkbox").prop('checked');
                 });
+            } else if (option.category == "security") {
+
+                result[option.id] = $('.jcSecurityDiv').getValues('.jcItemAttr')[0]['security'] || [];
+
+            } else if (option.category == "actionList") {
+                var tmp = []
+                $('#actionList-div .actionList').each((index, elt) => {
+                    var action = $(elt).getValues('.actionListAttr')[0];
+                    action.action = $(elt).attr('data-type');
+                    action.index = index;
+                    // console.log('item => ', action);
+                    tmp.push(action);
+                });
+                result[option.id] = tmp
+                // console.log('result => ', result);
+
+            } else if (widgetOld?.[option.id]) { // Keep options with no supported category
+                result[option.id] = widgetOld[option.id];
             }
         });
-
         // ----- END forEach ----
 
-        result.type = $("#widgetsList-select").val();
+        if (itemType == 'widget') {
+            result.type = $("#widgetsList-select").val();
+            result.blockDetail = $("#blockDetail-input").is(':checked');
+
+            visibilityCondData = $('#widgetModal #visibility-cond-input').val();
+            if (visibilityCondData != '') {
+                getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
+                    result.visibilityCond = cmdResult;
+                });
+            }
+
+        }
+        else {
+            result.type = 'component';
+            result.component = $("#widgetsList-select").val();
+        }
         widgetType = $("#widgetsList-select").val();
-        result.blockDetail = $("#blockDetail-input").is(':checked');
 
         widgetEnable = $('#enable-input').is(":checked");
         result.enable = widgetEnable;
-
-        visibilityCondData = $('#widgetModal #visibility-cond-input').val();
-        if (visibilityCondData != '') {
-            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
-                result.visibilityCond = cmdResult;
-            });
-        }
 
         widgetRoom = $('#room-input :selected').val();
         widgetRoomName = $('#room-input :selected').text();
@@ -1360,7 +1636,6 @@ $(".widgetMenu .saveWidget").click(function () {
                 result.room = parseInt(widgetRoom);
             }
         }
-
 
         if (moreInfos.length > 0) {
             result.moreInfos = [];
@@ -1469,7 +1744,7 @@ $(".widgetMenu .removeWidget").click(function () {
     getSimpleModal({
         title: "Confirmation", fields: [{
             type: "string",
-            value: "Voulez-vous supprimer ce widget ?<br/><br/>" + msg
+            value: "Voulez-vous supprimer ce widget ?<br /><br />" + msg
         }]
     }, function (result) {
         $('#widget-alert').hideAlert();

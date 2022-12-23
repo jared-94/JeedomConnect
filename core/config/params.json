@@ -80,7 +80,7 @@
                 "subtype": "message",
                 "isVisible": 0,
                 "configuration": {
-                    "listValueToCreate": "themeColor;darkMode;tracking;rtspServer;updateData;jcService"
+                    "listValueToCreate": "themeColor;darkMode;tracking;geofence;rtspServer;updateData;jcService"
                 },
                 "order": 10,
                 "display": {
@@ -244,6 +244,17 @@
                 "order": 14
             },
             {
+                "logicalId": "getDeviceInfos",
+                "name": "Obtenir infos",
+                "type": "action",
+                "subtype": "other",
+                "isVisible": 1,
+                "display": {
+                    "title_disable": "1"
+                },
+                "order": 14
+            },
+            {
                 "logicalId": "send_sms",
                 "name": "Envoyer un SMS",
                 "type": "action",
@@ -320,7 +331,7 @@
                 "logicalId": "volume",
                 "name": "Volume actuel",
                 "type": "info",
-                "subtype": "numeric",
+                "subtype": "string",
                 "isVisible": 1,
                 "order": 8
             }
@@ -344,6 +355,7 @@
         "themeColor": "Schéma thème",
         "darkMode": "Activer mode sombre",
         "tracking": "Activer le tracking",
+        "geofence": "Activer le geofence",
         "rtspServer": "Activer le serveur de streaming",
         "updateData": "Recharger les données",
         "jcService": "Service JC",

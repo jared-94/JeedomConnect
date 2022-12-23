@@ -321,10 +321,11 @@ function getSimpleModal(_options, _callback) {
 						result[_options.fields.find(i => i.type == "color").id] = $("#mod-color-input").val();
 					}
 					if (_options.fields.find(i => i.type == "widget")) {
-						if ($("#mod-widget-input").val() == undefined) {
-							throw 'Choix obligatoire';
+						let tmpId = $("#mod-widget-input").val();
+						if (tmpId == undefined || tmpId == '' || tmpId == 'none') {
+							throw "Aucun élément sélectionné";
 						}
-						result.widgetId = $("#mod-widget-input").val();
+						result.widgetId = tmpId;
 						result.widgetName = $("#mod-widget-input option:selected").text();
 						result.roomName = $("#mod-widget-input option:selected").data('room') || '';
 					}
@@ -338,6 +339,9 @@ function getSimpleModal(_options, _callback) {
 							getCmdIdFromHumanName({ alert: '#div_simpleModalAlert', stringData: visibilityCondData }, function (cmdResult, _params) {
 								result.visibilityCond = cmdResult;
 							});
+						}
+						else {
+							result.visibilityCond = '';
 						}
 					}
 					if (_options.fields.find(i => i.type == "advancedGrid")) {

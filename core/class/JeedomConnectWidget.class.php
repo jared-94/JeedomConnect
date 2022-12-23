@@ -83,6 +83,10 @@ class JeedomConnectWidget extends config {
 			}
 		}
 
+
+		$allImgPath = self::getElementImgPath();
+		// JCLog::debug('all img =>' . json_encode($allImgPath));
+
 		$widgetArray = array();
 		if (!empty($widgets)) {
 			foreach ($widgets as $widget) {
@@ -91,31 +95,59 @@ class JeedomConnectWidget extends config {
 				if ($_onlyConfig) {
 					$widgetItem = json_decode($widget['conf']['widgetJC'], true) ?? '';
 				} else {
-					$widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
+					// $widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 
 					$widgetJC = json_decode($widget['conf']['widgetJC'], true);
 					if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
 					$widgetItem['enable'] = $widgetJC['enable'];
 					$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
+					$widgetItem['nameDisplayed'] = $widgetJC['nameDisplayed'] ?? null;
 					$widgetItem['type'] = $widgetJC['type'] ?? 'none';
 					$widgetItem['roomId'] = $widgetJC['room'] ?? '';
 					$widgetRoomObjet = jeeObject::byId($widgetItem['roomId']);
 					$widgetItem['roomName'] = $widgetItem['roomId'] == 'global' ? 'Global' : (is_object($widgetRoomObjet) ? $widgetRoomObjet->getName() : 'Aucun');
 					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
+					$widgetItem['component'] = $widgetJC['component'] ?? 'none';
+
+					$typeImg = ($widgetJC['type'] == 'component') ? 'component-' . $widgetJC['component'] : $widgetJC['type'];
+					$widgetItem['img'] = $allImgPath[$typeImg] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 				}
 
 				array_push($widgetArray, $widgetItem);
 			}
 
 			if (!$_onlyConfig) {
-				$roomName  = array_column($widgetArray, 'roomName');
-				$widgetName = array_column($widgetArray, 'name');
-				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
+				$widgetArray = JeedomConnectUtils::orderWidget($widgetArray, 'object');
 			}
 
 			//JCLog::debug( ' final result sent >' . json_encode($widgetArray) );
 		}
 		return $widgetArray;
+	}
+
+
+	public static function getElementImgPath() {
+
+		$widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
+
+		$imgPath = array();
+		$pluginImg = plugin::byId(self::$_plugin_id)->getPathImgIcon();
+
+		foreach ($widgetsConfigJonFile['components'] as $config) {
+			if (file_exists(__DIR__ . '/../../data/img/' . $config['img'])) {
+				$imgPath['component-' . $config['type']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+			} else {
+				$imgPath['component-' . $config['type']] = $pluginImg;
+			}
+		}
+		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+			if (file_exists(__DIR__ . '/../../data/img/' . $config['img'])) {
+				$imgPath[$config['type']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+			} else {
+				$imgPath[$config['type']] = $pluginImg;
+			}
+		}
+		return $imgPath;
 	}
 
 	public static function getWidgetsList() {
@@ -423,6 +455,8 @@ class JeedomConnectWidget extends config {
 				if ($removeOld) config::remove($item['key'], 'JeedomConnect');
 			}
 		}
+
+		return true;
 	}
 
 	//***************  EXPERIMENTAL ZONE  =) ****************************/
@@ -481,32 +515,39 @@ class JeedomConnectWidget extends config {
 		$widgetParam = JeedomConnect::getWidgetParam(false);
 
 		$cmdArrayError = array();
+		$cmdArrayWarning = array();
 		$roomArrayError = array();
-
+		// JCLog::debug(" all widget DB => " . json_encode($widgetsDb));
 		foreach ($widgetsDb as $item) {
 			$widget = json_decode($item['widgetJC'], true);
 
-			$config = $widgetParam[$widget['type']];
+			$widgetType = ($widget['type'] == 'component') ? $widget['component'] : $widget['type'];
+			$config = $widgetParam[$widgetType];
 			foreach ($config['options'] as $option) {
 				// will check only the cmd data
 				if (!in_array($option['category'], array("cmd", "cmdList"))) {
 					continue;
 				}
 
-				// JCLog::debug(' cmd name ' . $option['name'] . '  - matching widget data : ' . json_encode($widget[$option['id']]));
 				if ($option['category'] == "cmd") {
 					if (array_key_exists($option['id'], $widget)) {
 						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
-						if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+						$cmdStatus = self::isCmd($cmdWidgetId);
+						if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 							$cmdArrayError[] = $widget['id'];
+						} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
+							$cmdArrayWarning[] = $widget['id'];
 						}
 					}
 				} elseif ($option['category'] == "cmdList") {
 					if (array_key_exists('actions', $widget)) {
 						foreach ($widget['actions'] as $action) {
 							$cmdWidgetId = $action['id'] ?: null;
-							if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+							$cmdStatus = self::isCmd($cmdWidgetId);
+							if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 								$cmdArrayError[] = $widget['id'];
+							} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
+								$cmdArrayWarning[] = $widget['id'];
 							}
 						}
 					}
@@ -524,26 +565,39 @@ class JeedomConnectWidget extends config {
 			if (key_exists('moreInfos', $widget)) {
 				foreach ($widget['moreInfos'] as $info) {
 					$cmdWidgetId = $info['id'] ?: null;
-					if (!self::isCmd($cmdWidgetId) && !in_array($widget['id'], $cmdArrayError)) {
+					$cmdStatus = self::isCmd($cmdWidgetId);
+					if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 						$cmdArrayError[] = $widget['id'];
+					} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
+						$cmdArrayWarning[] = $widget['id'];
 					}
 				}
 			}
 		}
 
 		// JCLog::debug(' ## all errors :    ' . json_encode($cmdArrayError));
-		return array($cmdArrayError, $roomArrayError);
+		return array($cmdArrayError, $cmdArrayWarning, $roomArrayError);
 	}
 
 
+	/**
+	 * Check if a cmd exist and/or if the equipment linked is enabled
+	 *
+	 * @param int $id
+	 * @return boolean  -1 if cmd does not exist, -2 is equipment does not exist or is disable, 0 otherwise
+	 */
 	public static function isCmd($id) {
 
 		if (!is_null($id)) {
+			/** @var cmd $cmd */
 			$cmd = cmd::byId($id);
 			if (!is_object($cmd)) {
-				return false;
+				return -1;
 			}
+			/** @var eqLogic $eqLogic  */
+			$eqLogic = $cmd->getEqLogic();
+			if (!is_object($eqLogic) || !$eqLogic->getIsEnable()) return -2;
 		}
-		return true;
+		return 0;
 	}
 }
