@@ -85,6 +85,7 @@ class JeedomConnectWidget extends config {
 
 
 		$allImgPath = self::getElementImgPath();
+		// JCLog::debug('all img =>' . json_encode($allImgPath));
 
 		$widgetArray = array();
 		if (!empty($widgets)) {
@@ -108,7 +109,7 @@ class JeedomConnectWidget extends config {
 					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
 					$widgetItem['component'] = $widgetJC['component'] ?? 'none';
 
-					$typeImg = ($widgetJC['type'] == 'component') ? $widgetJC['component'] : $widgetJC['type'];
+					$typeImg = ($widgetJC['type'] == 'component') ? 'component-' . $widgetJC['component'] : $widgetJC['type'];
 					$widgetItem['img'] = $allImgPath[$typeImg] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
 				}
 
@@ -130,12 +131,21 @@ class JeedomConnectWidget extends config {
 		$widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
 
 		$imgPath = array();
+		$pluginImg = plugin::byId(self::$_plugin_id)->getPathImgIcon();
 
 		foreach ($widgetsConfigJonFile['components'] as $config) {
-			$imgPath[$config['component']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+			if (file_exists(__DIR__ . '/../../data/img/' . $config['img'])) {
+				$imgPath['component-' . $config['type']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+			} else {
+				$imgPath['component-' . $config['type']] = $pluginImg;
+			}
 		}
 		foreach ($widgetsConfigJonFile['widgets'] as $config) {
-			$imgPath[$config['type']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+			if (file_exists(__DIR__ . '/../../data/img/' . $config['img'])) {
+				$imgPath[$config['type']] = 'plugins/JeedomConnect/data/img/' . $config['img'];
+			} else {
+				$imgPath[$config['type']] = $pluginImg;
+			}
 		}
 		return $imgPath;
 	}
