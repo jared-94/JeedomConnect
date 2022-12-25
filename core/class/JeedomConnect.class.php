@@ -464,8 +464,7 @@ class JeedomConnect extends eqLogic {
 				// ajax::error('Erreur - pas d\'équipement trouvé');
 				JCLog::debug('Erreur - pas de widget trouvé avec l\'id ' . $widget['id']);
 			} else {
-				$configJson = $widgetData[0]['widgetJC'] ?? '';
-				$widgetConf = json_decode($configJson, true);
+				$widgetConf = $widgetData[0]['widgetJC'] ?? '';
 
 				foreach ($widgetConf as $key2 => $value2) {
 					$widget[$key2] = $value2;
@@ -531,8 +530,7 @@ class JeedomConnect extends eqLogic {
 					if (empty($newWidgetData)) {
 						// ajax::error('Erreur - pas d\'équipement trouvé');
 					} else {
-						$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
-						$newWidgetConf = json_decode($newWidgetJC, true);
+						$newWidgetConf = $newWidgetData[0]['widgetJC'] ?? '';
 
 						$newWidgetConf['id'] = intval($newWidgetConf['id']);
 						$newWidgetConf['index'] = 999999999;
@@ -1799,9 +1797,8 @@ class JeedomConnect extends eqLogic {
 				$previousId = $widget['id'];
 				$widget['id'] = $widgetId;
 				// save json config on a dedicated config var
-				$newConfWidget['widgetJC'] = json_encode($widget);
 
-				JeedomConnectWidget::saveConfig($newConfWidget, $widgetId);
+				JeedomConnectWidget::saveConfig($widget, $widgetId);
 
 				// retrieve the eqLogic ID
 				$newWidget['id'] = intval($widgetId);
@@ -1822,8 +1819,7 @@ class JeedomConnect extends eqLogic {
 			// we need to update the widget ID
 			JCLog::info('checking widget included into other widgets', '_migration');
 			foreach ($widgetsIncluded as $widget) {
-				$widgetJC = JeedomConnectWidget::getConfiguration($widget, 'widgetJC');
-				$conf = json_decode($widgetJC, true);
+				$conf = JeedomConnectWidget::getConfiguration($widget);
 				JCLog::info('working on widget "' . $conf['name'] . '" [id:' . $conf['id'] . ']', '_migration');
 				foreach ($conf['widgets'] as $index => $obj) {
 					$newObj = array();
@@ -1838,7 +1834,7 @@ class JeedomConnect extends eqLogic {
 					$conf['widgets'][$index] = $newObj;
 				}
 
-				JeedomConnectWidget::setConfiguration($widget, 'widgetJC', json_encode($conf));
+				JeedomConnectWidget::updateWidgetConfig($conf);
 			}
 
 			//add info about new format in file
@@ -1940,7 +1936,7 @@ class JeedomConnect extends eqLogic {
 			foreach (JeedomConnectWidget::getWidgets() as $widget) {
 				$currentChange = false;
 				$widgetId = $widget['id'];
-				$widgetJC = json_decode($widget['widgetJC'], true);
+				$widgetJC = $widget['widgetJC'];
 
 				if (isset($widgetJC['statusImages']) && count($widgetJC['statusImages']) > 0) {
 

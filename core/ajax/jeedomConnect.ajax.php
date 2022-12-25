@@ -97,13 +97,12 @@ try {
 		JCLog::debug('-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
 
 		$id = init('eqId') ?: JeedomConnectWidget::incrementIndex();
-		$newConfWidget = array();
-		$newConfWidget['imgPath'] = init('imgPath');
-		$jcTemp = json_decode(init('widgetJC'), true);
-		$jcTemp['id'] = intval($id);
-		$newConfWidget['widgetJC'] = json_encode($jcTemp);
 
-		JeedomConnectWidget::saveConfig($newConfWidget, $id);
+		$jcTemp = json_decode(init('widgetJC'), true);
+		// JCLog::debug('-- manage fx ajax saveWidgetConfig data >' . json_encode($jcTemp) . '<');
+		$jcTemp['id'] = intval($id);
+
+		JeedomConnectWidget::saveConfig($jcTemp, $id);
 
 		if (!is_null(init('eqId'))  && init('eqId') != '') {
 			/** @var JeedomConnect $eqLogic */
@@ -111,7 +110,6 @@ try {
 				$eqLogic->checkEqAndUpdateConfig(init('eqId'));
 			}
 		}
-
 
 		ajax::success(array('id' => $id));
 	}
@@ -246,7 +244,7 @@ try {
 
 		$html = '';
 		foreach ($allWidgets as $widget) {
-			$widgetJC = json_decode($widget['widgetJC'], true);
+			$widgetJC = $widget['widgetJC'];
 			$itemType = ($widget['type'] == 'component') ? 'component' : 'widget';
 			$html .= ($ids == 'all') ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" data-item_type="' . $itemType . '">' : '';
 			$html .= '<td style="width:40px;"><span class="label label-info objectAttr bt_openWidget" data-l1key="widgetId" style="cursor: pointer !important;">' . $widget['id'] . '</span></td>';
@@ -454,7 +452,7 @@ try {
 			$existingWidget = JeedomConnectWidget::getConfiguration($widgetData['widgetId']);
 			JCLog::debug('massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($existingWidget));
 
-			$widgetJC = json_decode($existingWidget['widgetJC'], true);
+			$widgetJC = $existingWidget['widgetJC'];
 
 			$widgetJC['enable'] = boolval($widgetData['enable']);
 			$widgetJC['name'] = cmd::humanReadableToCmd($widgetData['name']);
@@ -464,15 +462,9 @@ try {
 
 			$widgetJC['display'] = $widgetData['display'];
 
-			$widgetJC['hideTitle'] = boolval($widgetData['hideTitle']);
-			$widgetJC['hideSubTitle'] = boolval($widgetData['hideSubTitle']);
-			$widgetJC['hideStatus'] = boolval($widgetData['hideStatus']);
-			$widgetJC['hideIcon'] = boolval($widgetData['hideIcon']);
 			$widgetJC['blockDetail'] = boolval($widgetData['blockDetail']);
 
-			$existingWidget['widgetJC'] = json_encode($widgetJC);
-
-			JeedomConnectWidget::saveConfig($existingWidget, $widgetData['widgetId']);
+			JeedomConnectWidget::saveConfig($widgetJC, $widgetData['widgetId']);
 		}
 
 		ajax::success();
@@ -512,12 +504,14 @@ try {
 		}
 	}
 
+	//TODO to be removed
 	if (init('action') == 'duplicateWidgetConfig') {
 		JCLog::debug('-- manage fx ajax duplicateWidgetConfig for id >' . init('eqId') . '<');
 		$newId = JeedomConnectWidget::duplicateWidget(init('eqId'));
 		ajax::success(array('duplicateId' => $newId));
 	}
 
+	//TODO to be removed
 	if (init('action') == 'getWidgetConfig') {
 		JCLog::debug('-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
 		$widget = JeedomConnectWidget::getWidgets(init('eqId'));

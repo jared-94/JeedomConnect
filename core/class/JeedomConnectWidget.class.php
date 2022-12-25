@@ -90,15 +90,14 @@ class JeedomConnectWidget extends config {
 		$widgetArray = array();
 		if (!empty($widgets)) {
 			foreach ($widgets as $widget) {
+				// JCLog::debug('** current widget =>' . json_encode($widget));
 				$widgetItem = array();
 
 				if ($_onlyConfig) {
-					$widgetItem = json_decode($widget['conf']['widgetJC'], true) ?? '';
+					$widgetItem = $widget['conf'] ?? '';
 				} else {
-					// $widgetItem['img'] = $widget['conf']['imgPath'] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
-
-					$widgetJC = json_decode($widget['conf']['widgetJC'], true);
-					if ($_fullConfig) $widgetItem['widgetJC'] = $widget['conf']['widgetJC'] ?? '';
+					$widgetJC = $widget['conf'] ?? '';
+					if ($_fullConfig) $widgetItem['widgetJC'] = $widgetJC;
 					$widgetItem['enable'] = $widgetJC['enable'];
 					$widgetItem['name'] = $widgetJC['name'] ?? 'inconnu';
 					$widgetItem['nameDisplayed'] = $widgetJC['nameDisplayed'] ?? null;
@@ -176,39 +175,36 @@ class JeedomConnectWidget extends config {
 
 	public static function updateConfig($widgetId, $key, $value = null, $reload = true) {
 
-		$widgetSettings = self::getConfiguration($widgetId);
-		if (empty($widgetSettings)) {
+		$widgetJC = self::getConfiguration($widgetId);
+		if (empty($widgetJC)) {
 			JCLog::debug('updateConfig - widgetId ' . $widgetId . ' NOT found');
 			return;
 		}
 
-		$widgetJC = json_decode($widgetSettings['widgetJC'], true);
 		if (isset($widgetJC[$key])) {
 			if (is_null($value)) {
 				unset($widgetJC[$key]);
 			} else {
 				$widgetJC[$key] = $value;
 			}
-			$widgetSettings['widgetJC'] = json_encode($widgetJC);
+			// $widgetSettings['widgetJC'] = json_encode($widgetJC);
 
 			JCLog::debug('updateConfig - key "' . $key . '" found - updating details id [' . $widgetId . '] - conf : ' . $value);
-			self::saveConfig($widgetSettings, $widgetId);
+			self::saveConfig($widgetJC, $widgetId);
 			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 			return;
 		}
 		JCLog::debug('updateConfig - key ' . $key . ' NOT found');
 	}
 
-	public static function updateWidgetConfig($config) {
-		$widgetId = $config['id'];
-		$widgetSettings = self::getConfiguration($widgetId);
-		if (empty($widgetSettings)) {
-			JCLog::debug('updateWidgetConfig - widgetId ' . $widgetId . ' NOT found');
-			return;
+	public static function updateWidgetConfig($config, $reload = true) {
+		if ($config != null) {
+			$widgetId = $config['id'];
+
+			JCLog::debug('   ---  updating widget id ' . $widgetId . ' with conf => ' . json_encode($config));
+			self::saveConfig($config, $widgetId);
+			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 		}
-		$widgetSettings['widgetJC'] = json_encode($config);
-		self::saveConfig($widgetSettings, $widgetId);
-		JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 	}
 
 	public static function saveConfig($conf, $widgetId = null) {
@@ -253,7 +249,7 @@ class JeedomConnectWidget extends config {
 		JCLog::info('all widget : ' . json_encode($allWidgets));
 		foreach ($allWidgets as $widget) {
 			$hasChanged = false;
-			$conf = json_decode($widget['conf']['widgetJC'], true);
+			$conf = $widget['conf'];
 
 			if (!array_key_exists('widgets', $conf) && !array_key_exists('moreWidgets', $conf)) {
 				continue;
@@ -299,6 +295,7 @@ class JeedomConnectWidget extends config {
 		self::remove($idToRemove, self::$_plugin_id);
 	}
 
+	//TODO to be removed
 	public static function duplicateWidget($widgetId) {
 
 		JCLog::debug('duplicating widget id : ' . $widgetId);
@@ -307,9 +304,9 @@ class JeedomConnectWidget extends config {
 		$config = json_decode($configInit, true);
 
 		$newId = self::incrementIndex();
-		$config['widgetJC']['id'] = $newId;
+		$config['id'] = $newId;
 
-		self::saveConfig(json_encode($config), $newId);
+		self::saveConfig($config, $newId);
 		return $newId;
 	}
 
@@ -470,12 +467,11 @@ class JeedomConnectWidget extends config {
 			return;
 		}
 
-		$widgetJC = json_decode($widgetSettings['widgetJC'], true);
+		$widgetJC = $widgetSettings['widgetJC'];
 		try {
 			self::replaceJC($widgetJC, $searchAndReplace);
 
-			$widgetSettings['widgetJC'] = json_encode($widgetJC);
-			self::saveConfig($widgetSettings, $widgetId);
+			self::saveConfig($widgetJC, $widgetId);
 			if ($reload) JeedomConnect::checkAllEquimentsAndUpdateConfig($widgetId);
 			return;
 		} catch (Exception $e) {
@@ -519,7 +515,7 @@ class JeedomConnectWidget extends config {
 		$roomArrayError = array();
 		// JCLog::debug(" all widget DB => " . json_encode($widgetsDb));
 		foreach ($widgetsDb as $item) {
-			$widget = json_decode($item['widgetJC'], true);
+			$widget = $item['widgetJC'];
 
 			$widgetType = ($widget['type'] == 'component') ? $widget['component'] : $widget['type'];
 			$config = $widgetParam[$widgetType];
@@ -555,7 +551,7 @@ class JeedomConnectWidget extends config {
 			}
 
 			// checking room
-			if (key_exists('room', $widget) && $widget['room'] != 'global') {
+			if (key_exists('room', $widget) && $widget['room'] != 'global' && $widget['type'] != 'component') {
 				$obj = jeeObject::byId($widget['room']);
 				// JCLog::debug("checking room => " . $widget['room'] . " // result :" . json_encode($obj));
 				if ($obj == '') $roomArrayError[] = $widget['id'];
@@ -599,5 +595,24 @@ class JeedomConnectWidget extends config {
 			if (!is_object($eqLogic) || !$eqLogic->getIsEnable()) return -2;
 		}
 		return 0;
+	}
+
+
+	/**
+	 * function to migration DB item from string(json) to real json 
+	 * without img element (beta 1.6.2)
+	 *
+	 * @return void
+	 */
+	public static function migrateWidgetsConfig() {
+		$allWidgetsDb = self::getWidgets();
+
+		foreach ($allWidgetsDb as $widget) {
+
+			JCLog::debug('will migrate widget =>' . json_encode($widget));
+			JeedomConnectWidget::updateWidgetConfig(json_decode($widget['widgetJC']['widgetJC'], true), false);
+		}
+
+		config::save('migration::widgetsConfig', 'done', 'JeedomConnect');
 	}
 }
