@@ -57,24 +57,6 @@ try {
 		ajax::success(array('id' => $id));
 	}
 
-	if (init('action') == 'migrateConfiguration') {
-
-		$scope = init('scope') ?? '';
-		$more = false;
-		/** @var JeedomConnect $eqLogic */
-		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
-			if (($scope == 'all') || (($scope == 'enableOnly') && $eqLogic->getIsEnable())) {
-				JCLog::info('migrate conf for equipment ' . $eqLogic->getName(), '_migration');
-				$eqLogic->moveToNewConfig();
-			} else {
-				JCLog::warning('configuration for equipement "' . $eqLogic->getName() . '" not migrated because equipement disabled', '_migration');
-				$more = true;
-			}
-		}
-
-		ajax::success(array('more' => $more));
-	}
-
 	if (init('action') == 'generateFile') {
 		switch (init('type')) {
 			case 'exportEqConf':

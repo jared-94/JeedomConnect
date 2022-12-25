@@ -37,60 +37,6 @@ $('.jeedomConnect').off('click', '#removeAllWidgets').on('click', '#removeAllWid
 })
 
 
-$('.jeedomConnect').off('click', '#migrateConf').on('click', '#migrateConf', function () {
-    if ($('#migrateConf').attr('disabled') == 'disabled') {
-        console.log('button disabled');
-        return;
-    }
-
-
-    $('.actions-detail').hideAlert();
-    var optionSelected = $('input[name=migration]:checked').attr('id');
-    if (optionSelected == 'all') {
-        var cplt = 'de <b>TOUS</b> vos équipements ';
-        var cpltResult = 'Tous vos équipements ';
-    }
-    else {
-        var cplt = 'de vos équipements <b>actifs uniquement</b> ';
-        var cpltResult = 'Vos équipements (actifs uniquement) ';
-    }
-
-    var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
-    var msg = warning + " Vous allez migrer vos configurations " + cplt + "vers le nouveau format.<br>Cette étape est nécessaire au bon fonctionnement de l'application.<br><br>Voulez-vous continuer ? " + warning;
-    bootbox.confirm(msg, function (result) {
-        if (result) {
-            $.post({
-                url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-                data: {
-                    action: 'migrateConfiguration',
-                    scope: optionSelected
-                },
-                cache: false,
-                dataType: 'json',
-                success: function (data) {
-                    if (data.state != 'ok') {
-                        $('.actions-detail').showAlert({
-                            message: data.result,
-                            level: 'danger'
-                        });
-                    }
-                    else {
-                        $('.actions-detail').showAlert({
-                            message: cpltResult + 'ont bien été migrés dans le nouveau format. (Consultez les logs pour plus de détails)',
-                            level: 'success'
-                        });
-
-                        if (data.result.more == false) {
-                            $('#migrationDiv').css('display', 'none');
-                        }
-                    }
-                }
-            });
-        }
-    });
-
-})
-
 
 $('.jeedomConnect').off('click', '#reinitAllEq').on('click', '#reinitAllEq', function () {
 
