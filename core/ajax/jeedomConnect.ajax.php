@@ -686,21 +686,6 @@ try {
 		));
 	}
 
-	if (init('action') == 'getImgList') {
-		$internalImgPath = __DIR__ . '/../../data/img/';
-		$userImgPath = $internalImgPath . "user_files/";
-
-		$internal = array_diff(scandir($internalImgPath), array('..', '.', 'user_files'));
-		$user = array_diff(scandir($userImgPath), array('..', '.'));
-
-		$result = [
-			'internal' => $internal,
-			'user' => $user
-		];
-
-		ajax::success($result);
-	}
-
 	if (init('action') == 'generateQRcode') {
 		$id = init('id', 'all');
 
