@@ -764,18 +764,6 @@ class JeedomConnect extends eqLogic {
 		return false;
 	}
 
-	public function getJeedomObject($id) {
-
-		$obj = jeeObject::byId($id);
-
-		if (!is_object($obj)) {
-			return null;
-		}
-
-		$result = array("id" => intval($obj->getId()), "name" => $obj->getName());
-		return $result;
-	}
-
 	public function updateConfig() {
 		$jsonConfig = $this->getConfig();
 		$changed = false;

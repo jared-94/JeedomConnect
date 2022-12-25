@@ -25,17 +25,6 @@ try {
 		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
 
-	if (init('action') == 'getJeedomObject') {
-		$list = array();
-		$options = '';
-		foreach ((jeeObject::buildTree(null, false)) as $object) {
-			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
-			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName()));
-		}
-		// echo $options;
-		ajax::success(array('details' => $list, 'options' => $options));
-	}
-
 	if (init('action') == 'getCmdsForWidgetType') {
 		$widget_type = init('widget_type');
 		$eqLogicId = !is_numeric(init('eqLogic_Id')) ? null : init('eqLogic_Id');
