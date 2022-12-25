@@ -505,13 +505,6 @@ try {
 	}
 
 	//TODO to be removed
-	if (init('action') == 'duplicateWidgetConfig') {
-		JCLog::debug('-- manage fx ajax duplicateWidgetConfig for id >' . init('eqId') . '<');
-		$newId = JeedomConnectWidget::duplicateWidget(init('eqId'));
-		ajax::success(array('duplicateId' => $newId));
-	}
-
-	//TODO to be removed
 	if (init('action') == 'getWidgetConfig') {
 		JCLog::debug('-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
 		$widget = JeedomConnectWidget::getWidgets(init('eqId'));

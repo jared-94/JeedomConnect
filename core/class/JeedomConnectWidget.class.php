@@ -295,18 +295,15 @@ class JeedomConnectWidget extends config {
 		self::remove($idToRemove, self::$_plugin_id);
 	}
 
-	//TODO to be removed
 	public static function duplicateWidget($widgetId) {
 
 		JCLog::debug('duplicating widget id : ' . $widgetId);
 		$configInit = self::getConfiguration($widgetId);
 
-		$config = json_decode($configInit, true);
-
 		$newId = self::incrementIndex();
-		$config['id'] = $newId;
+		$configInit['id'] = $newId;
 
-		self::saveConfig($config, $newId);
+		self::saveConfig($configInit, $newId);
 		return $newId;
 	}
 
