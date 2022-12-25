@@ -632,21 +632,6 @@ try {
 		ajax::success();
 	}
 
-	if (init('action') == 'uploadImg') {
-		$filename = $_FILES['file']['name'];
-		$destination = __DIR__ . '/../../data/img/user_files/';
-		if (!is_dir($destination)) {
-			mkdir($destination);
-		}
-		$location = $destination . $filename;
-
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
-			ajax::success();
-		} else {
-			ajax::error();
-		}
-	}
-
 	if (init('action') == 'removeDevice') {
 		$id = init('id');
 		/** @var JeedomConnect $eqLogic */
