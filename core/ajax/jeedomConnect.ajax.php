@@ -504,25 +504,6 @@ try {
 		}
 	}
 
-	//TODO to be removed
-	if (init('action') == 'getWidgetConfig') {
-		JCLog::debug('-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
-		$widget = JeedomConnectWidget::getWidgets(init('eqId'));
-
-		if ($widget == '') {
-			ajax::error('Erreur - pas d\'équipement trouvé');
-		} else {
-			$widgetConf = $widget['widgetJC'] ?? '';
-			$configJson = json_decode($widgetConf);
-
-			if ($configJson == null) {
-				ajax::error('Erreur - pas de configuration pour ce widget');
-			} else {
-				ajax::success($configJson);
-			}
-		}
-	}
-
 	if (init('action') == 'getWidgetConfigAll') {
 		JCLog::debug('-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
 		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
