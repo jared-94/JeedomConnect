@@ -25,52 +25,6 @@ try {
 		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
 
-	if (init('action') == 'orderWidget') {
-
-		$widgetArray = JeedomConnectWidget::getWidgets();
-
-		switch (init('orderBy')) {
-			case 'name':
-				$widgetName = array_column($widgetArray, 'name');
-				array_multisort($widgetName, SORT_ASC, $widgetArray);
-				break;
-
-			case 'type':
-				$widgetType = array_column($widgetArray, 'type');
-				$widgetName = array_column($widgetArray, 'name');
-				array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-				break;
-
-			default:
-				$roomName  = array_column($widgetArray, 'roomName');
-				$widgetName = array_column($widgetArray, 'name');
-
-				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-				break;
-		}
-
-		$listWidget = '';
-		foreach ($widgetArray as $widget) {
-
-			$img = $widget['img'];
-
-			$opacity = $widget['enable'] ? '' : 'disableCard';
-			$widgetName = $widget['name'];
-			$widgetRoom = $widget['roomName'];;
-			$id = $widget['id'];
-			$widgetType = $widget['type'];
-
-			$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . '</strong>';
-
-			$listWidget .= '<div class="widgetDisplayCard cursor ' . $opacity . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '" >';
-			$listWidget .= '<img src="' . $img . '"/>';
-			$listWidget .= '<br>';
-			$listWidget .= '<span class="name">' . $name . '</span>';
-			$listWidget .= '</div>';
-		}
-		ajax::success(array('widgets' => $listWidget));
-	}
-
 	if (init('action') == 'getJeedomObject') {
 		$list = array();
 		$options = '';
