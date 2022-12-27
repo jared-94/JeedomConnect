@@ -1000,8 +1000,8 @@ function SortByName(a, b) {
 }
 
 function SortByType(a, b) {
-  var aType = a.type.toLowerCase();
-  var bType = b.type.toLowerCase();
+  var aType = a.type?.toLowerCase();
+  var bType = b.type?.toLowerCase();
   return ((aType < bType) ? -1 : ((aType > bType) ? 1 : 0));
 }
 
