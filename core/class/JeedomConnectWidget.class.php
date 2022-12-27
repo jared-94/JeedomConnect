@@ -58,12 +58,17 @@ class JeedomConnectWidget extends config {
 	public static function getAllConfigurations() {
 
 		$result = array();
-		foreach (config::searchKey('widget', self::$_plugin_id)  as $config) {
+		foreach (config::searchKey('widget::', self::$_plugin_id)  as $config) {
+			$id = str_replace('widget::', '', $config['key']);
+			$newConf['id'] = $id;
 			$newConf['key'] = $config['key'];
-			$newConf['id'] = str_replace('widget::', '', $config['key']);
 			$newConf['conf'] = $config['value'];
 
-			array_push($result, $newConf);
+			if ($id != '' && is_numeric($id)) {
+				array_push($result, $newConf);
+			} else {
+				JCLog::warning("something goes wrong with widget : " . json_encode($config));
+			}
 		}
 		return $result;
 	}
