@@ -90,7 +90,7 @@ foreach ($widgetArray as $widget) {
 	if ($widgetType != 'component') {
 
 		//used later by the filter select item
-		if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
+		if (!in_array($widgetType, $widgetTypeArray, true) && key_exists($widgetType, $allConfig)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
 
 		$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 

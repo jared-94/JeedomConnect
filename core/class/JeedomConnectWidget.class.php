@@ -113,8 +113,9 @@ class JeedomConnectWidget extends config {
 					$widgetItem['id'] = $widgetJC['id'] ?? 'none';
 					$widgetItem['component'] = $widgetJC['component'] ?? 'none';
 
-					$typeImg = ($widgetJC['type'] == 'component') ? 'component-' . $widgetJC['component'] : $widgetJC['type'];
-					$widgetItem['img'] = $allImgPath[$typeImg] ?: plugin::byId(self::$_plugin_id)->getPathImgIcon();
+					if ($widgetItem['type'] == 'none') JCLog::warning('no type for widget => ' . json_encode($widgetJC));
+					$typeImg = ($widgetItem['type'] == 'component') ? 'component-' . $widgetItem['component'] : $widgetItem['type'];
+					$widgetItem['img'] = $allImgPath[$typeImg] ?? plugin::byId(self::$_plugin_id)->getPathImgIcon();
 				}
 
 				array_push($widgetArray, $widgetItem);
@@ -519,6 +520,10 @@ class JeedomConnectWidget extends config {
 		foreach ($widgetsDb as $item) {
 			$widget = $item['widgetJC'];
 
+			if (!key_exists('type', $widget)) {
+				//JCLog::warning(' -- SKIP -- no type for widget : ' . json_encode($widget));
+				continue;
+			}
 			$widgetType = ($widget['type'] == 'component') ? $widget['component'] : $widget['type'];
 			$config = $widgetParam[$widgetType];
 			foreach ($config['options'] as $option) {
