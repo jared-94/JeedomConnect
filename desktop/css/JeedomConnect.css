@@ -10,15 +10,12 @@
   padding: 5px !important;
 }
 
-.eqLogicThumbnailContainer {
-  /* min-height: 200px !important; */
-}
-
 .eqLogicThumbnailContainer .eqLogicDisplayCard {
   min-height: 190px !important;
 }
 
-.eqLogicThumbnailContainer .widgetDisplayCard {
+.eqLogicThumbnailContainer .widgetDisplayCard,
+.eqLogicThumbnailContainer .componentDisplayCard {
   min-height: 168px !important;
 }
 

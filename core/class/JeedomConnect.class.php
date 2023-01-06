@@ -321,7 +321,7 @@ class JeedomConnect extends eqLogic {
 		JeedomConnectWidget::exportWidgetConf();
 		JeedomConnectWidget::exportWidgetCustomConf();
 
-		foreach (\JeedomConnect::getAllJCequipment() as $eqLogic) {
+		foreach (self::getAllJCequipment() as $eqLogic) {
 			$apiKey = $eqLogic->getLogicalId();
 
 			$bkpDir = self::$_backup_dir . $apiKey;
@@ -330,8 +330,13 @@ class JeedomConnect extends eqLogic {
 			$configFile = realpath(self::$_config_dir) . '/' . $apiKey . '.json';
 			if (file_exists($configFile)) {
 				$configFileContent = JeedomConnectUtils::getFileContent($configFile);
-				$content = JeedomConnectUtils::addTypeInPayload($configFileContent, 'JC_EXPORT_EQLOGIC_CONFIG');
-				file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
+
+				if (array_key_exists('formatVersion', $configFileContent)) {
+					$content = JeedomConnectUtils::addTypeInPayload($configFileContent, 'JC_EXPORT_EQLOGIC_CONFIG');
+					file_put_contents($bkpDir . '/config-' . $apiKey . '.json', json_encode($content, JSON_PRETTY_PRINT));
+				} else {
+					JCLog::warning("no backup up of config file, because it's a bad one => " . json_encode($configFileContent));
+				}
 			}
 
 			$notifFile = realpath(self::$_notif_dir) . '/' . $apiKey . '.json';
@@ -644,22 +649,27 @@ class JeedomConnect extends eqLogic {
 		return $result;
 	}
 
-	public function getGeneratedConfigFile() {
+	public function getGeneratedConfigFile($forceReload = false) {
 
 		if ($this->getConfiguration('apiKey') == null || $this->getConfiguration('apiKey') == '') {
 			JCLog::error('¤¤¤¤¤ getGeneratedConfigFile for ApiKey EMPTY ! [' . $this->getName() . ']');
 			return null;
 		}
 
-		$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
-		if ($cacheConf != '') {
-			return json_decode($cacheConf, true);
-		}
-
 		$config_file_path = self::$_config_dir . $this->getConfiguration('apiKey') . ".json.generated";
-		if (!file_exists($config_file_path)) {
-			JCLog::warning('file ' . $config_file_path . ' does not exist  -- new try to generate one');
+		if ($forceReload) {
+			JCLog::debug('force new config generation');
 			$this->getConfig(true, true);
+		} else {
+			$cacheConf = cache::byKey('jcConfig' . $this->getConfiguration('apiKey'))->getValue();
+			if ($cacheConf != '') {
+				return json_decode($cacheConf, true);
+			}
+
+			if (!file_exists($config_file_path)) {
+				JCLog::warning('file ' . $config_file_path . ' does not exist  -- try to generate new one');
+				$this->getConfig(true, true);
+			}
 		}
 
 		try {
@@ -670,6 +680,29 @@ class JeedomConnect extends eqLogic {
 			JCLog::error('Unable to generate configuration setting : ' . $e->getMessage());
 			return null;
 		}
+	}
+
+	public function restoreConfigFile() {
+		$newConfig = null;
+		$apiKey = $this->getConfiguration('apiKey');
+		if ($apiKey == '') {
+			JCLog::warning('restoreConfigFile - apiKey empty !');
+			return $newConfig;
+		}
+
+		$bkpFile = self::$_backup_dir . $apiKey . '/config-' . $apiKey . '.json';
+		if (file_exists($bkpFile)) {
+			$fileConfigRestore = self::$_config_dir . $apiKey . '.json';
+
+			JCLog::debug('trying to restore bkp file from ' . $bkpFile . ' to ' . $fileConfigRestore);
+			$configFile = file_get_contents($bkpFile);
+			$jsonConfig = json_decode($configFile, true);
+
+			file_put_contents($fileConfigRestore, json_encode($jsonConfig['payload']));
+
+			$newConfig = $this->getGeneratedConfigFile(true);
+		}
+		return $newConfig;
 	}
 
 	public static function getChoiceData($cmdId) {
@@ -1048,7 +1081,7 @@ class JeedomConnect extends eqLogic {
 		$this->save(true);
 	}
 
-	public function sendNotif($notifId, $data) {
+	public function sendNotif($notifId, $data, $cmdId = null) {
 		if ($this->getConfiguration('token') == null) {
 			JCLog::info("No token defined. Please connect your device first");
 			return;
@@ -1111,7 +1144,8 @@ class JeedomConnect extends eqLogic {
 			chmod($binFile, 0555);
 		}
 		$cmd = $binFile . " -data='" . json_encode($postData, JSON_HEX_APOS) . "' 2>&1";
-		JCLog::info("Send notification with data " . json_encode($postData["data"]));
+		$cmdIdInfo = is_null($cmdId) ? '' : "to [" . $cmdId . "] ";
+		JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData["data"]));
 		$output = shell_exec($cmd);
 		if (is_null($output) || empty($output)) {
 			JCLog::error("Error while sending notification");
@@ -1482,7 +1516,7 @@ class JeedomConnect extends eqLogic {
 		$count_widget_types = count($widget_types);
 
 		$result = array();
-		foreach ($widgetsConfigJonFile['widgets'] as $config) {
+		foreach (array_merge($widgetsConfigJonFile['widgets'], $widgetsConfigJonFile['components']) as $config) {
 			if ($count_widget_types > 0 && !in_array($config['type'], $widget_types)) continue;
 
 			$result[$config['type']] = $only_name ? $config['name'] : $config;
@@ -2007,7 +2041,7 @@ class JeedomConnectCmd extends cmd {
 		);
 
 		// JCLog::debug( ' sending notif data ==> ' . json_encode($data));
-		$eqLogic->sendNotif($this->getLogicalId(), $data);
+		$eqLogic->sendNotif($this->getLogicalId(), $data, $this->getId());
 	}
 
 	public function execute($_options = array()) {
@@ -2036,7 +2070,7 @@ class JeedomConnectCmd extends cmd {
 					$_options['orignalCmdId'] = $orignalCmdId;
 					$_options['notificationId'] = $timestamp;
 
-					$cmdNotifCopy = array_values(array_diff($cmdNotif, array($cmdId)));
+					$cmdNotifCopy = array_values(array_diff($cmdNotif['cmd'], array($cmdId)));
 					$_options['otherAskCmdId'] = count($cmdNotifCopy) > 0 ? $cmdNotifCopy : null;
 					$cmd->execute($_options);
 				}
@@ -2071,7 +2105,7 @@ class JeedomConnectCmd extends cmd {
 					$data['payload']['files'] = $files;
 				}
 				// JCLog::debug(' notif payload ==> ' . json_encode($data), '_test')
-				$eqLogic->sendNotif($this->getLogicalId(), $data);
+				$eqLogic->sendNotif($this->getLogicalId(), $data, $this->getId());
 				break;
 
 			case 'goToPage':
@@ -2100,7 +2134,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2116,7 +2150,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2132,7 +2166,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2143,7 +2177,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2154,7 +2188,16 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
+				}
+				break;
+
+			case 'getDeviceInfos':
+				$payload = array(
+					'action' => 'getDeviceInfos'
+				);
+				if ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2170,7 +2213,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2188,7 +2231,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 
 				break;
@@ -2213,7 +2256,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2236,7 +2279,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2361,7 +2404,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 
@@ -2411,7 +2454,7 @@ class JeedomConnectCmd extends cmd {
 				if ($eqLogic->isConnected()) {
 					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
 				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
-					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload));
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
 				}
 				break;
 

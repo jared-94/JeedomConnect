@@ -501,6 +501,11 @@ class apiHelper {
           return self::getPicoKey($eqLogic);
           break;
 
+        case 'COPY_CONFIG':
+          JeedomConnectUtils::copyConfig($param['from'], $param['to'], $param['withCustom']);
+          return null;
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -648,14 +653,8 @@ class apiHelper {
 
     $versionJson = JeedomConnect::getPluginInfo();
 
-    if ($eqLogic->getConfiguration('deviceId') == '') {
-      JCLog::info("Register new device {$param['deviceName']}");
-      $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
-    }
-    $eqLogic->registerToken($param['token']);
-
     //check registered device
-    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId']) {
+    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId'] && $eqLogic->getConfiguration('deviceId') != '') {
       JCLog::warning("Try to connect to an invalid device (eq already used)");
       return array('type' => 'BAD_DEVICE');
     }
@@ -687,6 +686,12 @@ class apiHelper {
       return array('type' => 'PLUGIN_VERSION_ERROR');
     }
 
+    if ($eqLogic->getConfiguration('deviceId') != $param['deviceId'] || $eqLogic->getConfiguration('deviceName') != $param['deviceName']) {
+      JCLog::info("Register new device {$param['deviceName']}");
+      $eqLogic->registerDevice($param['deviceId'], $param['deviceName']);
+    }
+    $eqLogic->registerToken($param['token']);
+
     $user = user::byId($eqLogic->getConfiguration('userId'));
     if ($user == null) {
       $user = user::all()[0];
@@ -701,14 +706,30 @@ class apiHelper {
 
     //check config content
     if (is_null($config)) {
-      JCLog::warning("Failed to connect : empty config file");
-      return array('type' => 'EMPTY_CONFIG_FILE');
+      $wrongFile = true;
+      $newConfig = $eqLogic->restoreConfigFile();
+      if (!is_null($newConfig)) {
+        $wrongFile = false;
+      }
+
+      if ($wrongFile) {
+        JCLog::warning("Failed to connect : empty config file");
+        return array('type' => 'EMPTY_CONFIG_FILE');
+      }
     }
 
     //check config format version
     if (!array_key_exists('formatVersion', $config)) {
-      JCLog::warning("Failed to connect : bad format version");
-      return array('type' => 'FORMAT_VERSION_ERROR');
+      $wrongFile = true;
+      $newConfig = $eqLogic->restoreConfigFile();
+      if (array_key_exists('formatVersion', $newConfig)) {
+        $wrongFile = false;
+      }
+
+      if ($wrongFile) {
+        JCLog::warning("Failed to connect : bad format version");
+        return array('type' => 'FORMAT_VERSION_ERROR');
+      }
     }
 
     if ($eqLogic->getConfiguration('platformOs') == '') $eqLogic->createCommands($param['platformOs']);
@@ -1704,10 +1725,20 @@ class apiHelper {
 
     foreach ($widgets as $i => $widget) {
       $imgPath = '';
-      foreach ($widgetsConfigJonFile['widgets'] as $config) {
-        if ($config['type'] == $widget['type']) {
-          $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-          break;
+      if ($widget['type'] == 'component') {
+        foreach ($widgetsConfigJonFile['components'] as $config) {
+          if ($config['type'] == $widget['component']) {
+            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
+            break;
+          }
+        }
+      } else {
+
+        foreach ($widgetsConfigJonFile['widgets'] as $config) {
+          if ($config['type'] == $widget['type']) {
+            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
+            break;
+          }
         }
       }
       $newConfWidget['imgPath'] = $imgPath;

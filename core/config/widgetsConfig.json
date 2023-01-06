@@ -27,6 +27,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -166,6 +172,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -215,7 +227,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur de l'intensité sera prise en compte",
 					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
@@ -344,6 +356,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -413,7 +431,7 @@
 					"category": "cmd",
 					"type": "info",
 					"subtype": "binary",
-					"description": "Etat de la lumière (binaire). Si non précisé, la valeur sera déduite de l'intensité",
+					"description": "Etat de la lumière (binaire). Si non précisé, la valeur de l'intensité sera prise en compte",
 					"generic_type": "LIGHT_STATE_BOOL"
 				},
 				{
@@ -550,6 +568,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -652,6 +676,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -807,6 +837,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -904,6 +940,12 @@
 					"description": "Si vide, le nom du scénario sera utilisé"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -980,11 +1022,18 @@
 			"name": "Résumé",
 			"img": "summary.png",
 			"description": "Affiche un résumé de plusieurs widgets",
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1032,11 +1081,18 @@
 			"name": "Résumé de pièce",
 			"img": "room_summary.png",
 			"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1071,11 +1127,18 @@
 			"name": "Favoris",
 			"img": "favorites.png",
 			"description": "Affiche des widgets favoris",
+			"noMoreInfos": true,
 			"options": [
 				{
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1137,6 +1200,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1234,6 +1303,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1325,6 +1400,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1420,6 +1501,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1519,6 +1606,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -1740,6 +1833,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -1941,6 +2040,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2043,6 +2148,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2128,6 +2239,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2228,6 +2345,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2313,6 +2436,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2439,6 +2568,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2600,6 +2735,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2689,6 +2830,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -2794,6 +2941,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -2879,6 +3032,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3063,6 +3222,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3135,7 +3300,7 @@
 		{
 			"type": "generic-info-binary",
 			"name": "Générique binaire",
-			"img": "information.png",
+			"img": "generic-binary.png",
 			"description": "Widget générique pour afficher les infos d'une commande binaire",
 			"variables": [
 				{
@@ -3152,6 +3317,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3270,6 +3441,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3338,7 +3515,7 @@
 		{
 			"type": "generic-info-numeric",
 			"name": "Générique numérique",
-			"img": "information.png",
+			"img": "generic-numeric.png",
 			"description": "Widget générique pour afficher les infos d'une commande info numérique",
 			"variables": [
 				{
@@ -3355,6 +3532,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3444,7 +3627,7 @@
 		{
 			"type": "generic-info-string",
 			"name": "Générique texte",
-			"img": "information.png",
+			"img": "generic-text.png",
 			"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
 			"variables": [
 				{
@@ -3461,6 +3644,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3564,6 +3753,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -3702,6 +3897,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3811,6 +4012,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -3916,6 +4123,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4005,6 +4218,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4113,6 +4332,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4229,6 +4454,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4354,6 +4585,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4473,6 +4710,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4556,6 +4799,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -4797,6 +5046,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -4872,6 +5127,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5058,6 +5319,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -5151,6 +5418,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5251,6 +5524,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{
@@ -5570,6 +5849,12 @@
 					"category": "string"
 				},
 				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
 					"id": "subtitle",
 					"name": "Sous-titre",
 					"required": false,
@@ -5691,8 +5976,8 @@
 		{
 			"type": "component",
 			"name": "Composant",
-			"hide": true,
 			"img": "tools.png",
+			"hide": true,
 			"description": "Permet d'afficher des composants personnalisés",
 			"options": [
 				{
@@ -5706,14 +5991,24 @@
 	],
 	"components": [
 		{
-			"id": "separator",
+			"type": "separator",
 			"name": "Séparateur",
 			"description": "Affiche une ligne de séparation avec texte",
-			"img": {
-				"source": "fa",
-				"name": "grip-lines"
-			},
+			"img": "component-separator.png",
+			"noMoreInfos": true,
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
 				{
 					"id": "text",
 					"name": "Titre",
@@ -5733,27 +6028,37 @@
 				{
 					"id": "width",
 					"name": "Largeur",
-					"category": "numeric",
-					"min": 1,
+					"category": "string",
+					"subtype": "number",
+					"min": 0,
 					"max": 10,
 					"default": 1
 				}
 			]
 		},
 		{
-			"id": "text",
+			"type": "text",
 			"name": "Texte",
 			"description": "Affiche un texte",
-			"img": {
-				"source": "md",
-				"name": "format-text"
-			},
+			"img": "component-txt.png",
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
 				{
 					"id": "text",
 					"name": "Texte",
 					"category": "string",
-					"multiline": true,
+					"subtype": "multiline",
 					"useCmd": true
 				},
 				{
@@ -5765,7 +6070,8 @@
 				{
 					"id": "fontSize",
 					"name": "Taille de la police",
-					"category": "numeric",
+					"category": "string",
+					"subtype": "number",
 					"min": 6,
 					"max": 40,
 					"default": 14
@@ -5795,28 +6101,45 @@
 					"defaultChoice": "left"
 				},
 				{
-					"id": "moreInfos",
-					"name": "Commandes infos",
-					"description": "Commandes utilisables dans le texte",
-					"category": "cmdList",
-					"options": {
-						"type": "info",
-						"hasIcon": false,
-						"hasImage": false,
-						"hasName": false
-					}
+					"id": "justifyContent",
+					"name": "Alignement vertical",
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "flex-start",
+							"name": "Haut"
+						},
+						{
+							"id": "center",
+							"name": "Centré"
+						},
+						{
+							"id": "flex-end",
+							"name": "Bas"
+						}
+					],
+					"defaultChoice": "center"
 				}
 			]
 		},
 		{
-			"id": "image",
+			"type": "image",
 			"name": "Image",
 			"description": "Affiche une image",
-			"img": {
-				"source": "md",
-				"name": "image"
-			},
+			"img": "component-img.png",
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
 				{
 					"id": "image",
 					"name": "Image",
@@ -5831,7 +6154,8 @@
 				{
 					"id": "opacity",
 					"name": "Transparence",
-					"category": "numeric",
+					"category": "string",
+					"subtype": "number",
 					"min": 0,
 					"max": 100,
 					"default": 100
@@ -5859,30 +6183,28 @@
 						}
 					],
 					"defaultChoice": "contain"
-				},
-				{
-					"id": "moreInfos",
-					"name": "Commandes infos",
-					"description": "Commandes utilisables dans le texte",
-					"category": "cmdList",
-					"options": {
-						"type": "info",
-						"hasIcon": false,
-						"hasImage": false,
-						"hasName": false
-					}
 				}
 			]
 		},
 		{
-			"id": "switch",
+			"type": "switch",
 			"name": "Switch",
 			"description": "Affiche un switch à 2 états",
-			"img": {
-				"source": "md",
-				"name": "toggle-switch"
-			},
+			"img": "component-switch.png",
+			"noMoreInfos": true,
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
 				{
 					"id": "onAction",
 					"name": "Action ON",
@@ -5921,14 +6243,24 @@
 			]
 		},
 		{
-			"id": "slider",
+			"type": "slider",
 			"name": "Slider",
 			"description": "Affiche un slider",
-			"img": {
-				"source": "md",
-				"name": "tune"
-			},
+			"img": "component-slider.png",
+			"noMoreInfos": true,
 			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
 				{
 					"id": "sliderAction",
 					"name": "Action",
@@ -5954,6 +6286,121 @@
 					"category": "slider"
 				}
 			]
+		},
+		{
+			"type": "gauge",
+			"name": "Jauge",
+			"description": "Affiche une gauge",
+			"img": "component-gauge.png",
+			"noMoreInfos": true,
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
+					"id": "statusInfo",
+					"name": "Statut",
+					"required": true,
+					"category": "cmd",
+					"type": "info",
+					"subtype": "numeric"
+				},
+				{
+					"id": "gaugeOptions",
+					"name": "Options de la jauge",
+					"description": "Personnalisation de la jauge",
+					"category": "slider",
+					"defaultConfig": {
+						"isGauge": true,
+						"type": "circular",
+						"sweepAngle": 240,
+						"sliderWidth": 40,
+						"displayMarkers": true,
+						"trackBackground": {
+							"type": "gradient",
+							"options": {
+								"colors": [
+									"#2eff0c",
+									"#e3ff61",
+									"#ffae52",
+									"#ff1e11"
+								]
+							}
+						}
+					}
+				}
+			]
+		},
+		{
+			"type": "button",
+			"img": "component-button.png",
+			"name": "Bouton",
+			"description": "Affiche un bouton et permet de réaliser 1 à plusieurs actions à la suite",
+			"noMoreInfos": true,
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
+					"id": "button",
+					"name": "Bouton",
+					"description": "Personnaliser le bouton",
+					"category": "button"
+				},
+				{
+					"id": "actions",
+					"name": "Actions",
+					"category": "actionList",
+					"options": [
+						{
+							"id": "scenario",
+							"name": "Scénario",
+							"category": "scenario",
+							"noSecurity": true
+						},
+						{
+							"id": "cmd",
+							"name": "Commande",
+							"category": "cmd"
+						},
+						{
+							"id": "goToPage",
+							"name": "Afficher une page",
+							"category": "goToPage"
+						},
+						{
+							"id": "launchApp",
+							"name": "Lancer une application",
+							"category": "launchApp"
+						}
+					]
+				},
+				{
+					"id": "security",
+					"name": "Option de sécurité",
+					"required": false,
+					"category": "security",
+					"description": "Cet élément doit il être sécurisé ?"
+				}
+			]
 		}
 	],
 	"summaries": [
@@ -5976,6 +6423,12 @@
 					"id": "name",
 					"name": "Nom",
 					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
 					"category": "string"
 				},
 				{

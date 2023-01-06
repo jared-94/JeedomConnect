@@ -314,3 +314,9 @@ async function asyncAjaxGenericFunction(data) {
 
     return result;
 }
+
+/* Remove channel or notif item */
+
+$('body').off('click', '.deleteItem').on('click', '.deleteItem', function () {
+    $(this).parent().remove();
+});
