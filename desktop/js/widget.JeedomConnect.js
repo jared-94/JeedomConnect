@@ -140,7 +140,7 @@ function setWidgetModalData(options) {
 
 
     if (options.widget !== undefined) {
-        $('#widgetsList-select option[value="' + options.widget.type + '"]').prop('selected', true);
+        $('#widgetsList-select option.' + options.itemType + '[value="' + options.widget.type + '"]').prop('selected', true);
         refreshAddWidgets();
         //Enable
         var enable = options.widget.enable ? "checked" : "";
