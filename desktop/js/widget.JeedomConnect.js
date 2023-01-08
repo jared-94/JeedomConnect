@@ -397,19 +397,18 @@ function refreshAddWidgets() {
     }
 
     //Room
-    if (itemType == 'widget') {
-        option = `<li><div class='form-group'>
+    option = `<li><div class='form-group'>
         <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
         <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
         <option value="none">Sélection  d'une pièce</option>`;
-        option += roomListOptions;
+    option += roomListOptions;
 
-        if (type == 'room') {
-            option += `<option value="global">Global</option>`;
-        }
-        option += `</select></div></div></div></li>`;
-        items.push(option);
+    if (type == 'room') {
+        option += `<option value="global">Global</option>`;
     }
+    option += `</select></div></div></div></li>`;
+    items.push(option);
+
     let missingOptions = false;
     widget.options.forEach(option => {
         var required = (option.required) ? "required" : "";
