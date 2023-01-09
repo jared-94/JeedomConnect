@@ -374,10 +374,10 @@ try {
 		$widgetReceived = init('widgetsObj');
 
 		foreach ($widgetReceived as $widgetData) {
-			$existingWidget = JeedomConnectWidget::getConfiguration($widgetData['widgetId']);
-			JCLog::debug('massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($existingWidget));
+			$widgetJC = JeedomConnectWidget::getConfiguration($widgetData['widgetId']);
+			JCLog::debug('massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($widgetJC));
 
-			$widgetJC = $existingWidget['widgetJC'];
+			// $widgetJC = $existingWidget['widgetJC'];
 
 			$widgetJC['enable'] = boolval($widgetData['enable']);
 			$widgetJC['name'] = cmd::humanReadableToCmd($widgetData['name']);
@@ -455,11 +455,9 @@ try {
 		$arrayName = array();
 		/** @var JeedomConnect $eqLogic */
 		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
-			$eqIds = $eqLogic->getWidgetId();
-			JCLog::trace('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
-			if (in_array($myId, $eqIds)) {
+			if ($eqLogic->isWidgetIncluded($myId)) {
 				JCLog::trace($myId . ' exist in [' . $eqLogic->getName() . ']');
-				array_push($arrayName, $eqLogic->getName());
+				$arrayName[] = $eqLogic->getName();
 			} else {
 				JCLog::trace($myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
 			}

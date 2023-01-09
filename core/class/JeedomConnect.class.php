@@ -747,7 +747,7 @@ class JeedomConnect extends eqLogic {
 		if (is_null($conf)) return $ids;
 
 		foreach ($conf['payload']['widgets'] as $item) {
-			array_push($ids, $item['id']);
+			$ids[] = $item['id'];
 		}
 
 		JCLog::debug(' fx  getWidgetId -- result final ' . json_encode($ids));
@@ -756,12 +756,28 @@ class JeedomConnect extends eqLogic {
 
 	public function isWidgetIncluded($widgetId) {
 
-		$ids = $this->getWidgetId();
+		$conf = $this->getGeneratedConfigFile();
+		if (is_null($conf)) return false;
 
-		if (in_array($widgetId, $ids)) {
-			return true;
+		foreach ($conf['payload']['widgets'] ?? array() as $item) {
+			if ($item['id'] == $widgetId) return true;
 		}
 		return false;
+	}
+
+	public static function getWidgetCountByEq($widgetId) {
+
+		$nb = 0;
+		$names = array();
+
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			if ($eqLogic->isWidgetIncluded($widgetId)) {
+				$nb++;
+				$names[] = $eqLogic->getName();
+			}
+		}
+
+		return array($nb, $names);
 	}
 
 	public function updateConfig() {
