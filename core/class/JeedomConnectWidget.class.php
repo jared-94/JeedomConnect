@@ -535,7 +535,7 @@ class JeedomConnectWidget extends config {
 				if ($option['category'] == "cmd") {
 					if (array_key_exists($option['id'], $widget)) {
 						$cmdWidgetId = $widget[$option['id']]['id'] ?: null;
-						$cmdStatus = self::isCmd($cmdWidgetId);
+						$cmdStatus = self::isCmd($cmdWidgetId, $widget['id']);
 						if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 							$cmdArrayError[] = $widget['id'];
 						} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
@@ -546,7 +546,7 @@ class JeedomConnectWidget extends config {
 					if (array_key_exists('actions', $widget)) {
 						foreach ($widget['actions'] as $action) {
 							$cmdWidgetId = $action['id'] ?: null;
-							$cmdStatus = self::isCmd($cmdWidgetId);
+							$cmdStatus = self::isCmd($cmdWidgetId, $widget['id']);
 							if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 								$cmdArrayError[] = $widget['id'];
 							} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
@@ -568,7 +568,7 @@ class JeedomConnectWidget extends config {
 			if (key_exists('moreInfos', $widget)) {
 				foreach ($widget['moreInfos'] as $info) {
 					$cmdWidgetId = $info['id'] ?: null;
-					$cmdStatus = self::isCmd($cmdWidgetId);
+					$cmdStatus = self::isCmd($cmdWidgetId, $widget['id']);
 					if ($cmdStatus == -1 && !in_array($widget['id'], $cmdArrayError)) {
 						$cmdArrayError[] = $widget['id'];
 					} elseif ($cmdStatus == -2 && !in_array($widget['id'], $cmdArrayWarning)) {
@@ -589,17 +589,27 @@ class JeedomConnectWidget extends config {
 	 * @param int $id
 	 * @return boolean  -1 if cmd does not exist, -2 is equipment does not exist or is disable, 0 otherwise
 	 */
-	public static function isCmd($id) {
+	public static function isCmd($id, $widgetId = null) {
 
 		if (!is_null($id)) {
+			$widget = is_null($widgetId) ? '' : ' on widget ' . $widgetId;
+
 			/** @var cmd $cmd */
 			$cmd = cmd::byId($id);
 			if (!is_object($cmd)) {
+				JCLog::warning('cmdId [' . $id . '] does not exist' . $widget);
 				return -1;
 			}
 			/** @var eqLogic $eqLogic  */
 			$eqLogic = $cmd->getEqLogic();
-			if (!is_object($eqLogic) || !$eqLogic->getIsEnable()) return -2;
+			if (!is_object($eqLogic)) {
+				JCLog::warning('equipment of cmdId [' . $id . '] does not exist' . $widget);
+				return -2;
+			}
+			if (!$eqLogic->getIsEnable()) {
+				JCLog::warning('equipment hosting cmd "' . $cmd->getHumanName() . '" [' . $id . '] is disable' . $widget);
+				return -2;
+			}
 		}
 		return 0;
 	}
