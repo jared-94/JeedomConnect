@@ -289,8 +289,7 @@ class JeedomConnectWidget extends config {
 				$conf['moreWidgets'] = array_values($conf['moreWidgets']);
 			}
 
-
-			if ($hasChanged) self::setConfiguration(str_replace('widget::', '', $widget['id']), 'widgetJC', json_encode($conf));
+			if ($hasChanged) self::saveConfig($conf, str_replace('widget::', '', $widget['id']));
 		}
 
 		foreach ($arrayIdToRemove as $idToRemove) {
