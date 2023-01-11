@@ -73,7 +73,7 @@ class JeedomConnectWidget extends config {
 		return $result;
 	}
 
-	public static function getWidgets($_id = 'all', $_fullConfig = true, $_onlyConfig = false) {
+	public static function getWidgets($_id = 'all', $_fullConfig = true, $_onlyConfig = false, $check_type = true) {
 
 		if ($_id === 'all') {
 			if ($_fullConfig) JCLog::debug('getWidgets for all widgets with full config');
@@ -98,7 +98,7 @@ class JeedomConnectWidget extends config {
 				// JCLog::debug('** current widget =>' . json_encode($widget));
 				$widgetItem = array();
 
-				if (!key_exists('type', $widget['conf'])) {
+				if ($check_type && !key_exists('type', $widget['conf'])) {
 					JCLog::warning(' -- SKIP -- no type for widget : ' . json_encode($widget));
 					continue;
 				}
@@ -616,12 +616,12 @@ class JeedomConnectWidget extends config {
 
 	/**
 	 * function to migration DB item from string(json) to real json 
-	 * without img element (beta 1.6.2)
+	 * without img element (beta 1.7.1)
 	 *
 	 * @return void
 	 */
 	public static function migrateWidgetsConfig() {
-		$allWidgetsDb = self::getWidgets();
+		$allWidgetsDb = self::getWidgets('all', true, false, false);
 
 		foreach ($allWidgetsDb as $widget) {
 
