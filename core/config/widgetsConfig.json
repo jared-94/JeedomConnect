@@ -5159,7 +5159,7 @@
 					"customizable": true
 				},
 				{
-					"id": "histChartType",
+					"id": "chartType",
 					"name": "Type de graphique",
 					"required": false,
 					"customizable": true,
@@ -5176,42 +5176,51 @@
 					]
 				},
 				{
+					"id": "tabs",
+					"name": "Onglets",
+					"customizable": true,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "chart",
+							"name": "Graphique"
+						},
+						{
+							"id": "table",
+							"name": "Table"
+						},
+						{
+							"id": "both",
+							"name": "Graphique + table"
+						}
+					],
+					"defaultChoice": "chart"
+				},
+				{
 					"id": "interpolation",
 					"name": "Interpolation",
 					"required": false,
 					"customizable": true,
 					"category": "stringList",
-					"description": "Voir <a target='blank' href='https://formidable.com/open-source/victory/gallery/interpolation'>une démo ici</a>",
 					"choices": [
 						{
-							"id": "basis",
-							"name": "basis"
+							"id": "LINEAR",
+							"name": "Linéaire"
 						},
 						{
-							"id": "cardinal",
-							"name": "cardinal"
+							"id": "STEPPED",
+							"name": "Pallier"
 						},
 						{
-							"id": "linear",
-							"name": "linear"
+							"id": "CUBIC_BEZIER",
+							"name": "Bezier cubique"
 						},
 						{
-							"id": "natural",
-							"name": "natural"
-						},
-						{
-							"id": "step",
-							"name": "step"
-						},
-						{
-							"id": "stepAfter",
-							"name": "stepAfter"
-						},
-						{
-							"id": "stepBefore",
-							"name": "stepBefore"
+							"id": "HORIZONTAL_BEZIER",
+							"name": "Bezier horizontal"
 						}
-					]
+					],
+					"defaultChoice": "linear"
 				},
 				{
 					"id": "displayZoom",
@@ -5229,20 +5238,43 @@
 					"customizable": true
 				},
 				{
-					"id": "hideGrid",
-					"name": "Masquer la grille",
+					"id": "displayStats",
+					"name": "Afficher statistiques",
+					"description": "Affiche les statistiques pour les commandes numériques",
 					"required": false,
 					"category": "binary",
 					"customizable": true
 				},
 				{
-					"id": "histMinValue",
+					"id": "drawCircles",
+					"name": "Afficher les points",
+					"description": "Affiche les points (mode ligne)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridX",
+					"name": "Masquer la grille (vertical)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridY",
+					"name": "Masquer la grille (horizontal)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "minValue",
 					"name": "Valeur min (axe vertical)",
 					"description": "Laisser vide pour le mode auto",
 					"category": "string"
 				},
 				{
-					"id": "histMaxValue",
+					"id": "maxValue",
 					"name": "Valeur max (axe vertical)",
 					"description": "Laisser vide pour le mode auto",
 					"category": "string"
