@@ -205,6 +205,9 @@ function setWidgetModalData(options) {
                     $("#confirm-" + option.id).prop('checked', options.widget[option.id].confirm ? "checked" : "");
                     $("#secure-" + option.id).prop('checked', options.widget[option.id].secure ? "checked" : "");
                     $("#pwd-" + option.id).prop('checked', options.widget[option.id].pwd ? "checked" : "");
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 } else {
                     $("#confirm-div-" + option.id).css('display', 'none');
                     $("#secure-div-" + option.id).css('display', 'none');
@@ -215,6 +218,9 @@ function setWidgetModalData(options) {
                     $("#" + option.id + "-maxInput").css('display', '');
                     $("#" + option.id + "-minInput").val(options.widget[option.id].minValue);
                     $("#" + option.id + "-maxInput").val(options.widget[option.id].maxValue);
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 } else {
                     $("#" + option.id + "-minInput").css('display', 'none');
                     $("#" + option.id + "-maxInput").css('display', 'none');
@@ -228,12 +234,19 @@ function setWidgetModalData(options) {
                 if (options.widget[option.id].subType == 'numeric') {
                     $("#" + option.id + "-unitInput").css('display', '');
                     $("#" + option.id + "-unitInput").val(options.widget[option.id].unit);
+                    $("#" + option.id + "-input").css('width', '450px');
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 } else {
                     $("#" + option.id + "-unitInput").css('display', 'none');
                 }
                 if (options.widget[option.id].subType == 'slider') {
                     $("#" + option.id + "-stepInput").css('display', '');
                     $("#" + option.id + "-stepInput").val(options.widget[option.id].step);
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 }
                 else {
                     $("#" + option.id + "-stepInput").css('display', 'none');
@@ -449,16 +462,16 @@ function refreshAddWidgets() {
                     <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
             </td>
             <td>
-                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min" title="Min">
             </td>
             <td>
-                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max" title="Max">
             </td>
             <td>
-                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
+                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step" title="Step">
             </td>
             <td>
-                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
+                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité" title="Unité" >
             </td></tr></table>
                     `;
 
