@@ -5333,6 +5333,171 @@
 			]
 		},
 		{
+			"type": "group-history",
+			"name": "Groupe d'historiques",
+			"img": "history.png",
+			"description": "Permet d'afficher des historiques de commandes",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Historiques",
+					"required": true,
+					"category": "widgets",
+					"whiteList": [
+						"history"
+					],
+					"description": "Liste des historiques à gérer"
+				},
+				{
+					"id": "intervalDays",
+					"name": "Intervalle historique",
+					"required": false,
+					"category": "string",
+					"description": "Nombre de jours d'affichage de l'historique",
+					"customizable": true
+				},
+				{
+					"id": "tabs",
+					"name": "Onglets",
+					"customizable": true,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "chart",
+							"name": "Graphique"
+						},
+						{
+							"id": "table",
+							"name": "Table"
+						},
+						{
+							"id": "both",
+							"name": "Graphique + table"
+						}
+					],
+					"defaultChoice": "chart"
+				},
+				{
+					"id": "displayZoom",
+					"name": "Afficher sélecteur de zoom",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "displayStats",
+					"name": "Afficher statistiques",
+					"description": "Affiche les statistiques pour les commandes numériques",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridX",
+					"name": "Masquer la grille (vertical)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridY",
+					"name": "Masquer la grille (horizontal)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "minValue",
+					"name": "Valeur min (axe vertical)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string"
+				},
+				{
+					"id": "maxValue",
+					"name": "Valeur max (axe vertical)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string"
+				},
+				{
+					"id": "hideTickY",
+					"name": "Masquer légende verticale",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideTickX",
+					"name": "Masquer légende horizontale",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
 			"type": "image",
 			"name": "Image",
 			"img": "image.png",
