@@ -33,6 +33,10 @@ class apiHelper {
   public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
 
     try {
+      if (is_object($eqLogic) && !$eqLogic->getIsEnable()) {
+        return array('type' => 'EQUIPMENT_DISABLE');
+      }
+
       switch ($method) {
         case 'PING':
           if (is_object($eqLogic)) {
