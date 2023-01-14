@@ -5335,7 +5335,7 @@
 		{
 			"type": "group-history",
 			"name": "Groupe d'historiques",
-			"img": "history.png",
+			"img": "groupHistory.png",
 			"description": "Permet d'afficher des historiques de commandes",
 			"variables": [
 				{
