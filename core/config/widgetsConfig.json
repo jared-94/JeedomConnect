@@ -5419,6 +5419,12 @@
 					"customizable": true
 				},
 				{
+					"id": "displayLegend",
+					"name": "Afficher la légende",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "hideGridX",
 					"name": "Masquer la grille (vertical)",
 					"required": false,
