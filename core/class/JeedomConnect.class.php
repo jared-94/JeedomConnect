@@ -2005,6 +2005,15 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
+			case 'erase_data':
+				$payload = array(
+					'action' => 'erase_data'
+				);
+				if ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
+				}
+				break;
+
 			case 'play_sound':
 				if (empty($_options['message'])) {
 					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
