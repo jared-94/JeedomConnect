@@ -2005,9 +2005,17 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
-			case 'erase_data':
+			case 'eraseData':
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				} elseif (strtolower($_options['message']) != 'erase') {
+					JCLog::error('To use the erase data command, message field has to be filled with "erase"');
+					return;
+				}
+
 				$payload = array(
-					'action' => 'erase_data'
+					'action' => 'eraseData'
 				);
 				if ($eqLogic->getConfiguration('platformOs') == 'android') {
 					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());

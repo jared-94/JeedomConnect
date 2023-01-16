@@ -255,12 +255,13 @@
                 "order": 14
             },
             {
-                "logicalId": "erase_data",
+                "logicalId": "eraseData",
                 "name": "Effacer données",
                 "type": "action",
-                "subtype": "other",
+                "subtype": "message",
                 "isVisible": 1,
                 "display": {
+                    "message_placeholder": "Remplir avec 'erase'",
                     "title_disable": "1"
                 },
                 "order": 14
