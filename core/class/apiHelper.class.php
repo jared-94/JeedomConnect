@@ -204,7 +204,9 @@ class apiHelper {
         case 'GET_HISTORY':
           return self::getHistory($param['id'], $param['options']);
           break;
-
+        case 'GET_HISTORIES':
+          return self::getHistories($param['ids'], $param['options']);
+          break;
         case 'GET_FILES':
           return self::getFiles($param['folder'], $param['recursive'], true, $param['prefixe'] ?? null);
           break;
@@ -2300,6 +2302,40 @@ class apiHelper {
     }
     JCLog::debug('Send history (' . count($result['payload']['data']) . ' points)');
     return $result;
+  }
+
+  private static function getHistories($ids, $options = null) {
+    $historyList = array(
+      'type' => 'SET_HISTORIES',
+      'payload' => array()
+    );
+    foreach ($ids as $id) {
+      $history = array();
+      if ($options == null) {
+        $history = history::all($id);
+      } else {
+        $startTime = date('Y-m-d H:i:s', $options['startTime']);
+        $endTime = date('Y-m-d H:i:s', $options['endTime']);
+        JCLog::debug('Get history for cmd id: ' . $id . ' from: ' . $startTime . ' to ' . $endTime);
+        $history = history::all($id, $startTime, $endTime);
+      }
+
+      $result =  array(
+        'id' => $id,
+        'data' => array()
+      );
+
+      foreach ($history as $h) {
+        array_push($result['data'], array(
+          'time' => strtotime($h->getDateTime()),
+          'value' => $h->getValue()
+        ));
+      }
+
+      array_push($historyList['payload'], $result);
+    }
+    JCLog::debug('Send histories');
+    return $historyList;
   }
 
   // BATTERIES
