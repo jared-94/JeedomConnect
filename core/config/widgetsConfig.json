@@ -5440,15 +5440,31 @@
 				},
 				{
 					"id": "minValue",
-					"name": "Valeur min (axe vertical)",
+					"name": "Valeur min (axe vertical gauche)",
 					"description": "Laisser vide pour le mode auto",
-					"category": "string"
+					"category": "string",
+					"customizable": true
 				},
 				{
 					"id": "maxValue",
-					"name": "Valeur max (axe vertical)",
+					"name": "Valeur max (axe vertical gauche)",
 					"description": "Laisser vide pour le mode auto",
-					"category": "string"
+					"category": "string",
+					"customizable": true
+				},
+				{
+					"id": "minValueRight",
+					"name": "Valeur min (axe vertical droite)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string",
+					"customizable": true
+				},
+				{
+					"id": "maxValueRight",
+					"name": "Valeur max (axe vertical droite)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string",
+					"customizable": true
 				},
 				{
 					"id": "hideTickY",
