@@ -5146,9 +5146,15 @@
 				{
 					"id": "statusInfo",
 					"name": "Commandes infos",
-					"required": false,
+					"required": true,
 					"category": "cmd",
 					"type": "info"
+				},
+				{
+					"id": "isFuture",
+					"name": "Dates dans le futur",
+					"description": "Les dates historisées sont dans le futur",
+					"category": "binary"
 				},
 				{
 					"id": "intervalDays",
