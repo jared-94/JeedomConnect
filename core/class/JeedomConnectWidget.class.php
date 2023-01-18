@@ -630,5 +630,10 @@ class JeedomConnectWidget extends config {
 		}
 
 		config::save('migration::widgetsConfig', 'done', 'JeedomConnect');
+
+
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+				$eqLogic->getGeneratedConfigFile(true);
+		}
 	}
 }
