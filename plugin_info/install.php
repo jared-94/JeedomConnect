@@ -44,6 +44,7 @@ function JeedomConnect_update() {
   // FORCE save on all equipments to save new cmd
   /** @var JeedomConnect $eqLogic */
   foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+    $eqLogic->getGeneratedConfigFile(true);
     $eqLogic->save();
   }
   ///---------- NOTHING BELOW PLZ !!!!!!!! 

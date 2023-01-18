@@ -69,13 +69,29 @@ class JeedomConnectUtils {
 
             $infoPlugin .= '&nbsp;&nbsp;' .  $eqLogic->getName();
             if ($platform == '' && $versionApp == '') {
-                $infoPlugin .= ' : non enregistré<br/>';
+                $infoPlugin .= ' : non enregistré';
             } else {
-                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $osVersion . $cpl . '<br/>';
+                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $osVersion . $cpl;
             }
+
+            $infoPlugin .= ' - ' . self::getUserInfo($eqLogic->getConfiguration('userId'));
+            $infoPlugin .=  '<br/>';
         }
 
         return $infoPlugin;
+    }
+
+    public static function getUserInfo($userId) {
+
+        /** @var user $user */
+        $user = user::byId($userId);
+
+        $userProfil = $user->getProfils();
+        $return = ($userProfil == 'admin') ? 'PA' : ($userProfil == 'restrict' ? 'PR' : 'PU');
+
+        $return .= $user->getOptions('localOnly') ? 'L' : '';
+
+        return $return;
     }
 
     /**
