@@ -33,6 +33,10 @@ class apiHelper {
   public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
 
     try {
+      if (is_object($eqLogic) && !$eqLogic->getIsEnable()) {
+        return array('type' => 'EQUIPMENT_DISABLE');
+      }
+
       switch ($method) {
         case 'PING':
           if (is_object($eqLogic)) {
@@ -200,7 +204,9 @@ class apiHelper {
         case 'GET_HISTORY':
           return self::getHistory($param['id'], $param['options']);
           break;
-
+        case 'GET_HISTORIES':
+          return self::getHistories($param['ids'], $param['options']);
+          break;
         case 'GET_FILES':
           return self::getFiles($param['folder'], $param['recursive'], true, $param['prefixe'] ?? null);
           break;
@@ -1720,36 +1726,12 @@ class apiHelper {
   }
 
   private static function addGlobalWidgets($widgets) {
-    $newConfWidget = array();
-    $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
 
     foreach ($widgets as $i => $widget) {
-      $imgPath = '';
-      if ($widget['type'] == 'component') {
-        foreach ($widgetsConfigJonFile['components'] as $config) {
-          if ($config['type'] == $widget['component']) {
-            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-            break;
-          }
-        }
-      } else {
-
-        foreach ($widgetsConfigJonFile['widgets'] as $config) {
-          if ($config['type'] == $widget['type']) {
-            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-            break;
-          }
-        }
-      }
-      $newConfWidget['imgPath'] = $imgPath;
-
       $widgetId = JeedomConnectWidget::incrementIndex();
       $widget['id'] = intval($widgetId);
       $widgets[$i]['id'] = $widgetId;
-
-      $newConfWidget['widgetJC'] = json_encode($widget);
-
-      config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
+      JeedomConnectWidget::saveConfig($widget, $widgetId);
     }
 
     $result = array(
@@ -2320,6 +2302,40 @@ class apiHelper {
     }
     JCLog::debug('Send history (' . count($result['payload']['data']) . ' points)');
     return $result;
+  }
+
+  private static function getHistories($ids, $options = null) {
+    $historyList = array(
+      'type' => 'SET_HISTORIES',
+      'payload' => array()
+    );
+    foreach ($ids as $id) {
+      $history = array();
+      if ($options == null) {
+        $history = history::all($id);
+      } else {
+        $startTime = date('Y-m-d H:i:s', $options['startTime']);
+        $endTime = date('Y-m-d H:i:s', $options['endTime']);
+        JCLog::debug('Get history for cmd id: ' . $id . ' from: ' . $startTime . ' to ' . $endTime);
+        $history = history::all($id, $startTime, $endTime);
+      }
+
+      $result =  array(
+        'id' => $id,
+        'data' => array()
+      );
+
+      foreach ($history as $h) {
+        array_push($result['data'], array(
+          'time' => strtotime($h->getDateTime()),
+          'value' => $h->getValue()
+        ));
+      }
+
+      array_push($historyList['payload'], $result);
+    }
+    JCLog::debug('Send histories');
+    return $historyList;
   }
 
   // BATTERIES

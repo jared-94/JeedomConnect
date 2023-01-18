@@ -257,6 +257,9 @@ function refreshCmdData(name, id, value, concat = false) {
         $("#confirm-div-" + name).css('display', '');
         $("#secure-div-" + name).css('display', '');
         $("#pwd-div-" + name).css('display', '');
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       } else {
         $("#confirm-div-" + name).css('display', 'none');
         $("#secure-div-" + name).css('display', 'none');
@@ -267,6 +270,9 @@ function refreshCmdData(name, id, value, concat = false) {
         $("#" + name + "-maxInput").css('display', '');
         $("#" + name + "-minInput").val(data.result.minValue);
         $("#" + name + "-maxInput").val(data.result.maxValue);
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       } else {
         $("#" + name + "-minInput").css('display', 'none');
         $("#" + name + "-maxInput").css('display', 'none');
@@ -280,12 +286,18 @@ function refreshCmdData(name, id, value, concat = false) {
       if (data.result.subType == 'numeric') {
         $("#" + name + "-unitInput").css('display', '');
         $("#" + name + "-unitInput").val(data.result.unit);
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       } else {
         $("#" + name + "-unitInput").css('display', 'none');
       }
       if (data.result.subType == 'slider') {
         $("#" + name + "-stepInput").css('display', '');
         $("#" + name + "-stepInput").val(data.result.step);
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       }
       else {
         $("#" + name + "-stepInput").css('display', 'none');
@@ -1000,8 +1012,8 @@ function SortByName(a, b) {
 }
 
 function SortByType(a, b) {
-  var aType = a.type.toLowerCase();
-  var bType = b.type.toLowerCase();
+  var aType = a.type?.toLowerCase();
+  var bType = b.type?.toLowerCase();
   return ((aType < bType) ? -1 : ((aType > bType) ? 1 : 0));
 }
 

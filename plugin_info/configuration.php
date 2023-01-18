@@ -422,32 +422,6 @@ sendVarToJS('userHash', $userHash);
         </div>
       </div>
     </div>
-
-    <!-- <hr>
-    <div class="form-group" id="migrationDiv">
-      <label class="col-sm-6 control-label">{{Migration des configurations}}
-        <sup>
-          <i class="fas fa-question-circle floatright" title="Permet de migrer vos configurations vers le nouveau format. Nécessaire pour le bon fonctionnement de l'application."></i>
-        </sup>
-      </label>
-      <div class="col-sm-1">
-        <?php
-        if ($existOldFormat) {
-          echo '<a class="btn btn-warning" id="migrateConf" ><i class="fas fa-exclamation-triangle"></i> {{Migrer}}
-          </a>';
-        } else {
-          echo '<a class="btn btn-success" disabled id="migrateConf" style="cursor:not-allowed!important;" title="Tous vos équipements sont déjà sous le nouveau format" ><i class="fas fa-check-circle"></i> {{Migrer}}
-          </a>';
-        }
-        ?>
-      </div>
-      <div class="col-sm-5 migrationOption">
-        <label class="radio-inline"><input type="radio" name="migration" id="all" /> tous</label>
-        <label class="radio-inline"><input type="radio" name="migration" id="enableOnly" checked />Uniquement les équipements actifs</label>
-      </div>
-    </div> -->
-
-
     <!-- END DANGER ZONE -->
 
   </fieldset>

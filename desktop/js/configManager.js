@@ -167,7 +167,6 @@ function refreshWidgetsContent() {
 
 			<i class="mdi mdi-minus-circle" title="Supprimer" style="color:rgb(185, 58, 62);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="deleteWidget('${val.id}','${value.parentId}','${value.index}');"></i>
 			<i class="mdi mdi-arrow-right-circle" title="Déplacer vers..." style="color:rgb(50, 130, 60);font-size:24px;margin-right:10px;" aria-hidden="true" onclick="moveWidgetModal('${val.id}','${value.parentId}','${value.index}');"></i></li>`);
-			//<i class="mdi mdi-content-copy" title="Dupliquer" style="color:rgb(195, 125, 40);font-size:20px;;" aria-hidden="true" onclick="duplicateWidget('${val.id}');"></i></li>`);
 		}
 		else if (value.name === undefined) {  //if not found on widgets, and dont get a name, then it's a previous config -- remove the item
 			// console.log(" maybe an old widget because it's not a group ! ", value);
@@ -1385,22 +1384,6 @@ function selectWidgetModal() {
 	incrementIdCounter();
 	refreshWidgetsContent();
 	hideWidgetSelect();
-}
-
-function duplicateWidget(widgetId) {
-	var widgetToDuplicate = configData.payload.widgets.find(w => w.id == widgetId);
-	var newWidget = JSON.parse(JSON.stringify(widgetToDuplicate));
-	var parentId = $("#widgetsParents-select option:selected").attr('value');
-	var rootElmts = getRootObjects(parentId);
-
-	var maxIndex = getMaxIndex(rootElmts);
-	newWidget.index = maxIndex + 1;
-	newWidget.id = widgetToDuplicate.id;
-	newWidget.widgetId = configData.idCounter;
-
-	configData.payload.widgets.push(newWidget);
-	incrementIdCounter();
-	refreshWidgetsContent();
 }
 
 // BACKGROUND FUNCTIONS

@@ -255,6 +255,18 @@
                 "order": 14
             },
             {
+                "logicalId": "eraseData",
+                "name": "Effacer données",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "message_placeholder": "Remplir avec 'erase'",
+                    "title_disable": "1"
+                },
+                "order": 14
+            },
+            {
                 "logicalId": "send_sms",
                 "name": "Envoyer un SMS",
                 "type": "action",

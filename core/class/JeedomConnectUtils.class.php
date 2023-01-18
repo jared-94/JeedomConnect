@@ -1146,6 +1146,9 @@ class JeedomConnectUtils {
         if (config::byKey('fix::notifCmdDummy',   'JeedomConnect') == '') {
             JeedomConnect::fixNotifCmdDummy();
         }
+        if (config::byKey('migration::widgetsConfig',   'JeedomConnect') == '') {
+            JeedomConnectWidget::migrateWidgetsConfig();
+        }
 
         $pluginInfo = JeedomConnect::getPluginInfo();
         config::save('version', $pluginInfo['version'] ?? '#NA#', 'JeedomConnect');
