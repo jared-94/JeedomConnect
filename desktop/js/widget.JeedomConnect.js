@@ -381,8 +381,7 @@ function refreshAddWidgets() {
     items.push(option);
 
     //visible
-    if (itemType == 'widget') {
-        option = `<li><div class='form-group'>
+    option = `<li><div class='form-group'>
         <label class='col-xs-3 '>Visible sous condition
             <sup>
                 <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
@@ -395,19 +394,19 @@ function refreshAddWidgets() {
         <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
         <i class='fas fa-list-alt'></i></a>`;
 
-        // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
-        //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-        //     <i class="fas fa-plus-square"></i> </a>
-        //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
-        // if (widget.variables) {
-        //     widget.variables.forEach(v => {
-        //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-        //     });
-        // }
-        // option += `</ul></div >
-        option += `</div></div></div></li>`;
-        items.push(option);
-    }
+    // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
+    //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+    //     <i class="fas fa-plus-square"></i> </a>
+    //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
+    // if (widget.variables) {
+    //     widget.variables.forEach(v => {
+    //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+    //     });
+    // }
+    // option += `</ul></div >
+    option += `</div></div></div></li>`;
+    items.push(option);
+
 
     //Room
     option = `<li><div class='form-group'>
@@ -1621,18 +1620,19 @@ $(".widgetMenu .saveWidget").click(function () {
             result.type = $("#widgetsList-select").val();
             result.blockDetail = $("#blockDetail-input").is(':checked');
 
-            visibilityCondData = $('#widgetModal #visibility-cond-input').val();
-            if (visibilityCondData != '') {
-                getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
-                    result.visibilityCond = cmdResult;
-                });
-            }
-
         }
         else {
             result.type = 'component';
             result.component = $("#widgetsList-select").val();
         }
+
+        visibilityCondData = $('#widgetModal #visibility-cond-input').val();
+        if (visibilityCondData != '') {
+            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
+                result.visibilityCond = cmdResult;
+            });
+        }
+
         widgetType = $("#widgetsList-select").val();
 
         widgetEnable = $('#enable-input').is(":checked");
