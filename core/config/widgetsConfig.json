@@ -614,6 +614,18 @@
 					"customizable": true
 				},
 				{
+					"id": "onSecurity",
+					"name": "Sécuriser action ON",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action OFF",
+					"category": "security",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -872,6 +884,18 @@
 						"plug"
 					],
 					"description": "Liste des prises à gérer"
+				},
+				{
+					"id": "onSecurity",
+					"name": "Sécuriser action ON",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action OFF",
+					"category": "security",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -2772,6 +2796,18 @@
 					"description": "Liste des volets à gérer"
 				},
 				{
+					"id": "onSecurity",
+					"name": "Sécuriser action Ouvrir",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action Fermer",
+					"category": "security",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -3257,6 +3293,18 @@
 						"alarm"
 					],
 					"description": "Liste des alarmes à gérer"
+				},
+				{
+					"id": "onSecurity",
+					"name": "Sécuriser action ON",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action OFF",
+					"category": "security",
+					"customizable": true
 				},
 				{
 					"id": "image",
