@@ -327,8 +327,7 @@ function setWidgetModalData(options) {
 
                 });
             } else if (option.category == "security") {
-
-                $('.jcSecurityDiv').setValues({ security: options.widget.security }, '.jcItemAttr');
+                $('.jcSecurityDiv-' + option.id).setValues({ security: options.widget[option.id] }, '.jcItemAttr-' + option.id);
             }
         });
     }
@@ -616,7 +615,7 @@ function refreshAddWidgets() {
             curOption += `</div></div></div></li>`;
         } else if (option.category == "security") {
 
-            curOption += getHtmlItem(option.category, { id: 0, from: option.category, key1: option.category });
+            curOption += getHtmlItem(option.category, { id: option.id, from: option.category, key1: option.category });
 
         } else if (option.category == "actionList") {
             curOption += `<div class='input-group'>
@@ -1349,15 +1348,15 @@ function getHtmlItem(type, option) {
 
     } else if (type == 'security') {
         html = `
-        <div class="jcSecurityDiv" style="width: 100%;display: flex;">
+        <div class="jcSecurityDiv-${option.id}" style="width: 100%;display: flex;">
                 <div class="input-group input-group-sm">
                     <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
                 </div>
                 <div style="padding-left: 10px;">
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
                 </div>
             </div>`;
 
@@ -1596,7 +1595,7 @@ $(".widgetMenu .saveWidget").click(function () {
                 });
             } else if (option.category == "security") {
 
-                result[option.id] = $('.jcSecurityDiv').getValues('.jcItemAttr')[0]['security'] || [];
+                result[option.id] = $('.jcSecurityDiv-' + option.id).getValues('.jcItemAttr-' + option.id)[0]['security'] || [];
 
             } else if (option.category == "actionList") {
                 var tmp = []
