@@ -766,6 +766,13 @@
 					"generic_type": "POWER"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la puissance en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1260,6 +1267,13 @@
 					"generic_type": "BRIGHTNESS"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la luminosité en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1358,6 +1372,13 @@
 					"subtype": "numeric",
 					"description": "Etat de l'humidité en %",
 					"generic_type": "HUMIDITY"
+				},
+				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de l'humidité' en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -1460,6 +1481,13 @@
 					"generic_type": "TEMPERATURE"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la température en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1559,6 +1587,13 @@
 					"subtype": "numeric",
 					"description": "Etat de la puissance en W",
 					"generic_type": "POWER"
+				},
+				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la puissance en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -1790,6 +1825,13 @@
 					"customizable": true
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la température en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1994,6 +2036,13 @@
 					"required": false,
 					"category": "binary",
 					"description": "Afficher les modes dans le widget",
+					"customizable": true
+				},
+				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la température en arrière-plan du widget",
+					"category": "binary",
 					"customizable": true
 				},
 				{
@@ -3622,6 +3671,13 @@
 					"id": "showGauge",
 					"name": "Afficher la jauge",
 					"category": "binary"
+				},
+				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la commande en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
 				},
 				{
 					"id": "image",
