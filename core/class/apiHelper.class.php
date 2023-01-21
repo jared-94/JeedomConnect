@@ -2840,12 +2840,6 @@ class apiHelper {
     try {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
-        $textUser = '';
-        if (key_exists('user_login', $options)) {
-          $textUser =  " par l'utilisateur " . $options['user_login'];
-          $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
-        }
-
         if (key_exists('user_id', $options)) {
           /** @var user $user */
           $user = user::byId($options['user_id']);
@@ -2854,6 +2848,21 @@ class apiHelper {
             return self::raiseException('Vous n\'avez pas le droit d\'exécuter ce scenario ' . $scenario->getHumanName());
           }
         }
+
+        $_tags = array();
+        $args = arg2array($options["tags"]);
+        foreach ($args as $key => $value) {
+          $_tags['#' . trim(trim($key), '#') . '#'] = scenarioExpression::setTags(trim($value), $scenario);
+        }
+
+        $textUser = '';
+        if (key_exists('user_login', $options)) {
+          $textUser =  " par l'utilisateur " . $options['user_login'];
+          $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
+          $_tags['#userJC#'] = $options['user_login'];
+        }
+
+        $scenario->setTags($_tags);
 
         $scenario_return = $scenario->launch('JeedomConnect', 'Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
 
