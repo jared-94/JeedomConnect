@@ -86,7 +86,7 @@ class apiHelper {
 
         case 'SC_EXEC':
           $param['options']['tags'] = ($param['options']['tags'] ?? '') . ' eqId=' . $eqLogic->getId();
-          $result = self::execSc($param['id'], $param['options']);
+          $result = self::execSc($param['id'], $param['options'], $eqLogic->getId());
           return $result;
           break;
 
@@ -2834,19 +2834,15 @@ class apiHelper {
   }
 
   // MANAGE SC
-  private static function execSc($id, $options = null) {
-    if ($options == null) {
-      $options = array(
-        'action' => 'start',
-        'scenario_id' => $id
-      );
-    }
+  private static function execSc($id, $options = null, $eqLogicId = null) {
+    if ($options == null) $options = array();
+
     try {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
         $textUser = '';
         if (key_exists('user_login', $options)) {
-          $textUser =  ' par l\'utilisateur ' . $options['user_login'];
+          $textUser =  " par l'utilisateur " . $options['user_login'];
           $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
         }
 
@@ -2854,16 +2850,18 @@ class apiHelper {
           /** @var user $user */
           $user = user::byId($options['user_id']);
           if (!$scenario->hasRight('x', $user)) {
-            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . ' interdit pour l\'utilisateur "' . $user->getLogin() . '" - droit limité');
+            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . " interdit pour l'utilisateur '" . $user->getLogin() . "' - droit limité");
             return self::raiseException('Vous n\'avez pas le droit d\'exécuter ce scenario ' . $scenario->getHumanName());
           }
         }
 
-        if (!key_exists('action', $options)) $options['action'] = 'start';
-        if (!key_exists('scenario_id', $options)) $options['scenario_id'] = $id;
+        $scenario_return = $scenario->launch('JeedomConnect', 'Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
 
-        JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
-        scenarioExpression::createAndExec('action', 'scenario', $options);
+        //if scenario returns a string, then display a toaster
+        if (is_string($scenario_return)) {
+          $toaterCmd = JeedomConnectCmd::byEqLogicIdAndLogicalId($eqLogicId, 'toaster');
+          if (is_object($toaterCmd)) $toaterCmd->execCmd(array('message' => $scenario_return));
+        }
       } else {
         throw new Exception("Le scenario $id n'existe pas");
       }
