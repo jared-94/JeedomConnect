@@ -335,6 +335,15 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 		</div>
 		<!--  FIN --- PANEL DES EQUIPEMENTS  -->
 
+
+		<!-- Champ de recherche widget -->
+		<div class="input-group" style="margin:10px 5px;">
+			<input class="form-control roundedLeft jcInSearch" placeholder="{{Rechercher sur le nom d'un élément ou son id}}" id="in_search" value="<?= $widgetSearch ?>" />
+			<div class="input-group-btn">
+				<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_search" style=" width:30px"><i class="fas fa-times"></i></a>
+			</div>
+		</div>
+
 		<!--   PANEL DES WIDGETS  -->
 		<legend>
 			<a class="accordion-toggle" data-toggle="collapse" href="#collapseWidgets">
@@ -361,13 +370,9 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				</span>
 			</div>
 		</legend>
-		<!-- Champ de recherche widget -->
 		<div id="collapseWidgets" class="panel-collapse collapse in">
-			<div class="input-group" style="margin:10px 5px;">
-				<input class="form-control roundedLeft jcInSearch" data-type="widget" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
-				<div class="input-group-btn">
-					<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_searchWidget" style=" width:30px"><i class="fas fa-times"></i></a>
-				</div>
+			<div class="input-group" style="display:none">
+				<!-- leave it empty -->
 			</div>
 			<!-- Liste des widgets du plugin -->
 			<div class="eqLogicThumbnailContainer" id="widgetsList-div" style="background-color:white">
@@ -394,15 +399,11 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 			</div>
 		</legend>
 		<div id="collapseComponents" class="panel-collapse collapse in">
-			<!-- Champ de recherche composant -->
-			<div class="input-group" style="margin:10px 5px;">
-				<input class="form-control roundedLeft jcInSearch" data-type="component" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchComponent" value="<?= $componentSearch ?>" />
-				<div class="input-group-btn">
-					<a id="bt_resetSearchComponent" class="btn roundedRight jcResetSearch" data-input="in_searchComponent" style="width:30px"><i class="fas fa-times"></i></a>
-				</div>
+			<div class="input-group" style="display:none">
+				<!-- leave it empty -->
 			</div>
-			<!-- Liste des composant du plugin -->
 
+			<!-- Liste des composant du plugin -->
 			<div class="eqLogicThumbnailContainer" id="componentsList-div" style="background-color:white">
 				<?php
 				echo $listComponent;
