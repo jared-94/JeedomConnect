@@ -2850,15 +2850,16 @@ class apiHelper {
         }
 
         $_tags = array();
-        $args = arg2array($options["tags"]);
-        foreach ($args as $key => $value) {
-          $_tags['#' . trim(trim($key), '#') . '#'] = scenarioExpression::setTags(trim($value), $scenario);
+        if (key_exists('tags', $options)) {
+          $args = arg2array($options["tags"]);
+          foreach ($args as $key => $value) {
+            $_tags['#' . trim(trim($key), '#') . '#'] = scenarioExpression::setTags(trim($value), $scenario);
+          }
         }
 
         $textUser = '';
         if (key_exists('user_login', $options)) {
           $textUser =  " par l'utilisateur " . $options['user_login'];
-          $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
           $_tags['#userJC#'] = $options['user_login'];
         }
 
