@@ -231,6 +231,16 @@ function setWidgetModalData(options) {
                 } else {
                     $("#invert-div-" + option.id).css('display', 'none');
                 }
+                if (['slider', 'numeric'].includes(options.widget[option.id].subType)) {
+                    $("#" + option.id + "-stepInput").css('display', '');
+                    $("#" + option.id + "-stepInput").val(options.widget[option.id].step);
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
+                }
+                else {
+                    $("#" + option.id + "-stepInput").css('display', 'none');
+                }
                 if (options.widget[option.id].subType == 'numeric') {
                     $("#" + option.id + "-unitInput").css('display', '');
                     $("#" + option.id + "-unitInput").val(options.widget[option.id].unit);
@@ -240,16 +250,6 @@ function setWidgetModalData(options) {
                     })
                 } else {
                     $("#" + option.id + "-unitInput").css('display', 'none');
-                }
-                if (options.widget[option.id].subType == 'slider') {
-                    $("#" + option.id + "-stepInput").css('display', '');
-                    $("#" + option.id + "-stepInput").val(options.widget[option.id].step);
-                    $("#" + option.id + "-input").css({
-                        'width': $("#" + option.id + "-input").width() * 0.85
-                    })
-                }
-                else {
-                    $("#" + option.id + "-stepInput").css('display', 'none');
                 }
 
             } else if (option.category == "scenario" & options.widget[option.id] !== undefined) {
