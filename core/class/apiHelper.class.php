@@ -512,6 +512,17 @@ class apiHelper {
           return null;
           break;
 
+
+        case 'SET_CMD_SHORTCUT':
+          $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
+          return null;
+          break;
+
+        case 'REMOVE_CMD_SHORTCUT':
+          $eqLogic->removeInEqConfiguration('cmdInShortcut', $param['cmdId']);
+          return null;
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -961,63 +972,18 @@ class apiHelper {
   public static function getCmdInfoData($config, $withType = true) {
     $returnType = 'SET_CMD_INFO';
 
-    $cmds = cmd::byIds(self::getInfoCmdList($config));
+    // $cmds = cmd::byIds(self::getInfoCmdList($config));
+    $cmdsIds = self::getInfoCmdList($config);
     $payload = array();
 
-    foreach ($cmds as $cmd) {
-      $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
-
-      $cmd_info = array(
-        'id' => $cmd->getId(),
-        'value' => $state['value'],
-        'modified' => strtotime($state['valueDate']),
-        'collectDate' => strtotime($state['collectDate']),
-        'history' => self::getHistoryValueInfo($cmd->getId())
-      );
+    foreach ($cmdsIds as $cmdId) {
+      $cmd_info = JeedomConnectUtils::getCmdInfoDataDetails($cmdId);
       array_push($payload, $cmd_info);
     }
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
   }
 
-  private static function getHistoryValueInfo($cmdId) {
-
-    $cmd = cmd::byId($cmdId);
-
-    if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
-      $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
-      $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
-
-      if ($historyStatistique['avg'] == 0 && $historyStatistique['min'] == 0 && $historyStatistique['max'] == 0) {
-        $val = $cmd->execCmd();
-        $averageHistoryValue = round($val, 1);
-        $minHistoryValue = round($val, 1);
-        $maxHistoryValue = round($val, 1);
-      } else {
-        $averageHistoryValue = round($historyStatistique['avg'], 1);
-        $minHistoryValue = round($historyStatistique['min'], 1);
-        $maxHistoryValue = round($historyStatistique['max'], 1);
-      }
-
-      $startTendance = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculTendance') . ' hour'));
-      $tendanceData = $cmd->getTendance($startTendance, date('Y-m-d H:i:s'));
-      if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
-        $tendance = "up";
-      } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
-        $tendance = "down";
-      } else {
-        $tendance = "stable";
-      }
-    }
-
-
-    return array(
-      'averageValue' => $averageHistoryValue ?? 0,
-      'minValue' => $minHistoryValue ?? 0,
-      'maxValue' => $maxHistoryValue ?? 0,
-      'tendance' => $tendance ?? null,
-    );
-  }
 
   // SCENARIO FUNCTIONS
 
@@ -2265,7 +2231,7 @@ class apiHelper {
             'value' => $event['option']['value'],
             'modified' => strtotime($event['option']['valueDate']),
             'collectDate' => strtotime($event['option']['collectDate']),
-            'history' => self::getHistoryValueInfo($event['option']['cmd_id'])
+            'history' => JeedomConnectUtils::getHistoryValueInfo($event['option']['cmd_id'])
           );
           array_push($result_cmd['payload'], $cmd_info);
         }

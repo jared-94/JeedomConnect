@@ -1096,6 +1096,61 @@ class JeedomConnectUtils {
     }
 
 
+    public static function getCmdInfoDataDetails($cmdId) {
+        $cmd = cmd::byId($cmdId);
+        if (!is_object($cmd)) return null;
+
+        $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
+
+        $cmd_info = array(
+            'id' => $cmd->getId(),
+            'value' => $state['value'],
+            'modified' => strtotime($state['valueDate']),
+            'collectDate' => strtotime($state['collectDate']),
+            'history' => self::getHistoryValueInfo($cmd->getId())
+        );
+        // JCLog::debug('getCmdInfoDataDetails result => ' . json_encode($cmd_info));
+        return $cmd_info;
+    }
+
+    public static function getHistoryValueInfo($cmdId) {
+
+        $cmd = cmd::byId($cmdId);
+
+        if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
+            $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
+            $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
+
+            if ($historyStatistique['avg'] == 0 && $historyStatistique['min'] == 0 && $historyStatistique['max'] == 0) {
+                $val = $cmd->execCmd();
+                $averageHistoryValue = round($val, 1);
+                $minHistoryValue = round($val, 1);
+                $maxHistoryValue = round($val, 1);
+            } else {
+                $averageHistoryValue = round($historyStatistique['avg'], 1);
+                $minHistoryValue = round($historyStatistique['min'], 1);
+                $maxHistoryValue = round($historyStatistique['max'], 1);
+            }
+
+            $startTendance = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculTendance') . ' hour'));
+            $tendanceData = $cmd->getTendance($startTendance, date('Y-m-d H:i:s'));
+            if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
+                $tendance = "up";
+            } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
+                $tendance = "down";
+            } else {
+                $tendance = "stable";
+            }
+        }
+
+
+        return array(
+            'averageValue' => $averageHistoryValue ?? 0,
+            'minValue' => $minHistoryValue ?? 0,
+            'maxValue' => $maxHistoryValue ?? 0,
+            'tendance' => $tendance ?? null,
+        );
+    }
     /**
      * Copy the configuration file from equipement $from to one or several equipement $toArray
      * If $withCustom apply, then also the customsation of the equipment will be copy

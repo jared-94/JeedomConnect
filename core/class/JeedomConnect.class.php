@@ -1311,6 +1311,10 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('platformOs') != '') {
 			$this->createCommands($this->getConfiguration('platformOs'));
 		}
+
+		$confCmd = $this->getConfiguration('cmdInShortcut', array());
+		$cmd_ids = explode(",", $confCmd);
+		$this->setListener($cmd_ids);
 	}
 
 	public function preRemove() {
@@ -1657,6 +1661,99 @@ class JeedomConnect extends eqLogic {
 		$eqMap->setEqType_name(__CLASS__);
 		$eqMap->save();
 	}
+
+	public function addInEqConfiguration($key, $value, $separator = ',') {
+		$current = $this->getConfiguration($key, null);
+
+		$arr = explode($separator, $current);
+		if (array_search($value, $arr) === false) {
+			JCLog::debug('Adding ' . $value . ' in configuration ' . $key);
+			$arr[] = $value;
+		}
+		$str = implode($separator, array_filter($arr));
+
+		$this->setConfiguration($key, $str);
+		$this->save();
+	}
+
+	public function removeInEqConfiguration($key, $value, $separator = ',') {
+		$current = $this->getConfiguration($key);
+
+		$arr = explode($separator, $current);
+		if (($keyItem = array_search($value, $arr)) !== false) {
+			JCLog::debug('Removing ' . $value . ' in configuration ' . $key);
+			unset($arr[$keyItem]);
+		}
+		$str = implode($separator, $arr);
+
+		$this->setConfiguration($key, $str);
+		$this->save();
+	}
+
+	/**
+	 * @return listener
+	 */
+	private function getListener($fx = 'sendCmdInfoToShortcut') {
+		return listener::byClassAndFunction(__CLASS__, $fx, array('id' => $this->getId()));
+	}
+
+	private function removeListener($fx) {
+		$listener = $this->getListener($fx);
+		if (is_object($listener)) {
+			$listener->remove();
+		}
+	}
+
+	private function setListener(array $cmd_ids = array(), string $fx = 'sendCmdInfoToShortcut') {
+		JCLog::debug('------ setListener started -- adding listener for fx ' . $fx);
+		JCLog::trace('------ setListener started -- ids ' . json_encode($cmd_ids));
+		if ($this->getIsEnable() == 0) {
+			$this->removeListener($fx);
+			return;
+		}
+
+		/** @var listener $listener */
+		$listener = $this->getListener($fx);
+		if (!is_object($listener)) {
+			$listener = new listener();
+			$listener->setClass(__CLASS__);
+			$listener->setFunction($fx);
+			$listener->setOption(array('id' => $this->getId()));
+		}
+		$listener->emptyEvent();
+
+		foreach ($cmd_ids as $cmd_id) {
+			if (!is_numeric($cmd_id)) continue;
+
+			$cmd = cmd::byId($cmd_id);
+			if (!is_object($cmd)) continue;
+			JCLog::debug(' -- add listener for cmd ' . $cmd_id);
+			$listener->addEvent($cmd_id);
+		}
+		$listener->save();
+		JCLog::debug('------ setListener end');
+	}
+
+	public static function sendCmdInfoToShortcut($_option) {
+		JCLog::debug('sendCmdInfoToShortcut started -->>> ' . json_encode($_option));
+		$cmd_info = JeedomConnectUtils::getCmdInfoDataDetails($_option['event_id']);
+		$result = array(
+			'type' => 'SET_EVENTS',
+			'payload' => array(
+				array(
+					'type' => 'CMD_INFO',
+					'payload' =>  $cmd_info
+				)
+			)
+		);
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($_option['id']);
+		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
+		JCLog::debug('---- sendCmdInfoToShortcut end -->>> ' . json_encode($result));
+	}
+
+
 
 	/*
 	 ************************************************************************
