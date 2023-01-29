@@ -1312,8 +1312,8 @@ class JeedomConnect extends eqLogic {
 			$this->createCommands($this->getConfiguration('platformOs'));
 		}
 
-		$confCmd = $this->getConfiguration('cmdInShortcut', array());
-		$cmd_ids = explode(",", $confCmd);
+		$confCmd = $this->getConfiguration('cmdInShortcut');
+		$cmd_ids = ($confCmd != '') ? explode(",", $confCmd) : array();
 		$this->setListener($cmd_ids);
 	}
 
@@ -1684,7 +1684,7 @@ class JeedomConnect extends eqLogic {
 			JCLog::debug('Removing ' . $value . ' in configuration ' . $key);
 			unset($arr[$keyItem]);
 		}
-		$str = implode($separator, $arr);
+		$str = implode($separator, array_filter($arr));
 
 		$this->setConfiguration($key, $str);
 		$this->save();
@@ -1707,7 +1707,8 @@ class JeedomConnect extends eqLogic {
 	private function setListener(array $cmd_ids = array(), string $fx = 'sendCmdInfoToShortcut') {
 		JCLog::debug('------ setListener started -- adding listener for fx ' . $fx);
 		JCLog::trace('------ setListener started -- ids ' . json_encode($cmd_ids));
-		if ($this->getIsEnable() == 0) {
+		if ($this->getIsEnable() == 0 || count($cmd_ids) == 0) {
+			JCLog::trace('remove listener');
 			$this->removeListener($fx);
 			return;
 		}
