@@ -973,7 +973,7 @@ class apiHelper {
 
     foreach ($cmdsIds as $cmdId) {
       $cmd_info = JeedomConnectUtils::getCmdInfoDataDetails($cmdId);
-      array_push($payload, $cmd_info);
+      if (!is_null($cmd_info)) array_push($payload, $cmd_info);
     }
 
     return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
