@@ -1663,32 +1663,21 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public function addInEqConfiguration($key, $value, $separator = ',') {
-		$current = $this->getConfiguration($key, null);
 
-		$arr = explode($separator, $current);
-		if (array_search($value, $arr) === false) {
-			JCLog::debug('Adding ' . $value . ' in configuration ' . $key);
-			$arr[] = $value;
+		if (is_array($value)) {
+			foreach ($value as $val) {
+				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
+				$arr[] = $val;
+			}
+			$str = implode($separator, array_filter($arr));
+		} else {
+			$str = $value;
 		}
-		$str = implode($separator, array_filter($arr));
 
 		$this->setConfiguration($key, $str);
 		$this->save();
 	}
 
-	public function removeInEqConfiguration($key, $value, $separator = ',') {
-		$current = $this->getConfiguration($key);
-
-		$arr = explode($separator, $current);
-		if (($keyItem = array_search($value, $arr)) !== false) {
-			JCLog::debug('Removing ' . $value . ' in configuration ' . $key);
-			unset($arr[$keyItem]);
-		}
-		$str = implode($separator, array_filter($arr));
-
-		$this->setConfiguration($key, $str);
-		$this->save();
-	}
 
 	/**
 	 * @return listener

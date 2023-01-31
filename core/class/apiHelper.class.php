@@ -518,11 +518,6 @@ class apiHelper {
           return null;
           break;
 
-        case 'REMOVE_CMD_SHORTCUT':
-          $eqLogic->removeInEqConfiguration('cmdInShortcut', $param['cmdId']);
-          return null;
-          break;
-
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
