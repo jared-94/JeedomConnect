@@ -514,8 +514,7 @@ class apiHelper {
 
 
         case 'SET_CMD_SHORTCUT':
-          $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
-          return null;
+          return $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
           break;
 
         default:
