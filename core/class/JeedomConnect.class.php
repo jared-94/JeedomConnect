@@ -2163,6 +2163,25 @@ class JeedomConnectCmd extends cmd {
 
 				break;
 
+			case 'dndMode':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$payload = array(
+					'action' => 'dndMode',
+					'mode' => $_options['title']
+				);
+
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
+				}
+
+				break;
+
 			case 'setVolume':
 				if (empty($_options['title']) && $eqLogic->getConfiguration('platformOs') == 'android') {
 					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
