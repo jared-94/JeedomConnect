@@ -1664,37 +1664,26 @@ class JeedomConnect extends eqLogic {
 
 	public function addInEqConfiguration($key, $value, $separator = ',') {
 
+		$payload = array();
 		if (is_array($value)) {
 			foreach ($value as $val) {
 				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
 				$arr[] = $val;
+				$payload[] = array(
+					'type' => 'CMD_INFO',
+					'payload' =>  JeedomConnectUtils::getCmdInfoDataDetails($val)
+				);
 			}
 			$str = implode($separator, array_filter($arr));
 		} else {
 			$str = $value;
+			$payload = null;
 		}
 
 		$this->setConfiguration($key, $str);
 		$this->save();
 
-		if (is_array($value)) {
-			$result = array(
-				'type' => 'SET_EVENTS',
-				'payload' => array()
-			);
-			foreach ($value as $val) {
-				$cmd_info = JeedomConnectUtils::getCmdInfoDataDetails($val);
-				array_push(
-					$result["payload"],
-					array(
-						'type' => 'CMD_INFO',
-						'payload' =>  $cmd_info
-					)
-				);
-			}
-			return $result;
-		}
-		return null;
+		return is_null($payload) ? null : JeedomConnectUtils::addTypeInPayload($payload, 'SET_EVENTS');
 	}
 
 
