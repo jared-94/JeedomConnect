@@ -514,7 +514,8 @@ class apiHelper {
 
 
         case 'SET_CMD_SHORTCUT':
-          return $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
+          $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
+          return JeedomConnectUtils::getCmdInfoDataIds($param['cmdId']);
           break;
 
         default:
@@ -963,21 +964,17 @@ class apiHelper {
     return array_unique($return);
   }
 
+  /**
+   * return detail of cmd type info from the JC config file
+   *
+   * @param string $config
+   * @param boolean $withType
+   * @return void
+   */
   public static function getCmdInfoData($config, $withType = true) {
-    $returnType = 'SET_CMD_INFO';
-
-    // $cmds = cmd::byIds(self::getInfoCmdList($config));
     $cmdsIds = self::getInfoCmdList($config);
-    $payload = array();
-
-    foreach ($cmdsIds as $cmdId) {
-      $cmd_info = JeedomConnectUtils::getCmdInfoDataDetails($cmdId);
-      if (!is_null($cmd_info)) array_push($payload, $cmd_info);
-    }
-
-    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
+    return JeedomConnectUtils::getCmdInfoDataIds($cmdsIds, $withType);
   }
-
 
   // SCENARIO FUNCTIONS
 

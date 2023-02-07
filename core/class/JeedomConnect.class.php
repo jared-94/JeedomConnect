@@ -1664,26 +1664,20 @@ class JeedomConnect extends eqLogic {
 
 	public function addInEqConfiguration($key, $value, $separator = ',') {
 
-		$payload = array();
 		if (is_array($value)) {
 			foreach ($value as $val) {
 				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
 				$arr[] = $val;
-				$payload[] = array(
-					'type' => 'CMD_INFO',
-					'payload' =>  JeedomConnectUtils::getCmdInfoDataDetails($val)
-				);
 			}
 			$str = implode($separator, array_filter($arr));
 		} else {
 			$str = $value;
-			$payload = null;
 		}
 
 		$this->setConfiguration($key, $str);
 		$this->save();
 
-		return is_null($payload) ? null : JeedomConnectUtils::addTypeInPayload($payload, 'SET_EVENTS');
+		return null;
 	}
 
 
@@ -1734,16 +1728,8 @@ class JeedomConnect extends eqLogic {
 
 	public static function sendCmdInfoToShortcut($_option) {
 		JCLog::debug('sendCmdInfoToShortcut started -->>> ' . json_encode($_option));
-		$cmd_info = JeedomConnectUtils::getCmdInfoDataDetails($_option['event_id']);
-		$result = array(
-			'type' => 'SET_EVENTS',
-			'payload' => array(
-				array(
-					'type' => 'CMD_INFO',
-					'payload' =>  $cmd_info
-				)
-			)
-		);
+
+		$result = JeedomConnectUtils::getCmdInfoDataIds(array($_option['event_id']));
 
 		/** @var JeedomConnect $eqLogic */
 		$eqLogic = eqLogic::byId($_option['id']);

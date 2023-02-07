@@ -1095,6 +1095,25 @@ class JeedomConnectUtils {
         return;
     }
 
+    /**
+     * return detail of cmd type info from a list of cmd Ids
+     *
+     * @param array $cmdsIds
+     * @param boolean $withType
+     * @return void
+     */
+    public static function getCmdInfoDataIds($cmdsIds, $withType = true) {
+        $returnType = 'SET_CMD_INFO';
+
+        $payload = array();
+
+        foreach ($cmdsIds as $cmdId) {
+            $cmd_info = self::getCmdInfoDataDetails($cmdId);
+            if (!is_null($cmd_info)) array_push($payload, $cmd_info);
+        }
+
+        return (!$withType) ? $payload : self::addTypeInPayload($payload, $returnType);
+    }
 
     public static function getCmdInfoDataDetails($cmdId) {
         $cmd = cmd::byId($cmdId);
