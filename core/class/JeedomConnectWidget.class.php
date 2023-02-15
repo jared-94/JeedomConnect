@@ -226,7 +226,12 @@ class JeedomConnectWidget extends config {
 		}
 
 		JCLog::debug('saveConfiguration details received for id : ' . $widgetId . $cpl . ' - conf : ' . json_encode($conf));
-		config::save('widget::' . $widgetId, $conf, self::$_plugin_id);
+		try {
+			config::save('widget::' . $widgetId, $conf, self::$_plugin_id);
+		} catch (Exception $e) {
+			JCLog::error("Error while saving widget => " . $e->getMessage());
+			return null;
+		}
 		JCLog::debug('saveConfiguration done');
 		return $widgetId;
 	}

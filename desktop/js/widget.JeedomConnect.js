@@ -231,6 +231,16 @@ function setWidgetModalData(options) {
                 } else {
                     $("#invert-div-" + option.id).css('display', 'none');
                 }
+                if (['slider', 'numeric'].includes(options.widget[option.id].subType)) {
+                    $("#" + option.id + "-stepInput").css('display', '');
+                    $("#" + option.id + "-stepInput").val(options.widget[option.id].step);
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
+                }
+                else {
+                    $("#" + option.id + "-stepInput").css('display', 'none');
+                }
                 if (options.widget[option.id].subType == 'numeric') {
                     $("#" + option.id + "-unitInput").css('display', '');
                     $("#" + option.id + "-unitInput").val(options.widget[option.id].unit);
@@ -240,16 +250,6 @@ function setWidgetModalData(options) {
                     })
                 } else {
                     $("#" + option.id + "-unitInput").css('display', 'none');
-                }
-                if (options.widget[option.id].subType == 'slider') {
-                    $("#" + option.id + "-stepInput").css('display', '');
-                    $("#" + option.id + "-stepInput").val(options.widget[option.id].step);
-                    $("#" + option.id + "-input").css({
-                        'width': $("#" + option.id + "-input").width() * 0.85
-                    })
-                }
-                else {
-                    $("#" + option.id + "-stepInput").css('display', 'none');
                 }
 
             } else if (option.category == "scenario" & options.widget[option.id] !== undefined) {
@@ -327,8 +327,7 @@ function setWidgetModalData(options) {
 
                 });
             } else if (option.category == "security") {
-
-                $('.jcSecurityDiv').setValues({ security: options.widget.security }, '.jcItemAttr');
+                $('.jcSecurityDiv-' + option.id).setValues({ security: options.widget[option.id] }, '.jcItemAttr-' + option.id);
             }
         });
     }
@@ -381,8 +380,7 @@ function refreshAddWidgets() {
     items.push(option);
 
     //visible
-    if (itemType == 'widget') {
-        option = `<li><div class='form-group'>
+    option = `<li><div class='form-group'>
         <label class='col-xs-3 '>Visible sous condition
             <sup>
                 <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
@@ -395,19 +393,19 @@ function refreshAddWidgets() {
         <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
         <i class='fas fa-list-alt'></i></a>`;
 
-        // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
-        //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-        //     <i class="fas fa-plus-square"></i> </a>
-        //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
-        // if (widget.variables) {
-        //     widget.variables.forEach(v => {
-        //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-        //     });
-        // }
-        // option += `</ul></div >
-        option += `</div></div></div></li>`;
-        items.push(option);
-    }
+    // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
+    //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+    //     <i class="fas fa-plus-square"></i> </a>
+    //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
+    // if (widget.variables) {
+    //     widget.variables.forEach(v => {
+    //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+    //     });
+    // }
+    // option += `</ul></div >
+    option += `</div></div></div></li>`;
+    items.push(option);
+
 
     //Room
     option = `<li><div class='form-group'>
@@ -617,7 +615,7 @@ function refreshAddWidgets() {
             curOption += `</div></div></div></li>`;
         } else if (option.category == "security") {
 
-            curOption += getHtmlItem(option.category, { id: 0, from: option.category, key1: option.category });
+            curOption += getHtmlItem(option.category, { id: option.id, from: option.category, key1: option.category });
 
         } else if (option.category == "actionList") {
             curOption += `<div class='input-group'>
@@ -1350,15 +1348,15 @@ function getHtmlItem(type, option) {
 
     } else if (type == 'security') {
         html = `
-        <div class="jcSecurityDiv" style="width: 100%;display: flex;">
+        <div class="jcSecurityDiv-${option.id}" style="width: 100%;display: flex;">
                 <div class="input-group input-group-sm">
                     <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
                 </div>
                 <div style="padding-left: 10px;">
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
                 </div>
             </div>`;
 
@@ -1597,7 +1595,7 @@ $(".widgetMenu .saveWidget").click(function () {
                 });
             } else if (option.category == "security") {
 
-                result[option.id] = $('.jcSecurityDiv').getValues('.jcItemAttr')[0]['security'] || [];
+                result[option.id] = $('.jcSecurityDiv-' + option.id).getValues('.jcItemAttr-' + option.id)[0]['security'] || [];
 
             } else if (option.category == "actionList") {
                 var tmp = []
@@ -1621,18 +1619,19 @@ $(".widgetMenu .saveWidget").click(function () {
             result.type = $("#widgetsList-select").val();
             result.blockDetail = $("#blockDetail-input").is(':checked');
 
-            visibilityCondData = $('#widgetModal #visibility-cond-input').val();
-            if (visibilityCondData != '') {
-                getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
-                    result.visibilityCond = cmdResult;
-                });
-            }
-
         }
         else {
             result.type = 'component';
             result.component = $("#widgetsList-select").val();
         }
+
+        visibilityCondData = $('#widgetModal #visibility-cond-input').val();
+        if (visibilityCondData != '') {
+            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
+                result.visibilityCond = cmdResult;
+            });
+        }
+
         widgetType = $("#widgetsList-select").val();
 
         widgetEnable = $('#enable-input').is(":checked");

@@ -86,7 +86,7 @@ class apiHelper {
 
         case 'SC_EXEC':
           $param['options']['tags'] = ($param['options']['tags'] ?? '') . ' eqId=' . $eqLogic->getId();
-          $result = self::execSc($param['id'], $param['options']);
+          $result = self::execSc($param['id'], $param['options'], $eqLogic->getId());
           return $result;
           break;
 
@@ -510,6 +510,12 @@ class apiHelper {
         case 'COPY_CONFIG':
           JeedomConnectUtils::copyConfig($param['from'], $param['to'], $param['withCustom']);
           return null;
+          break;
+
+
+        case 'SET_CMD_SHORTCUT':
+          $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
+          return JeedomConnectUtils::getCmdInfoDataIds($param['cmdId']);
           break;
 
         default:
@@ -958,65 +964,16 @@ class apiHelper {
     return array_unique($return);
   }
 
+  /**
+   * return detail of cmd type info from the JC config file
+   *
+   * @param string $config
+   * @param boolean $withType
+   * @return void
+   */
   public static function getCmdInfoData($config, $withType = true) {
-    $returnType = 'SET_CMD_INFO';
-
-    $cmds = cmd::byIds(self::getInfoCmdList($config));
-    $payload = array();
-
-    foreach ($cmds as $cmd) {
-      $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
-
-      $cmd_info = array(
-        'id' => $cmd->getId(),
-        'value' => $state['value'],
-        'modified' => strtotime($state['valueDate']),
-        'collectDate' => strtotime($state['collectDate']),
-        'history' => self::getHistoryValueInfo($cmd->getId())
-      );
-      array_push($payload, $cmd_info);
-    }
-
-    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
-  }
-
-  private static function getHistoryValueInfo($cmdId) {
-
-    $cmd = cmd::byId($cmdId);
-
-    if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
-      $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
-      $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
-
-      if ($historyStatistique['avg'] == 0 && $historyStatistique['min'] == 0 && $historyStatistique['max'] == 0) {
-        $val = $cmd->execCmd();
-        $averageHistoryValue = round($val, 1);
-        $minHistoryValue = round($val, 1);
-        $maxHistoryValue = round($val, 1);
-      } else {
-        $averageHistoryValue = round($historyStatistique['avg'], 1);
-        $minHistoryValue = round($historyStatistique['min'], 1);
-        $maxHistoryValue = round($historyStatistique['max'], 1);
-      }
-
-      $startTendance = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculTendance') . ' hour'));
-      $tendanceData = $cmd->getTendance($startTendance, date('Y-m-d H:i:s'));
-      if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
-        $tendance = "up";
-      } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
-        $tendance = "down";
-      } else {
-        $tendance = "stable";
-      }
-    }
-
-
-    return array(
-      'averageValue' => $averageHistoryValue ?? 0,
-      'minValue' => $minHistoryValue ?? 0,
-      'maxValue' => $maxHistoryValue ?? 0,
-      'tendance' => $tendance ?? null,
-    );
+    $cmdsIds = self::getInfoCmdList($config);
+    return JeedomConnectUtils::getCmdInfoDataIds($cmdsIds, $withType);
   }
 
   // SCENARIO FUNCTIONS
@@ -2265,7 +2222,7 @@ class apiHelper {
             'value' => $event['option']['value'],
             'modified' => strtotime($event['option']['valueDate']),
             'collectDate' => strtotime($event['option']['collectDate']),
-            'history' => self::getHistoryValueInfo($event['option']['cmd_id'])
+            'history' => JeedomConnectUtils::getHistoryValueInfo($event['option']['cmd_id'])
           );
           array_push($result_cmd['payload'], $cmd_info);
         }
@@ -2834,36 +2791,44 @@ class apiHelper {
   }
 
   // MANAGE SC
-  private static function execSc($id, $options = null) {
-    if ($options == null) {
-      $options = array(
-        'action' => 'start',
-        'scenario_id' => $id
-      );
-    }
+  private static function execSc($id, $options = null, $eqLogicId = null) {
+    if ($options == null) $options = array();
+
     try {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
-        $textUser = '';
-        if (key_exists('user_login', $options)) {
-          $textUser =  ' par l\'utilisateur ' . $options['user_login'];
-          $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
-        }
-
         if (key_exists('user_id', $options)) {
           /** @var user $user */
           $user = user::byId($options['user_id']);
           if (!$scenario->hasRight('x', $user)) {
-            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . ' interdit pour l\'utilisateur "' . $user->getLogin() . '" - droit limité');
+            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . " interdit pour l'utilisateur '" . $user->getLogin() . "' - droit limité");
             return self::raiseException('Vous n\'avez pas le droit d\'exécuter ce scenario ' . $scenario->getHumanName());
           }
         }
 
-        if (!key_exists('action', $options)) $options['action'] = 'start';
-        if (!key_exists('scenario_id', $options)) $options['scenario_id'] = $id;
+        $_tags = array();
+        if (key_exists('tags', $options)) {
+          $args = arg2array($options["tags"]);
+          foreach ($args as $key => $value) {
+            $_tags['#' . trim(trim($key), '#') . '#'] = scenarioExpression::setTags(trim($value), $scenario);
+          }
+        }
 
-        JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
-        scenarioExpression::createAndExec('action', 'scenario', $options);
+        $textUser = '';
+        if (key_exists('user_login', $options)) {
+          $textUser =  " par l'utilisateur " . $options['user_login'];
+          $_tags['#userJC#'] = $options['user_login'];
+        }
+
+        $scenario->setTags($_tags);
+
+        $scenario_return = $scenario->launch('JeedomConnect', 'Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
+
+        //if scenario returns a string, then display a toaster
+        if (is_string($scenario_return)) {
+          $toaterCmd = JeedomConnectCmd::byEqLogicIdAndLogicalId($eqLogicId, 'toaster');
+          if (is_object($toaterCmd)) $toaterCmd->execCmd(array('message' => $scenario_return));
+        }
       } else {
         throw new Exception("Le scenario $id n'existe pas");
       }

@@ -917,17 +917,15 @@ $('.jcItemSelect').on('change', function () {
   var typeSelected = this.value;
 
   var itemClass = (dataType == 'widget') ? '.widgetDisplayCard' : '.componentDisplayCard';
-  var itemId = (dataType == 'widget') ? '#in_searchWidget' : '#in_searchComponent';
-
 
   $(itemClass).show();
   if (typeSelected != 'none') {
     $(itemClass).not("[data-widget_type=" + typeSelected + "]").hide();
   }
 
-  var widgetSearch = $(itemId).val()?.trim();
+  var widgetSearch = $('#in_search').val()?.trim();
   if (widgetSearch != '') {
-    $(itemId).keyup()
+    $('#in_search').keyup()
   }
 
   $('.eqLogicThumbnailContainer').packery();
@@ -986,7 +984,7 @@ function getCustomParamUrl(url, vars) {
     url += '&jcOrderBy=' + widgetOrder
   }
 
-  var widgetSearch = $("#in_searchWidget").val()?.trim();
+  var widgetSearch = $("#in_search").val()?.trim();
   if (widgetSearch != '') {
     url += '&jcSearch=' + widgetSearch
   }
@@ -1030,47 +1028,69 @@ function SortByRoom(a, b) {
 
 $('.jcInSearch').off('keyup').keyup(function () {
   var dataType = $(this).attr('data-type')
-  var displayCard = (dataType == 'widget') ? '.widgetDisplayCard' : '.componentDisplayCard';
-  var itemId = (dataType == 'widget') ? '#widgetTypeSelect' : '#componentTypeSelect';
 
   var search = $(this).value()
-  var widgetFilter = $(itemId + " option:selected").val();
+
+  var widgetFilter = $("#widgetTypeSelect option:selected").val();
+  var componentFilter = $("#componentTypeSelect option:selected").val();
 
   if (search == '') {
     if (widgetFilter == 'none') {
-      $(displayCard).show()
+      $('.widgetDisplayCard').show()
     }
     else {
-      $(displayCard).each(function () {
+      $('.widgetDisplayCard').each(function () {
         widgetType = $(this).attr('data-widget_type');
         if (widgetFilter == widgetType) {
-          $(this).closest(displayCard).show()
+          $(this).closest('.widgetDisplayCard').show()
         }
       })
     }
+
+    if (componentFilter == 'none') {
+      $('.componentDisplayCard').show()
+    }
+    else {
+      $('.componentDisplayCard').each(function () {
+        componentType = $(this).attr('data-widget_type');
+        if (componentFilter == componentType) {
+          $(this).closest('.componentDisplayCard').show()
+        }
+      })
+    }
+
     $('.eqLogicThumbnailContainer').packery()
-    updateWidgetCount(dataType);
+    updateWidgetCount();
+    updateWidgetCount('component');
     return;
   }
 
 
-  $(displayCard).hide()
+  $('.widgetDisplayCard,.componentDisplayCard').hide()
   search = normTextLower(search)
   var text
   var widgetId
 
-  $(displayCard).each(function () {
+  $('.widgetDisplayCard,.componentDisplayCard').each(function () {
     text = normTextLower($(this).children('.name').text())
     widgetId = normTextLower($(this).attr('data-widget_id'))
     widgetType = $(this).attr('data-widget_type');
     if (text.indexOf(search) >= 0 || widgetId.indexOf(search) >= 0) {
-      if (widgetFilter == 'none' || widgetFilter == widgetType) {
-        $(this).closest(displayCard).show()
+      if ($(this).hasClass('widget')) {
+        if (widgetFilter == 'none' || widgetFilter == widgetType) {
+          $(this).closest('.widgetDisplayCard').show()
+        }
+      }
+      else if ($(this).hasClass('component')) {
+        if (componentFilter == 'none' || componentFilter == widgetType) {
+          $(this).closest('.componentDisplayCard').show()
+        }
       }
     }
   })
   $('.eqLogicThumbnailContainer').packery()
-  updateWidgetCount(dataType);
+  updateWidgetCount();
+  updateWidgetCount('component');
 })
 
 // ------------- END SEARCH & FILTER BAR

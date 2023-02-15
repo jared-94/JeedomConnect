@@ -1311,6 +1311,10 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('platformOs') != '') {
 			$this->createCommands($this->getConfiguration('platformOs'));
 		}
+
+		$confCmd = $this->getConfiguration('cmdInShortcut');
+		$cmd_ids = ($confCmd != '') ? explode(",", $confCmd) : array();
+		$this->setListener($cmd_ids);
 	}
 
 	public function preRemove() {
@@ -1657,6 +1661,83 @@ class JeedomConnect extends eqLogic {
 		$eqMap->setEqType_name(__CLASS__);
 		$eqMap->save();
 	}
+
+	public function addInEqConfiguration($key, $value, $separator = ',') {
+
+		if (is_array($value)) {
+			foreach ($value as $val) {
+				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
+				$arr[] = $val;
+			}
+			$str = implode($separator, array_filter($arr));
+		} else {
+			$str = $value;
+		}
+
+		$this->setConfiguration($key, $str);
+		$this->save();
+
+		return null;
+	}
+
+
+	/**
+	 * @return listener
+	 */
+	private function getListener($fx = 'sendCmdInfoToShortcut') {
+		return listener::byClassAndFunction(__CLASS__, $fx, array('id' => $this->getId()));
+	}
+
+	private function removeListener($fx) {
+		$listener = $this->getListener($fx);
+		if (is_object($listener)) {
+			$listener->remove();
+		}
+	}
+
+	private function setListener(array $cmd_ids = array(), string $fx = 'sendCmdInfoToShortcut') {
+		JCLog::debug('------ setListener started -- adding listener for fx ' . $fx);
+		JCLog::trace('------ setListener started -- ids ' . json_encode($cmd_ids));
+		if ($this->getIsEnable() == 0 || count($cmd_ids) == 0) {
+			JCLog::trace('remove listener');
+			$this->removeListener($fx);
+			return;
+		}
+
+		/** @var listener $listener */
+		$listener = $this->getListener($fx);
+		if (!is_object($listener)) {
+			$listener = new listener();
+			$listener->setClass(__CLASS__);
+			$listener->setFunction($fx);
+			$listener->setOption(array('id' => $this->getId()));
+		}
+		$listener->emptyEvent();
+
+		foreach ($cmd_ids as $cmd_id) {
+			if (!is_numeric($cmd_id)) continue;
+
+			$cmd = cmd::byId($cmd_id);
+			if (!is_object($cmd)) continue;
+			JCLog::debug(' -- add listener for cmd ' . $cmd_id);
+			$listener->addEvent($cmd_id);
+		}
+		$listener->save();
+		JCLog::debug('------ setListener end');
+	}
+
+	public static function sendCmdInfoToShortcut($_option) {
+		JCLog::debug('sendCmdInfoToShortcut started -->>> ' . json_encode($_option));
+
+		$result = JeedomConnectUtils::getCmdInfoDataIds(array($_option['event_id']));
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($_option['id']);
+		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
+		JCLog::debug('---- sendCmdInfoToShortcut end -->>> ' . json_encode($result));
+	}
+
+
 
 	/*
 	 ************************************************************************
@@ -2046,6 +2127,25 @@ class JeedomConnectCmd extends cmd {
 
 				$payload = array(
 					'action' => 'ringerMode',
+					'mode' => $_options['title']
+				);
+
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
+				}
+
+				break;
+
+			case 'dndMode':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$payload = array(
+					'action' => 'dndMode',
 					'mode' => $_options['title']
 				);
 
