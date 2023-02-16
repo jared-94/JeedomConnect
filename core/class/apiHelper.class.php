@@ -2996,6 +2996,13 @@ class apiHelper {
     if (isset($infos['volumes'])) {
       self::setVolume($eqLogic, $infos['volumes']);
     }
+
+    if (isset($infos['smsMessage'])) {
+      $eqLogic->checkAndUpdateCmd('smsMessage', $infos['smsMessage']);
+    }
+    if (isset($infos['smsNumber'])) {
+      $eqLogic->checkAndUpdateCmd('smsNumber', $infos['smsNumber']);
+    }
   }
 
   private static function setFaceDetected($eqLogic, $infos) {
