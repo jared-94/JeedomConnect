@@ -1103,7 +1103,7 @@ class JeedomConnectUtils {
      * @return void
      */
     public static function getCmdInfoDataIds($cmdsIds, $withType = true) {
-        $returnType = 'SET_QSTILES_INFO';
+        $returnType = 'SET_CMD_INFO';
 
         $payload = array();
 

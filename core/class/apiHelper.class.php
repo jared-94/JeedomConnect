@@ -515,7 +515,8 @@ class apiHelper {
 
         case 'SET_CMD_SHORTCUT':
           $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
-          return JeedomConnectUtils::getCmdInfoDataIds($param['cmdId']);
+          return
+            JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds($param['cmdId'], false), 'SET_QSTILES_INFO');
           break;
 
         default:
