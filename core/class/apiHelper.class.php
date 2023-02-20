@@ -797,6 +797,7 @@ class apiHelper {
       'objInfo' => self::getObjectData($config, false),
       'geofenceInfo' => self::getGeofencesData($eqLogic, false),
       'links' => JeedomConnectUtils::getLinks(),
+      'timezone' => date_default_timezone_get(),
       // check timelineclass for old jeedom core
       'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
     );
