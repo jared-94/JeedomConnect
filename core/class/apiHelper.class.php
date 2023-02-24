@@ -515,7 +515,8 @@ class apiHelper {
 
         case 'SET_CMD_SHORTCUT':
           $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
-          return JeedomConnectUtils::getCmdInfoDataIds($param['cmdId']);
+          return
+            JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds($param['cmdId'], false), 'SET_QSTILES_INFO');
           break;
 
         default:
@@ -796,6 +797,7 @@ class apiHelper {
       'objInfo' => self::getObjectData($config, false),
       'geofenceInfo' => self::getGeofencesData($eqLogic, false),
       'links' => JeedomConnectUtils::getLinks(),
+      'timezone' => date_default_timezone_get(),
       // check timelineclass for old jeedom core
       'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
     );
@@ -2995,6 +2997,13 @@ class apiHelper {
 
     if (isset($infos['volumes'])) {
       self::setVolume($eqLogic, $infos['volumes']);
+    }
+
+    if (isset($infos['smsMessage'])) {
+      $eqLogic->checkAndUpdateCmd('smsMessage', $infos['smsMessage']);
+    }
+    if (isset($infos['smsNumber'])) {
+      $eqLogic->checkAndUpdateCmd('smsNumber', $infos['smsNumber']);
     }
   }
 

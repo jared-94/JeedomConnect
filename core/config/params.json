@@ -278,6 +278,22 @@
                 }
             },
             {
+                "logicalId": "smsMessage",
+                "name": "Dernier message SMS",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "smsNumber",
+                "name": "Dernier numéro SMS",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
                 "logicalId": "play_sound",
                 "name": "Jouer un son",
                 "type": "action",

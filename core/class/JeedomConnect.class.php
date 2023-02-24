@@ -1729,7 +1729,7 @@ class JeedomConnect extends eqLogic {
 	public static function sendCmdInfoToShortcut($_option) {
 		JCLog::debug('sendCmdInfoToShortcut started -->>> ' . json_encode($_option));
 
-		$result = JeedomConnectUtils::getCmdInfoDataIds(array($_option['event_id']));
+		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds(array($_option['event_id']), false), 'SET_QSTILES_INFO');;
 
 		/** @var JeedomConnect $eqLogic */
 		$eqLogic = eqLogic::byId($_option['id']);
