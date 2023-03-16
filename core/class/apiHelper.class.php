@@ -17,7 +17,7 @@
  */
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
-
+require_once dirname(__FILE__) . "/JeedomConnectDeviceControl.class.php";
 class apiHelper {
   public static $_skipLog = array('GET_EVENTS', 'GET_LOG');
 
@@ -517,6 +517,11 @@ class apiHelper {
           $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
           return
             JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds($param['cmdId'], false), 'SET_QSTILES_INFO');
+          break;
+
+        case 'GET_CONTROL_DEVICES':
+          $result = JeedomConnectDeviceControl::getDevices($eqLogic, $param['activeControlIds'], $param['lastUpdateTime']);
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_CONTROL_DEVICES');
           break;
 
         default:
