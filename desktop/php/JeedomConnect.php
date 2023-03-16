@@ -350,7 +350,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				<i class="fas fa-table"></i> {{Mes widgets}} <span id="coundWidget"></span>
 			</a>
 			<div class="pull-right">
-				<span style="margin-right:10px">{{Trie}}
+				<span style="margin-right:10px">{{Tri}}
 					<select id="widgetOrder" class="updateOrderWidget" style="width:100px">
 						<?php
 						echo $optionsOrderBy;

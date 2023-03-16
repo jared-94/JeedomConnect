@@ -191,9 +191,9 @@ sendVarToJS('userHash', $userHash);
       </div>
 
       <div class="form-group col-lg-6">
-        <label class="col-lg-3 control-label">{{Trie des widgets}}
+        <label class="col-lg-3 control-label">{{Tri des widgets}}
           <sup>
-            <i class="fas fa-question-circle floatright" title="Trie par défaut sur la page principale du plugin et dans l'assistant de configuration"></i>
+            <i class="fas fa-question-circle floatright" title="Tri par défaut sur la page principale du plugin et dans l'assistant de configuration"></i>
           </sup>
         </label>
         <div class="col-lg-6">
