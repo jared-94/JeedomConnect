@@ -11,7 +11,16 @@ class JeedomConnectDeviceControl {
 
         $devices = array();
         $cmdData = array();
-        $widgets = $eqLogic->getConfig(true)['payload']['widgets'];
+        $idList = array();
+        $widgetsAll = $eqLogic->getConfig(true)['payload']['widgets'];
+        $widgets = array();
+        foreach ($widgetsAll as $widget) {
+            if (!in_array($widget['id'], $idList)) {
+                array_push($widgets, $widget);
+                array_push($idList, $widget['id']);
+            };
+        }
+
 
         if ($activeControlIds != null) {
             $cmdIds = array();
