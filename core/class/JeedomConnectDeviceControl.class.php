@@ -21,7 +21,6 @@ class JeedomConnectDeviceControl {
             };
         }
 
-
         if ($activeControlIds != null) {
             $cmdIds = array();
             foreach ($widgets as $widget) {
@@ -37,10 +36,22 @@ class JeedomConnectDeviceControl {
                 $cmdData = self::getCmdValues($cmdIds);
                 $cmdData['lastUpdateTime'] = $newUpdateTime;
             }
-        }
 
-        foreach ($widgets as $widget) {
-            if ($activeControlIds == null  || in_array($widget['id'], $activeControlIds)) {
+            foreach ($activeControlIds as $deviceId) {
+                $widgetIndex = array_search($deviceId, array_column($widgets, 'id'));
+                if ($widgetIndex !== false) {
+                    $deviceConfig = self::getDeviceConfig($widgets[$widgetIndex], $cmdData['data']);
+                    if ($deviceConfig != null) {
+                        array_push($devices, $deviceConfig);
+                    } else {
+                        array_push($devices, array('id' => $deviceId, 'deviceStatus' => "ERROR"));
+                    }
+                } else {
+                    array_push($devices, array('id' => $deviceId, 'deviceStatus' => "NOT_FOUND"));
+                }
+            }
+        } else {
+            foreach ($widgets as $widget) {
                 $deviceConfig = self::getDeviceConfig($widget, $cmdData['data']);
                 if ($deviceConfig != null) {
                     array_push($devices, $deviceConfig);
@@ -141,7 +152,7 @@ class JeedomConnectDeviceControl {
             default:
                 return null;
         }
-
+        $device['deviceStatus'] = $widget['enable'] ? "OK" : "DISABLED";
         $device['deviceType'] = $deviceType;
         $device['controlTemplate'] = $controlTemplate;
 
