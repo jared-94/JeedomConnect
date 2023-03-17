@@ -25,7 +25,7 @@ class JeedomConnectDeviceControl {
         if ($activeControlIds != null) {
             $cmdIds = array();
             foreach ($widgets as $widget) {
-                if (in_array($widget['widgetId'], $activeControlIds)) {
+                if (in_array($widget['id'], $activeControlIds)) {
                     $cmdIds = array_merge($cmdIds, self::getInfosCmdIds($widget));
                 }
             }
@@ -40,7 +40,7 @@ class JeedomConnectDeviceControl {
         }
 
         foreach ($widgets as $widget) {
-            if ($activeControlIds == null  || in_array($widget['widgetId'], $activeControlIds)) {
+            if ($activeControlIds == null  || in_array($widget['id'], $activeControlIds)) {
                 $deviceConfig = self::getDeviceConfig($widget, $cmdData['data']);
                 if ($deviceConfig != null) {
                     array_push($devices, $deviceConfig);
@@ -72,6 +72,7 @@ class JeedomConnectDeviceControl {
 
     private static function getDeviceConfig($widget, $cmdData) {
         $device = array(
+            'id' => strval($widget['id']),
             'widgetId' => strval($widget['widgetId']),
             'title' => $widget["name"],
             'subtitle' => self::getRoomName($widget),
