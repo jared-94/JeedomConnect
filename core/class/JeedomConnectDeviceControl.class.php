@@ -12,7 +12,7 @@ class JeedomConnectDeviceControl {
         $devices = array();
         $cmdData = array();
         $idList = array();
-        $widgetsAll = $eqLogic->getConfig(true)['payload']['widgets'];
+        $widgetsAll = $eqLogic->getGeneratedConfigFile()['payload']['widgets'];
         $widgets = array();
         foreach ($widgetsAll as $widget) {
             if (!in_array($widget['id'], $idList)) {
@@ -67,14 +67,14 @@ class JeedomConnectDeviceControl {
                 $cmdIds = array($widget['statusInfo']['id'], $widget['setpointInfo']['id'], $widget['modeInfo']['id']);
                 break;
         }
-        return $cmdIds;
+        return array_merge($cmdIds, self::getCmdIdFromText($widget["name"]));
     }
 
     private static function getDeviceConfig($widget, $cmdData) {
         $device = array(
             'id' => strval($widget['id']),
             'widgetId' => strval($widget['widgetId']),
-            'title' => $widget["name"],
+            'title' => self::getFormatedText($widget["name"], $cmdData),
             'subtitle' => self::getRoomName($widget),
             'zone' => config::byKey('name') ?? self::getRoomName($widget)
         );
@@ -216,6 +216,21 @@ class JeedomConnectDeviceControl {
         if (isset($action['unit'])) {
             $device['rangeUnit'] = $action['unit'];
         }
+    }
+
+    private static function getCmdIdFromText($text) {
+        preg_match_all("/#.*?#/", $text, $match);
+        $res = array_map(function ($t) {
+            return str_replace("#", "", $t);
+        }, $match[0]);
+        return $res;
+    }
+
+    private static function getFormatedText($text, $cmdData) {
+        foreach (self::getCmdIdFromText($text) as $id) {
+            $text = str_replace("#${id}#", $cmdData[$id], $text);
+        }
+        return $text;
     }
 
     private static function experimentalGetMode($modeName) {
