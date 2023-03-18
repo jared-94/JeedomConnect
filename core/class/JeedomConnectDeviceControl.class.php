@@ -66,9 +66,12 @@ class JeedomConnectDeviceControl {
         $cmdIds = array();
         switch ($widget['type']) {
             case 'generic-info-string':
+            case 'generic-info-numeric':
             case 'generic-slider':
             case 'generic-switch':
+            case 'power':
             case 'single-light-switch':
+            case 'temperature':
             case 'door':
             case 'window':
                 $cmdIds = array($widget['statusInfo']['id']);
@@ -104,6 +107,10 @@ class JeedomConnectDeviceControl {
             case 'generic-action-other':
                 $device['action'] = self::getActionCmd($widget['actions'][0]); // we only consider the first action
                 break;
+            case 'generic-info-numeric':
+            case 'power':
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
+                break;
             case 'generic-info-string':
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']];
                 break;
@@ -119,6 +126,13 @@ class JeedomConnectDeviceControl {
                 $device['offAction'] = self::getActionCmd($widget['offAction']);
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                break;
+            case 'scenario':
+                $device['action'] = array(
+                    'action' => 'execSc',
+                    'scenarioId' => $widget['scenarioId'],
+                    'options' => $widget['options']
+                );
                 break;
             case 'single-light-switch':
                 $deviceType = "TYPE_LIGHT";
@@ -146,6 +160,10 @@ class JeedomConnectDeviceControl {
                     $device['status'] = $cmdData[$widget['brightInfo']['id']] > 0 ? 'on' : 'off';
                 }
                 $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                break;
+            case 'temperature':
+                $deviceType = "TYPE_THERMOSTAT";
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
                 break;
             case 'thermostat':
                 $hasMode = $cmdData[$widget['modeInfo']['id']] != null;
