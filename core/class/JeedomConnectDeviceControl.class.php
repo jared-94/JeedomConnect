@@ -65,9 +65,12 @@ class JeedomConnectDeviceControl {
     private static function getInfosCmdIds($widget) {
         $cmdIds = array();
         switch ($widget['type']) {
+            case 'generic-info-string':
             case 'generic-slider':
             case 'generic-switch':
             case 'single-light-switch':
+            case 'door':
+            case 'window':
                 $cmdIds = array($widget['statusInfo']['id']);
                 break;
             case 'single-light-dim':
@@ -94,9 +97,15 @@ class JeedomConnectDeviceControl {
         $controlTemplate = "TYPE_STATELESS";
 
         switch ($widget['type']) {
+            case 'door':
+                $deviceType = "TYPE_DOOR";
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
+                break;
             case 'generic-action-other':
-                $controlTemplate = "TYPE_STATELESS";
                 $device['action'] = self::getActionCmd($widget['actions'][0]); // we only consider the first action
+                break;
+            case 'generic-info-string':
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']];
                 break;
             case 'generic-slider':
                 $controlTemplate = "TYPE_RANGE";
@@ -139,7 +148,7 @@ class JeedomConnectDeviceControl {
                 $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
                 break;
             case 'thermostat':
-                $hasMode = is_string($cmdData[$widget['modeInfo']['id']]);
+                $hasMode = $cmdData[$widget['modeInfo']['id']] != null;
                 $deviceType = $hasMode ? "TYPE_THERMOSTAT" : "TYPE_AC_HEATER";
                 $controlTemplate = $hasMode ? "TYPE_TEMPERATURE" : "TYPE_RANGE";
                 self::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
@@ -147,7 +156,10 @@ class JeedomConnectDeviceControl {
                 $device['modeStatus'] = self::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
                 $device['modes'] = self::getModes($widget['modes']);
                 $device['statusText'] = $cmdData[$widget['modeInfo']['id']];
-
+                break;
+            case 'window':
+                $deviceType = "TYPE_WINDOW";
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
                 break;
             default:
                 return null;
