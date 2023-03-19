@@ -15,7 +15,7 @@ class JeedomConnectDeviceControl {
         $widgetsAll = $eqLogic->getGeneratedConfigFile()['payload']['widgets'];
         $widgets = array();
         foreach ($widgetsAll as $widget) {
-            if (!in_array($widget['id'], $idList)) {
+            if (!$widget['hideControlDevice'] && !in_array($widget['id'], $idList)) {
                 array_push($widgets, $widget);
                 array_push($idList, $widget['id']);
             };
@@ -95,6 +95,10 @@ class JeedomConnectDeviceControl {
             'subtitle' => self::getRoomName($widget),
             'zone' => config::byKey('name') ?? self::getRoomName($widget)
         );
+
+        if ($widget['allowOnUnlock']) {
+            $device['allowOnUnlock'] = true;
+        }
 
         $deviceType = "TYPE_UNKNOWN";
         $controlTemplate = "TYPE_STATELESS";

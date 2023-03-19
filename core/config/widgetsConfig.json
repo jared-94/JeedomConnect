@@ -142,6 +142,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -326,6 +338,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -530,6 +554,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -1045,6 +1081,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -1873,6 +1921,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -3975,6 +4035,30 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -4094,6 +4178,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -4205,6 +4301,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
