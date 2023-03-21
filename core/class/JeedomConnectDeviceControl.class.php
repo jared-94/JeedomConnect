@@ -31,7 +31,12 @@ class JeedomConnectDeviceControl {
         // JCLog::debug('getDevices - all ids ' . json_encode($idList));
 
         if ($activeControlIds != null) {
-            $eqLogic->addInEqConfiguration('activeControlIds', $activeControlIds);
+            $currentActiveControls = explode(',', $eqLogic->getConfiguration('activeControlIds'));
+            if ($currentActiveControls != $activeControlIds) {
+                JCLog::debug('adding activeControlIds in eqLogic');
+                $eqLogic->addInEqConfiguration('activeControlIds', $activeControlIds);
+            }
+
             $cmdIds = array();
             foreach ($widgets as $widget) {
                 if (in_array($widget['id'], $activeControlIds)) {
@@ -41,13 +46,9 @@ class JeedomConnectDeviceControl {
 
             $cmdIds = array_unique(array_filter($cmdIds, 'strlen'));
             $cmdData = JeedomConnectUtils::getCmdValues($cmdIds);
-            if ($lastUpdateTime != 0) {
-                $newUpdateTime =  self::waitForEvents($cmdIds, $lastUpdateTime);
-                $cmdData['lastUpdateTime'] = $newUpdateTime;
-            }
 
             foreach ($activeControlIds as $deviceId) {
-                if ($widgetIndex = array_search($deviceId, array_column($widgets, 'id')) !== false) {
+                if (($widgetIndex = array_search($deviceId, array_column($widgets, 'id'))) !== false) {
                     $deviceConfig = self::getDeviceConfig($widgets[$widgetIndex], $cmdData['data']);
                     if ($deviceConfig != null) {
                         $devices[] =  $deviceConfig;
@@ -208,32 +209,12 @@ class JeedomConnectDeviceControl {
     }
 
     /**
-     * Polling function to get the last event
+     * Return cmd IDs used in widgets based on $activeControlIds (=> widget's id)
      *
-     * @param array $cmdIds
-     * @param int $lastUpdateTime
+     * @param JeedomConnect $eqLogic
+     * @param array $activeControlIds
      * @return void
      */
-    private static function waitForEvents($cmdIds, $lastUpdateTime) {
-        set_time_limit(300);
-        while (true) {
-            // JCLog::trace('checking event', '_events');
-            $events = event::changes($lastUpdateTime);
-            $changed = false;
-            foreach ($events['result'] as $event) {
-                if ($event['name'] == 'cmd::update') {
-                    if (in_array($event['option']['cmd_id'], $cmdIds)) {
-                        $changed = true;
-                    }
-                }
-            }
-            if ($changed) {
-                return $events['datetime'];
-            }
-            sleep(1);
-        }
-    }
-
     public static function getInfoCmdIdsFromControls($eqLogic, $activeControlIds) {
         $widgetsAll = $eqLogic->getGeneratedConfigFile()['payload']['widgets'];
         $res = array();

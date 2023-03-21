@@ -1731,7 +1731,7 @@ class JeedomConnect extends eqLogic {
 			$listener->addEvent($cmd_id);
 		}
 		$listener->save();
-		JCLog::debug('------ setListener end');
+		JCLog::debug('------ setListener end for fx ' . $fx);
 	}
 
 	public static function sendCmdInfoToShortcut($_option) {
