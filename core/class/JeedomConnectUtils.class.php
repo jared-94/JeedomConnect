@@ -1141,7 +1141,7 @@ class JeedomConnectUtils {
                 $data[$cmdId] = $cmd->execCmd();
             }
         }
-        return array('data' => $data, 'lastUpdateTime' => time());
+        return array('data' => $data);
     }
 
     public static function getInfosCmdIds($widget) {

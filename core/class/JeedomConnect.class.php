@@ -1752,7 +1752,7 @@ class JeedomConnect extends eqLogic {
 		$eqLogic = eqLogic::byId($_option['id']);
 
 		$confControls = $eqLogic->getConfiguration('activeControlIds');
-		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectDeviceControl::getDevices($eqLogic, explode(",", $confControls), 0), 'SET_CONTROLS_INFO');
+		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectDeviceControl::getDevices($eqLogic, explode(",", $confControls)), 'SET_CONTROLS_INFO');
 
 		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
 		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($result));

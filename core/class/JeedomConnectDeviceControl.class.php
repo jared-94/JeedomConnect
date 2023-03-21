@@ -7,16 +7,11 @@ class JeedomConnectDeviceControl {
      *
      * @param JeedomConnect $eqLogic
      * @param array|null $activeControlIds : list of active devices ID, null if we requiere all devices without states
-     * @param int|null $lastUpdateTime : last polling time, 0 if first time polling and want all infos immediately, null if we requiere all devices without states
      * @return void
      */
-    public static function getDevices($eqLogic, $activeControlIds, $lastUpdateTime) {
+    public static function getDevices($eqLogic, $activeControlIds) {
 
         $devices = array();
-        $cmdData = array(
-            'data' => null,
-            'lastUpdateTime' => 0  // or time() ?
-        );
 
         $widgetsAll = $eqLogic->getGeneratedConfigFile()['payload']['widgets'];
         $widgets = array();
@@ -31,6 +26,7 @@ class JeedomConnectDeviceControl {
         // JCLog::debug('getDevices - all ids ' . json_encode($idList));
 
         if ($activeControlIds != null) {
+
             $currentActiveControls = explode(',', $eqLogic->getConfiguration('activeControlIds'));
             if ($currentActiveControls != $activeControlIds) {
                 // JCLog::debug('adding activeControlIds in eqLogic');
@@ -61,14 +57,14 @@ class JeedomConnectDeviceControl {
             }
         } else {
             foreach ($widgets as $widget) {
-                $deviceConfig = self::getDeviceConfig($widget, $cmdData['data']);
+                $deviceConfig = self::getDeviceConfig($widget, null);
                 if ($deviceConfig != null) {
                     $devices[] =  $deviceConfig;
                 }
             }
         }
 
-        return array("devices" => $devices, 'lastUpdateTime' => $cmdData['lastUpdateTime']);
+        return array("devices" => $devices);
     }
 
 
@@ -94,7 +90,6 @@ class JeedomConnectDeviceControl {
             'id' => strval($widget['id']),
             'widgetId' => strval($widget['widgetId']),
             'title' => $expEval['result'],
-            // 'title' => JeedomConnectUtils::getFormatedText($widget["name"], $cmdData),
             'subtitle' => JeedomConnectUtils::getRoomName($widget),
             'zone' => config::byKey('name') ?? JeedomConnectUtils::getRoomName($widget)
         );

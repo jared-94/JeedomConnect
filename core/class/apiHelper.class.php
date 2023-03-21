@@ -520,7 +520,7 @@ class apiHelper {
           break;
 
         case 'GET_CONTROL_DEVICES':
-          $result = JeedomConnectDeviceControl::getDevices($eqLogic, $param['activeControlIds'], $param['lastUpdateTime']);
+          $result = JeedomConnectDeviceControl::getDevices($eqLogic, $param['activeControlIds']);
           return JeedomConnectUtils::addTypeInPayload($result, 'SET_CONTROL_DEVICES');
           break;
 
