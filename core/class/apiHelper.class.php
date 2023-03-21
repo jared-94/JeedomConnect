@@ -17,7 +17,7 @@
  */
 
 require_once dirname(__FILE__) . "/../../../../core/php/core.inc.php";
-require_once dirname(__FILE__) . "/JeedomConnectDeviceControl.class.php";
+
 class apiHelper {
   public static $_skipLog = array('GET_EVENTS', 'GET_LOG');
 
