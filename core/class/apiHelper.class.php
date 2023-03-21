@@ -782,6 +782,7 @@ class apiHelper {
     $payload = array(
       'pluginVersion' => $pluginVersion,
       'jeedomName' => config::byKey('name'),
+      'serverId' => config::byKey('register::id'),
       'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'polling' => $eqLogic->getConfiguration('polling', 0),
