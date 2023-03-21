@@ -31,6 +31,7 @@ class JeedomConnectDeviceControl {
         // JCLog::debug('getDevices - all ids ' . json_encode($idList));
 
         if ($activeControlIds != null) {
+            $eqLogic->addInEqConfiguration('activeControlIds', $activeControlIds);
             $cmdIds = array();
             foreach ($widgets as $widget) {
                 if (in_array($widget['id'], $activeControlIds)) {
@@ -70,7 +71,13 @@ class JeedomConnectDeviceControl {
     }
 
 
-
+    /**
+     * Create the payload of each "device" for available widget type
+     *
+     * @param array $widget widget config
+     * @param array|null $cmdData data already existing
+     * @return void
+     */
     private static function getDeviceConfig($widget, $cmdData) {
         JCLog::trace('checking device config for widget ' . json_encode($widget));
 
@@ -200,10 +207,17 @@ class JeedomConnectDeviceControl {
         return $device;
     }
 
+    /**
+     * Polling function to get the last event
+     *
+     * @param array $cmdIds
+     * @param int $lastUpdateTime
+     * @return void
+     */
     private static function waitForEvents($cmdIds, $lastUpdateTime) {
         set_time_limit(300);
         while (true) {
-            // JCLog::debug('checking event', '_events');
+            // JCLog::trace('checking event', '_events');
             $events = event::changes($lastUpdateTime);
             $changed = false;
             foreach ($events['result'] as $event) {
@@ -218,5 +232,16 @@ class JeedomConnectDeviceControl {
             }
             sleep(1);
         }
+    }
+
+    public static function getInfoCmdIdsFromControls($eqLogic, $activeControlIds) {
+        $widgetsAll = $eqLogic->getGeneratedConfigFile()['payload']['widgets'];
+        $res = array();
+        foreach ($widgetsAll as $widget) {
+            if (in_array($widget['id'], $activeControlIds)) {
+                $res = array_merge($res, JeedomConnectUtils::getInfosCmdIds($widget));
+            };
+        }
+        return array_unique(array_filter($res, 'strlen'));
     }
 }

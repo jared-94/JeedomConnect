@@ -1316,6 +1316,13 @@ class JeedomConnect extends eqLogic {
 		$confCmd = $this->getConfiguration('cmdInShortcut');
 		$cmd_ids = ($confCmd != '') ? explode(",", $confCmd) : array();
 		$this->setListener($cmd_ids);
+
+		$confControls = $this->getConfiguration('activeControlIds');
+		JCLog::debug('------ confControls ' . $confControls);
+		$cmdControls_ids = ($confControls != '') ? JeedomConnectDeviceControl::getInfoCmdIdsFromControls($this, explode(",", $confControls))  : array();
+
+		JCLog::debug('------ cmdControls_ids ' . json_encode($cmdControls_ids));
+		$this->setListener($cmdControls_ids, 'sendActiveControl');
 	}
 
 	public function preRemove() {
@@ -1738,6 +1745,18 @@ class JeedomConnect extends eqLogic {
 		JCLog::debug('---- sendCmdInfoToShortcut end -->>> ' . json_encode($result));
 	}
 
+	public static function sendActiveControl($_option) {
+		JCLog::debug('sendActiveControl started -->>> ' . json_encode($_option));
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($_option['id']);
+
+		$confControls = $eqLogic->getConfiguration('activeControlIds');
+		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectDeviceControl::getDevices($eqLogic, explode(",", $confControls), 0), 'SET_CONTROLS_INFO');
+
+		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
+		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($result));
+	}
 
 
 	/*
