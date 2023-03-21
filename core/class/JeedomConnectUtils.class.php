@@ -1304,6 +1304,18 @@ class JeedomConnectUtils {
             'tendance' => $tendance ?? null,
         );
     }
+
+    public static function hasObjectId($obj, $id) {
+
+        foreach ($obj as $item) {
+            // JCLog::debug('check id [' . $id . '] in item ' . json_encode($item));
+            if ($item['id'] == $id) return true;
+        }
+
+        return false;
+    }
+
+
     /**
      * Copy the configuration file from equipement $from to one or several equipement $toArray
      * If $withCustom apply, then also the customsation of the equipment will be copy
