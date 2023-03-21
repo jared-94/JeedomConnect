@@ -33,7 +33,7 @@ class JeedomConnectDeviceControl {
         if ($activeControlIds != null) {
             $currentActiveControls = explode(',', $eqLogic->getConfiguration('activeControlIds'));
             if ($currentActiveControls != $activeControlIds) {
-                JCLog::debug('adding activeControlIds in eqLogic');
+                // JCLog::debug('adding activeControlIds in eqLogic');
                 $eqLogic->addInEqConfiguration('activeControlIds', $activeControlIds);
             }
 
