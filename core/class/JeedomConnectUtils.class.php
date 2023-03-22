@@ -1147,11 +1147,15 @@ class JeedomConnectUtils {
     public static function getInfosCmdIds($widget) {
 
         switch ($widget['type']) {
+            case 'camera':
+                $cmdIds = array($widget['snapshotUrlInfo']['id']);
+                break;
             case 'generic-info-string':
             case 'generic-info-numeric':
             case 'generic-slider':
             case 'generic-switch':
             case 'power':
+            case 'shutter':
             case 'single-light-switch':
             case 'temperature':
             case 'door':
