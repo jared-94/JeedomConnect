@@ -1150,9 +1150,11 @@ class JeedomConnectUtils {
             case 'alarm':
                 $cmdIds = array($widget['enableInfo']['id'], $widget['modeInfo']['id']);
                 break;
+
             case 'camera':
                 $cmdIds = array($widget['snapshotUrlInfo']['id']);
                 break;
+
             case 'brightness':
             case 'frontgate':
             case 'generic-info-binary':
@@ -1171,14 +1173,17 @@ class JeedomConnectUtils {
             case 'window':
                 $cmdIds = array($widget['statusInfo']['id']);
                 break;
+
             case 'single-light-dim':
             case 'single-light-color':
                 $cmdIds = array($widget['statusInfo']['id'], $widget['brightInfo']['id']);
                 break;
+
             case 'air-con':
             case 'thermostat':
                 $cmdIds = array($widget['setpointInfo']['id'], $widget['modeInfo']['id']);
                 break;
+
             default:
                 $cmdIds = array();
                 break;

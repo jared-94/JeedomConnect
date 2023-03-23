@@ -120,10 +120,12 @@ class JeedomConnectDeviceControl {
                 $device['statusText'] = $widget['modeInfo']['id'] != null ? $cmdData[$widget['modeInfo']['id']]
                     : $device['status'] == 'on' ? "Armé" : "Désarmé";
                 break;
+
             case 'brightness':
             case 'humidity':
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
                 break;
+
             case 'camera':
                 if (empty($widget['snapshotUrl']) && $widget['snapshotUrlInfo'] == null) {
                     return null;
@@ -131,10 +133,12 @@ class JeedomConnectDeviceControl {
                 $deviceType = "TYPE_CAMERA";
                 $controlTemplate = "TYPE_THUMBNAIL";
                 break;
+
             case 'door':
                 $deviceType = "TYPE_DOOR";
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
                 break;
+
             case 'frontgate':
                 $hasStatus = $widget['statusInfo']['id'] != null;
                 $deviceType = "TYPE_GATE";
@@ -144,9 +148,11 @@ class JeedomConnectDeviceControl {
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $hasStatus ? $device['status'] == 'on' ? "Ouvert" : "Fermé" : "";
                 break;
+
             case 'generic-action-other':
                 $device['action'] = JeedomConnectUtils::getActionCmd($widget['actions'][0]); // we only consider the first action
                 break;
+
             case 'generic-info-binary':
                 if ($cmdData[$widget['statusInfo']['id']] > 0) {
                     $device['statusText'] = empty($widget['text1']) ? "1" : $widget['text1'];
@@ -154,6 +160,7 @@ class JeedomConnectDeviceControl {
                     $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
                 }
                 break;
+
             case 'generic-info-numeric':
             case 'power':
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
@@ -198,6 +205,7 @@ class JeedomConnectDeviceControl {
                     'options' => $widget['options']
                 );
                 break;
+
             case 'shutter':
                 $deviceType = 'TYPE_SHUTTER';
                 if ($widget['statusInfo']['subType'] == "numeric") {
@@ -225,8 +233,8 @@ class JeedomConnectDeviceControl {
                     $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['positionAction']);
                     JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 }
-
                 break;
+
             case 'single-light-switch':
                 $deviceType = "TYPE_LIGHT";
                 $controlTemplate = "TYPE_TOGGLE";
@@ -260,6 +268,7 @@ class JeedomConnectDeviceControl {
                 $deviceType = "TYPE_THERMOSTAT";
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
                 break;
+
             case 'air-con':
             case 'thermostat':
                 $hasMode = $widget['modeInfo']['id'] != null;
