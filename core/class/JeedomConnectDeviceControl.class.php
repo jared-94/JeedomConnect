@@ -128,6 +128,7 @@ class JeedomConnectDeviceControl {
 
             case 'brightness':
             case 'humidity':
+                $device['icon'] = 'ic_fluent_brightness_high_24_regular';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
                 break;
 
@@ -157,6 +158,7 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'generic-action-other':
+                $device['icon'] = 'ic_fluent_filmstrip_play_24_regular';
                 $device['action'] = JeedomConnectUtils::getActionCmd($widget['actions'][0]); // we only consider the first action
                 break;
 
@@ -168,18 +170,26 @@ class JeedomConnectDeviceControl {
                 } else {
                     $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
                 }
+                // $device['icon'] = ''; // TODO
                 break;
 
             case 'generic-info-numeric':
+                $device['icon'] = 'ic_fluent_number_circle_1_24_regular';
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
+                break;
+
             case 'power':
+                $device['icon'] = 'ic_fluent_flash_24_regular';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
                 break;
 
             case 'generic-info-string':
+                $device['icon'] = 'ic_fluent_text_t_24_regular';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']];
                 break;
 
             case 'generic-slider':
+                // $device['icon'] = ''; // TODO
                 $controlTemplate = "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['sliderAction']);
@@ -188,6 +198,7 @@ class JeedomConnectDeviceControl {
             case 'generic-switch':
                 $deviceType = "TYPE_SWITCH";
                 $controlTemplate = "TYPE_TOGGLE";
+                $device['icon'] = 'ic_fluent_toggle_left_24_regular';
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
@@ -198,7 +209,14 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
+<<<<<<< HEAD
                 $device['colorEnabled'] = "#80FF0000";
+=======
+                $icon_alert = 'ic_fluent_alert_on_24_regular';
+                $icon_alert_none = 'ic_fluent_snooze_24_regular';
+                $device['icon'] = $cmdData[$widget['statusInfo']['id']] > 0 ? $icon_alert : $icon_alert_none;
+                $device['iconColor'] = $cmdData[$widget['statusInfo']['id']] > 0 ? '#ff0000' : '';
+>>>>>>> d0ffb051454705c1653313981ee33090d6a5a0f1
                 break;
 
             case 'plug':
@@ -216,6 +234,7 @@ class JeedomConnectDeviceControl {
                     'scenarioId' => $widget['scenarioId'],
                     'options' => $widget['options']
                 );
+                $device['icon'] = 'ic_fluent_arrow_routing_rectangle_multiple_24_regular';
                 break;
 
             case 'shutter':
