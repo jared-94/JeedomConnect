@@ -209,14 +209,11 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
-<<<<<<< HEAD
                 $device['colorEnabled'] = "#80FF0000";
-=======
                 $icon_alert = 'ic_fluent_alert_on_24_regular';
                 $icon_alert_none = 'ic_fluent_snooze_24_regular';
                 $device['icon'] = $cmdData[$widget['statusInfo']['id']] > 0 ? $icon_alert : $icon_alert_none;
                 $device['iconColor'] = $cmdData[$widget['statusInfo']['id']] > 0 ? '#ff0000' : '';
->>>>>>> d0ffb051454705c1653313981ee33090d6a5a0f1
                 break;
 
             case 'plug':
