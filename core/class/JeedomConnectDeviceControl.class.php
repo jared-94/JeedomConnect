@@ -29,7 +29,7 @@ class JeedomConnectDeviceControl {
 
             $currentActiveControls = explode(',', $eqLogic->getConfiguration('activeControlIds'));
             if ($currentActiveControls != $activeControlIds) {
-                // JCLog::debug('adding activeControlIds in eqLogic');
+                JCLog::trace('adding activeControlIds in eqLogic - old : ' . json_encode($currentActiveControls) . ' - new : ' . json_encode($activeControlIds));
                 $eqLogic->addInEqConfiguration('activeControlIds', $activeControlIds);
             }
 
@@ -63,6 +63,14 @@ class JeedomConnectDeviceControl {
                 }
             }
         }
+
+        // sort by room, then name
+        usort($devices, function ($a, $b) {
+            if (strtolower($a['subtitle']) ==  strtolower($b['subtitle'])) {
+                return strcmp(strtolower($a['title']),  strtolower($b['title']));
+            }
+            return strcmp(strtolower($a['subtitle']),  strtolower($b['subtitle']));
+        });
 
         return array("devices" => $devices);
     }
