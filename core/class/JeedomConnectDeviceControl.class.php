@@ -115,10 +115,15 @@ class JeedomConnectDeviceControl {
                 $deviceType = "TYPE_LOCK";
                 $controlTemplate = $hasArmActions ? "TYPE_TOGGLE" : "TYPE_STATELESS";
                 $device['status'] = $cmdData[$widget['enableInfo']['id']] > 0 ? 'on' : 'off';
-                $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
-                $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
+                if ($widget['onAction']['id'] != null) {
+                    $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
+                }
+                if ($widget['offAction']['id'] != null) {
+                    $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
+                }
                 $device['statusText'] = $widget['modeInfo']['id'] != null ? $cmdData[$widget['modeInfo']['id']]
                     : $device['status'] == 'on' ? "Armé" : "Désarmé";
+                $device['colorEnabled'] = "#8000FF00";
                 break;
 
             case 'brightness':
@@ -135,8 +140,10 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'door':
+                $controlTemplate = "TYPE_TOGGLE";
                 $deviceType = "TYPE_DOOR";
-                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['statusText'] = $device['status'] == 'on' ? "Ouvert" : "Fermé";
                 break;
 
             case 'frontgate':
@@ -154,7 +161,9 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'generic-info-binary':
-                if ($cmdData[$widget['statusInfo']['id']] > 0) {
+                $controlTemplate = "TYPE_TOGGLE";
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                if ($device['status']) {
                     $device['statusText'] = empty($widget['text1']) ? "1" : $widget['text1'];
                 } else {
                     $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
@@ -186,7 +195,10 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'pir':
+                $controlTemplate = "TYPE_TOGGLE";
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
+                $device['colorEnabled'] = "#80FF0000";
                 break;
 
             case 'plug':
@@ -233,6 +245,7 @@ class JeedomConnectDeviceControl {
                     $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['positionAction']);
                     JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 }
+
                 break;
 
             case 'single-light-switch':
@@ -262,6 +275,12 @@ class JeedomConnectDeviceControl {
                     $device['status'] = $cmdData[$widget['brightInfo']['id']] > 0 ? 'on' : 'off';
                 }
                 $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                if (!empty($cmdData[$widget['colorInfo']['id']])) {
+                    $color = $cmdData[$widget['colorInfo']['id']];
+                    if (is_string($color) && strlen($color) == 7 && substr($color, 0, 1) === "#") {
+                        $device['colorEnabled'] = "#80" . substr($color, 1);
+                    }
+                }
                 break;
 
             case 'temperature':
@@ -283,6 +302,8 @@ class JeedomConnectDeviceControl {
 
             case 'window':
                 $deviceType = "TYPE_WINDOW";
+                $controlTemplate = "TYPE_TOGGLE";
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
                 break;
 

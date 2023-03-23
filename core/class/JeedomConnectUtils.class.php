@@ -1175,8 +1175,11 @@ class JeedomConnectUtils {
                 break;
 
             case 'single-light-dim':
-            case 'single-light-color':
                 $cmdIds = array($widget['statusInfo']['id'], $widget['brightInfo']['id']);
+                break;
+
+            case 'single-light-color':
+                $cmdIds = array($widget['statusInfo']['id'], $widget['brightInfo']['id'], $widget['colorInfo']['id']);
                 break;
 
             case 'air-con':
