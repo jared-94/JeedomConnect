@@ -1147,13 +1147,22 @@ class JeedomConnectUtils {
     public static function getInfosCmdIds($widget) {
 
         switch ($widget['type']) {
+            case 'alarm':
+                $cmdIds = array($widget['enableInfo']['id'], $widget['modeInfo']['id']);
+                break;
             case 'camera':
                 $cmdIds = array($widget['snapshotUrlInfo']['id']);
                 break;
+            case 'brightness':
+            case 'frontgate':
+            case 'generic-info-binary':
             case 'generic-info-string':
             case 'generic-info-numeric':
             case 'generic-slider':
             case 'generic-switch':
+            case 'humidity':
+            case 'pir':
+            case 'plug':
             case 'power':
             case 'shutter':
             case 'single-light-switch':
@@ -1166,8 +1175,9 @@ class JeedomConnectUtils {
             case 'single-light-color':
                 $cmdIds = array($widget['statusInfo']['id'], $widget['brightInfo']['id']);
                 break;
+            case 'air-con':
             case 'thermostat':
-                $cmdIds = array($widget['statusInfo']['id'], $widget['setpointInfo']['id'], $widget['modeInfo']['id']);
+                $cmdIds = array($widget['setpointInfo']['id'], $widget['modeInfo']['id']);
                 break;
             default:
                 $cmdIds = array();

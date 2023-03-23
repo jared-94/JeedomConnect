@@ -110,6 +110,20 @@ class JeedomConnectDeviceControl {
         $controlTemplate = "TYPE_STATELESS";
 
         switch ($widget['type']) {
+            case 'alarm':
+                $hasArmActions = $widget['onAction']['id'] != null && $widget['offAction']['id'] != null;
+                $deviceType = "TYPE_LOCK";
+                $controlTemplate = $hasArmActions ? "TYPE_TOGGLE" : "TYPE_STATELESS";
+                $device['status'] = $cmdData[$widget['enableInfo']['id']] > 0 ? 'on' : 'off';
+                $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
+                $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
+                $device['statusText'] = $widget['modeInfo']['id'] != null ? $cmdData[$widget['modeInfo']['id']]
+                    : $device['status'] == 'on' ? "Armé" : "Désarmé";
+                break;
+            case 'brightness':
+            case 'humidity':
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
+                break;
             case 'camera':
                 if (empty($widget['snapshotUrl']) && $widget['snapshotUrlInfo'] == null) {
                     return null;
@@ -121,11 +135,25 @@ class JeedomConnectDeviceControl {
                 $deviceType = "TYPE_DOOR";
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
                 break;
-
+            case 'frontgate':
+                $hasStatus = $widget['statusInfo']['id'] != null;
+                $deviceType = "TYPE_GATE";
+                $controlTemplate = $hasStatus != null ? "TYPE_TOGGLE" : "TYPE_STATELESS";
+                $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['openAction']);
+                $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['closeAction']);
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['statusText'] = $hasStatus ? $device['status'] == 'on' ? "Ouvert" : "Fermé" : "";
+                break;
             case 'generic-action-other':
                 $device['action'] = JeedomConnectUtils::getActionCmd($widget['actions'][0]); // we only consider the first action
                 break;
-
+            case 'generic-info-binary':
+                if ($cmdData[$widget['statusInfo']['id']] > 0) {
+                    $device['statusText'] = empty($widget['text1']) ? "1" : $widget['text1'];
+                } else {
+                    $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
+                }
+                break;
             case 'generic-info-numeric':
             case 'power':
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
@@ -143,6 +171,19 @@ class JeedomConnectDeviceControl {
 
             case 'generic-switch':
                 $deviceType = "TYPE_SWITCH";
+                $controlTemplate = "TYPE_TOGGLE";
+                $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
+                $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                break;
+
+            case 'pir':
+                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
+                break;
+
+            case 'plug':
+                $deviceType = "TYPE_OUTLET";
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
@@ -219,7 +260,7 @@ class JeedomConnectDeviceControl {
                 $deviceType = "TYPE_THERMOSTAT";
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] . ($widget['statusInfo']['unit'] ?? "");
                 break;
-
+            case 'air-con':
             case 'thermostat':
                 $hasMode = $widget['modeInfo']['id'] != null;
                 $deviceType = $hasMode ? "TYPE_THERMOSTAT" : "TYPE_AC_HEATER";
