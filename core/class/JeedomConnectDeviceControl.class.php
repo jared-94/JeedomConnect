@@ -9,7 +9,12 @@ class JeedomConnectDeviceControl {
      * @param array|null $activeControlIds : list of active devices ID, null if we requiere all devices without states
      * @return void
      */
-    public static function getDevices($eqLogic, $activeControlIds) {
+    public static function getDevices($eqLogic, $activeControlIds, $saveTime = true) {
+
+        if ($saveTime) {
+            $eqLogic->setConfiguration('activeControlTime', time());
+            $eqLogic->save();
+        }
 
         $devices = array();
 

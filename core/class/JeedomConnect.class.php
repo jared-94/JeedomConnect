@@ -1751,8 +1751,22 @@ class JeedomConnect extends eqLogic {
 		/** @var JeedomConnect $eqLogic */
 		$eqLogic = eqLogic::byId($_option['id']);
 
+		if (!is_object($eqLogic)) {
+			JCLog::warning('sendActiveControl - No eqLogic with id  [' . $_option['id'] . ']');
+			return;
+		}
+
+		// CHECK if control page has been displayed since the last 5 min (300sec)
+		$lastTime = $eqLogic->getConfiguration('activeControlTime', 0);
+		$diff = time() - $lastTime;
+		// JCLog::debug('diff : ' . $diff);
+		if ($diff > 300) {
+			JCLog::debug('Not sending sendActiveControl result - time exceed');
+			return;
+		}
+
 		$confControls = $eqLogic->getConfiguration('activeControlIds');
-		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectDeviceControl::getDevices($eqLogic, explode(",", $confControls)), 'SET_CONTROLS_INFO');
+		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectDeviceControl::getDevices($eqLogic, explode(",", $confControls), false), 'SET_CONTROLS_INFO');
 
 		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
 		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($result));
