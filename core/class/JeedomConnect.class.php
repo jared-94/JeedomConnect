@@ -704,6 +704,32 @@ class JeedomConnect extends eqLogic {
 		return $newConfig;
 	}
 
+
+	public function getGeneratedWidget($widgetId = null, $_force = false) {
+
+		$conf = $this->getGeneratedConfigFile($_force);
+
+		if (!key_exists('payload', $conf) || !key_exists('widgets', $conf['payload'])) {
+			JCLog::warning('bad configuration file, no payload nor widgets');
+			return null;
+		}
+
+		$widgetsAll = $conf['payload']['widgets'];
+
+		$widgets = array();
+		foreach ($widgetsAll as $widget) {
+
+			if ($widgetId != null && $widget['id'] == $widgetId) {
+				return $widget;
+			}
+
+			$widgets[] =  $widget;
+		}
+
+		return $widgets;
+	}
+
+
 	public static function getChoiceData($cmdId) {
 		$choice = array();
 
@@ -1771,17 +1797,12 @@ class JeedomConnect extends eqLogic {
 		foreach (explode(",", $confControls) as $widgetId) {
 			// JCLog::debug('checking control ID : ' . $widgetId);
 
-			// get the widget conf
-			$widgetConf = JeedomConnectWidget::getWidgets($widgetId);
+			// get the widget conf from generated file of the current eqlogic
+			$widget = $eqLogic->getGeneratedWidget($widgetId);
 			// JCLog::debug('getting widget : ' . json_encode($widget));
 
-			// if there is no result, or the config does not exist -> continue
-			// else take out the config
-			if (count($widgetConf) != 1 && !key_exists('widgetJC', $widgetConf[0])) {
-				continue;
-			} else {
-				$widget = $widgetConf[0]['widgetJC'];
-			}
+			// if there is no result -> continue
+			if (empty($widget)) continue;
 
 			// retrieve the IDs used in this widget
 			$cmdIds = JeedomConnectUtils::getInfosCmdIds($widget);
@@ -1802,7 +1823,7 @@ class JeedomConnect extends eqLogic {
 			$payload = JeedomConnectUtils::addTypeInPayload(array("devices" => $result), 'SET_CONTROLS_INFO');
 			$eqLogic->sendNotif($eqLogic->getLogicalId(), $payload);
 		}
-		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($result));
+		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($payload));
 	}
 
 
