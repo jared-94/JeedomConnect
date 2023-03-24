@@ -1766,9 +1766,42 @@ class JeedomConnect extends eqLogic {
 		}
 
 		$confControls = $eqLogic->getConfiguration('activeControlIds');
-		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectDeviceControl::getDevices($eqLogic, explode(",", $confControls), false), 'SET_CONTROLS_INFO');
 
-		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
+		$result = array();
+		foreach (explode(",", $confControls) as $widgetId) {
+			// JCLog::debug('checking control ID : ' . $widgetId);
+
+			// get the widget conf
+			$widgetConf = JeedomConnectWidget::getWidgets($widgetId);
+			// JCLog::debug('getting widget : ' . json_encode($widget));
+
+			// if there is no result, or the config does not exist -> continue
+			// else take out the config
+			if (count($widgetConf) != 1 && !key_exists('widgetJC', $widgetConf[0])) {
+				continue;
+			} else {
+				$widget = $widgetConf[0]['widgetJC'];
+			}
+
+			// retrieve the IDs used in this widget
+			$cmdIds = JeedomConnectUtils::getInfosCmdIds($widget);
+			// JCLog::debug('cmdIds : ' . json_encode($cmdIds));
+
+			// if the event is coming from a cmdId that is used in the widget, 
+			// then get the device info on that widget otherwise do nothing (next)
+			if (in_array($_option['event_id'], $cmdIds)) {
+				// JCLog::debug('  ----  cmd found in widget ! ');
+				$deviceConfig = JeedomConnectDeviceControl::getDeviceConfig($widget, null);
+				if ($deviceConfig != null) {
+					$result[] =  $deviceConfig;
+				}
+			}
+		}
+
+		if (!empty($result)) {
+			$payload = JeedomConnectUtils::addTypeInPayload(array("devices" => $result), 'SET_CONTROLS_INFO');
+			$eqLogic->sendNotif($eqLogic->getLogicalId(), $payload);
+		}
 		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($result));
 	}
 

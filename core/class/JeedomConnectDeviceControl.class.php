@@ -88,7 +88,7 @@ class JeedomConnectDeviceControl {
      * @param array|null $cmdData data already existing
      * @return void
      */
-    private static function getDeviceConfig($widget, $cmdData) {
+    public static function getDeviceConfig($widget, $cmdData) {
         JCLog::trace('checking device config for widget ' . json_encode($widget));
 
         try {
