@@ -1812,7 +1812,10 @@ class JeedomConnect extends eqLogic {
 			// then get the device info on that widget otherwise do nothing (next)
 			if (in_array($_option['event_id'], $cmdIds)) {
 				// JCLog::debug('  ----  cmd found in widget ! ');
-				$deviceConfig = JeedomConnectDeviceControl::getDeviceConfig($widget, null);
+				$cmdIds = array_unique(array_filter($cmdIds, 'strlen'));
+				$cmdData = JeedomConnectUtils::getCmdValues($cmdIds);
+
+				$deviceConfig = JeedomConnectDeviceControl::getDeviceConfig($widget, $cmdData['data']);
 				if ($deviceConfig != null) {
 					$result[] =  $deviceConfig;
 				}
