@@ -13,7 +13,7 @@ class JeedomConnectDeviceControl {
 
         if ($saveTime) {
             $eqLogic->setConfiguration('activeControlTime', time());
-            $eqLogic->save();
+            $eqLogic->save(true);
         }
 
         $devices = array();
