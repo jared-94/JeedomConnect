@@ -2818,7 +2818,9 @@ class apiHelper {
         if (key_exists('tags', $options)) {
           $args = arg2array($options["tags"]);
           foreach ($args as $key => $value) {
-            $_tags['#' . trim(trim($key), '#') . '#'] = scenarioExpression::setTags(trim($value), $scenario);
+            $valueTmp = trim($value);
+            $tmp = scenarioExpression::setTags($valueTmp, $scenario);
+            $_tags['#' . trim(trim($key), '#') . '#'] = $tmp;
           }
         }
 
