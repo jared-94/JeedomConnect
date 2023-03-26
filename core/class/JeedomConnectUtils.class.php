@@ -42,7 +42,7 @@ class JeedomConnectUtils {
 
         $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/>';
         $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/>';
-        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . $daemon_info['last_launch'] . ')<br/><br/>';
+        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . ($daemon_info['last_launch'] ?? 'NA') . ')<br/><br/>';
 
 
         $infoPlugin .= '<b>Equipements</b> : <br/>';
@@ -85,6 +85,9 @@ class JeedomConnectUtils {
 
         /** @var user $user */
         $user = user::byId($userId);
+        if (!is_object($user)) {
+            return 'NA';
+        }
 
         $userProfil = $user->getProfils();
         $return = ($userProfil == 'admin') ? 'PA' : ($userProfil == 'restrict' ? 'PR' : 'PU');
