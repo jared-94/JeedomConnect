@@ -1697,7 +1697,7 @@ $(".widgetMenu .saveWidget").click(function () {
 
                             url = getCustomParamUrl(url, vars);
                             modifyWithoutSave = false
-                            loadPage(url)
+                            jeedomUtils.loadPage(url)
                         }
                         else {
 
@@ -1789,7 +1789,7 @@ $(".widgetMenu .removeWidget").click(function () {
                     }
                     modifyWithoutSave = false
                     url += '&saveSuccessFull=1'
-                    loadPage(url)
+                    jeedomUtils.loadPage(url)
                 }
             }
         })

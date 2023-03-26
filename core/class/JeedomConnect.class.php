@@ -1258,6 +1258,9 @@ class JeedomConnect extends eqLogic {
 			$this->setLogicalId($this->getConfiguration('apiKey'));
 			$this->generateQRCode();
 		}
+
+		$this->setConfiguration('volume', 'all');
+		$this->setIsEnable(1);
 	}
 
 	public function postInsert() {

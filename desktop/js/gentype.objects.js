@@ -8,12 +8,12 @@ $('#in_searchObject').keyup(function () {
         $('.objectListContainer').packery()
         return
     }
-    search = normTextLower(search)
+    search = jeedomUtils.normTextLower(search)
 
     $('.objectDisplayCard').hide()
     var text
     $('.objectDisplayCard .name').each(function () {
-        text = normTextLower($(this).text())
+        text = jeedomUtils.normTextLower($(this).text())
         if (text.indexOf(search) >= 0) {
             $(this).closest('.objectDisplayCard').show()
         }

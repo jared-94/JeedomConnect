@@ -321,7 +321,7 @@ $('.showGeofence').off('click').on('click', function () {
 
             url = getCustomParamUrl(url, vars);
 
-            loadPage(url)
+            jeedomUtils.loadPage(url)
         }
     });
     $('#mapsModal').load('index.php?v=d&plugin=JeedomConnect&modal=position.JeedomConnect&geo=true&eqId=' + $('.eqLogicAttr[data-l1key=id]').value()).dialog('open');

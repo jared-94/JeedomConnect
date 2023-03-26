@@ -482,8 +482,8 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Options}}</label>
 								<div class="col-sm-7">
-									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" checked />{{Activer}}</label>
-									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked />{{Visible}}</label>
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" />{{Activer}}</label>
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" />{{Visible}}</label>
 								</div>
 							</div>
 
@@ -600,7 +600,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Accès à la timeline}}</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" checked type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 
@@ -622,7 +622,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								<label class="col-sm-3 control-label">{{Commande info Volume}}</label>
 								<div class="col-sm-7">
 									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="volume">
-										<option value="all" selected>{{Toutes}}</option>
+										<option value="all">{{Toutes}}</option>
 										<?php
 										foreach (JeedomConnect::$_volumeType as $key => $value) {
 											echo '<option value="' . $key . '">' . $value . '</option>';

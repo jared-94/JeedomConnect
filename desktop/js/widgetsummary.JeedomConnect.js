@@ -207,7 +207,7 @@ function check_before_closing() {
 
         url = getCustomParamUrl(url, vars);
         modifyWithoutSave = false
-        loadPage(url);
+        jeedomUtils.loadPage(url);
     }
     $("#widgetSummaryModal").dialog('destroy').remove();
 }
