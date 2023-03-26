@@ -1151,11 +1151,11 @@ class JeedomConnectUtils {
 
         switch ($widget['type']) {
             case 'alarm':
-                $cmdIds = array($widget['enableInfo']['id'], $widget['modeInfo']['id']);
+                $cmdIds = array($widget['enableInfo']['id'] ?? null, $widget['modeInfo']['id'] ?? null);
                 break;
 
             case 'camera':
-                $cmdIds = array($widget['snapshotUrlInfo']['id']);
+                $cmdIds = array($widget['snapshotUrlInfo']['id'] ?? null);
                 break;
 
             case 'brightness':
@@ -1174,20 +1174,20 @@ class JeedomConnectUtils {
             case 'temperature':
             case 'door':
             case 'window':
-                $cmdIds = array($widget['statusInfo']['id']);
+                $cmdIds = array($widget['statusInfo']['id'] ?? null);
                 break;
 
             case 'single-light-dim':
-                $cmdIds = array($widget['statusInfo']['id'], $widget['brightInfo']['id']);
+                $cmdIds = array($widget['statusInfo']['id'] ?? null, $widget['brightInfo']['id'] ?? null);
                 break;
 
             case 'single-light-color':
-                $cmdIds = array($widget['statusInfo']['id'], $widget['brightInfo']['id'], $widget['colorInfo']['id']);
+                $cmdIds = array($widget['statusInfo']['id'] ?? null, $widget['brightInfo']['id'] ?? null, $widget['colorInfo']['id'] ?? null);
                 break;
 
             case 'air-con':
             case 'thermostat':
-                $cmdIds = array($widget['setpointInfo']['id'], $widget['modeInfo']['id']);
+                $cmdIds = array($widget['setpointInfo']['id'] ?? null, $widget['modeInfo']['id'] ?? null);
                 break;
 
             default:
@@ -1195,6 +1195,7 @@ class JeedomConnectUtils {
                 break;
         }
 
+        $cmdIds = array_filter($cmdIds);
         return array_merge($cmdIds, self::getCmdIdFromText($widget["name"]));
     }
 
