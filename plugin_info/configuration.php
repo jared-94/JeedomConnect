@@ -191,9 +191,9 @@ sendVarToJS('userHash', $userHash);
       </div>
 
       <div class="form-group col-lg-6">
-        <label class="col-lg-3 control-label">{{Trie des widgets}}
+        <label class="col-lg-3 control-label">{{Tri des widgets}}
           <sup>
-            <i class="fas fa-question-circle floatright" title="Trie par défaut sur la page principale du plugin et dans l'assistant de configuration"></i>
+            <i class="fas fa-question-circle floatright" title="Tri par défaut sur la page principale du plugin et dans l'assistant de configuration"></i>
           </sup>
         </label>
         <div class="col-lg-6">
@@ -215,7 +215,7 @@ sendVarToJS('userHash', $userHash);
           </sup>
         </label>
         <div class="col-lg-3">
-          <input type="checkbox" class="configKey" data-l1key="withQrCode" checked />
+          <input type="checkbox" class="configKey" data-l1key="withQrCode" />
         </div>
       </div>
 
@@ -240,7 +240,7 @@ sendVarToJS('userHash', $userHash);
           </sup>
         </label>
         <div class="col-lg-3">
-          <input type="checkbox" class="configKey" data-l1key="isStrict" checked />
+          <input type="checkbox" class="configKey" data-l1key="isStrict" />
         </div>
       </div>
 
@@ -278,7 +278,7 @@ sendVarToJS('userHash', $userHash);
         </label>
         <div class="col-lg-6">
           <select class="form-control configKey needJCRefresh" data-l1key="daemonLog">
-            <option value="parent" selected>Même que le plugin</option>
+            <option value="parent">Même que le plugin</option>
             <option value="100">Debug</option>
             <option value="200">Infos</option>
             <option value="300">Warning</option>
@@ -300,7 +300,7 @@ sendVarToJS('userHash', $userHash);
         </label>
         <div class="col-lg-5">
           <select class="form-control configKey" data-l1key="bkpCount">
-            <option value="all" selected>Toutes</option>
+            <option value="all">Toutes</option>
             <option value="1">1</option>
             <option value="5">5</option>
             <option value="10">10</option>

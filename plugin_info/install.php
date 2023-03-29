@@ -25,6 +25,13 @@ function JeedomConnect_install() {
   JeedomConnectUtils::installAndMigration();
   JeedomConnectUtils::addCronItems();
   JeedomConnect::createMapEquipment();
+
+  // default option for configuration page
+  config::save('daemonLog', 'parent', 'JeedomConnect');
+  config::save('bkpCount', 'all', 'JeedomConnect');
+  config::save('jcOrderByDefault', 'object', 'JeedomConnect');
+  config::save('withQrCode', '1', 'JeedomConnect');
+  config::save('isStrict', '1', 'JeedomConnect');
 }
 
 function JeedomConnect_update() {

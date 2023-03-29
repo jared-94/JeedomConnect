@@ -41,6 +41,8 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
       <th data-sorter="checkbox" data-filter="false">{{Actif}}</th>
       <th data-sorter="select-text" data-filter="false" style="width:140px;">{{Affichage forcé}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Bloquer détails}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Masquer l'appareil}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Contrôle verr.}}</th>
       <th>{{Nb Eq}}</th>
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>

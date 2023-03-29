@@ -552,7 +552,7 @@ function getWidgetPath(id) {
     console.log('issue with getWidgetPath - widget not found with id ' + id)
     return 'inconnu !';
   }
-  var name = (' ' + widget.name).slice(1);
+  var name = (' ' + (widget.nameDisplayed || widget.name)).slice(1);
 
   if (widget.parentId === undefined || widget.parentId == null || typeof configData === 'undefined') {
     return name;
@@ -944,7 +944,7 @@ $('#eraseFilterChoice').off('click').on('click', function () {
     }
   }
 
-  loadPage(url)
+  jeedomUtils.loadPage(url)
 })
 
 
@@ -962,7 +962,7 @@ $('.updateOrderWidget').on('change', function () {
 
   url = getCustomParamUrl(url, vars);
 
-  loadPage(url)
+  jeedomUtils.loadPage(url)
 
 });
 
@@ -1067,13 +1067,13 @@ $('.jcInSearch').off('keyup').keyup(function () {
 
 
   $('.widgetDisplayCard,.componentDisplayCard').hide()
-  search = normTextLower(search)
+  search = jeedomUtils.normTextLower(search)
   var text
   var widgetId
 
   $('.widgetDisplayCard,.componentDisplayCard').each(function () {
-    text = normTextLower($(this).children('.name').text())
-    widgetId = normTextLower($(this).attr('data-widget_id'))
+    text = jeedomUtils.normTextLower($(this).children('.name').text())
+    widgetId = jeedomUtils.normTextLower($(this).attr('data-widget_id'))
     widgetType = $(this).attr('data-widget_type');
     if (text.indexOf(search) >= 0 || widgetId.indexOf(search) >= 0) {
       if ($(this).hasClass('widget')) {
@@ -1347,7 +1347,7 @@ function addCmdToTable(_cmd) {
   $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet).append(tr);
   var tr = $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet + ' tr').last();
 
-  jeedom.eqLogic.builSelectCmd({
+  jeedom.eqLogic.buildSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),
     filter: { type: 'info' },
     error: function (error) {

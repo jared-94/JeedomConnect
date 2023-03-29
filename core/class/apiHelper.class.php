@@ -519,6 +519,11 @@ class apiHelper {
             JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds($param['cmdId'], false), 'SET_QSTILES_INFO');
           break;
 
+        case 'GET_CONTROL_DEVICES':
+          $result = JeedomConnectDeviceControl::getDevices($eqLogic, $param['activeControlIds']);
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_CONTROL_DEVICES');
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -777,6 +782,7 @@ class apiHelper {
     $payload = array(
       'pluginVersion' => $pluginVersion,
       'jeedomName' => config::byKey('name'),
+      'serverId' => config::byKey('register::id'),
       'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'polling' => $eqLogic->getConfiguration('polling', 0),
@@ -2812,7 +2818,9 @@ class apiHelper {
         if (key_exists('tags', $options)) {
           $args = arg2array($options["tags"]);
           foreach ($args as $key => $value) {
-            $_tags['#' . trim(trim($key), '#') . '#'] = scenarioExpression::setTags(trim($value), $scenario);
+            $valueTmp = trim($value);
+            $tmp = scenarioExpression::setTags($valueTmp, $scenario);
+            $_tags['#' . trim(trim($key), '#') . '#'] = $tmp;
           }
         }
 

@@ -290,6 +290,26 @@ try {
 				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="blockDetail" /></td>';
 			}
 
+			if (!JeedomConnectUtils::hasObjectId($widgetArrayConfig[$widget['type']]['options'], 'hideControlDevice')) {
+				$html .= '<td></td>';
+			} else {
+				if (isset($widgetJC['hideControlDevice']) && $widgetJC['hideControlDevice']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideControlDevice" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideControlDevice" /></td>';
+				}
+			}
+
+			if (!JeedomConnectUtils::hasObjectId($widgetArrayConfig[$widget['type']]['options'], 'allowOnUnlock')) {
+				$html .= '<td></td>';
+			} else {
+				if (isset($widgetJC['allowOnUnlock']) && $widgetJC['allowOnUnlock']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="allowOnUnlock" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="allowOnUnlock" /></td>';
+				}
+			}
+
 
 			//**************  EQUIPEMENT INCLUSION **********************/
 			$nb = 0;
@@ -388,6 +408,8 @@ try {
 			$widgetJC['display'] = $widgetData['display'];
 
 			$widgetJC['blockDetail'] = boolval($widgetData['blockDetail']);
+			if (isset($widgetData['hideControlDevice'])) $widgetJC['hideControlDevice'] = boolval($widgetData['hideControlDevice']);
+			if (isset($widgetData['allowOnUnlock'])) $widgetJC['allowOnUnlock'] = boolval($widgetData['allowOnUnlock']);
 
 			JeedomConnectWidget::saveConfig($widgetJC, $widgetData['widgetId']);
 		}

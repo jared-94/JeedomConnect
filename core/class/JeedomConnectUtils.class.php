@@ -42,7 +42,7 @@ class JeedomConnectUtils {
 
         $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/>';
         $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/>';
-        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . $daemon_info['last_launch'] . ')<br/><br/>';
+        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . ($daemon_info['last_launch'] ?? 'NA') . ')<br/><br/>';
 
 
         $infoPlugin .= '<b>Equipements</b> : <br/>';
@@ -85,6 +85,9 @@ class JeedomConnectUtils {
 
         /** @var user $user */
         $user = user::byId($userId);
+        if (!is_object($user)) {
+            return 'NA';
+        }
 
         $userProfil = $user->getProfils();
         $return = ($userProfil == 'admin') ? 'PA' : ($userProfil == 'restrict' ? 'PR' : 'PU');
@@ -1132,6 +1135,163 @@ class JeedomConnectUtils {
         return $cmd_info;
     }
 
+    public static function getCmdValues($cmdIds) {
+        $data = array();
+
+        foreach ($cmdIds as $cmdId) {
+            $cmd = cmd::byId($cmdId);
+            if (is_object($cmd)) {
+                $data[$cmdId] = $cmd->execCmd();
+            }
+        }
+        return array('data' => $data);
+    }
+
+    public static function getInfosCmdIds($widget) {
+
+        switch ($widget['type']) {
+            case 'alarm':
+                $cmdIds = array($widget['enableInfo']['id'] ?? null, $widget['modeInfo']['id'] ?? null);
+                break;
+
+            case 'camera':
+                $cmdIds = array($widget['snapshotUrlInfo']['id'] ?? null);
+                break;
+
+            case 'brightness':
+            case 'frontgate':
+            case 'generic-info-binary':
+            case 'generic-info-string':
+            case 'generic-info-numeric':
+            case 'generic-slider':
+            case 'generic-switch':
+            case 'humidity':
+            case 'pir':
+            case 'plug':
+            case 'power':
+            case 'shutter':
+            case 'single-light-switch':
+            case 'temperature':
+            case 'door':
+            case 'window':
+                $cmdIds = array($widget['statusInfo']['id'] ?? null);
+                break;
+
+            case 'single-light-dim':
+                $cmdIds = array($widget['statusInfo']['id'] ?? null, $widget['brightInfo']['id'] ?? null);
+                break;
+
+            case 'single-light-color':
+                $cmdIds = array($widget['statusInfo']['id'] ?? null, $widget['brightInfo']['id'] ?? null, $widget['colorInfo']['id'] ?? null);
+                break;
+
+            case 'air-con':
+            case 'thermostat':
+                $cmdIds = array($widget['setpointInfo']['id'] ?? null, $widget['modeInfo']['id'] ?? null);
+                break;
+
+            default:
+                $cmdIds = array();
+                break;
+        }
+
+        $cmdIds = array_filter($cmdIds);
+        return array_merge($cmdIds, self::getCmdIdFromText($widget["name"]));
+    }
+
+    public static function getCmdIdFromText($text) {
+        preg_match_all("/#.*?#/", $text, $match);
+        $res = array_map(function ($t) {
+            return str_replace("#", "", $t);
+        }, $match[0]);
+        return $res;
+    }
+
+    /**
+     * @deprecated please use getExpressionEvaluated function instead
+     *
+     * @param [type] $text
+     * @param [type] $cmdData
+     * @return void
+     */
+    public static function getFormatedText($text, $cmdData) {
+        foreach (self::getCmdIdFromText($text) as $id) {
+            $text = str_replace("#${id}#", $cmdData[$id], $text);
+        }
+        return $text;
+    }
+
+    public static function getExpressionEvaluated($expression) {
+        $return = array();
+        $scenario = null;
+        $myExp = jeedom::fromHumanReadable($expression);
+        $return['evaluate'] = scenarioExpression::setTags($myExp, $scenario, true);
+        $return['result'] = evaluate($return['evaluate']);
+        $return['correct'] = 'ok';
+        if (trim($return['result']) == trim($return['evaluate'])) {
+            $return['correct'] = 'nok';
+        }
+        return $return;
+    }
+
+
+    public static function getRoomName($widget) {
+        if (!array_key_exists('room', $widget)) return "";
+        $roomObjet = jeeObject::byId(intval($widget['room']));
+        return is_object($roomObjet) ? $roomObjet->getName() : 'Aucun';
+    }
+
+    public static function getActionCmd($action) {
+        $res = array(
+            'action' => 'execCmd',
+            'cmdId' =>  $action['id']
+        );
+        if (key_exists('options', $action) && $action['options'] != null)
+            $res['options'] = $action['options'];
+        if (key_exists('confirm', $action) && $action['confirm']) {
+            $res['challenge'] = "ACK";
+        } else if ((key_exists('security', $action) && $action['security']) || (key_exists('pwd', $action) && $action['pwd'])) {
+            $res['challenge'] = "PIN";
+        }
+        return $res;
+    }
+
+    public static function getRangeStatus($cmdData, $action, &$device) {
+        $device['rangeStatus'] = $cmdData[$action['id']];
+        if (isset($action['minValue'])) {
+            $device['minValue'] = floatval($action['minValue']);
+        }
+        if (isset($action['maxValue'])) {
+            $device['maxValue'] = floatval($action['maxValue']);
+        }
+        if (isset($action['step'])) {
+            $device['stepValue'] = floatval($action['step']);
+        }
+        if (isset($action['unit'])) {
+            $device['rangeUnit'] = $action['unit'];
+        }
+    }
+
+    public static function experimentalGetMode($modeName) {
+        $modeName = strtolower($modeName);
+        // JCLog::debug('experimentalGetMode - name = ' . $modeName);
+        if (in_array($modeName, ["off", "eteindre", "éteindre"])) return 'off';
+        if (strpos($modeName, "froid") !== false) return 'cold';
+        if (strpos($modeName, "chaud") !== false) return 'heat';
+        if (strpos($modeName, "auto") !== false) return 'heat_cool';
+        if (strpos($modeName, "eco") !== false) return 'eco';
+
+        return "";
+    }
+
+    public static function getModes($modes) {
+        $res = array();
+        foreach ($modes as $mode) {
+            array_push($res, self::experimentalGetMode($mode['name']));
+        }
+        return array_unique($res);
+    }
+
     public static function getHistoryValueInfo($cmdId) {
 
         $cmd = cmd::byId($cmdId);
@@ -1170,6 +1330,18 @@ class JeedomConnectUtils {
             'tendance' => $tendance ?? null,
         );
     }
+
+    public static function hasObjectId($obj, $id) {
+
+        foreach ($obj as $item) {
+            // JCLog::debug('check id [' . $id . '] in item ' . json_encode($item));
+            if ($item['id'] == $id) return true;
+        }
+
+        return false;
+    }
+
+
     /**
      * Copy the configuration file from equipement $from to one or several equipement $toArray
      * If $withCustom apply, then also the customsation of the equipment will be copy

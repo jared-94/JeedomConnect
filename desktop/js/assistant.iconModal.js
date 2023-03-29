@@ -85,9 +85,9 @@ $('body').on('keyup', '#in_searchIconSelector', function () {
     })
 
     if (search != '') {
-        search = normTextLower(search)
+        search = jeedomUtils.normTextLower(search)
         $('.iconDesc').each(function () {
-            iconName = normTextLower($(this).text())
+            iconName = jeedomUtils.normTextLower($(this).text())
             if (iconName.indexOf(search) == -1) {
                 $(this).closest('.divIconSel').css({
                     'display': 'none'

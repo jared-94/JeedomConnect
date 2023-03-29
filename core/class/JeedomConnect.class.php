@@ -22,6 +22,7 @@ require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectUtils.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectLogs.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectDeviceControl.class.php';
 
 class JeedomConnect extends eqLogic {
 
@@ -703,6 +704,32 @@ class JeedomConnect extends eqLogic {
 		return $newConfig;
 	}
 
+
+	public function getGeneratedWidget($widgetId = null, $_force = false) {
+
+		$conf = $this->getGeneratedConfigFile($_force);
+
+		if (!key_exists('payload', $conf) || !key_exists('widgets', $conf['payload'])) {
+			JCLog::warning('bad configuration file, no payload nor widgets');
+			return null;
+		}
+
+		$widgetsAll = $conf['payload']['widgets'];
+
+		$widgets = array();
+		foreach ($widgetsAll as $widget) {
+
+			if ($widgetId != null && $widget['id'] == $widgetId) {
+				return $widget;
+			}
+
+			$widgets[] =  $widget;
+		}
+
+		return $widgets;
+	}
+
+
 	public static function getChoiceData($cmdId) {
 		$choice = array();
 
@@ -1231,6 +1258,9 @@ class JeedomConnect extends eqLogic {
 			$this->setLogicalId($this->getConfiguration('apiKey'));
 			$this->generateQRCode();
 		}
+
+		$this->setConfiguration('volume', 'all');
+		$this->setIsEnable(1);
 	}
 
 	public function postInsert() {
@@ -1315,6 +1345,13 @@ class JeedomConnect extends eqLogic {
 		$confCmd = $this->getConfiguration('cmdInShortcut');
 		$cmd_ids = ($confCmd != '') ? explode(",", $confCmd) : array();
 		$this->setListener($cmd_ids);
+
+		$confControls = $this->getConfiguration('activeControlIds');
+		JCLog::debug('------ confControls ' . $confControls);
+		$cmdControls_ids = ($confControls != '') ? JeedomConnectDeviceControl::getInfoCmdIdsFromControls($this, explode(",", $confControls))  : array();
+
+		JCLog::debug('------ cmdControls_ids ' . json_encode($cmdControls_ids));
+		$this->setListener($cmdControls_ids, 'sendActiveControl');
 	}
 
 	public function preRemove() {
@@ -1723,7 +1760,7 @@ class JeedomConnect extends eqLogic {
 			$listener->addEvent($cmd_id);
 		}
 		$listener->save();
-		JCLog::debug('------ setListener end');
+		JCLog::debug('------ setListener end for fx ' . $fx);
 	}
 
 	public static function sendCmdInfoToShortcut($_option) {
@@ -1737,6 +1774,63 @@ class JeedomConnect extends eqLogic {
 		JCLog::debug('---- sendCmdInfoToShortcut end -->>> ' . json_encode($result));
 	}
 
+	public static function sendActiveControl($_option) {
+		JCLog::debug('sendActiveControl started -->>> ' . json_encode($_option));
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($_option['id']);
+
+		if (!is_object($eqLogic)) {
+			JCLog::warning('sendActiveControl - No eqLogic with id  [' . $_option['id'] . ']');
+			return;
+		}
+
+		// CHECK if control page has been displayed since the last 5 min (300sec)
+		$lastTime = $eqLogic->getConfiguration('activeControlTime', 0);
+		$diff = time() - $lastTime;
+		// JCLog::debug('diff : ' . $diff);
+		if ($diff > 300) {
+			JCLog::debug('Not sending sendActiveControl result - time exceed');
+			return;
+		}
+
+		$confControls = $eqLogic->getConfiguration('activeControlIds');
+
+		$result = array();
+		foreach (explode(",", $confControls) as $widgetId) {
+			// JCLog::debug('checking control ID : ' . $widgetId);
+
+			// get the widget conf from generated file of the current eqlogic
+			$widget = $eqLogic->getGeneratedWidget($widgetId);
+			// JCLog::debug('getting widget : ' . json_encode($widget));
+
+			// if there is no result -> continue
+			if (empty($widget)) continue;
+
+			// retrieve the IDs used in this widget
+			$cmdIds = JeedomConnectUtils::getInfosCmdIds($widget);
+			// JCLog::debug('cmdIds : ' . json_encode($cmdIds));
+
+			// if the event is coming from a cmdId that is used in the widget, 
+			// then get the device info on that widget otherwise do nothing (next)
+			if (in_array($_option['event_id'], $cmdIds)) {
+				// JCLog::debug('  ----  cmd found in widget ! ');
+				$cmdIds = array_unique(array_filter($cmdIds, 'strlen'));
+				$cmdData = JeedomConnectUtils::getCmdValues($cmdIds);
+
+				$deviceConfig = JeedomConnectDeviceControl::getDeviceConfig($widget, $cmdData['data']);
+				if ($deviceConfig != null) {
+					$result[] =  $deviceConfig;
+				}
+			}
+		}
+
+		if (!empty($result)) {
+			$payload = JeedomConnectUtils::addTypeInPayload(array("devices" => $result), 'SET_CONTROLS_INFO');
+			$eqLogic->sendNotif($eqLogic->getLogicalId(), $payload);
+		}
+		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($payload));
+	}
 
 
 	/*
