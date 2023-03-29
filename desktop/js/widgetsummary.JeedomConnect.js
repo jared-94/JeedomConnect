@@ -289,6 +289,50 @@ function exportTableToCSV($table, filename) {
     }
 }
 
+
+
+$('#table_JcWidgetSummary').off('click', '.jcMassAction').on('click', '.jcMassAction', function () {
+    var type = $(this).data('jctype');
+    var checked = ($(this).data('jcaction') == 'checked');
+
+    $('#table_JcWidgetSummary > tbody  > tr').each(function (index, tr) {
+
+        id = $(this).data('widget_id');
+
+        maCell = $(this).find('td input[data-l1key=' + type + ']')
+        // if no input on the row, skip
+        if (maCell.length == 0) {
+            return;
+        }
+        currentState = maCell.is(':checked');
+
+        if (currentState && !checked) {
+            // console.log(id + " => on décoche !");
+            maCell.prop('checked', false);
+            updateToBeDone(id);
+        }
+        else if (!currentState && checked) {
+            // console.log(id + " => on coche !");
+            maCell.prop('checked', true);
+            updateToBeDone(id);
+        }
+        /*
+        else do nothing => ((currentState && checked) || (!currentState && !checked)) {
+        */
+
+    });
+})
+
+function updateToBeDone(eqId) {
+    $tr = $('.tr_object[data-widget_id=' + eqId + ']');
+    $tr.attr('data-changed', true);
+    $tr.find('span[data-l1key=widgetId]')
+        .removeClass('label-info')
+        .addClass('label-warning');
+}
+
+
+
 jQuery("#bt_exportJcWidgetSummary").on('click', function (event) {
     filename = 'export_JcWidgetSummary_' + new Date().toLocaleDateString() + '.csv';
     exportTableToCSV.apply(this, [jQuery('#table_JcWidgetSummary'), filename]);
