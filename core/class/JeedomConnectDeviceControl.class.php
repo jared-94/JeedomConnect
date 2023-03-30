@@ -247,7 +247,7 @@ class JeedomConnectDeviceControl {
             case 'shutter':
                 $deviceType = 'TYPE_SHUTTER';
                 if ($widget['statusInfo']['subType'] == "numeric") {
-                    if ($widget['positionAction']['id'] != null) {
+                    if (key_exists('positionAction', $widget) && $widget['positionAction']['id'] != null) {
                         if ($widget['upAction']['id'] != null && $widget['downAction']['id'] != null) {
                             $controlTemplate = "TYPE_TOGGLE_RANGE";
                         } else {
@@ -267,7 +267,7 @@ class JeedomConnectDeviceControl {
                     $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                     $device['statusText'] = $device['status'] == 'on' ? "Ouvert" : "Fermé";
                 }
-                if ($controlTemplate == "TYPE_RANGE" || $controlTemplate = "TYPE_TOGGLE_RANGE") {
+                if (($controlTemplate == "TYPE_RANGE" || $controlTemplate = "TYPE_TOGGLE_RANGE") && key_exists('positionAction', $widget)) {
                     $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['positionAction']);
                     JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 }
@@ -321,8 +321,8 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = $hasMode ? "TYPE_TEMPERATURE" : "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['setpointAction']);
-                // $device['modeStatus'] = JeedomConnectUtils::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
-                $device['modeStatus'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['modeStatus'] = ($cmdData[$widget['statusInfo']['id']] == 0) ? 'off' :
+                    JeedomConnectUtils::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
                 $device['modes'] = JeedomConnectUtils::getModes($widget['modes']);
                 $device['statusText'] = $cmdData[$widget['modeInfo']['id']];
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
