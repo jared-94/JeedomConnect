@@ -321,9 +321,12 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = $hasMode ? "TYPE_TEMPERATURE" : "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['setpointAction']);
-                $device['modeStatus'] = JeedomConnectUtils::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
+                // $device['modeStatus'] = JeedomConnectUtils::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
+                $device['modeStatus'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['modes'] = JeedomConnectUtils::getModes($widget['modes']);
                 $device['statusText'] = $cmdData[$widget['modeInfo']['id']];
+                $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
+                $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
                 break;
 
             case 'window':
