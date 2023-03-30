@@ -114,7 +114,9 @@ class JeedomConnectDeviceControl {
         $deviceType = "TYPE_UNKNOWN";
         $controlTemplate = "TYPE_STATELESS";
 
-        switch ($widget['type']) {
+        $widgetType = $widget['type'];
+
+        switch ($widgetType) {
             case 'alarm':
                 $hasArmActions = $widget['onAction']['id'] != null && $widget['offAction']['id'] != null;
                 $deviceType = "TYPE_LOCK";
@@ -189,11 +191,13 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'generic-info-string':
+            case ($widgetType == 'component' && $widget['component'] == 'text'):
                 $device['icon'] = 'ic_fluent_text_t_24_regular';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']];
                 break;
 
             case 'generic-slider':
+            case ($widgetType == 'component' && $widget['component'] == 'slider'):
                 // $device['icon'] = ''; // TODO
                 $controlTemplate = "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
@@ -201,6 +205,7 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'generic-switch':
+            case ($widgetType == 'component' && $widget['component'] == 'switch'):
                 $deviceType = "TYPE_SWITCH";
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['icon'] = 'ic_fluent_toggle_left_24_regular';
