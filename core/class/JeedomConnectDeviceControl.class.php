@@ -161,7 +161,7 @@ class JeedomConnectDeviceControl {
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['openAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['closeAction']);
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $hasStatus ? $device['status'] == 'on' ? "Ouvert" : "Fermé" : "";
+                $device['statusText'] = $hasStatus ? ($device['status'] == 'on' ? "Ouvert" : "Fermé") : "";
                 break;
 
             case 'generic-action-other':
@@ -172,7 +172,7 @@ class JeedomConnectDeviceControl {
             case 'generic-info-binary':
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                if ($device['status']) {
+                if ($device['status'] == 'on') {
                     $device['statusText'] = empty($widget['text1']) ? "1" : $widget['text1'];
                 } else {
                     $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
