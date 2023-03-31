@@ -1343,6 +1343,85 @@ class JeedomConnectUtils {
 
 
     /**
+     * Do the copy of the appPref backup file from one equipment to one or several other. Only the gridLayout part is copied
+     *
+     * @param string $eqFrom apiKey from the JC equipment source
+     * @param string $eqToList one or several apiKey (separated with a coma) of the target JC equipments
+     * @return bool true if success, otherwise false
+     */
+    public static function copyGridLayout($eqFrom, $eqToList) {
+        $allGood = true;
+        $eqTemp = JeedomConnect::byLogicalId($eqFrom, 'JeedomConnect');
+        if (!is_object($eqTemp)) {
+            JCLog::warning('Origne Id [' . $eqFrom . '] does not match any of the current JC equipment');
+            return false;
+        }
+
+        $dir = JeedomConnect::$_backup_dir . '/' . $eqFrom;
+        $lastAppPref = self::getLastFile($dir, 'appPref*');
+
+        $file = $dir . '/' . $lastAppPref;
+
+        if ($lastAppPref == null || !file_exists($file)) {
+            JCLog::info('No backup found, sorry ... ');
+            return false;
+        }
+
+        $fileContent = json_decode(file_get_contents($file), true);
+        if (!key_exists('gridLayout', $fileContent)) {
+            JCLog::info('Sorry no "gridLayout" property found in the backup File ');
+            return false;
+        }
+
+        // JCLog::debug('"gridLayout" property =>' . json_encode($fileContent['gridLayout']));
+
+        $eqToList = explode(",", $eqToList);
+
+        foreach ($eqToList as $eq) {
+            JCLog::debug('Trying to copy gridLayout backup from ' . $eqFrom . ' to ' . $eq);
+            $eqTemp = JeedomConnect::byLogicalId($eq, 'JeedomConnect');
+            if (!is_object($eqTemp)) {
+                JCLog::warning('Final Id [' . $eq . '] does not match any of the current JC equipment');
+                continue;
+            }
+
+            $fileCopy = JeedomConnect::$_backup_dir .  $eq . '/appPref-GridLayout-' . date('d-m-y') . '-' . time() . '.json';
+            JCLog::debug('Filename destination : ' . $fileCopy);
+            $copy = file_put_contents($fileCopy, json_encode(array('gridLayout' => $fileContent['gridLayout']), JSON_PRETTY_PRINT));
+
+            if (!$copy) {
+                $allGood = false;
+                JCLog::warning('Copy to [' . $eq . '] goes wrong');
+            } else {
+                JCLog::info('Copy to [' . $eq . '] - SUCCESS');
+            }
+        }
+
+        return $allGood;
+    }
+
+
+    public static function getLastFile($dir, $pattern = null) {
+
+        $latest_ctime = 0;
+        $latest_filename = null;
+
+        $d = dir($dir);
+        while (false !== ($entry = $d->read())) {
+            if ($pattern != null && !fnmatch($pattern, $entry)) continue;
+
+            $filepath = "{$dir}/{$entry}";
+            if (is_file($filepath) && filectime($filepath) > $latest_ctime) {
+                $latest_ctime = filectime($filepath);
+                $latest_filename = $entry;
+            }
+        }
+
+        return $latest_filename;
+    }
+
+
+    /**
      * Copy the configuration file from equipement $from to one or several equipement $toArray
      * If $withCustom apply, then also the customsation of the equipment will be copy
      *
