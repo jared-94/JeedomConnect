@@ -318,11 +318,13 @@ class JeedomConnectDeviceControl {
             case 'thermostat':
                 $hasMode = $widget['modeInfo']['id'] != null;
                 $deviceType = $hasMode ? "TYPE_THERMOSTAT" : "TYPE_AC_HEATER";
-                $controlTemplate = $hasMode ? "TYPE_TEMPERATURE" : "TYPE_RANGE";
+                // $controlTemplate = $hasMode ? "TYPE_TEMPERATURE" : "TYPE_RANGE";
+                $controlTemplate = $hasMode ? "TYPE_TOGGLE_RANGE" : "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['setpointAction']);
-                $device['modeStatus'] = ($cmdData[$widget['statusInfo']['id']] == 0) ? 'off' :
-                    JeedomConnectUtils::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
+                // $device['modeStatus'] = ($cmdData[$widget['statusInfo']['id']] == 0) ? 'off' :
+                // JeedomConnectUtils::experimentalGetMode($cmdData[$widget['modeInfo']['id']]);
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['modes'] = JeedomConnectUtils::getModes($widget['modes']);
                 $device['statusText'] = $cmdData[$widget['modeInfo']['id']];
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
