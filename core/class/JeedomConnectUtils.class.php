@@ -1250,7 +1250,7 @@ class JeedomConnectUtils {
             $res['options'] = $action['options'];
         if (key_exists('confirm', $action) && $action['confirm']) {
             $res['challenge'] = "ACK";
-        } else if ((key_exists('security', $action) && $action['security']) || (key_exists('pwd', $action) && $action['pwd'])) {
+        } else if ((key_exists('secure', $action) && $action['secure']) || (key_exists('pwd', $action) && $action['pwd'])) {
             $res['challenge'] = "PIN";
         }
         return $res;
