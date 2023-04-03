@@ -315,14 +315,13 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'air-con':
-                $hasMode = $widget['modeInfo']['id'] != null;
                 $hasStatus = $widget['statusInfo']['id'] != null;
                 $deviceType = "TYPE_THERMOSTAT";
                 $controlTemplate = "TYPE_TOGGLE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['setpointAction']);
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $hasMode ? $cmdData[$widget['modeInfo']['id']] : ($device['status'] == 'on' ? "ON" : "OFF");
+                $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
                 break;

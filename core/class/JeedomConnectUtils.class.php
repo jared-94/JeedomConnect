@@ -1186,6 +1186,9 @@ class JeedomConnectUtils {
                 break;
 
             case 'air-con':
+                $cmdIds = array($widget['setpointInfo']['id'] ?? null, $widget['statusInfo']['id'] ?? null);
+                break;
+
             case 'thermostat':
                 $cmdIds = array($widget['setpointInfo']['id'] ?? null, $widget['modeInfo']['id'] ?? null);
                 break;
