@@ -1174,6 +1174,9 @@ class JeedomConnectUtils {
             case 'temperature':
             case 'door':
             case 'window':
+            case ($widget['type'] == 'component' && $widget['component'] == 'slider'):
+            case ($widget['type'] == 'component' && $widget['component'] == 'switch'):
+                // case ($widget['type'] == 'component' && $widget['component'] == 'text'):
                 $cmdIds = array($widget['statusInfo']['id'] ?? null);
                 break;
 
