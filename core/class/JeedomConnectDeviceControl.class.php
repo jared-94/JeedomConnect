@@ -130,7 +130,6 @@ class JeedomConnectDeviceControl {
                 }
                 $device['statusText'] = $widget['modeInfo']['id'] != null ? $cmdData[$widget['modeInfo']['id']]
                     : ($device['status'] == 'on' ? "Armé" : "Désarmé");
-                $device['colorEnabled'] = "#8000FF00";
                 break;
 
             case 'brightness':
@@ -219,7 +218,6 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
-                $device['colorEnabled'] = "#80FF0000";
                 $icon_alert = 'ic_fluent_alert_on_24_regular';
                 $icon_alert_none = 'ic_fluent_snooze_24_regular';
                 $device['icon'] = $cmdData[$widget['statusInfo']['id']] > 0 ? $icon_alert : $icon_alert_none;
