@@ -63,7 +63,9 @@ foreach ($widgetArray as $widget) {
 
   $widgetRoomAvail[$widget['roomName']] = $widget['roomName'];
 
-  $widgetAvailOptions .= '<option value="' . $id . '" data-widget-id="' . $id . '" data-type="' . $type . '" data-room-name="' . $widget['roomName'] . '">' . $widgetName . $widgetRoom . ' [' . $id . ']</option>';
+  $component = ($widget['type'] == 'component') ? '  (' . $widget['component'] . ')'  : '';
+
+  $widgetAvailOptions .= '<option value="' . $id . '" data-widget-id="' . $id . '" data-type="' . $type . '" data-room-name="' . $widget['roomName'] . '">' . $widgetName . $widgetRoom . ' [' . $id . ']' . $component . '</option>';
 }
 asort($widgetTypeAvail);
 asort($widgetRoomAvail);

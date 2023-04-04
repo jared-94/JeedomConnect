@@ -114,7 +114,9 @@ class JeedomConnectDeviceControl {
         $deviceType = "TYPE_UNKNOWN";
         $controlTemplate = "TYPE_STATELESS";
 
-        switch ($widget['type']) {
+        $widgetType = $widget['type'];
+
+        switch ($widgetType) {
             case 'alarm':
                 $hasArmActions = $widget['onAction']['id'] != null && $widget['offAction']['id'] != null;
                 $deviceType = "TYPE_LOCK";
@@ -127,8 +129,7 @@ class JeedomConnectDeviceControl {
                     $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
                 }
                 $device['statusText'] = $widget['modeInfo']['id'] != null ? $cmdData[$widget['modeInfo']['id']]
-                    : $device['status'] == 'on' ? "Armé" : "Désarmé";
-                $device['colorEnabled'] = "#8000FF00";
+                    : ($device['status'] == 'on' ? "Armé" : "Désarmé");
                 break;
 
             case 'brightness':
@@ -159,7 +160,7 @@ class JeedomConnectDeviceControl {
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['openAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['closeAction']);
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $hasStatus ? $device['status'] == 'on' ? "Ouvert" : "Fermé" : "";
+                $device['statusText'] = $hasStatus ? ($device['status'] == 'on' ? "Ouvert" : "Fermé") : "";
                 break;
 
             case 'generic-action-other':
@@ -170,12 +171,12 @@ class JeedomConnectDeviceControl {
             case 'generic-info-binary':
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                if ($device['status']) {
+                if ($device['status'] == 'on') {
                     $device['statusText'] = empty($widget['text1']) ? "1" : $widget['text1'];
                 } else {
                     $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
                 }
-                // $device['icon'] = ''; // TODO
+                $device['icon'] = 'ic_fluent_dark_theme_24_regular';
                 break;
 
             case 'generic-info-numeric':
@@ -189,18 +190,21 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'generic-info-string':
+            case ($widgetType == 'component' && $widget['component'] == 'text'):
                 $device['icon'] = 'ic_fluent_text_t_24_regular';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']];
                 break;
 
             case 'generic-slider':
-                // $device['icon'] = ''; // TODO
+            case ($widgetType == 'component' && $widget['component'] == 'slider'):
+                $device['icon'] = 'ic_fluent_auto_fit_width_24_regular'; //'ic_fluent_split_vertical_24_regular';
                 $controlTemplate = "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['sliderAction']);
                 break;
 
             case 'generic-switch':
+            case ($widgetType == 'component' && $widget['component'] == 'switch'):
                 $deviceType = "TYPE_SWITCH";
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['icon'] = 'ic_fluent_toggle_left_24_regular';
@@ -214,7 +218,6 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                 $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
-                $device['colorEnabled'] = "#80FF0000";
                 $icon_alert = 'ic_fluent_alert_on_24_regular';
                 $icon_alert_none = 'ic_fluent_snooze_24_regular';
                 $device['icon'] = $cmdData[$widget['statusInfo']['id']] > 0 ? $icon_alert : $icon_alert_none;
@@ -242,7 +245,7 @@ class JeedomConnectDeviceControl {
             case 'shutter':
                 $deviceType = 'TYPE_SHUTTER';
                 if ($widget['statusInfo']['subType'] == "numeric") {
-                    if ($widget['positionAction']['id'] != null) {
+                    if (key_exists('positionAction', $widget) && $widget['positionAction']['id'] != null) {
                         if ($widget['upAction']['id'] != null && $widget['downAction']['id'] != null) {
                             $controlTemplate = "TYPE_TOGGLE_RANGE";
                         } else {
@@ -262,7 +265,7 @@ class JeedomConnectDeviceControl {
                     $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
                     $device['statusText'] = $device['status'] == 'on' ? "Ouvert" : "Fermé";
                 }
-                if ($controlTemplate == "TYPE_RANGE" || $controlTemplate = "TYPE_TOGGLE_RANGE") {
+                if (($controlTemplate == "TYPE_RANGE" || $controlTemplate = "TYPE_TOGGLE_RANGE") && key_exists('positionAction', $widget)) {
                     $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['positionAction']);
                     JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 }
@@ -310,6 +313,17 @@ class JeedomConnectDeviceControl {
                 break;
 
             case 'air-con':
+                $hasStatus = $widget['statusInfo']['id'] != null;
+                $deviceType = "TYPE_THERMOSTAT";
+                $controlTemplate = "TYPE_TOGGLE_RANGE";
+                JeedomConnectUtils::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
+                $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['setpointAction']);
+                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
+                $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
+                break;
+
             case 'thermostat':
                 $hasMode = $widget['modeInfo']['id'] != null;
                 $deviceType = $hasMode ? "TYPE_THERMOSTAT" : "TYPE_AC_HEATER";
