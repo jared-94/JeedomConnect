@@ -176,7 +176,7 @@ class JeedomConnectDeviceControl {
                 } else {
                     $device['statusText'] = empty($widget['text0']) ? "0" : $widget['text0'];
                 }
-                // $device['icon'] = ''; // TODO
+                $device['icon'] = 'ic_fluent_dark_theme_24_regular';
                 break;
 
             case 'generic-info-numeric':
@@ -197,7 +197,7 @@ class JeedomConnectDeviceControl {
 
             case 'generic-slider':
             case ($widgetType == 'component' && $widget['component'] == 'slider'):
-                // $device['icon'] = ''; // TODO
+                $device['icon'] = 'ic_fluent_auto_fit_width_24_regular'; //'ic_fluent_split_vertical_24_regular';
                 $controlTemplate = "TYPE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['statusInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['sliderAction']);
