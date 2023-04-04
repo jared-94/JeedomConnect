@@ -129,7 +129,7 @@ class JeedomConnectDeviceControl {
                     $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
                 }
                 $device['statusText'] = $widget['modeInfo']['id'] != null ? $cmdData[$widget['modeInfo']['id']]
-                    : $device['status'] == 'on' ? "Armé" : "Désarmé";
+                    : ($device['status'] == 'on' ? "Armé" : "Désarmé");
                 $device['colorEnabled'] = "#8000FF00";
                 break;
 
