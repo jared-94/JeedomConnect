@@ -32,8 +32,7 @@ ob_clean();
 header('Content-Type: image/jpeg');
 
 $camWidgetId = init('id');
-$widget = JeedomConnectWidget::getConfiguration($camWidgetId, 'widgetJC');
-$conf = json_decode($widget, true);
+$conf = JeedomConnectWidget::getConfiguration($camWidgetId);
 $snapUrl = getUrl($conf);
 $username = $conf['username'] ?? null ?: null;
 $pwd = $conf['password'] ?? null ?: null;

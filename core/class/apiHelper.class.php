@@ -33,6 +33,10 @@ class apiHelper {
   public static function dispatch($type, $method, $eqLogic, $param, $apiKey) {
 
     try {
+      if (is_object($eqLogic) && !$eqLogic->getIsEnable()) {
+        return array('type' => 'EQUIPMENT_DISABLE');
+      }
+
       switch ($method) {
         case 'PING':
           if (is_object($eqLogic)) {
@@ -82,7 +86,7 @@ class apiHelper {
 
         case 'SC_EXEC':
           $param['options']['tags'] = ($param['options']['tags'] ?? '') . ' eqId=' . $eqLogic->getId();
-          $result = self::execSc($param['id'], $param['options']);
+          $result = self::execSc($param['id'], $param['options'], $eqLogic->getId());
           return $result;
           break;
 
@@ -200,7 +204,9 @@ class apiHelper {
         case 'GET_HISTORY':
           return self::getHistory($param['id'], $param['options']);
           break;
-
+        case 'GET_HISTORIES':
+          return self::getHistories($param['ids'], $param['options']);
+          break;
         case 'GET_FILES':
           return self::getFiles($param['folder'], $param['recursive'], true, $param['prefixe'] ?? null);
           break;
@@ -506,6 +512,18 @@ class apiHelper {
           return null;
           break;
 
+
+        case 'SET_CMD_SHORTCUT':
+          $eqLogic->addInEqConfiguration('cmdInShortcut', $param['cmdId']);
+          return
+            JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds($param['cmdId'], false), 'SET_QSTILES_INFO');
+          break;
+
+        case 'GET_CONTROL_DEVICES':
+          $result = JeedomConnectDeviceControl::getDevices($eqLogic, $param['activeControlIds'] ?? null);
+          return JeedomConnectUtils::addTypeInPayload($result, 'SET_CONTROL_DEVICES');
+          break;
+
         default:
           return self::raiseException('[' . $type . '] - method not defined', $method);
           break;
@@ -764,6 +782,7 @@ class apiHelper {
     $payload = array(
       'pluginVersion' => $pluginVersion,
       'jeedomName' => config::byKey('name'),
+      'serverId' => config::byKey('register::id'),
       'eqName' => $eqLogic->getName(),
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'polling' => $eqLogic->getConfiguration('polling', 0),
@@ -784,6 +803,7 @@ class apiHelper {
       'objInfo' => self::getObjectData($config, false),
       'geofenceInfo' => self::getGeofencesData($eqLogic, false),
       'links' => JeedomConnectUtils::getLinks(),
+      'timezone' => date_default_timezone_get(),
       // check timelineclass for old jeedom core
       'timelineFolders' => (class_exists('timeline') && $eqLogic->getConfiguration('timelineEnabled', 1) == '1') ?  JeedomConnectUtils::getTimelineFolders() : null,
     );
@@ -952,65 +972,16 @@ class apiHelper {
     return array_unique($return);
   }
 
+  /**
+   * return detail of cmd type info from the JC config file
+   *
+   * @param string $config
+   * @param boolean $withType
+   * @return void
+   */
   public static function getCmdInfoData($config, $withType = true) {
-    $returnType = 'SET_CMD_INFO';
-
-    $cmds = cmd::byIds(self::getInfoCmdList($config));
-    $payload = array();
-
-    foreach ($cmds as $cmd) {
-      $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
-
-      $cmd_info = array(
-        'id' => $cmd->getId(),
-        'value' => $state['value'],
-        'modified' => strtotime($state['valueDate']),
-        'collectDate' => strtotime($state['collectDate']),
-        'history' => self::getHistoryValueInfo($cmd->getId())
-      );
-      array_push($payload, $cmd_info);
-    }
-
-    return (!$withType) ? $payload : JeedomConnectUtils::addTypeInPayload($payload, $returnType);
-  }
-
-  private static function getHistoryValueInfo($cmdId) {
-
-    $cmd = cmd::byId($cmdId);
-
-    if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
-      $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
-      $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
-
-      if ($historyStatistique['avg'] == 0 && $historyStatistique['min'] == 0 && $historyStatistique['max'] == 0) {
-        $val = $cmd->execCmd();
-        $averageHistoryValue = round($val, 1);
-        $minHistoryValue = round($val, 1);
-        $maxHistoryValue = round($val, 1);
-      } else {
-        $averageHistoryValue = round($historyStatistique['avg'], 1);
-        $minHistoryValue = round($historyStatistique['min'], 1);
-        $maxHistoryValue = round($historyStatistique['max'], 1);
-      }
-
-      $startTendance = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculTendance') . ' hour'));
-      $tendanceData = $cmd->getTendance($startTendance, date('Y-m-d H:i:s'));
-      if ($tendanceData > config::byKey('historyCalculTendanceThresholddMax')) {
-        $tendance = "up";
-      } else if ($tendanceData < config::byKey('historyCalculTendanceThresholddMin')) {
-        $tendance = "down";
-      } else {
-        $tendance = "stable";
-      }
-    }
-
-
-    return array(
-      'averageValue' => $averageHistoryValue ?? 0,
-      'minValue' => $minHistoryValue ?? 0,
-      'maxValue' => $maxHistoryValue ?? 0,
-      'tendance' => $tendance ?? null,
-    );
+    $cmdsIds = self::getInfoCmdList($config);
+    return JeedomConnectUtils::getCmdInfoDataIds($cmdsIds, $withType);
   }
 
   // SCENARIO FUNCTIONS
@@ -1720,36 +1691,12 @@ class apiHelper {
   }
 
   private static function addGlobalWidgets($widgets) {
-    $newConfWidget = array();
-    $widgetsConfigJonFile = json_decode(file_get_contents(JeedomConnect::$_plugin_config_dir . 'widgetsConfig.json'), true);
 
     foreach ($widgets as $i => $widget) {
-      $imgPath = '';
-      if ($widget['type'] == 'component') {
-        foreach ($widgetsConfigJonFile['components'] as $config) {
-          if ($config['type'] == $widget['component']) {
-            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-            break;
-          }
-        }
-      } else {
-
-        foreach ($widgetsConfigJonFile['widgets'] as $config) {
-          if ($config['type'] == $widget['type']) {
-            $imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-            break;
-          }
-        }
-      }
-      $newConfWidget['imgPath'] = $imgPath;
-
       $widgetId = JeedomConnectWidget::incrementIndex();
       $widget['id'] = intval($widgetId);
       $widgets[$i]['id'] = $widgetId;
-
-      $newConfWidget['widgetJC'] = json_encode($widget);
-
-      config::save('widget::' . $widgetId, $newConfWidget, JeedomConnectWidget::$_plugin_id);
+      JeedomConnectWidget::saveConfig($widget, $widgetId);
     }
 
     $result = array(
@@ -2283,7 +2230,7 @@ class apiHelper {
             'value' => $event['option']['value'],
             'modified' => strtotime($event['option']['valueDate']),
             'collectDate' => strtotime($event['option']['collectDate']),
-            'history' => self::getHistoryValueInfo($event['option']['cmd_id'])
+            'history' => JeedomConnectUtils::getHistoryValueInfo($event['option']['cmd_id'])
           );
           array_push($result_cmd['payload'], $cmd_info);
         }
@@ -2320,6 +2267,40 @@ class apiHelper {
     }
     JCLog::debug('Send history (' . count($result['payload']['data']) . ' points)');
     return $result;
+  }
+
+  private static function getHistories($ids, $options = null) {
+    $historyList = array(
+      'type' => 'SET_HISTORIES',
+      'payload' => array()
+    );
+    foreach ($ids as $id) {
+      $history = array();
+      if ($options == null) {
+        $history = history::all($id);
+      } else {
+        $startTime = date('Y-m-d H:i:s', $options['startTime']);
+        $endTime = date('Y-m-d H:i:s', $options['endTime']);
+        JCLog::debug('Get history for cmd id: ' . $id . ' from: ' . $startTime . ' to ' . $endTime);
+        $history = history::all($id, $startTime, $endTime);
+      }
+
+      $result =  array(
+        'id' => $id,
+        'data' => array()
+      );
+
+      foreach ($history as $h) {
+        array_push($result['data'], array(
+          'time' => strtotime($h->getDateTime()),
+          'value' => $h->getValue()
+        ));
+      }
+
+      array_push($historyList['payload'], $result);
+    }
+    JCLog::debug('Send histories');
+    return $historyList;
   }
 
   // BATTERIES
@@ -2818,36 +2799,46 @@ class apiHelper {
   }
 
   // MANAGE SC
-  private static function execSc($id, $options = null) {
-    if ($options == null) {
-      $options = array(
-        'action' => 'start',
-        'scenario_id' => $id
-      );
-    }
+  private static function execSc($id, $options = null, $eqLogicId = null) {
+    if ($options == null) $options = array();
+
     try {
       $scenario = scenario::byId($id);
       if (is_object($scenario)) {
-        $textUser = '';
-        if (key_exists('user_login', $options)) {
-          $textUser =  ' par l\'utilisateur ' . $options['user_login'];
-          $options["tags"] = ($options["tags"] ?? '') . ' userJC="' . $options['user_login'] . '"';
-        }
-
         if (key_exists('user_id', $options)) {
           /** @var user $user */
           $user = user::byId($options['user_id']);
           if (!$scenario->hasRight('x', $user)) {
-            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . ' interdit pour l\'utilisateur "' . $user->getLogin() . '" - droit limité');
+            JCLog::warning('/!\ scenario ' . $scenario->getHumanName() . " interdit pour l'utilisateur '" . $user->getLogin() . "' - droit limité");
             return self::raiseException('Vous n\'avez pas le droit d\'exécuter ce scenario ' . $scenario->getHumanName());
           }
         }
 
-        if (!key_exists('action', $options)) $options['action'] = 'start';
-        if (!key_exists('scenario_id', $options)) $options['scenario_id'] = $id;
+        $_tags = array();
+        if (key_exists('tags', $options)) {
+          $args = arg2array($options["tags"]);
+          foreach ($args as $key => $value) {
+            $valueTmp = trim($value);
+            $tmp = scenarioExpression::setTags($valueTmp, $scenario);
+            $_tags['#' . trim(trim($key), '#') . '#'] = $tmp;
+          }
+        }
 
-        JCLog::info('Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
-        scenarioExpression::createAndExec('action', 'scenario', $options);
+        $textUser = '';
+        if (key_exists('user_login', $options)) {
+          $textUser =  " par l'utilisateur " . $options['user_login'];
+          $_tags['#userJC#'] = $options['user_login'];
+        }
+
+        $scenario->setTags($_tags);
+
+        $scenario_return = $scenario->launch('JeedomConnect', 'Lancement du scénario ' . $scenario->getHumanName() . ' (' . $id . ')' . $textUser);
+
+        //if scenario returns a string, then display a toaster
+        if (is_string($scenario_return)) {
+          $toaterCmd = JeedomConnectCmd::byEqLogicIdAndLogicalId($eqLogicId, 'toaster');
+          if (is_object($toaterCmd)) $toaterCmd->execCmd(array('message' => $scenario_return));
+        }
       } else {
         throw new Exception("Le scenario $id n'existe pas");
       }
@@ -3014,6 +3005,13 @@ class apiHelper {
 
     if (isset($infos['volumes'])) {
       self::setVolume($eqLogic, $infos['volumes']);
+    }
+
+    if (isset($infos['smsMessage'])) {
+      $eqLogic->checkAndUpdateCmd('smsMessage', $infos['smsMessage']);
+    }
+    if (isset($infos['smsNumber'])) {
+      $eqLogic->checkAndUpdateCmd('smsNumber', $infos['smsNumber']);
     }
   }
 

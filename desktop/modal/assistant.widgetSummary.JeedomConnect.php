@@ -41,6 +41,14 @@ require_once dirname(__FILE__) . '/../../core/class/JeedomConnectWidget.class.ph
       <th data-sorter="checkbox" data-filter="false">{{Actif}}</th>
       <th data-sorter="select-text" data-filter="false" style="width:140px;">{{Affichage forcé}}</th>
       <th data-sorter="checkbox" data-filter="false">{{Bloquer détails}}</th>
+      <th data-sorter="checkbox" data-filter="false">{{Masquer l'appareil}}
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="hideControlDevice" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="hideControlDevice" style="width:22px;"><i class="fas fa-times"></i></a>
+      </th>
+      <th data-sorter="checkbox" data-filter="false">{{Contrôle verr.}}
+        <a class="btn btn-success btn-xs jcMassAction" data-jcaction="checked" data-jctype="allowOnUnlock" style="width:22px;"><i class="fas fa-check"></i></a>
+        <a class="btn btn-danger btn-xs jcMassAction" data-jcaction="unchecked" data-jctype="allowOnUnlock" style="width:22px;"><i class="fas fa-times"></i></a>
+      </th>
       <th>{{Nb Eq}}</th>
       <th data-sorter="false" data-filter="false" style="text-align:center;"><i class="fas fa-trash-alt"></i></th>
     </tr>

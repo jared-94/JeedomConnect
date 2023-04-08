@@ -90,7 +90,7 @@ foreach ($widgetArray as $widget) {
 	if ($widgetType != 'component') {
 
 		//used later by the filter select item
-		if (!in_array($widgetType, $widgetTypeArray, true)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
+		if (!in_array($widgetType, $widgetTypeArray, true) && key_exists($widgetType, $allConfig)) $widgetTypeArray[$widgetType] = $allConfig[$widgetType];
 
 		$styleHide = ($jcFilter == '') ? '' : ($jcFilter == $widgetType ? '' : 'style="display:none;"');
 
@@ -335,13 +335,22 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 		</div>
 		<!--  FIN --- PANEL DES EQUIPEMENTS  -->
 
+
+		<!-- Champ de recherche widget -->
+		<div class="input-group" style="margin:10px 5px;">
+			<input class="form-control roundedLeft jcInSearch" placeholder="{{Rechercher sur le nom d'un élément ou son id}}" id="in_search" value="<?= $widgetSearch ?>" />
+			<div class="input-group-btn">
+				<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_search" style=" width:30px"><i class="fas fa-times"></i></a>
+			</div>
+		</div>
+
 		<!--   PANEL DES WIDGETS  -->
 		<legend>
 			<a class="accordion-toggle" data-toggle="collapse" href="#collapseWidgets">
 				<i class="fas fa-table"></i> {{Mes widgets}} <span id="coundWidget"></span>
 			</a>
 			<div class="pull-right">
-				<span style="margin-right:10px">{{Trie}}
+				<span style="margin-right:10px">{{Tri}}
 					<select id="widgetOrder" class="updateOrderWidget" style="width:100px">
 						<?php
 						echo $optionsOrderBy;
@@ -361,13 +370,9 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 				</span>
 			</div>
 		</legend>
-		<!-- Champ de recherche widget -->
 		<div id="collapseWidgets" class="panel-collapse collapse in">
-			<div class="input-group" style="margin:10px 5px;">
-				<input class="form-control roundedLeft jcInSearch" data-type="widget" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchWidget" value="<?= $widgetSearch ?>" />
-				<div class="input-group-btn">
-					<a id="bt_resetSearchWidget" class="btn roundedRight jcResetSearch" data-input="in_searchWidget" style=" width:30px"><i class="fas fa-times"></i></a>
-				</div>
+			<div class="input-group" style="display:none">
+				<!-- leave it empty -->
 			</div>
 			<!-- Liste des widgets du plugin -->
 			<div class="eqLogicThumbnailContainer" id="widgetsList-div" style="background-color:white">
@@ -394,15 +399,11 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 			</div>
 		</legend>
 		<div id="collapseComponents" class="panel-collapse collapse in">
-			<!-- Champ de recherche composant -->
-			<div class="input-group" style="margin:10px 5px;">
-				<input class="form-control roundedLeft jcInSearch" data-type="component" placeholder="{{Rechercher sur le nom ou l'id}}" id="in_searchComponent" value="<?= $componentSearch ?>" />
-				<div class="input-group-btn">
-					<a id="bt_resetSearchComponent" class="btn roundedRight jcResetSearch" data-input="in_searchComponent" style="width:30px"><i class="fas fa-times"></i></a>
-				</div>
+			<div class="input-group" style="display:none">
+				<!-- leave it empty -->
 			</div>
-			<!-- Liste des composant du plugin -->
 
+			<!-- Liste des composant du plugin -->
 			<div class="eqLogicThumbnailContainer" id="componentsList-div" style="background-color:white">
 				<?php
 				echo $listComponent;
@@ -481,8 +482,8 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Options}}</label>
 								<div class="col-sm-7">
-									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" checked />{{Activer}}</label>
-									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked />{{Visible}}</label>
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" />{{Activer}}</label>
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" />{{Visible}}</label>
 								</div>
 							</div>
 
@@ -599,7 +600,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Accès à la timeline}}</label>
 								<div class="col-sm-7">
-									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" checked type="checkbox" placeholder="{{}}">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="timelineEnabled" type="checkbox" placeholder="{{}}">
 								</div>
 							</div>
 
@@ -621,7 +622,7 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 								<label class="col-sm-3 control-label">{{Commande info Volume}}</label>
 								<div class="col-sm-7">
 									<select class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="volume">
-										<option value="all" selected>{{Toutes}}</option>
+										<option value="all">{{Toutes}}</option>
 										<?php
 										foreach (JeedomConnect::$_volumeType as $key => $value) {
 											echo '<option value="' . $key . '">' . $value . '</option>';

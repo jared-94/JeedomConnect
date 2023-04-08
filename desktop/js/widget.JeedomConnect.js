@@ -205,6 +205,9 @@ function setWidgetModalData(options) {
                     $("#confirm-" + option.id).prop('checked', options.widget[option.id].confirm ? "checked" : "");
                     $("#secure-" + option.id).prop('checked', options.widget[option.id].secure ? "checked" : "");
                     $("#pwd-" + option.id).prop('checked', options.widget[option.id].pwd ? "checked" : "");
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 } else {
                     $("#confirm-div-" + option.id).css('display', 'none');
                     $("#secure-div-" + option.id).css('display', 'none');
@@ -215,6 +218,9 @@ function setWidgetModalData(options) {
                     $("#" + option.id + "-maxInput").css('display', '');
                     $("#" + option.id + "-minInput").val(options.widget[option.id].minValue);
                     $("#" + option.id + "-maxInput").val(options.widget[option.id].maxValue);
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 } else {
                     $("#" + option.id + "-minInput").css('display', 'none');
                     $("#" + option.id + "-maxInput").css('display', 'none');
@@ -225,18 +231,25 @@ function setWidgetModalData(options) {
                 } else {
                     $("#invert-div-" + option.id).css('display', 'none');
                 }
-                if (options.widget[option.id].subType == 'numeric') {
-                    $("#" + option.id + "-unitInput").css('display', '');
-                    $("#" + option.id + "-unitInput").val(options.widget[option.id].unit);
-                } else {
-                    $("#" + option.id + "-unitInput").css('display', 'none');
-                }
-                if (options.widget[option.id].subType == 'slider') {
+                if (['slider', 'numeric'].includes(options.widget[option.id].subType)) {
                     $("#" + option.id + "-stepInput").css('display', '');
                     $("#" + option.id + "-stepInput").val(options.widget[option.id].step);
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
                 }
                 else {
                     $("#" + option.id + "-stepInput").css('display', 'none');
+                }
+                if (options.widget[option.id].subType == 'numeric') {
+                    $("#" + option.id + "-unitInput").css('display', '');
+                    $("#" + option.id + "-unitInput").val(options.widget[option.id].unit);
+                    $("#" + option.id + "-input").css('width', '450px');
+                    $("#" + option.id + "-input").css({
+                        'width': $("#" + option.id + "-input").width() * 0.85
+                    })
+                } else {
+                    $("#" + option.id + "-unitInput").css('display', 'none');
                 }
 
             } else if (option.category == "scenario" & options.widget[option.id] !== undefined) {
@@ -314,8 +327,7 @@ function setWidgetModalData(options) {
 
                 });
             } else if (option.category == "security") {
-
-                $('.jcSecurityDiv').setValues({ security: options.widget.security }, '.jcItemAttr');
+                $('.jcSecurityDiv-' + option.id).setValues({ security: options.widget[option.id] }, '.jcItemAttr-' + option.id);
             }
         });
     }
@@ -368,8 +380,7 @@ function refreshAddWidgets() {
     items.push(option);
 
     //visible
-    if (itemType == 'widget') {
-        option = `<li><div class='form-group'>
+    option = `<li><div class='form-group'>
         <label class='col-xs-3 '>Visible sous condition
             <sup>
                 <i class="fas fa-question-circle floatright" style="color: var(--al-info-color) !important;" title="Permet d'ajouter une condition pour afficher ou masquer cet élément (uniquement si 'actif' est coché)"></i>
@@ -377,39 +388,38 @@ function refreshAddWidgets() {
         </label>
         <div class='col-xs-9'>
         <div class='input-group'>
-        <input style="width:340px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
+        <input style="width:600px;" class="roundedLeft" id="visibility-cond-input" value="" cmdtype="info" cmdsubtype="undefined" configtype="info" configsubtype="undefined" />
         
         <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('widgetModal #visibility-cond', 'info', 'undefined', 'undefined', true);">
         <i class='fas fa-list-alt'></i></a>`;
 
-        // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
-        //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
-        //     <i class="fas fa-plus-square"></i> </a>
-        //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
-        // if (widget.variables) {
-        //     widget.variables.forEach(v => {
-        //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
-        //     });
-        // }
-        // option += `</ul></div >
-        option += `</div></div></div></li>`;
-        items.push(option);
-    }
+    // option += `<div class="dropdown" id="visibility-cond-select" style="display:inline !important;" >
+    //     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
+    //     <i class="fas fa-plus-square"></i> </a>
+    //     <ul class="dropdown-menu infos-select" input="visibility-cond-input">`;
+    // if (widget.variables) {
+    //     widget.variables.forEach(v => {
+    //         option += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
+    //     });
+    // }
+    // option += `</ul></div >
+    option += `</div></div></div></li>`;
+    items.push(option);
+
 
     //Room
-    if (itemType == 'widget') {
-        option = `<li><div class='form-group'>
+    option = `<li><div class='form-group'>
         <label class='col-xs-3 ${type == 'room' ? 'required' : ''}'>Pièce</label>
-        <div class='col-xs-9'><div class='input-group'><select style="width:340px;" id="room-input" value=''>
+        <div class='col-xs-9'><div class='input-group'><select style="width:600px;" id="room-input" value=''>
         <option value="none">Sélection  d'une pièce</option>`;
-        option += roomListOptions;
+    option += roomListOptions;
 
-        if (type == 'room') {
-            option += `<option value="global">Global</option>`;
-        }
-        option += `</select></div></div></div></li>`;
-        items.push(option);
+    if (type == 'room') {
+        option += `<option value="global">Global</option>`;
     }
+    option += `</select></div></div></div></li>`;
+    items.push(option);
+
     let missingOptions = false;
     widget.options.forEach(option => {
         var required = (option.required) ? "required" : "";
@@ -423,7 +433,7 @@ function refreshAddWidgets() {
             isDisabled = isJcExpert ? '' : 'disabled';
             curOption += `<table><tr class="cmd">
             <td>
-              <input class='input-sm form-control roundedLeft needRefresh' style="width:250px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled} configtype='${option.type}' configsubtype='${option.subtype}' configlink='${option.value}'>
+              <input class='input-sm form-control roundedLeft needRefresh' style="width:600px;" id="${option.id}-input" value='' cmdId='' cmdType='' cmdSubType='' ${isDisabled} configtype='${option.type}' configsubtype='${option.subtype}' configlink='${option.value}'>
               <td>
                  <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', '${option.type}', '${option.subtype}', '${option.value}');">
                     <i class='fas fa-list-alt'></i></a>
@@ -450,16 +460,16 @@ function refreshAddWidgets() {
                     <i class='mdi mdi-numeric' title="Sécuriser avec un code"></i><input type="checkbox" style="margin-left:5px;" id="pwd-${option.id}"  ></div>
             </td>
             <td>
-                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min">
+                <input type="number" style="width:50px; display:none;" id="${option.id}-minInput" value='' placeholder="Min" title="Min">
             </td>
             <td>
-                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max">
+                <input type="number" style="width:50px;margin-left:5px; display:none;" id="${option.id}-maxInput" value='' placeholder="Max" title="Max">
             </td>
             <td>
-                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step">
+                <input type="number" step="0.1" style="width:50px;margin-left:5px; display:none;" id="${option.id}-stepInput" value='1' placeholder="Step" title="Step">
             </td>
             <td>
-                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité">
+                <input style="width:50px; margin-left:5px; display:none;" id="${option.id}-unitInput" value='' placeholder="Unité" title="Unité" >
             </td></tr></table>
                     `;
 
@@ -469,14 +479,14 @@ function refreshAddWidgets() {
             type = (option.subtype != undefined) ? option.subtype : 'text';
             if (option.subtype == "multiline") {
                 curOption += `<div class='input-group'>
-        <div style="display:flex"><textarea style="width:340px;" id="${option.id}-input" value=''></textarea>`;
+        <div style="display:flex"><textarea style="width:600px;" id="${option.id}-input" value=''></textarea>`;
             } else {
                 var min = (option.min || false) ? `min="${option.min}"` : '';
                 var max = (option.max || false) ? `max="${option.max}"` : '';
                 var defaultValue = (option.default || false) ? `default="${option.default}"` : '';
 
                 curOption += `<div class='input-group'>
-        <div style="display:flex"><input type="${type}" style="width:340px;" ${min} ${max} ${defaultValue} id="${option.id}-input" value='${option.default || ''}'>`;
+        <div style="display:flex"><input type="${type}" style="width:600px;" ${min} ${max} ${defaultValue} id="${option.id}-input" value='${option.default || ''}'>`;
             }
 
             if (option.id == 'name' || (option.useCmd != 'undefined' && option.useCmd)) {
@@ -485,7 +495,7 @@ function refreshAddWidgets() {
               <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
                 <i class="fas fa-plus-square"></i>
               </a>
-              <ul class="dropdown-menu infos-select" input="${option.id}-input">`;
+              <ul class="dropdown-menu infos-select" input="${option.id}-input" style="left: -600px !important;">`;
                 if (widget.variables) {
                     widget.variables.forEach(v => {
                         curOption += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
@@ -504,7 +514,7 @@ function refreshAddWidgets() {
          </div></div></li>`;
         } else if (option.category == "stringList") {
             var classSub = (option.id == "subtitle") ? "subtitleSelected" : "";
-            curOption += '<div class="input-group"><select style="width:340px;" id="' + option.id + '-input" class="' + classSub + '">';
+            curOption += '<div class="input-group"><select style="width:600px;" id="' + option.id + '-input" class="' + classSub + '">';
             if (!required) {
                 curOption += `<option value="none">Aucun</option>`;
             }
@@ -514,13 +524,13 @@ function refreshAddWidgets() {
             if (option.id == "subtitle") {
                 curOption += `<option value="custom">Personnalisé</option></select>`;
                 curOption += `<div style="display:flex">
-  					<textarea style="width:340px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'></textarea>`;
+  					<textarea style="width:600px; margin-top:5px; display:none;" id="subtitle-input-value" value='none'></textarea>`;
 
                 curOption += `
             <div class="dropdown" id="subtitle-select" style=" display:none;">
             <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height" >
             <i class="fas fa-plus-square"></i> </a>
-            <ul class="dropdown-menu infos-select" input="subtitle-input-value">`;
+            <ul class="dropdown-menu infos-select" input="subtitle-input-value" style="left: -600px !important;">`;
                 if (widget.variables) {
                     widget.variables.forEach(v => {
                         curOption += `<li info="${v.name}" onclick="infoSelected('#${v.name}#', this)"><a href="#">#${v.name}#</a></li>`;
@@ -569,8 +579,8 @@ function refreshAddWidgets() {
               </i> Ajouter</a></span><div id="imgList-option"></div>`;
             curOption += `</div></div></li>`;
         } else if (option.category == "scenario") {
-            curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled>
-    <span class='input-group-btn'><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
+            curOption += `<div class='input-group'><input class='input-sm form-control roundedLeft' id="${option.id}-input" value='' scId='' disabled style="width: 600px;">
+    <span class='input-group-btn' style="position: absolute;left: 600px;"><a class='btn btn-default btn-sm cursor bt_selectTrigger selectScenario' tooltip='Choisir un scenario' data-id="${option.id}" data-related="${option.id}-input">
     <i class='fas fa-list-alt'></i></a></span></div>
       <div id='optionScenario-${option.id}' style='display:none;'>
         <div class="input-group input-group-sm" style="width: 100%">
@@ -605,7 +615,7 @@ function refreshAddWidgets() {
             curOption += `</div></div></div></li>`;
         } else if (option.category == "security") {
 
-            curOption += getHtmlItem(option.category, { id: 0, from: option.category, key1: option.category });
+            curOption += getHtmlItem(option.category, { id: option.id, from: option.category, key1: option.category });
 
         } else if (option.category == "actionList") {
             curOption += `<div class='input-group'>
@@ -1020,12 +1030,12 @@ function refreshMoreInfos() {
         item.index = i;
         var unit = item.unit || '';
         div += `<div class='input-group moreInfosItem' style="border-width:1px; border-style:dotted;" id="moreInfo-${item.id}" data-id="${item.id}">
-          <input style="width:260px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled>
-          <label style="position:absolute; margin-left:5px; width: 40px;"> Nom : </label>
-          <input style="width:80px;position:absolute; margin-left:45px;" id="${item.id}-name-input" title='${item.name}' value='${item.name}'>
-          <label style="position:absolute; margin-left:130px; width: 42px;"> Unité : </label>
-          <input style="width:80px;position:absolute; margin-left:175px;" id="${item.id}-unit-input" value='${unit}'>
-          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-left:265px;cursor:grab!important;" aria-hidden="true"></i>
+          <input style="width:600px;" class='input-sm form-control roundedLeft' id="${item.id}-input" value='${item.id}' disabled><br>
+          <label style="position:relative; margin-left:25px; width: 46px;"> Nom : </label>
+          <input style="width:450px;position:absolute; " id="${item.id}-name-input" title='${item.name}' value='${item.name}'><br>
+          <label style="position:relative; margin-left:25px; width: 42px;"> Unité : </label>
+          <input style="width:80px;position:absolute; " id="${item.id}-unit-input" value='${unit}'>
+          <i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-left:460px;cursor:grab!important;" aria-hidden="true"></i>
           <i class="mdi mdi-minus-circle" style="color:rgb(185, 58, 62);font-size:24px;position:absolute; margin-left:5px;" aria-hidden="true" onclick="deleteMoreInfo('${item.id}');"></i>
           </div>`;
     });
@@ -1241,7 +1251,7 @@ function getHtmlItem(type, option) {
         option.id = option.from + '-' + option.id;
         html = `
         <div class="input-group input-group-sm" style="width: 100%">
-              <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:250px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
+              <input class='input-sm form-control roundedLeft needRefresh actionListAttr' style="width:600px;" id="${option.id}-input" data-l1key="options" data-l2key="name" value='' cmdId='' cmdType='action' cmdSubType='other' ${isDisabled} configtype='action' configsubtype='other' configlink='${option.value}'>
               <input class='input-sm form-control roundedLeft actionListAttr' id="${option.id}-id" value='' data-l1key="options" data-l2key="id" style="display:none">              
                <a class='btn btn-default btn-sm cursor bt_selectTrigger' tooltip='Choisir une commande' onclick="selectCmd('${option.id}', 'action', 'other', '');">
                     <i class='fas fa-list-alt'></i></a>  
@@ -1338,15 +1348,15 @@ function getHtmlItem(type, option) {
 
     } else if (type == 'security') {
         html = `
-        <div class="jcSecurityDiv" style="width: 100%;display: flex;">
+        <div class="jcSecurityDiv-${option.id}" style="width: 100%;display: flex;">
                 <div class="input-group input-group-sm">
                     <span class="input-group-addon roundedLeft" style="width: 100px">Sécurité</span>
                 </div>
                 <div style="padding-left: 10px;">
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
-                    <label class="radio-inline"><input type="radio" class="jcItemAttr" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="confirm-${option.id}" data-l1key="${option.key1 || 'options'}" data-l2key="confirm"><i class='fa fa-question' title="Demander confirmation"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="secure-${option.id}"  data-l1key="${option.key1 || 'options'}" data-l2key="secure"><i class='fa fa-fingerprint' title="Sécuriser avec empreinte digitale"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="pwd-${option.id}"     data-l1key="${option.key1 || 'options'}" data-l2key="pwd"><i class='mdi mdi-numeric' title="Sécuriser avec un code"></i></label>
+                    <label class="radio-inline"><input type="radio" class="jcItemAttr-${option.id}" name="secure-radio-${option.id}" id="none-${option.id}"  checked >Aucun</label>
                 </div>
             </div>`;
 
@@ -1585,7 +1595,7 @@ $(".widgetMenu .saveWidget").click(function () {
                 });
             } else if (option.category == "security") {
 
-                result[option.id] = $('.jcSecurityDiv').getValues('.jcItemAttr')[0]['security'] || [];
+                result[option.id] = $('.jcSecurityDiv-' + option.id).getValues('.jcItemAttr-' + option.id)[0]['security'] || [];
 
             } else if (option.category == "actionList") {
                 var tmp = []
@@ -1609,18 +1619,19 @@ $(".widgetMenu .saveWidget").click(function () {
             result.type = $("#widgetsList-select").val();
             result.blockDetail = $("#blockDetail-input").is(':checked');
 
-            visibilityCondData = $('#widgetModal #visibility-cond-input').val();
-            if (visibilityCondData != '') {
-                getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
-                    result.visibilityCond = cmdResult;
-                });
-            }
-
         }
         else {
             result.type = 'component';
             result.component = $("#widgetsList-select").val();
         }
+
+        visibilityCondData = $('#widgetModal #visibility-cond-input').val();
+        if (visibilityCondData != '') {
+            getCmdIdFromHumanName({ alert: '#widget-alert', stringData: visibilityCondData }, function (cmdResult, _params) {
+                result.visibilityCond = cmdResult;
+            });
+        }
+
         widgetType = $("#widgetsList-select").val();
 
         widgetEnable = $('#enable-input').is(":checked");
@@ -1686,7 +1697,7 @@ $(".widgetMenu .saveWidget").click(function () {
 
                             url = getCustomParamUrl(url, vars);
                             modifyWithoutSave = false
-                            loadPage(url)
+                            jeedomUtils.loadPage(url)
                         }
                         else {
 
@@ -1778,7 +1789,7 @@ $(".widgetMenu .removeWidget").click(function () {
                     }
                     modifyWithoutSave = false
                     url += '&saveSuccessFull=1'
-                    loadPage(url)
+                    jeedomUtils.loadPage(url)
                 }
             }
         })

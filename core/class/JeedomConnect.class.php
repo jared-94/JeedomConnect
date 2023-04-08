@@ -22,6 +22,7 @@ require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectUtils.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectLogs.class.php';
+require_once dirname(__FILE__) . '/JeedomConnectDeviceControl.class.php';
 
 class JeedomConnect extends eqLogic {
 
@@ -464,8 +465,7 @@ class JeedomConnect extends eqLogic {
 				// ajax::error('Erreur - pas d\'équipement trouvé');
 				JCLog::debug('Erreur - pas de widget trouvé avec l\'id ' . $widget['id']);
 			} else {
-				$configJson = $widgetData[0]['widgetJC'] ?? '';
-				$widgetConf = json_decode($configJson, true);
+				$widgetConf = $widgetData[0]['widgetJC'] ?? '';
 
 				foreach ($widgetConf as $key2 => $value2) {
 					$widget[$key2] = $value2;
@@ -531,8 +531,7 @@ class JeedomConnect extends eqLogic {
 					if (empty($newWidgetData)) {
 						// ajax::error('Erreur - pas d\'équipement trouvé');
 					} else {
-						$newWidgetJC = $newWidgetData[0]['widgetJC'] ?? '';
-						$newWidgetConf = json_decode($newWidgetJC, true);
+						$newWidgetConf = $newWidgetData[0]['widgetJC'] ?? '';
 
 						$newWidgetConf['id'] = intval($newWidgetConf['id']);
 						$newWidgetConf['index'] = 999999999;
@@ -705,6 +704,32 @@ class JeedomConnect extends eqLogic {
 		return $newConfig;
 	}
 
+
+	public function getGeneratedWidget($widgetId = null, $_force = false) {
+
+		$conf = $this->getGeneratedConfigFile($_force);
+
+		if (!key_exists('payload', $conf) || !key_exists('widgets', $conf['payload'])) {
+			JCLog::warning('bad configuration file, no payload nor widgets');
+			return null;
+		}
+
+		$widgetsAll = $conf['payload']['widgets'];
+
+		$widgets = array();
+		foreach ($widgetsAll as $widget) {
+
+			if ($widgetId != null && $widget['id'] == $widgetId) {
+				return $widget;
+			}
+
+			$widgets[] =  $widget;
+		}
+
+		return $widgets;
+	}
+
+
 	public static function getChoiceData($cmdId) {
 		$choice = array();
 
@@ -749,7 +774,7 @@ class JeedomConnect extends eqLogic {
 		if (is_null($conf)) return $ids;
 
 		foreach ($conf['payload']['widgets'] as $item) {
-			array_push($ids, $item['id']);
+			$ids[] = $item['id'];
 		}
 
 		JCLog::debug(' fx  getWidgetId -- result final ' . json_encode($ids));
@@ -758,24 +783,28 @@ class JeedomConnect extends eqLogic {
 
 	public function isWidgetIncluded($widgetId) {
 
-		$ids = $this->getWidgetId();
+		$conf = $this->getGeneratedConfigFile();
+		if (is_null($conf)) return false;
 
-		if (in_array($widgetId, $ids)) {
-			return true;
+		foreach ($conf['payload']['widgets'] ?? array() as $item) {
+			if ($item['id'] == $widgetId) return true;
 		}
 		return false;
 	}
 
-	public function getJeedomObject($id) {
+	public static function getWidgetCountByEq($widgetId) {
 
-		$obj = jeeObject::byId($id);
+		$nb = 0;
+		$names = array();
 
-		if (!is_object($obj)) {
-			return null;
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			if ($eqLogic->isWidgetIncluded($widgetId)) {
+				$nb++;
+				$names[] = $eqLogic->getName();
+			}
 		}
 
-		$result = array("id" => intval($obj->getId()), "name" => $obj->getName());
-		return $result;
+		return array($nb, $names);
 	}
 
 	public function updateConfig() {
@@ -1229,6 +1258,9 @@ class JeedomConnect extends eqLogic {
 			$this->setLogicalId($this->getConfiguration('apiKey'));
 			$this->generateQRCode();
 		}
+
+		$this->setConfiguration('volume', 'all');
+		$this->setIsEnable(1);
 	}
 
 	public function postInsert() {
@@ -1309,6 +1341,17 @@ class JeedomConnect extends eqLogic {
 		if ($this->getConfiguration('platformOs') != '') {
 			$this->createCommands($this->getConfiguration('platformOs'));
 		}
+
+		$confCmd = $this->getConfiguration('cmdInShortcut');
+		$cmd_ids = ($confCmd != '') ? explode(",", $confCmd) : array();
+		$this->setListener($cmd_ids);
+
+		$confControls = $this->getConfiguration('activeControlIds');
+		JCLog::debug('------ confControls ' . $confControls);
+		$cmdControls_ids = ($confControls != '') ? JeedomConnectDeviceControl::getInfoCmdIdsFromControls($this, explode(",", $confControls))  : array();
+
+		JCLog::debug('------ cmdControls_ids ' . json_encode($cmdControls_ids));
+		$this->setListener($cmdControls_ids, 'sendActiveControl');
 	}
 
 	public function preRemove() {
@@ -1656,210 +1699,146 @@ class JeedomConnect extends eqLogic {
 		$eqMap->save();
 	}
 
+	public function addInEqConfiguration($key, $value, $separator = ',') {
+
+		if (is_array($value)) {
+			foreach ($value as $val) {
+				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
+				$arr[] = $val;
+			}
+			$str = implode($separator, array_filter($arr));
+		} else {
+			$str = $value;
+		}
+
+		$this->setConfiguration($key, $str);
+		$this->save();
+
+		return null;
+	}
+
+
+	/**
+	 * @return listener
+	 */
+	private function getListener($fx = 'sendCmdInfoToShortcut') {
+		return listener::byClassAndFunction(__CLASS__, $fx, array('id' => $this->getId()));
+	}
+
+	private function removeListener($fx) {
+		$listener = $this->getListener($fx);
+		if (is_object($listener)) {
+			$listener->remove();
+		}
+	}
+
+	private function setListener(array $cmd_ids = array(), string $fx = 'sendCmdInfoToShortcut') {
+		JCLog::debug('------ setListener started -- adding listener for fx ' . $fx);
+		JCLog::trace('------ setListener started -- ids ' . json_encode($cmd_ids));
+		if ($this->getIsEnable() == 0 || count($cmd_ids) == 0) {
+			JCLog::trace('remove listener');
+			$this->removeListener($fx);
+			return;
+		}
+
+		/** @var listener $listener */
+		$listener = $this->getListener($fx);
+		if (!is_object($listener)) {
+			$listener = new listener();
+			$listener->setClass(__CLASS__);
+			$listener->setFunction($fx);
+			$listener->setOption(array('id' => $this->getId()));
+		}
+		$listener->emptyEvent();
+
+		foreach ($cmd_ids as $cmd_id) {
+			if (!is_numeric($cmd_id)) continue;
+
+			$cmd = cmd::byId($cmd_id);
+			if (!is_object($cmd)) continue;
+			JCLog::debug(' -- add listener for cmd ' . $cmd_id);
+			$listener->addEvent($cmd_id);
+		}
+		$listener->save();
+		JCLog::debug('------ setListener end for fx ' . $fx);
+	}
+
+	public static function sendCmdInfoToShortcut($_option) {
+		JCLog::debug('sendCmdInfoToShortcut started -->>> ' . json_encode($_option));
+
+		$result = JeedomConnectUtils::addTypeInPayload(JeedomConnectUtils::getCmdInfoDataIds(array($_option['event_id']), false), 'SET_QSTILES_INFO');;
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($_option['id']);
+		$eqLogic->sendNotif($eqLogic->getLogicalId(), $result);
+		JCLog::debug('---- sendCmdInfoToShortcut end -->>> ' . json_encode($result));
+	}
+
+	public static function sendActiveControl($_option) {
+		JCLog::debug('sendActiveControl started -->>> ' . json_encode($_option));
+
+		/** @var JeedomConnect $eqLogic */
+		$eqLogic = eqLogic::byId($_option['id']);
+
+		if (!is_object($eqLogic)) {
+			JCLog::warning('sendActiveControl - No eqLogic with id  [' . $_option['id'] . ']');
+			return;
+		}
+
+		// CHECK if control page has been displayed since the last 5 min (300sec)
+		$lastTime = $eqLogic->getConfiguration('activeControlTime', 0);
+		$diff = time() - $lastTime;
+		// JCLog::debug('diff : ' . $diff);
+		if ($diff > 300) {
+			JCLog::debug('Not sending sendActiveControl result - time exceed');
+			return;
+		}
+
+		$confControls = $eqLogic->getConfiguration('activeControlIds');
+
+		$result = array();
+		foreach (explode(",", $confControls) as $widgetId) {
+			// JCLog::debug('checking control ID : ' . $widgetId);
+
+			// get the widget conf from generated file of the current eqlogic
+			$widget = $eqLogic->getGeneratedWidget($widgetId);
+			// JCLog::debug('getting widget : ' . json_encode($widget));
+
+			// if there is no result -> continue
+			if (empty($widget)) continue;
+
+			// retrieve the IDs used in this widget
+			$cmdIds = JeedomConnectUtils::getInfosCmdIds($widget);
+			// JCLog::debug('cmdIds : ' . json_encode($cmdIds));
+
+			// if the event is coming from a cmdId that is used in the widget, 
+			// then get the device info on that widget otherwise do nothing (next)
+			if (in_array($_option['event_id'], $cmdIds)) {
+				// JCLog::debug('  ----  cmd found in widget ! ');
+				$cmdIds = array_unique(array_filter($cmdIds, 'strlen'));
+				$cmdData = JeedomConnectUtils::getCmdValues($cmdIds);
+
+				$deviceConfig = JeedomConnectDeviceControl::getDeviceConfig($widget, $cmdData['data']);
+				if ($deviceConfig != null) {
+					$result[] =  $deviceConfig;
+				}
+			}
+		}
+
+		if (!empty($result)) {
+			$payload = JeedomConnectUtils::addTypeInPayload(array("devices" => $result), 'SET_CONTROLS_INFO');
+			$eqLogic->sendNotif($eqLogic->getLogicalId(), $payload);
+		}
+		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($payload));
+	}
+
+
 	/*
 	 ************************************************************************
 	 ****************** FUNCTION TO UPDATE CONF FILE FORMAT *****************
 	 ******************    AND CREATE WIDGET ACCORDINGLY    *****************
 	 ************************************************************************
 	 */
-
-	public function moveToNewConfig() {
-		JCLog::info('starting configuration migration for new format - equipement "' . $this->getName() . '"', '_migration');
-
-		//get the config file brut
-		$configFile = $this->getConfig(false);
-		JCLog::info('original JSON configFile : ' . json_encode($configFile), '_migration');
-
-		//if the configFile is not defined with the new format
-		// ie : exist key formatVersion
-		if ($configFile == '') {
-			JCLog::warning('no configuration file found', '_migration');
-		} elseif (!array_key_exists('formatVersion', $configFile)) {
-			$newConfWidget = array();
-
-			// create array matching between
-			// JC room ID <=> jeedom Object ID
-
-			// sort array by index in order to recreate a good index array
-			usort($configFile['payload']['rooms'], function ($a, $b) {
-				return strcmp($a['index'], $b['index']);
-			});
-			$indexRoom = 0;
-			$indexRoomToRemove = array();
-			$newRoomsArray = array();
-			$existingRooms = array();
-			JCLog::info('updating rooms ', '_migration');
-			foreach ($configFile['payload']['rooms'] as $key => $room) {
-				if (
-					array_key_exists('object', $room)
-					&& !is_null($room['object'])
-				) {
-
-					JCLog::info('working on room "' . $room['name'] . '"', '_migration');
-
-					$roomObject = jeeObject::byId($room['object']);
-
-					if (is_object($roomObject)) {
-						// set the name with the Jeedom One
-						$currentRoom['name'] = $roomObject->getName();
-					} elseif ($room['name'] == 'global') {
-						// do nothing
-						$currentRoom['name'] = $room['name'];
-					} else {
-						// if object doesnt exist in jeedom, we remove it
-						JCLog::info('Room ' . $room['name'] . ' is not migrated as it is not attached to an existing jeedom object [objectId incorrect]', '_migration');
-						continue;
-					}
-
-					$existingRooms[$room['id']] = $room['object'];
-
-					// set the main id to the jeedom object id
-					$currentRoom['id'] = $room['object'];
-
-					$currentRoom['index'] = $indexRoom;
-
-					JCLog::info('new info -- name : "' . $currentRoom['name'] . '"  -- id : ' . $currentRoom['id'], '_migration');
-
-					//save the new widget data into the original config array
-					array_push($newRoomsArray, $currentRoom);
-
-					$indexRoom++;
-				} else {
-					JCLog::info('Room "' . $room['name'] . '" is not migrated as it is not attached to an existing jeedom object', '_migration');
-				}
-			}
-
-			$configFile['payload']['rooms'] = $newRoomsArray;
-
-
-			// manage group, and provide new id
-			$groupIndex = 999000;
-			$existingGroups = array();
-			JCLog::info('Group objects -- BEFORE : ' . json_encode($configFile['payload']['groups']), '_migration');
-			foreach ($configFile['payload']['groups'] as $key => $group) {
-
-				$newGroup = $group;
-				$existingGroups[$group['id']] = $groupIndex;
-				$newGroup['id'] = $groupIndex;
-
-				$configFile['payload']['groups'][$key] = $newGroup;
-				$groupIndex += 1;
-			}
-			JCLog::info('Group objects with new Ids-- AFTER : ' . json_encode($configFile['payload']['groups']), '_migration');
-
-
-			$widgetsIncluded = array();
-			$widgetsMatching = array();
-
-			// for each widget in config file create the associate widget equipment
-			foreach ($configFile['payload']['widgets'] as $key => $widget) {
-				JCLog::info('starting migration for widget "' . $widget['name'] . '"', '_migration');
-
-				// create config widget with new format
-				$newWidget = array();
-
-				// check if parentId is a group one, if so then apply the new group Id
-				if (array_key_exists($widget['parentId'], $existingGroups)) {
-					$newWidget['parentId'] = $existingGroups[$widget['parentId']];
-				} else {
-					$newWidget['parentId'] = $widget['parentId'];
-				}
-				$newWidget['index'] = $widget['index'];
-
-				// retrieve the img to display for the widget based on the type
-				$widgetsConfigJonFile = json_decode(file_get_contents(self::$_plugin_config_dir . 'widgetsConfig.json'), true);
-				$imgPath = '';
-				foreach ($widgetsConfigJonFile['widgets'] as $config) {
-					if ($config['type'] == $widget['type']) {
-						$imgPath = 'plugins/JeedomConnect/data/img/' . $config['img'];
-						break;
-					}
-				}
-				$newConfWidget['imgPath'] = $imgPath;
-
-				// attached the widget to the jeedom object
-				if (
-					array_key_exists('room', $widget)
-					&& !is_null($widget['room'])
-					&& array_key_exists(intval($widget['room']), $existingRooms)
-				) {
-					$widget['room'] = $existingRooms[$widget['room']];
-				} else if (array_key_exists('room', $widget) && $widget['room'] == 'global') {
-					$widget['room'] = 'global';
-				} else {
-					unset($widget['room']);
-				}
-
-				//generate a random logicalId
-				$widgetId = JeedomConnectWidget::incrementIndex();
-
-				unset($widget['parentId']);
-				unset($widget['index']);
-
-				$previousId = $widget['id'];
-				$widget['id'] = $widgetId;
-				// save json config on a dedicated config var
-				$newConfWidget['widgetJC'] = json_encode($widget);
-
-				JeedomConnectWidget::saveConfig($newConfWidget, $widgetId);
-
-				// retrieve the eqLogic ID
-				$newWidget['id'] = intval($widgetId);
-				$widgetsMatching[$previousId] = $widgetId;
-
-				if (array_key_exists('widgets', $widget)) {
-					array_push($widgetsIncluded, $widgetId);
-				}
-
-				//save the new widget data into the original config array
-				$configFile['payload']['widgets'][$key] = $newWidget;
-
-				JCLog::info('conf saved [DB] for widget ' . json_encode($widget), '_migration');
-				JCLog::info('conf saved [file] for widget "' . json_encode($newWidget) . '"', '_migration');
-			}
-
-			// for each widget which includes other widgets (group, favourite,..)
-			// we need to update the widget ID
-			JCLog::info('checking widget included into other widgets', '_migration');
-			foreach ($widgetsIncluded as $widget) {
-				$widgetJC = JeedomConnectWidget::getConfiguration($widget, 'widgetJC');
-				$conf = json_decode($widgetJC, true);
-				JCLog::info('working on widget "' . $conf['name'] . '" [id:' . $conf['id'] . ']', '_migration');
-				foreach ($conf['widgets'] as $index => $obj) {
-					$newObj = array();
-					foreach ($obj as $key => $value) {
-						if ($key == 'id') {
-							$newObj['id'] = $widgetsMatching[$value];
-							JCLog::info('replacing widget child id "' . $value . '" with new Id "' . $widgetsMatching[$value] . '"', '_migration');
-						} else {
-							$newObj[$key] = $value;
-						}
-					}
-					$conf['widgets'][$index] = $newObj;
-				}
-
-				JeedomConnectWidget::setConfiguration($widget, 'widgetJC', json_encode($conf));
-			}
-
-			//add info about new format in file
-			$configFile = array_merge(array_slice($configFile, 0, 1), array('formatVersion' => '1.0'), array_slice($configFile, 1));
-			JCLog::info('final config file : ' . json_encode($configFile), '_migration');
-
-			// make a backup file
-			$originalFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json';
-			$backupFile = self::$_config_dir . $this->getConfiguration('apiKey') . '.json.bkp';
-			copy($originalFile, $backupFile);
-			JCLog::info('backup file created -- ' . $backupFile, '_migration');
-
-			// save the file
-			file_put_contents($originalFile, json_encode($configFile, JSON_PRETTY_PRINT));
-			JCLog::info('new configuration file saved ', '_migration');
-		} else {
-			JCLog::info('Configuration file already into new format', '_migration');
-		}
-
-		return;
-	}
 
 	public static function migrationAllNotif() {
 		$result = array();
@@ -1940,7 +1919,7 @@ class JeedomConnect extends eqLogic {
 			foreach (JeedomConnectWidget::getWidgets() as $widget) {
 				$currentChange = false;
 				$widgetId = $widget['id'];
-				$widgetJC = json_decode($widget['widgetJC'], true);
+				$widgetJC = $widget['widgetJC'];
 
 				if (isset($widgetJC['statusImages']) && count($widgetJC['statusImages']) > 0) {
 
@@ -2201,6 +2180,23 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
+			case 'eraseData':
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				} elseif (strtolower($_options['message']) != 'erase') {
+					JCLog::error('To use the erase data command, message field has to be filled with "erase"');
+					return;
+				}
+
+				$payload = array(
+					'action' => 'eraseData'
+				);
+				if ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
+				}
+				break;
+
 			case 'play_sound':
 				if (empty($_options['message'])) {
 					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
@@ -2225,6 +2221,25 @@ class JeedomConnectCmd extends cmd {
 
 				$payload = array(
 					'action' => 'ringerMode',
+					'mode' => $_options['title']
+				);
+
+				if ($eqLogic->isConnected()) {
+					JeedomConnectActions::addAction($payload, $eqLogic->getLogicalId());
+				} elseif ($eqLogic->getConfiguration('platformOs') == 'android') {
+					$eqLogic->sendNotif($this->getLogicalId(), array('type' => 'ACTIONS', 'payload' => $payload), $this->getId());
+				}
+
+				break;
+
+			case 'dndMode':
+				if (empty($_options['title'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$payload = array(
+					'action' => 'dndMode',
 					'mode' => $_options['title']
 				);
 

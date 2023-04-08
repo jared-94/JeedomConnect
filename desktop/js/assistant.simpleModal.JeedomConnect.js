@@ -255,7 +255,7 @@ $("body").on('change', '.refreshWidgetType', function (e) {
 
 function refreshSwipe(type) {
   if ($("#" + type + "-cmd-input").attr('cmdId') != '') {
-    getSimpleCmd({
+    getCmd({
       id: $("#" + type + "-cmd-input").attr('cmdId'),
       success: function (data) {
         $("#" + type + "-cmd-input").val(data.result.humanName);
@@ -324,29 +324,6 @@ function getSimpleScenarioHumanName(_params) {
     id: _params.id
   };
   $.ajax(paramsAJAX);
-}
-
-function getSimpleCmd({
-  id,
-  error,
-  success
-}) {
-  $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
-    data: {
-      'action': 'getCmd',
-      'id': id
-    },
-    cache: false,
-    success: function (cmdData) {
-      jsonData = JSON.parse(cmdData);
-      if (jsonData.state == 'ok') {
-        success && success(jsonData);
-      } else {
-        error && error(jsonData);
-      }
-    }
-  });
 }
 
 function getSimpleIcon(name) {

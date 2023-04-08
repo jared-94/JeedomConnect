@@ -293,7 +293,7 @@ function saveWidgetBulk() {
                             vars['saveSuccessFull'] = "1";
                             url = getCustomParamUrl(url, vars);
                             modifyWithoutSave = false
-                            loadPage(url)
+                            jeedomUtils.loadPage(url)
                         }
                     }
                 }));

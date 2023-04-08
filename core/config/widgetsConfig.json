@@ -142,6 +142,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -326,6 +338,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -530,6 +554,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -611,6 +647,18 @@
 					"name": "Arrière plan automatique",
 					"description": "Affiche un arrière plan automatique en fonction de l'état de la lumière",
 					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "onSecurity",
+					"name": "Sécuriser action ON",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action OFF",
+					"category": "security",
 					"customizable": true
 				},
 				{
@@ -754,6 +802,13 @@
 					"generic_type": "POWER"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la puissance en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -795,6 +850,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -872,6 +939,18 @@
 						"plug"
 					],
 					"description": "Liste des prises à gérer"
+				},
+				{
+					"id": "onSecurity",
+					"name": "Sécuriser action ON",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action OFF",
+					"category": "security",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -1014,6 +1093,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -1236,6 +1327,13 @@
 					"generic_type": "BRIGHTNESS"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la luminosité en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1277,6 +1375,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -1336,6 +1440,13 @@
 					"generic_type": "HUMIDITY"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de l'humidité' en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1377,6 +1488,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -1436,6 +1553,13 @@
 					"generic_type": "TEMPERATURE"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la température en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1478,6 +1602,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -1537,6 +1667,13 @@
 					"generic_type": "POWER"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la puissance en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1579,6 +1716,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -1766,6 +1909,13 @@
 					"customizable": true
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la température en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -1807,6 +1957,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -1973,6 +2135,13 @@
 					"customizable": true
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la température en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -2014,6 +2183,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -2114,6 +2295,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -2315,6 +2502,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -2541,6 +2734,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -2701,6 +2906,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -2770,6 +2987,18 @@
 						"shutter"
 					],
 					"description": "Liste des volets à gérer"
+				},
+				{
+					"id": "onSecurity",
+					"name": "Sécuriser action Ouvrir",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action Fermer",
+					"category": "security",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -2907,6 +3136,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -3188,6 +3423,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -3257,6 +3504,18 @@
 						"alarm"
 					],
 					"description": "Liste des alarmes à gérer"
+				},
+				{
+					"id": "onSecurity",
+					"name": "Sécuriser action ON",
+					"category": "security",
+					"customizable": true
+				},
+				{
+					"id": "offSecurity",
+					"name": "Sécuriser action OFF",
+					"category": "security",
+					"customizable": true
 				},
 				{
 					"id": "image",
@@ -3407,6 +3666,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -3576,6 +3841,13 @@
 					"category": "binary"
 				},
 				{
+					"id": "historyBackground",
+					"name": "Afficher historique",
+					"description": "Affiche l'historique de la commande en arrière-plan du widget",
+					"category": "binary",
+					"customizable": true
+				},
+				{
 					"id": "image",
 					"name": "Image",
 					"required": false,
@@ -3621,6 +3893,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -3730,6 +4008,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -3871,6 +4155,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -3990,6 +4286,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -4101,6 +4409,18 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
+				},
+				{
+					"id": "allowOnUnlock",
+					"name": "Contrôle depuis l'écran de verrouillage",
+					"category": "binary",
+					"description": "[Android 13+] Autorise le contrôle de l'appareil depuis l'écran de verrouillage"
 				}
 			]
 		},
@@ -5024,6 +5344,12 @@
 						}
 					],
 					"description": "Affichage forcé du widget"
+				},
+				{
+					"id": "hideControlDevice",
+					"name": "Masquer l'appareil",
+					"category": "binary",
+					"description": "[Android 11+] Ne pas remonter ce widget dans les appareils contrôlés par Android"
 				}
 			]
 		},
@@ -5146,9 +5472,15 @@
 				{
 					"id": "statusInfo",
 					"name": "Commandes infos",
-					"required": false,
+					"required": true,
 					"category": "cmd",
 					"type": "info"
+				},
+				{
+					"id": "isFuture",
+					"name": "Dates dans le futur",
+					"description": "Les dates historisées sont dans le futur",
+					"category": "binary"
 				},
 				{
 					"id": "intervalDays",
@@ -5159,7 +5491,7 @@
 					"customizable": true
 				},
 				{
-					"id": "histChartType",
+					"id": "chartType",
 					"name": "Type de graphique",
 					"required": false,
 					"customizable": true,
@@ -5176,42 +5508,51 @@
 					]
 				},
 				{
+					"id": "tabs",
+					"name": "Onglets",
+					"customizable": true,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "chart",
+							"name": "Graphique"
+						},
+						{
+							"id": "table",
+							"name": "Table"
+						},
+						{
+							"id": "both",
+							"name": "Graphique + table"
+						}
+					],
+					"defaultChoice": "chart"
+				},
+				{
 					"id": "interpolation",
 					"name": "Interpolation",
 					"required": false,
 					"customizable": true,
 					"category": "stringList",
-					"description": "Voir <a target='blank' href='https://formidable.com/open-source/victory/gallery/interpolation'>une démo ici</a>",
 					"choices": [
 						{
-							"id": "basis",
-							"name": "basis"
+							"id": "LINEAR",
+							"name": "Linéaire"
 						},
 						{
-							"id": "cardinal",
-							"name": "cardinal"
+							"id": "STEPPED",
+							"name": "Pallier"
 						},
 						{
-							"id": "linear",
-							"name": "linear"
+							"id": "CUBIC_BEZIER",
+							"name": "Bezier cubique"
 						},
 						{
-							"id": "natural",
-							"name": "natural"
-						},
-						{
-							"id": "step",
-							"name": "step"
-						},
-						{
-							"id": "stepAfter",
-							"name": "stepAfter"
-						},
-						{
-							"id": "stepBefore",
-							"name": "stepBefore"
+							"id": "HORIZONTAL_BEZIER",
+							"name": "Bezier horizontal"
 						}
-					]
+					],
+					"defaultChoice": "linear"
 				},
 				{
 					"id": "displayZoom",
@@ -5229,23 +5570,233 @@
 					"customizable": true
 				},
 				{
-					"id": "hideGrid",
-					"name": "Masquer la grille",
+					"id": "displayStats",
+					"name": "Afficher statistiques",
+					"description": "Affiche les statistiques pour les commandes numériques",
 					"required": false,
 					"category": "binary",
 					"customizable": true
 				},
 				{
-					"id": "histMinValue",
+					"id": "drawCircles",
+					"name": "Afficher les points",
+					"description": "Affiche les points (mode ligne)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridX",
+					"name": "Masquer la grille (vertical)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridY",
+					"name": "Masquer la grille (horizontal)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "minValue",
 					"name": "Valeur min (axe vertical)",
 					"description": "Laisser vide pour le mode auto",
 					"category": "string"
 				},
 				{
-					"id": "histMaxValue",
+					"id": "maxValue",
 					"name": "Valeur max (axe vertical)",
 					"description": "Laisser vide pour le mode auto",
 					"category": "string"
+				},
+				{
+					"id": "hideTickY",
+					"name": "Masquer légende verticale",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideTickX",
+					"name": "Masquer légende horizontale",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "image",
+					"name": "Image",
+					"required": false,
+					"category": "img"
+				},
+				{
+					"id": "statusImages",
+					"name": "Images sous conditions",
+					"required": false,
+					"category": "ifImgs"
+				},
+				{
+					"id": "display",
+					"name": "Affichage forcé",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "widget",
+							"name": "Carte"
+						},
+						{
+							"id": "miniWidget",
+							"name": "Vignette"
+						},
+						{
+							"id": "bigWidget",
+							"name": "Grand widget"
+						},
+						{
+							"id": "detail",
+							"name": "Détail"
+						}
+					],
+					"description": "Affichage forcé du widget"
+				}
+			]
+		},
+		{
+			"type": "group-history",
+			"name": "Groupe d'historiques",
+			"img": "groupHistory.png",
+			"description": "Permet d'afficher des historiques de commandes",
+			"variables": [
+				{
+					"name": "room",
+					"descr": "Pièce"
+				}
+			],
+			"options": [
+				{
+					"id": "name",
+					"name": "Nom",
+					"required": true,
+					"category": "string"
+				},
+				{
+					"id": "nameDisplayed",
+					"name": "Nom d'affichage",
+					"description": "Nom affiché sur les pages de configuration. Si vide, alors le nom est utilisé.",
+					"category": "string"
+				},
+				{
+					"id": "subtitle",
+					"name": "Sous-titre",
+					"required": false,
+					"category": "stringList",
+					"choices": [],
+					"description": "Information supplémentaire affichée sur le widget"
+				},
+				{
+					"id": "widgets",
+					"name": "Historiques",
+					"required": true,
+					"category": "widgets",
+					"whiteList": [
+						"history"
+					],
+					"description": "Liste des historiques à gérer"
+				},
+				{
+					"id": "intervalDays",
+					"name": "Intervalle historique",
+					"required": false,
+					"category": "string",
+					"description": "Nombre de jours d'affichage de l'historique",
+					"customizable": true
+				},
+				{
+					"id": "tabs",
+					"name": "Onglets",
+					"customizable": true,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "chart",
+							"name": "Graphique"
+						},
+						{
+							"id": "table",
+							"name": "Table"
+						},
+						{
+							"id": "both",
+							"name": "Graphique + table"
+						}
+					],
+					"defaultChoice": "chart"
+				},
+				{
+					"id": "displayZoom",
+					"name": "Afficher sélecteur de zoom",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "displayStats",
+					"name": "Afficher statistiques",
+					"description": "Affiche les statistiques pour les commandes numériques",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "displayLegend",
+					"name": "Afficher la légende",
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridX",
+					"name": "Masquer la grille (vertical)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "hideGridY",
+					"name": "Masquer la grille (horizontal)",
+					"required": false,
+					"category": "binary",
+					"customizable": true
+				},
+				{
+					"id": "minValue",
+					"name": "Valeur min (axe vertical gauche)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string",
+					"customizable": true
+				},
+				{
+					"id": "maxValue",
+					"name": "Valeur max (axe vertical gauche)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string",
+					"customizable": true
+				},
+				{
+					"id": "minValueRight",
+					"name": "Valeur min (axe vertical droite)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string",
+					"customizable": true
+				},
+				{
+					"id": "maxValueRight",
+					"name": "Valeur max (axe vertical droite)",
+					"description": "Laisser vide pour le mode auto",
+					"category": "string",
+					"customizable": true
 				},
 				{
 					"id": "hideTickY",
@@ -5351,6 +5902,30 @@
 					"name": "Intervalle de rafraîchissement (s)",
 					"category": "string",
 					"description": "Si l'image n'est pas statique, temps entre deux chargements (laisser vide sinon)"
+				},
+				{
+					"id": "resizeMode",
+					"name": "Mode de redimensionnement",
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "contain",
+							"name": "Contenu"
+						},
+						{
+							"id": "cover",
+							"name": "Couvert"
+						},
+						{
+							"id": "stretch",
+							"name": "Etire"
+						},
+						{
+							"id": "center",
+							"name": "Centre"
+						}
+					],
+					"defaultChoice": "contain"
 				},
 				{
 					"id": "autoBackground",

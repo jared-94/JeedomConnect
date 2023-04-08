@@ -25,63 +25,6 @@ try {
 		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
 
-	if (init('action') == 'orderWidget') {
-
-		$widgetArray = JeedomConnectWidget::getWidgets();
-
-		switch (init('orderBy')) {
-			case 'name':
-				$widgetName = array_column($widgetArray, 'name');
-				array_multisort($widgetName, SORT_ASC, $widgetArray);
-				break;
-
-			case 'type':
-				$widgetType = array_column($widgetArray, 'type');
-				$widgetName = array_column($widgetArray, 'name');
-				array_multisort($widgetType, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-				break;
-
-			default:
-				$roomName  = array_column($widgetArray, 'roomName');
-				$widgetName = array_column($widgetArray, 'name');
-
-				array_multisort($roomName, SORT_ASC, $widgetName, SORT_ASC, $widgetArray);
-				break;
-		}
-
-		$listWidget = '';
-		foreach ($widgetArray as $widget) {
-
-			$img = $widget['img'];
-
-			$opacity = $widget['enable'] ? '' : 'disableCard';
-			$widgetName = $widget['name'];
-			$widgetRoom = $widget['roomName'];;
-			$id = $widget['id'];
-			$widgetType = $widget['type'];
-
-			$name = '<span class="label labelObjectHuman" style="text-shadow : none;">' . $widgetRoom . '</span><br><strong> ' . $widgetName . '</strong>';
-
-			$listWidget .= '<div class="widgetDisplayCard cursor ' . $opacity . '" data-widget_id="' . $id . '" data-widget_type="' . $widgetType . '" >';
-			$listWidget .= '<img src="' . $img . '"/>';
-			$listWidget .= '<br>';
-			$listWidget .= '<span class="name">' . $name . '</span>';
-			$listWidget .= '</div>';
-		}
-		ajax::success(array('widgets' => $listWidget));
-	}
-
-	if (init('action') == 'getJeedomObject') {
-		$list = array();
-		$options = '';
-		foreach ((jeeObject::buildTree(null, false)) as $object) {
-			$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
-			array_push($list, array("id" => intval($object->getId()), "name" => $object->getName()));
-		}
-		// echo $options;
-		ajax::success(array('details' => $list, 'options' => $options));
-	}
-
 	if (init('action') == 'getCmdsForWidgetType') {
 		$widget_type = init('widget_type');
 		$eqLogicId = !is_numeric(init('eqLogic_Id')) ? null : init('eqLogic_Id');
@@ -97,13 +40,12 @@ try {
 		JCLog::debug('-- manage fx ajax saveWidgetConfig for id >' . init('eqId') . '<');
 
 		$id = init('eqId') ?: JeedomConnectWidget::incrementIndex();
-		$newConfWidget = array();
-		$newConfWidget['imgPath'] = init('imgPath');
-		$jcTemp = json_decode(init('widgetJC'), true);
-		$jcTemp['id'] = intval($id);
-		$newConfWidget['widgetJC'] = json_encode($jcTemp);
 
-		JeedomConnectWidget::saveConfig($newConfWidget, $id);
+		$jcTemp = json_decode(init('widgetJC'), true);
+		// JCLog::debug('-- manage fx ajax saveWidgetConfig data >' . json_encode($jcTemp) . '<');
+		$jcTemp['id'] = intval($id);
+
+		JeedomConnectWidget::saveConfig($jcTemp, $id);
 
 		if (!is_null(init('eqId'))  && init('eqId') != '') {
 			/** @var JeedomConnect $eqLogic */
@@ -112,26 +54,7 @@ try {
 			}
 		}
 
-
 		ajax::success(array('id' => $id));
-	}
-
-	if (init('action') == 'migrateConfiguration') {
-
-		$scope = init('scope') ?? '';
-		$more = false;
-		/** @var JeedomConnect $eqLogic */
-		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
-			if (($scope == 'all') || (($scope == 'enableOnly') && $eqLogic->getIsEnable())) {
-				JCLog::info('migrate conf for equipment ' . $eqLogic->getName(), '_migration');
-				$eqLogic->moveToNewConfig();
-			} else {
-				JCLog::warning('configuration for equipement "' . $eqLogic->getName() . '" not migrated because equipement disabled', '_migration');
-				$more = true;
-			}
-		}
-
-		ajax::success(array('more' => $more));
 	}
 
 	if (init('action') == 'generateFile') {
@@ -246,7 +169,7 @@ try {
 
 		$html = '';
 		foreach ($allWidgets as $widget) {
-			$widgetJC = json_decode($widget['widgetJC'], true);
+			$widgetJC = $widget['widgetJC'];
 			$itemType = ($widget['type'] == 'component') ? 'component' : 'widget';
 			$html .= ($ids == 'all') ? '<tr class="tr_object" data-widget_id="' . $widget['id'] . '" data-item_type="' . $itemType . '">' : '';
 			$html .= '<td style="width:40px;"><span class="label label-info objectAttr bt_openWidget" data-l1key="widgetId" style="cursor: pointer !important;">' . $widget['id'] . '</span></td>';
@@ -367,6 +290,26 @@ try {
 				$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="blockDetail" /></td>';
 			}
 
+			if (!JeedomConnectUtils::hasObjectId($widgetArrayConfig[$widget['type']]['options'], 'hideControlDevice')) {
+				$html .= '<td></td>';
+			} else {
+				if (isset($widgetJC['hideControlDevice']) && $widgetJC['hideControlDevice']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="hideControlDevice" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="hideControlDevice" /></td>';
+				}
+			}
+
+			if (!JeedomConnectUtils::hasObjectId($widgetArrayConfig[$widget['type']]['options'], 'allowOnUnlock')) {
+				$html .= '<td></td>';
+			} else {
+				if (isset($widgetJC['allowOnUnlock']) && $widgetJC['allowOnUnlock']) {
+					$html .= '<td align="center" style="width:65px;"><input type="checkbox" class="objectAttr" checked data-l1key="allowOnUnlock" /></td>';
+				} else {
+					$html .= '<td align="center" style="width:75px;"><input type="checkbox" class="objectAttr" data-l1key="allowOnUnlock" /></td>';
+				}
+			}
+
 
 			//**************  EQUIPEMENT INCLUSION **********************/
 			$nb = 0;
@@ -451,10 +394,10 @@ try {
 		$widgetReceived = init('widgetsObj');
 
 		foreach ($widgetReceived as $widgetData) {
-			$existingWidget = JeedomConnectWidget::getConfiguration($widgetData['widgetId']);
-			JCLog::debug('massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($existingWidget));
+			$widgetJC = JeedomConnectWidget::getConfiguration($widgetData['widgetId']);
+			JCLog::debug('massUpdate - widget [' . $widgetData['widgetId'] . '] will be updated -- current data ' . json_encode($widgetJC));
 
-			$widgetJC = json_decode($existingWidget['widgetJC'], true);
+			// $widgetJC = $existingWidget['widgetJC'];
 
 			$widgetJC['enable'] = boolval($widgetData['enable']);
 			$widgetJC['name'] = cmd::humanReadableToCmd($widgetData['name']);
@@ -464,15 +407,11 @@ try {
 
 			$widgetJC['display'] = $widgetData['display'];
 
-			$widgetJC['hideTitle'] = boolval($widgetData['hideTitle']);
-			$widgetJC['hideSubTitle'] = boolval($widgetData['hideSubTitle']);
-			$widgetJC['hideStatus'] = boolval($widgetData['hideStatus']);
-			$widgetJC['hideIcon'] = boolval($widgetData['hideIcon']);
 			$widgetJC['blockDetail'] = boolval($widgetData['blockDetail']);
+			if (isset($widgetData['hideControlDevice'])) $widgetJC['hideControlDevice'] = boolval($widgetData['hideControlDevice']);
+			if (isset($widgetData['allowOnUnlock'])) $widgetJC['allowOnUnlock'] = boolval($widgetData['allowOnUnlock']);
 
-			$existingWidget['widgetJC'] = json_encode($widgetJC);
-
-			JeedomConnectWidget::saveConfig($existingWidget, $widgetData['widgetId']);
+			JeedomConnectWidget::saveConfig($widgetJC, $widgetData['widgetId']);
 		}
 
 		ajax::success();
@@ -512,30 +451,6 @@ try {
 		}
 	}
 
-	if (init('action') == 'duplicateWidgetConfig') {
-		JCLog::debug('-- manage fx ajax duplicateWidgetConfig for id >' . init('eqId') . '<');
-		$newId = JeedomConnectWidget::duplicateWidget(init('eqId'));
-		ajax::success(array('duplicateId' => $newId));
-	}
-
-	if (init('action') == 'getWidgetConfig') {
-		JCLog::debug('-- manage fx ajax getWidgetConfig for id >' . init('eqId') . '<');
-		$widget = JeedomConnectWidget::getWidgets(init('eqId'));
-
-		if ($widget == '') {
-			ajax::error('Erreur - pas d\'équipement trouvé');
-		} else {
-			$widgetConf = $widget['widgetJC'] ?? '';
-			$configJson = json_decode($widgetConf);
-
-			if ($configJson == null) {
-				ajax::error('Erreur - pas de configuration pour ce widget');
-			} else {
-				ajax::success($configJson);
-			}
-		}
-	}
-
 	if (init('action') == 'getWidgetConfigAll') {
 		JCLog::debug('-- manage fx ajax getWidgetConfigAll ~~ retrieve config for ALL widgets');
 		$widgets = JeedomConnectWidget::getWidgets('all', false, true);
@@ -562,11 +477,9 @@ try {
 		$arrayName = array();
 		/** @var JeedomConnect $eqLogic */
 		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
-			$eqIds = $eqLogic->getWidgetId();
-			JCLog::trace('all ids for eq [' . $eqLogic->getName() . '] : ' . json_encode($eqIds));
-			if (in_array($myId, $eqIds)) {
+			if ($eqLogic->isWidgetIncluded($myId)) {
 				JCLog::trace($myId . ' exist in [' . $eqLogic->getName() . ']');
-				array_push($arrayName, $eqLogic->getName());
+				$arrayName[] = $eqLogic->getName();
 			} else {
 				JCLog::trace($myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
 			}
@@ -739,21 +652,6 @@ try {
 		ajax::success();
 	}
 
-	if (init('action') == 'uploadImg') {
-		$filename = $_FILES['file']['name'];
-		$destination = __DIR__ . '/../../data/img/user_files/';
-		if (!is_dir($destination)) {
-			mkdir($destination);
-		}
-		$location = $destination . $filename;
-
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
-			ajax::success();
-		} else {
-			ajax::error();
-		}
-	}
-
 	if (init('action') == 'removeDevice') {
 		$id = init('id');
 		/** @var JeedomConnect $eqLogic */
@@ -806,21 +704,6 @@ try {
 			'icon' => $cmd->getDisplay('icon'),
 			'display' => $cmd->getDisplay()
 		));
-	}
-
-	if (init('action') == 'getImgList') {
-		$internalImgPath = __DIR__ . '/../../data/img/';
-		$userImgPath = $internalImgPath . "user_files/";
-
-		$internal = array_diff(scandir($internalImgPath), array('..', '.', 'user_files'));
-		$user = array_diff(scandir($userImgPath), array('..', '.'));
-
-		$result = [
-			'internal' => $internal,
-			'user' => $user
-		];
-
-		ajax::success($result);
 	}
 
 	if (init('action') == 'generateQRcode') {

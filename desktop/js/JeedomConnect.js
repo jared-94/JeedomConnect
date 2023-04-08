@@ -257,6 +257,9 @@ function refreshCmdData(name, id, value, concat = false) {
         $("#confirm-div-" + name).css('display', '');
         $("#secure-div-" + name).css('display', '');
         $("#pwd-div-" + name).css('display', '');
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       } else {
         $("#confirm-div-" + name).css('display', 'none');
         $("#secure-div-" + name).css('display', 'none');
@@ -267,6 +270,9 @@ function refreshCmdData(name, id, value, concat = false) {
         $("#" + name + "-maxInput").css('display', '');
         $("#" + name + "-minInput").val(data.result.minValue);
         $("#" + name + "-maxInput").val(data.result.maxValue);
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       } else {
         $("#" + name + "-minInput").css('display', 'none');
         $("#" + name + "-maxInput").css('display', 'none');
@@ -280,12 +286,18 @@ function refreshCmdData(name, id, value, concat = false) {
       if (data.result.subType == 'numeric') {
         $("#" + name + "-unitInput").css('display', '');
         $("#" + name + "-unitInput").val(data.result.unit);
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       } else {
         $("#" + name + "-unitInput").css('display', 'none');
       }
       if (data.result.subType == 'slider') {
         $("#" + name + "-stepInput").css('display', '');
         $("#" + name + "-stepInput").val(data.result.step);
+        $("#" + name + "-input").css({
+          'width': $("#" + name + "-input").width() * 0.85
+        })
       }
       else {
         $("#" + name + "-stepInput").css('display', 'none');
@@ -540,7 +552,7 @@ function getWidgetPath(id) {
     console.log('issue with getWidgetPath - widget not found with id ' + id)
     return 'inconnu !';
   }
-  var name = (' ' + widget.name).slice(1);
+  var name = (' ' + (widget.nameDisplayed || widget.name)).slice(1);
 
   if (widget.parentId === undefined || widget.parentId == null || typeof configData === 'undefined') {
     return name;
@@ -905,17 +917,15 @@ $('.jcItemSelect').on('change', function () {
   var typeSelected = this.value;
 
   var itemClass = (dataType == 'widget') ? '.widgetDisplayCard' : '.componentDisplayCard';
-  var itemId = (dataType == 'widget') ? '#in_searchWidget' : '#in_searchComponent';
-
 
   $(itemClass).show();
   if (typeSelected != 'none') {
     $(itemClass).not("[data-widget_type=" + typeSelected + "]").hide();
   }
 
-  var widgetSearch = $(itemId).val()?.trim();
+  var widgetSearch = $('#in_search').val()?.trim();
   if (widgetSearch != '') {
-    $(itemId).keyup()
+    $('#in_search').keyup()
   }
 
   $('.eqLogicThumbnailContainer').packery();
@@ -934,7 +944,7 @@ $('#eraseFilterChoice').off('click').on('click', function () {
     }
   }
 
-  loadPage(url)
+  jeedomUtils.loadPage(url)
 })
 
 
@@ -952,7 +962,7 @@ $('.updateOrderWidget').on('change', function () {
 
   url = getCustomParamUrl(url, vars);
 
-  loadPage(url)
+  jeedomUtils.loadPage(url)
 
 });
 
@@ -974,7 +984,7 @@ function getCustomParamUrl(url, vars) {
     url += '&jcOrderBy=' + widgetOrder
   }
 
-  var widgetSearch = $("#in_searchWidget").val()?.trim();
+  var widgetSearch = $("#in_search").val()?.trim();
   if (widgetSearch != '') {
     url += '&jcSearch=' + widgetSearch
   }
@@ -1000,8 +1010,8 @@ function SortByName(a, b) {
 }
 
 function SortByType(a, b) {
-  var aType = a.type.toLowerCase();
-  var bType = b.type.toLowerCase();
+  var aType = a.type?.toLowerCase();
+  var bType = b.type?.toLowerCase();
   return ((aType < bType) ? -1 : ((aType > bType) ? 1 : 0));
 }
 
@@ -1018,47 +1028,69 @@ function SortByRoom(a, b) {
 
 $('.jcInSearch').off('keyup').keyup(function () {
   var dataType = $(this).attr('data-type')
-  var displayCard = (dataType == 'widget') ? '.widgetDisplayCard' : '.componentDisplayCard';
-  var itemId = (dataType == 'widget') ? '#widgetTypeSelect' : '#componentTypeSelect';
 
   var search = $(this).value()
-  var widgetFilter = $(itemId + " option:selected").val();
+
+  var widgetFilter = $("#widgetTypeSelect option:selected").val();
+  var componentFilter = $("#componentTypeSelect option:selected").val();
 
   if (search == '') {
     if (widgetFilter == 'none') {
-      $(displayCard).show()
+      $('.widgetDisplayCard').show()
     }
     else {
-      $(displayCard).each(function () {
+      $('.widgetDisplayCard').each(function () {
         widgetType = $(this).attr('data-widget_type');
         if (widgetFilter == widgetType) {
-          $(this).closest(displayCard).show()
+          $(this).closest('.widgetDisplayCard').show()
         }
       })
     }
+
+    if (componentFilter == 'none') {
+      $('.componentDisplayCard').show()
+    }
+    else {
+      $('.componentDisplayCard').each(function () {
+        componentType = $(this).attr('data-widget_type');
+        if (componentFilter == componentType) {
+          $(this).closest('.componentDisplayCard').show()
+        }
+      })
+    }
+
     $('.eqLogicThumbnailContainer').packery()
-    updateWidgetCount(dataType);
+    updateWidgetCount();
+    updateWidgetCount('component');
     return;
   }
 
 
-  $(displayCard).hide()
-  search = normTextLower(search)
+  $('.widgetDisplayCard,.componentDisplayCard').hide()
+  search = jeedomUtils.normTextLower(search)
   var text
   var widgetId
 
-  $(displayCard).each(function () {
-    text = normTextLower($(this).children('.name').text())
-    widgetId = normTextLower($(this).attr('data-widget_id'))
+  $('.widgetDisplayCard,.componentDisplayCard').each(function () {
+    text = jeedomUtils.normTextLower($(this).children('.name').text())
+    widgetId = jeedomUtils.normTextLower($(this).attr('data-widget_id'))
     widgetType = $(this).attr('data-widget_type');
     if (text.indexOf(search) >= 0 || widgetId.indexOf(search) >= 0) {
-      if (widgetFilter == 'none' || widgetFilter == widgetType) {
-        $(this).closest(displayCard).show()
+      if ($(this).hasClass('widget')) {
+        if (widgetFilter == 'none' || widgetFilter == widgetType) {
+          $(this).closest('.widgetDisplayCard').show()
+        }
+      }
+      else if ($(this).hasClass('component')) {
+        if (componentFilter == 'none' || componentFilter == widgetType) {
+          $(this).closest('.componentDisplayCard').show()
+        }
       }
     }
   })
   $('.eqLogicThumbnailContainer').packery()
-  updateWidgetCount(dataType);
+  updateWidgetCount();
+  updateWidgetCount('component');
 })
 
 // ------------- END SEARCH & FILTER BAR
@@ -1315,7 +1347,7 @@ function addCmdToTable(_cmd) {
   $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet).append(tr);
   var tr = $('#table_cmd tbody.cmd_' + _cmd.type + cpltOnglet + ' tr').last();
 
-  jeedom.eqLogic.builSelectCmd({
+  jeedom.eqLogic.buildSelectCmd({
     id: $('.eqLogicAttr[data-l1key=id]').value(),
     filter: { type: 'info' },
     error: function (error) {

@@ -5,7 +5,7 @@
 	"utilization": "Vous pourrez contrôler toutes les fonctions de votre Jeedom (y compris scénario, mise à jour des plugins...), vos notifications (y compris la fonction ask), la géolocalisation et la gestion de présence associée. Il est possible d'y intégrer tous les plugins et tous les équipements de votre Jeedom, l'interface de Jeedom Connect est entièrement personnalisable: menu, widget... voir documentation pour plus d'informations.",
 	"licence": "AGPL",
 	"author": "Jared-94 et ToMiToMas",
-	"require": "4.0",
+	"require": "4.2",
 	"category": "communication",
 	"documentation_beta": "https://jared-94.github.io/JeedomConnectDoc/fr_FR/index_beta",
 	"documentation": "https://jared-94.github.io/JeedomConnectDoc/fr_FR/index",

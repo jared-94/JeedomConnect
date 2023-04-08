@@ -255,6 +255,18 @@
                 "order": 14
             },
             {
+                "logicalId": "eraseData",
+                "name": "Effacer données",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "display": {
+                    "message_placeholder": "Remplir avec 'erase'",
+                    "title_disable": "1"
+                },
+                "order": 14
+            },
+            {
                 "logicalId": "send_sms",
                 "name": "Envoyer un SMS",
                 "type": "action",
@@ -264,6 +276,22 @@
                 "display": {
                     "title_placeholder": "Numéro/Options"
                 }
+            },
+            {
+                "logicalId": "smsMessage",
+                "name": "Dernier message SMS",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 14
+            },
+            {
+                "logicalId": "smsNumber",
+                "name": "Dernier numéro SMS",
+                "type": "info",
+                "subtype": "string",
+                "isVisible": 1,
+                "order": 14
             },
             {
                 "logicalId": "play_sound",
@@ -301,6 +329,23 @@
                 "isVisible": 1,
                 "configuration": {
                     "listValueToCreate": "silent;normal;vibrate"
+                },
+                "display": {
+                    "title_with_list": "1",
+                    "title_disable": "1",
+                    "message_disable": "1",
+                    "title_placeholder": "Mode"
+                },
+                "order": 8
+            },
+            {
+                "logicalId": "dndMode",
+                "name": "Ne pas déranger",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 1,
+                "configuration": {
+                    "listValueToCreate": "dndOn;dndOff"
                 },
                 "display": {
                     "title_with_list": "1",
@@ -364,6 +409,8 @@
         "silent": "Silencieux",
         "normal": "Normal",
         "vibrate": "Vibreur",
+        "dndOn": "Activer",
+        "dndOff": "Désactiver",
         "music": "Musique",
         "call": "Appel",
         "system": "Système",
