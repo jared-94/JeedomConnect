@@ -89,7 +89,7 @@ sendVarToJS('userHash', $userHash);
   <div class="alert alert-warning infoRefresh" style="text-align:center;display:none;">
     Pour information : vous êtes en train de modifier des éléments de configuration essentiels au bon fonctionnement de vos équipements JC. <br />
     Les QR-Code de l'ensemble de vos équipements JC seront automatiquement regénérés après la sauvegarde de vos modifications.<br />
-    Le démon sera automatiquement redémarré.
+    Le démon sera automatiquement redémarré (si nécessaire).
   </div>
 
   <div class="alert alert-info" style="text-align:center;">
