@@ -1227,9 +1227,10 @@ class JeedomConnectUtils {
         return $text;
     }
 
-    public static function getExpressionEvaluated($expression) {
+    public static function getExpressionEvaluated($expression, $widget) {
         $return = array();
         $scenario = null;
+        $expression = str_replace("#room#", self::getRoomName($widget), $expression);
         $myExp = jeedom::fromHumanReadable($expression);
         $return['evaluate'] = scenarioExpression::setTags($myExp, $scenario, true);
         $return['result'] = evaluate($return['evaluate']);

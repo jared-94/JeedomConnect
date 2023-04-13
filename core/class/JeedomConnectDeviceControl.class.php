@@ -92,7 +92,7 @@ class JeedomConnectDeviceControl {
         JCLog::trace('checking device config for widget ' . json_encode($widget));
 
         try {
-            $expEval = JeedomConnectUtils::getExpressionEvaluated($widget["name"]);
+            $expEval = JeedomConnectUtils::getExpressionEvaluated($widget["name"], $widget);
             // JCLog::debug('expression evaluated : ' . json_encode($expEval));
         } catch (Exception $e) {
             JCLog::warning('Exception with expression evaluation => ' . $e->getMessage());
