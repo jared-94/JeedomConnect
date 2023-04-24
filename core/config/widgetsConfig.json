@@ -3,7 +3,7 @@
 		{
 			"type": "single-light-switch",
 			"name": "Lumière On/Off",
-			"img": "light100.png",
+			"img": "light100.webp",
 			"description": "Gère une lumière simple à deux états allumé/éteint",
 			"variables": [
 				{
@@ -160,7 +160,7 @@
 		{
 			"type": "single-light-dim",
 			"name": "Lumière à variation",
-			"img": "light80.png",
+			"img": "light80.webp",
 			"description": "Gère une lumière à intensité variable",
 			"variables": [
 				{
@@ -356,7 +356,7 @@
 		{
 			"type": "single-light-color",
 			"name": "Lumière de couleurs",
-			"img": "icon_wheel.png",
+			"img": "icon_wheel.webp",
 			"description": "Gère une lumière à couleurs",
 			"variables": [
 				{
@@ -572,7 +572,7 @@
 		{
 			"type": "group-light",
 			"name": "Groupe de lumières",
-			"img": "groupLight.png",
+			"img": "groupLight.webp",
 			"description": "Gère un groupe de plusieurs widgets lumières",
 			"variables": [
 				{
@@ -703,7 +703,7 @@
 		{
 			"type": "plug",
 			"name": "Prise",
-			"img": "plug6.png",
+			"img": "plug6.webp",
 			"description": "Widget pour gérer une prise électrique",
 			"variables": [
 				{
@@ -868,7 +868,7 @@
 		{
 			"type": "group-plug",
 			"name": "Groupe de prises",
-			"img": "groupPlug.png",
+			"img": "groupPlug.webp",
 			"description": "Gère un groupe de plusieurs widgets prises",
 			"variables": [
 				{
@@ -994,7 +994,7 @@
 		{
 			"type": "scenario",
 			"name": "Scénario",
-			"img": "scenario.png",
+			"img": "scenario.webp",
 			"description": "Gestion d'un scénario",
 			"variables": [
 				{
@@ -1111,7 +1111,7 @@
 		{
 			"type": "widgets-summary",
 			"name": "Résumé",
-			"img": "summary.png",
+			"img": "summary.webp",
 			"description": "Affiche un résumé de plusieurs widgets",
 			"noMoreInfos": true,
 			"options": [
@@ -1170,7 +1170,7 @@
 		{
 			"type": "room",
 			"name": "Résumé de pièce",
-			"img": "room_summary.png",
+			"img": "room_summary.webp",
 			"description": "Affiche le résumé d'une pièce associée à un objet Jeedom",
 			"noMoreInfos": true,
 			"options": [
@@ -1216,7 +1216,7 @@
 		{
 			"type": "favorites",
 			"name": "Favoris",
-			"img": "favorites.png",
+			"img": "favorites.webp",
 			"description": "Affiche des widgets favoris",
 			"noMoreInfos": true,
 			"options": [
@@ -1274,7 +1274,7 @@
 		{
 			"type": "brightness",
 			"name": "Luminosité",
-			"img": "brightness.png",
+			"img": "brightness.webp",
 			"description": "Donne la luminosité en Lux",
 			"variables": [
 				{
@@ -1387,7 +1387,7 @@
 		{
 			"type": "humidity",
 			"name": "Humidité",
-			"img": "humidity.png",
+			"img": "humidity.webp",
 			"description": "Donne l'humidité en %",
 			"variables": [
 				{
@@ -1500,7 +1500,7 @@
 		{
 			"type": "temperature",
 			"name": "Température",
-			"img": "temperature.png",
+			"img": "temperature.webp",
 			"description": "Affiche la température en °C",
 			"variables": [
 				{
@@ -1614,7 +1614,7 @@
 		{
 			"type": "power",
 			"name": "Puissance",
-			"img": "power.png",
+			"img": "power.webp",
 			"description": "Donne la puissance consomée en W",
 			"variables": [
 				{
@@ -1728,7 +1728,7 @@
 		{
 			"type": "thermostat",
 			"name": "Thermostat",
-			"img": "thermostatOff.png",
+			"img": "thermostatOff.webp",
 			"description": "Gère un thermostat. Compatible avec le plugin officiel",
 			"variables": [
 				{
@@ -1975,7 +1975,7 @@
 		{
 			"type": "air-con",
 			"name": "Climatiseur",
-			"img": "cold.png",
+			"img": "cold.webp",
 			"description": "Gère un climatiseur",
 			"variables": [
 				{
@@ -2201,7 +2201,7 @@
 		{
 			"type": "door",
 			"name": "Porte",
-			"img": "doorOn.png",
+			"img": "doorOn.webp",
 			"description": "Donne l'état ouvert/fermé d'une porte",
 			"variables": [
 				{
@@ -2307,7 +2307,7 @@
 		{
 			"type": "group-door",
 			"name": "Groupe de portes",
-			"img": "groupDoor.png",
+			"img": "groupDoor.webp",
 			"description": "Gère un groupe de plusieurs widgets portes",
 			"variables": [
 				{
@@ -2409,7 +2409,7 @@
 		{
 			"type": "window",
 			"name": "Fenêtre",
-			"img": "windowClosed.png",
+			"img": "windowClosed.webp",
 			"description": "Donne l'état ouvert/fermé d'une fenêtre",
 			"variables": [
 				{
@@ -2514,7 +2514,7 @@
 		{
 			"type": "group-window",
 			"name": "Groupe de fenêtres",
-			"img": "groupWindows.png",
+			"img": "groupWindows.webp",
 			"description": "Gère un groupe de plusieurs widgets fenêtres",
 			"variables": [
 				{
@@ -2612,7 +2612,7 @@
 		{
 			"type": "frontgate",
 			"name": "Portail coulissant",
-			"img": "gateOpen.png",
+			"img": "gateOpen.webp",
 			"description": "Gère un portail coulissant",
 			"variables": [
 				{
@@ -2752,7 +2752,7 @@
 		{
 			"type": "shutter",
 			"name": "Volet",
-			"img": "shutter50.png",
+			"img": "shutter50.webp",
 			"description": "Gère un volet roulant",
 			"variables": [
 				{
@@ -2924,7 +2924,7 @@
 		{
 			"type": "group-shutter",
 			"name": "Groupe de volets",
-			"img": "groupShutter.png",
+			"img": "groupShutter.webp",
 			"description": "Gère un groupe de plusieurs widgets volets",
 			"variables": [
 				{
@@ -3042,7 +3042,7 @@
 		{
 			"type": "pir",
 			"name": "PIR",
-			"img": "pirOff.png",
+			"img": "pirOff.webp",
 			"description": "Donne l'état d'un capteur de mouvements",
 			"variables": [
 				{
@@ -3148,7 +3148,7 @@
 		{
 			"type": "group-pir",
 			"name": "Groupe de PIR",
-			"img": "groupPIR.png",
+			"img": "groupPIR.webp",
 			"description": "Gère un groupe de plusieurs capteurs de mouvements",
 			"variables": [
 				{
@@ -3250,7 +3250,7 @@
 		{
 			"type": "alarm",
 			"name": "Alarme",
-			"img": "alarm_red.png",
+			"img": "alarm_red.webp",
 			"description": "Gère une alarme",
 			"variables": [
 				{
@@ -3441,7 +3441,7 @@
 		{
 			"type": "group-alarm",
 			"name": "Groupe d'alarmes",
-			"img": "groupAlarm.png",
+			"img": "groupAlarm.webp",
 			"description": "Gère un groupe d'alarmes",
 			"variables": [
 				{
@@ -3559,7 +3559,7 @@
 		{
 			"type": "generic-info-binary",
 			"name": "Générique binaire",
-			"img": "generic-binary.png",
+			"img": "generic-binary.webp",
 			"description": "Widget générique pour afficher les infos d'une commande binaire",
 			"variables": [
 				{
@@ -3678,7 +3678,7 @@
 		{
 			"type": "group-generic-info-binary",
 			"name": "Groupe de génériques binaires",
-			"img": "groupBinary.png",
+			"img": "groupBinary.webp",
 			"description": "Gère un groupe de plusieurs widgets générique info binaire",
 			"variables": [
 				{
@@ -3780,7 +3780,7 @@
 		{
 			"type": "generic-info-numeric",
 			"name": "Générique numérique",
-			"img": "generic-numeric.png",
+			"img": "generic-numeric.webp",
 			"description": "Widget générique pour afficher les infos d'une commande info numérique",
 			"variables": [
 				{
@@ -3905,7 +3905,7 @@
 		{
 			"type": "generic-info-string",
 			"name": "Générique texte",
-			"img": "generic-text.png",
+			"img": "generic-text.webp",
 			"description": "Widget générique pour afficher les infos d'une commande info texte (sous-type string)",
 			"variables": [
 				{
@@ -4020,7 +4020,7 @@
 		{
 			"type": "generic-switch",
 			"name": "Générique switch",
-			"img": "switch.png",
+			"img": "switch.webp",
 			"description": "Widget générique pour un switch (commande ON/OFF)",
 			"variables": [
 				{
@@ -4173,7 +4173,7 @@
 		{
 			"type": "generic-slider",
 			"name": "Générique slider",
-			"img": "meter.png",
+			"img": "meter.webp",
 			"description": "Gère un slider",
 			"variables": [
 				{
@@ -4304,7 +4304,7 @@
 		{
 			"type": "generic-action-other",
 			"name": "Générique actions",
-			"img": "powerButton.png",
+			"img": "powerButton.webp",
 			"description": "Permet des lancer des commandes action (de tous types)",
 			"variables": [
 				{
@@ -4427,7 +4427,7 @@
 		{
 			"type": "choices-list",
 			"name": "Liste de choix",
-			"img": "choices-list.png",
+			"img": "choices-list.webp",
 			"description": "Gère une liste",
 			"variables": [
 				{
@@ -4531,7 +4531,7 @@
 		{
 			"type": "generic-message",
 			"name": "Générique message",
-			"img": "generic-message.png",
+			"img": "generic-message.webp",
 			"description": "Permet l'utilisation d'une commande de type message",
 			"options": [
 				{
@@ -4635,7 +4635,7 @@
 		{
 			"type": "mode",
 			"name": "Mode",
-			"img": "mode.png",
+			"img": "mode.webp",
 			"description": "Affiche une liste de modes et permet de les sélectionner",
 			"variables": [
 				{
@@ -4761,7 +4761,7 @@
 		{
 			"type": "webview",
 			"name": "Web View",
-			"img": "web.png",
+			"img": "web.webp",
 			"description": "Permet d'afficher un design, le dashboard ou n'importe quelle page Web. Astuce : Pour un affichage direct dans un menu, configurez l'affichage forcé sur Détail (ce widget doit être unique dans le menu)",
 			"variables": [
 				{
@@ -4889,7 +4889,7 @@
 		{
 			"type": "geoloc",
 			"name": "Géolocalisation",
-			"img": "geo.png",
+			"img": "geo.webp",
 			"description": "Permet d'afficher un point de localisation",
 			"variables": [
 				{
@@ -5014,7 +5014,7 @@
 		{
 			"type": "group-geoloc",
 			"name": "Groupe de géolocalisation",
-			"img": "groupGeo.png",
+			"img": "groupGeo.webp",
 			"description": "Permet d'afficher plusieurs géolocalisation sur une seule et même carte",
 			"variables": [
 				{
@@ -5106,7 +5106,7 @@
 		{
 			"type": "camera",
 			"name": "Caméra",
-			"img": "camera.png",
+			"img": "camera.webp",
 			"description": "Permet d'afficher une caméra",
 			"variables": [
 				{
@@ -5356,7 +5356,7 @@
 		{
 			"type": "appLauncher",
 			"name": "Lanceur d'application",
-			"img": "droid.png",
+			"img": "droid.webp",
 			"description": "Permet de lancer une application. !! Uniquement compatible Android !!",
 			"variables": [
 				{
@@ -5440,7 +5440,7 @@
 		{
 			"type": "history",
 			"name": "Historique",
-			"img": "history.png",
+			"img": "history.webp",
 			"description": "Permet d'afficher un historique de commande",
 			"variables": [
 				{
@@ -5667,7 +5667,7 @@
 		{
 			"type": "group-history",
 			"name": "Groupe d'historiques",
-			"img": "groupHistory.png",
+			"img": "groupHistory.webp",
 			"description": "Permet d'afficher des historiques de commandes",
 			"variables": [
 				{
@@ -5854,7 +5854,7 @@
 		{
 			"type": "image",
 			"name": "Image",
-			"img": "image.png",
+			"img": "image.webp",
 			"description": "Permet d'afficher une image",
 			"variables": [
 				{
@@ -5976,7 +5976,7 @@
 		{
 			"type": "event",
 			"name": "Evénement",
-			"img": "events.png",
+			"img": "events.webp",
 			"description": "Permet de réaliser la mise à jour d'une commande info",
 			"variables": [
 				{
@@ -6082,7 +6082,7 @@
 		{
 			"type": "media-player",
 			"name": "Lecteur multimedia",
-			"img": "media.png",
+			"img": "media.webp",
 			"description": "Gère un équipement multimedia",
 			"variables": [
 				{
@@ -6408,7 +6408,7 @@
 			"type": "jc",
 			"name": "JC",
 			"hide": true,
-			"img": "jeedomConnect.png",
+			"img": "jeedomConnect.webp",
 			"description": "Permet d'afficher les informations d'un équipement JC",
 			"variables": [
 				{
@@ -6551,7 +6551,7 @@
 		{
 			"type": "component",
 			"name": "Composant",
-			"img": "tools.png",
+			"img": "tools.webp",
 			"hide": true,
 			"description": "Permet d'afficher des composants personnalisés",
 			"options": [
@@ -6569,7 +6569,7 @@
 			"type": "separator",
 			"name": "Séparateur",
 			"description": "Affiche une ligne de séparation avec texte",
-			"img": "component-separator.png",
+			"img": "component-separator.webp",
 			"noMoreInfos": true,
 			"options": [
 				{
@@ -6615,7 +6615,7 @@
 			"type": "text",
 			"name": "Texte",
 			"description": "Affiche un texte",
-			"img": "component-txt.png",
+			"img": "component-txt.webp",
 			"options": [
 				{
 					"id": "name",
@@ -6701,7 +6701,7 @@
 			"type": "image",
 			"name": "Image",
 			"description": "Affiche une image",
-			"img": "component-img.png",
+			"img": "component-img.webp",
 			"options": [
 				{
 					"id": "name",
@@ -6765,7 +6765,7 @@
 			"type": "switch",
 			"name": "Switch",
 			"description": "Affiche un switch à 2 états",
-			"img": "component-switch.png",
+			"img": "component-switch.webp",
 			"noMoreInfos": true,
 			"options": [
 				{
@@ -6821,7 +6821,7 @@
 			"type": "slider",
 			"name": "Slider",
 			"description": "Affiche un slider",
-			"img": "component-slider.png",
+			"img": "component-slider.webp",
 			"noMoreInfos": true,
 			"options": [
 				{
@@ -6866,7 +6866,7 @@
 			"type": "gauge",
 			"name": "Jauge",
 			"description": "Affiche une gauge",
-			"img": "component-gauge.png",
+			"img": "component-gauge.webp",
 			"noMoreInfos": true,
 			"options": [
 				{
@@ -6917,7 +6917,7 @@
 		},
 		{
 			"type": "button",
-			"img": "component-button.png",
+			"img": "component-button.webp",
 			"name": "Bouton",
 			"description": "Affiche un bouton et permet de réaliser 1 à plusieurs actions à la suite",
 			"noMoreInfos": true,

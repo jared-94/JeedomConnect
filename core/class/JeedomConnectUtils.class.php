@@ -666,7 +666,7 @@ class JeedomConnectUtils {
     }
 
     private static function isImgFile($extension) {
-        return in_array($extension, array('gif', 'jpeg', 'jpg', 'png'));
+        return in_array($extension, array('gif', 'jpeg', 'jpg', 'png', 'wepb'));
     }
 
     private static function isVideoFile($extension) {
@@ -690,7 +690,7 @@ class JeedomConnectUtils {
                 );
             }
             if (empty($data['payload']['image'])) {
-                $data['payload']['image'] = array("source" => "jc", "name" => "favorites.png");
+                $data['payload']['image'] = array("source" => "jc", "name" => "favorites.webp");
             }
         }
 

@@ -73,7 +73,7 @@ try {
 			if (count($data) < 2) continue;
 			$cmdDistance = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),  'distance');
 			$distance = is_object($cmdDistance) ? number_format(floatval($cmdDistance->execCmd()), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
-			$img = $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.png');
+			$img = $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.webp');
 			$infoImg = getimagesize('/var/www/html/' . $img);
 			$result[] = array(
 				'id' => $cmd->getId(),
