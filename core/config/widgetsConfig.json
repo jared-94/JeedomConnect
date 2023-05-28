@@ -6865,7 +6865,7 @@
 		{
 			"type": "gauge",
 			"name": "Jauge",
-			"description": "Affiche une gauge",
+			"description": "Affiche une jauge",
 			"img": "component-gauge.webp",
 			"noMoreInfos": true,
 			"options": [
