@@ -121,7 +121,7 @@ class JeedomConnectDeviceControl {
                 $hasArmActions = $widget['onAction']['id'] != null && $widget['offAction']['id'] != null;
                 $deviceType = "TYPE_LOCK";
                 $controlTemplate = $hasArmActions ? "TYPE_TOGGLE" : "TYPE_STATELESS";
-                $device['status'] = $cmdData[$widget['enableInfo']['id']] > 0 ? 'on' : 'off';
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget, 'enableInfo');
                 if ($widget['onAction']['id'] != null) {
                     $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 }
@@ -149,7 +149,7 @@ class JeedomConnectDeviceControl {
             case 'door':
                 $controlTemplate = "TYPE_TOGGLE";
                 $deviceType = "TYPE_DOOR";
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
                 $device['statusText'] = $device['status'] == 'on' ? "Ouvert" : "Fermé";
                 break;
 
@@ -159,7 +159,7 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = $hasStatus != null ? "TYPE_TOGGLE" : "TYPE_STATELESS";
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['openAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['closeAction']);
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
                 $device['statusText'] = $hasStatus ? ($device['status'] == 'on' ? "Ouvert" : "Fermé") : "";
                 break;
 
@@ -170,7 +170,7 @@ class JeedomConnectDeviceControl {
 
             case 'generic-info-binary':
                 $controlTemplate = "TYPE_TOGGLE";
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
                 if ($device['status'] == 'on') {
                     $device['statusText'] = empty($widget['text1']) ? "1" : $widget['text1'];
                 } else {
@@ -210,18 +210,18 @@ class JeedomConnectDeviceControl {
                 $device['icon'] = 'ic_fluent_toggle_left_24_regular';
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
                 $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
                 break;
 
             case 'pir':
                 $controlTemplate = "TYPE_TOGGLE";
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "En alerte" : "Absent";
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
+                $device['statusText'] = ($device['status'] == 'on')  ? "En alerte" : "Absent";
                 $icon_alert = 'ic_fluent_alert_on_24_regular';
                 $icon_alert_none = 'ic_fluent_snooze_24_regular';
                 $device['icon'] = $cmdData[$widget['statusInfo']['id']] > 0 ? $icon_alert : $icon_alert_none;
-                $device['iconColor'] = $cmdData[$widget['statusInfo']['id']] > 0 ? '#ff0000' : '';
+                $device['iconColor'] = ($device['status'] == 'on')  ? '#ff0000' : '';
                 break;
 
             case 'plug':
@@ -229,8 +229,8 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
+                $device['statusText'] = ($device['status'] == 'on') ? "ON" : "OFF";
                 break;
 
             case 'scenario':
@@ -262,8 +262,8 @@ class JeedomConnectDeviceControl {
                 if ($controlTemplate == "TYPE_TOGGLE" || $controlTemplate = "TYPE_TOGGLE_RANGE") {
                     $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['upAction']);
                     $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['downAction']);
-                    $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                    $device['statusText'] = $device['status'] == 'on' ? "Ouvert" : "Fermé";
+                    $device['status'] = self::getTranslatedStatus($cmdData, $widget);
+                    $device['statusText'] = ($device['status'] == 'on') ? "Ouvert" : "Fermé";
                 }
                 if (($controlTemplate == "TYPE_RANGE" || $controlTemplate = "TYPE_TOGGLE_RANGE") && key_exists('positionAction', $widget)) {
                     $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['positionAction']);
@@ -277,8 +277,8 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE";
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
+                $device['statusText'] = ($device['status'] == 'on') ? "ON" : "OFF";
                 break;
 
             case 'single-light-dim':
@@ -294,9 +294,9 @@ class JeedomConnectDeviceControl {
                 }
 
                 if ($widget['statusInfo']['id'] != null) {
-                    $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
+                    $device['status'] = self::getTranslatedStatus($cmdData, $widget);
                 } else {
-                    $device['status'] = $cmdData[$widget['brightInfo']['id']] > 0 ? 'on' : 'off';
+                    $device['status'] = self::getTranslatedStatus($cmdData, $widget, 'brightInfo');
                 }
                 $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
                 if (!empty($cmdData[$widget['colorInfo']['id']])) {
@@ -318,8 +318,8 @@ class JeedomConnectDeviceControl {
                 $controlTemplate = "TYPE_TOGGLE_RANGE";
                 JeedomConnectUtils::getRangeStatus($cmdData, $widget['setpointInfo'], $device);
                 $device['rangeAction'] = JeedomConnectUtils::getActionCmd($widget['setpointAction']);
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $device['status'] == 'on' ? "ON" : "OFF";
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
+                $device['statusText'] = ($device['status'] == 'on') ? "ON" : "OFF";
                 $device['onAction'] = JeedomConnectUtils::getActionCmd($widget['onAction']);
                 $device['offAction'] = JeedomConnectUtils::getActionCmd($widget['offAction']);
                 break;
@@ -338,8 +338,8 @@ class JeedomConnectDeviceControl {
             case 'window':
                 $deviceType = "TYPE_WINDOW";
                 $controlTemplate = "TYPE_TOGGLE";
-                $device['status'] = $cmdData[$widget['statusInfo']['id']] > 0 ? 'on' : 'off';
-                $device['statusText'] = $cmdData[$widget['statusInfo']['id']] > 0 ? "Ouvert" : "Fermé";
+                $device['status'] = self::getTranslatedStatus($cmdData, $widget);
+                $device['statusText'] = ($device['status'] == 'on') ? "Ouvert" : "Fermé";
                 break;
 
             default:
@@ -350,6 +350,26 @@ class JeedomConnectDeviceControl {
         $device['controlTemplate'] = $controlTemplate;
 
         return $device;
+    }
+
+    public static function getTranslatedStatus($cmdData, $widget, $key = 'statusInfo') {
+
+        $isInvert = $widget[$key]['invert'] ?? false;
+
+        $cmdVal = $cmdData[$widget[$key]['id']];
+        // JCLog::debug('getTranslatedStatus - value : ' . $cmdVal);
+        if (!$isInvert) {
+            $status = $cmdVal > 0;
+        } else {
+            // JCLog::debug('getTranslatedStatus - widget is inverted !');
+            $status = $cmdVal <= 0;
+            // JCLog::debug('getTranslatedStatus - widget status : ' . ($status ? 'true' : 'false'));
+        }
+
+        return ($status ? 'on' : 'off');
+        // $ret = ($status ? 'on' : 'off');
+        // JCLog::debug('getTranslatedStatus - return : ' . $ret);
+        // return $ret;
     }
 
     /**
