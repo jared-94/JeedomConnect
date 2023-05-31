@@ -1513,7 +1513,7 @@ class JeedomConnect extends eqLogic {
 
 		JCLog::debug('Checking if widget ' . $widgetId . ' exist on equipment "' . $this->getName() . '" [' . $this->getConfiguration('apiKey') . ']');
 
-		$conf = $this->getConfig(true);
+		$conf = $this->getGeneratedConfigFile();
 		$exist = false;
 
 		if (!$conf) {

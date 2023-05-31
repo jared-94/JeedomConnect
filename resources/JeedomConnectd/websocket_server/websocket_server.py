@@ -455,7 +455,13 @@ class WebSocketHandler(StreamRequestHandler):
         header.append(FIN | OPCODE_CLOSE_CONN)
         header.append(payload_length)
         with self._send_lock:
-            self.request.send(header + payload)
+            try:
+                self.request.send(header + payload)
+            except IOError as e:
+                if e.errno == errno.EPIPE:
+                    logging.warning("Broken pipe SKIP")
+                    pass
+                    # Handling of the error
 
     def send_text(self, message, opcode=OPCODE_TEXT):
         """

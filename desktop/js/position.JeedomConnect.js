@@ -5,7 +5,7 @@
  */
 
 var myDefaultIcon = L.icon({
-    iconUrl: 'plugins/JeedomConnect/data/img/pin.png',
+    iconUrl: 'plugins/JeedomConnect/data/img/pin.webp',
     iconSize: [32, 48],
     iconAnchor: [16, 48],
     popupAnchor: [-3, -40],

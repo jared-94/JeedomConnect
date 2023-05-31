@@ -28,7 +28,7 @@ sendVarToJS('selectedIcon', [
 function get_all_files($dir, $includeSubDir = false) {
   $result = array();
   $dh = new DirectoryIterator($dir);
-  $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp'); //match extentions in .htaccess files so adapt it as well
+  $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'); //match extentions in .htaccess files so adapt it as well
 
   foreach ($dh as $item) {
     if ($item->isDot()) continue;
