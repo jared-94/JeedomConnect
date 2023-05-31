@@ -148,6 +148,7 @@ function refreshWidgetsContent() {
 		if (val != undefined && val.type !== undefined) { //it is a widget
 			$("#selWidgetDetail option[data-widget-id=" + val.id + "]").attr('data-exist', true);
 			// console.log('widgetsList  ==> ', widgetsList)
+			// console.log('val  ==> ', val)
 			if (val.type == 'component') {
 				var itemType = 'component';
 				var imgObj = widgetsList.components.find(w => w.type == val.component).img;
@@ -157,8 +158,9 @@ function refreshWidgetsContent() {
 				var imgObj = widgetsList.widgets.find(w => w.type == val.type).img;
 			}
 			var enable = val.enable ? '' : hideSpan;
+			var currentName = val.nameDisplayed || val.name;
 			items.push(`<li class="widgetItem" data-id="${val.id}" data-parentId="${value.parentId}" data-index="${value.index}"><a title="id=${val.id}\nwidgetId=${value.widgetId}" onclick="editWidgetModal('${val.id}', '${itemType}');">
-			<img src="plugins/JeedomConnect/data/img/${imgObj}" class="imgList"/>${val.name}${enable}<br/>
+			<img src="plugins/JeedomConnect/data/img/${imgObj}" class="imgList"/>${currentName}${enable}<br/>
 			<span style="font-size:12px;margin-left:40px;">${getRoomName(val.room) || 'Pas de pièce'}</span></a>
 			<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
@@ -204,7 +206,9 @@ function refreshWidgetsContent() {
 						var itemType = 'widget';
 						var imgObj = widgetsList.widgets.find(i => i.type == w.type).img;
 					}
-					items.push(`<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}\nwidgetId=${wid.widgetId}" onclick="editWidgetModal('${w.id}', '${itemType}');"><img src="plugins/JeedomConnect/data/img/${imgObj}" class="imgList"/>${w.name}${enableSub}</a>
+					var currentName = w.nameDisplayed || w.name;
+					items.push(`<li  class='widgetItem' data-id="${w.id}" data-parentId="${wid.parentId}" data-index="${wid.index}"><a title="id=${w.id}\nwidgetId=${wid.widgetId}" onclick="editWidgetModal('${w.id}', '${itemType}');">
+					<img src="plugins/JeedomConnect/data/img/${imgObj}" class="imgList"/>${currentName}${enableSub}</a>
 					<i class="mdi mdi-arrow-up-down-bold" title="Déplacer" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;cursor:grab!important;" aria-hidden="true"></i>
 
 					<!-- <i class="mdi mdi-arrow-up-circle" title="Monter" style="color:rgb(80, 120, 170);font-size:24px;margin-right:10px;margin-left:10px;" aria-hidden="true" onclick="upWidget('${w.id}','${wid.parentId}','${wid.index}');"></i>

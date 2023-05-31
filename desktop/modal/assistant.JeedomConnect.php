@@ -168,7 +168,7 @@ foreach ($summaryConfig as $index => $summary) {
           <div class="alert alert-info">
             Vous pouvez ici configurer les menus du bas dans l'application. Choisissez une icône et de préférence un nom court.
           </div>
-          <img src="plugins/JeedomConnect/desktop/img/bottom_tab.png" />
+          <img src="plugins/JeedomConnect/desktop/img/bottom_tab.webp" />
         </div>
       </div>
 
@@ -185,7 +185,7 @@ foreach ($summaryConfig as $index => $summary) {
           <div class="alert alert-info">
             Chaque menu du bas peut avoir une liste de menu haut.
           </div>
-          <img src="plugins/JeedomConnect/desktop/img/top_tab.png" />
+          <img src="plugins/JeedomConnect/desktop/img/top_tab.webp" />
         </div>
       </div>
 
@@ -331,7 +331,7 @@ foreach ($summaryConfig as $index => $summary) {
           <div class="alert alert-info">
             Vous pouvez ajouter des widgets, ainsi que des groupes pour les classer.
           </div>
-          <img src="plugins/JeedomConnect/desktop/img/widget.png" />
+          <img src="plugins/JeedomConnect/desktop/img/widget.webp" />
         </div>
       </div>
 
