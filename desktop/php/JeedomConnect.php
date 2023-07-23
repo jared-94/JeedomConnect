@@ -257,6 +257,11 @@ $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 					<legend><i class=" fas fa-comments"></i> {{Community}}</legend>
 					<!-- Boutons de gestion du plugin -->
 					<div class="eqLogicThumbnailContainer">
+						<div class="cursor eqLogicAction logoSecondary" data-action="createCommunityPost" style="color:rgb(27,161,242);">
+							<i class="fas fa-ambulance"></i>
+							<br>
+							<span style="color:var(--txt-color)">{{Créer un post Community}}</span>
+						</div>
 						<div class="cursor eqLogicAction logoSecondary" data-action="showCommunity" style="color:rgb(27,161,242);">
 							<i class="fas fa-question-circle"></i>
 							<br>

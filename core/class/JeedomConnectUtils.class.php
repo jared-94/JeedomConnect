@@ -32,9 +32,9 @@ class JeedomConnectUtils {
         return  false;
     }
 
-    public static function getInstallDetails(): string {
+    public static function getInstallDetails($str = false): string {
 
-        $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
+        $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . ' (' . config::byKey('core::branch') . ')<br/>';
 
         $pluginType = self::isBeta(true);
         $daemon_info = JeedomConnect::deamon_info();
@@ -76,6 +76,11 @@ class JeedomConnectUtils {
 
             $infoPlugin .= ' - ' . self::getUserInfo($eqLogic->getConfiguration('userId'));
             $infoPlugin .=  '<br/>';
+        }
+
+        if ($str) {
+            $infoPlugin = br2nl('<br/>' . $infoPlugin);
+            $infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
         }
 
         return $infoPlugin;
