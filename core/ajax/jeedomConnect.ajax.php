@@ -495,7 +495,7 @@ try {
 
 	if (init('action') == 'createCommunityPost') {
 
-		$installDetail = '```' . JeedomConnectUtils::getInstallDetails(true) . '```';
+		$installDetail = JeedomConnectUtils::getInstallDetails(true);
 
 		/** @var plugin $plugin */
 		$plugin = plugin::byId('JeedomConnect');

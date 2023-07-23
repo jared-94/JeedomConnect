@@ -79,7 +79,7 @@ class JeedomConnectUtils {
         }
 
         if ($str) {
-            $infoPlugin = br2nl('<br/>' . $infoPlugin);
+            $infoPlugin = br2nl('< Ajoutez un titre puis rédigez votre question/problème ici, sans effacer les infos de config indiquées ci-dessous ><br/><br/><br/><br/>--- <br/>**Mes infos de config** : <br/>```' . $infoPlugin . '```');
             $infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
         }
 
