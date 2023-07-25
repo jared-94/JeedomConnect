@@ -868,7 +868,7 @@ async function createCommunityPost() {
     action: 'createCommunityPost'
   }
   var infoPlugin = await asyncAjaxGenericFunction(data);
-  console.log('info plugin', infoPlugin);
+  // console.log('info plugin', infoPlugin);
 
   var element = document.createElement('a');
 
@@ -885,7 +885,7 @@ async function createCommunityPost() {
 
 }
 
-$('.eqLogicAction[data-action=createCommunityPost]').off('click').on('click', function () {
+$('.eqLogicAction[data-action=createCommunityPostJC]').off('click').on('click', function () {
   createCommunityPost();
 })
 // End Community Post

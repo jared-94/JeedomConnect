@@ -1832,6 +1832,51 @@ class JeedomConnect extends eqLogic {
 		JCLog::debug('---- sendActiveControl end -->>> ' . json_encode($payload));
 	}
 
+	public static function getConfigForCommunity($str = true) {
+
+		$pluginType = JeedomConnectUtils::isBeta(true);
+
+		$infoPlugin = '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/><br/>';
+		$infoPlugin .= '<b>Equipements</b> : <br/>';
+
+		/** @var JeedomConnect $eqLogic */
+		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
+			$platformOs = $eqLogic->getConfiguration('platformOs');
+			$platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
+
+			$versionAppConfig = $eqLogic->getConfiguration('appVersion');
+			$versionAppTypeConfig = $eqLogic->getConfiguration('appTypeVersion');
+			$buildVersion = $eqLogic->getConfiguration('buildVersion');
+			$warn = ($versionAppTypeConfig != '' && $versionAppTypeConfig != $pluginType) ? ' <i class="fas fa-exclamation-triangle" style="color:red"></i> ' : '';
+			$buildVersionApp = ($pluginType == 'beta' && $buildVersion != '') ? ' (' . $buildVersion . ')' : '';
+			$versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig . $buildVersionApp . ' ' . $versionAppTypeConfig . $warn  : $versionAppConfig;
+
+			$connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
+			$withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
+
+			$osVersionConfig = $eqLogic->getConfiguration('osVersion');
+			$osVersion = $osVersionConfig != '' ? ' [os : ' . $osVersionConfig . ']'  : '';
+
+			$cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
+
+			$infoPlugin .= '&nbsp;&nbsp;' .  $eqLogic->getName();
+			if ($platform == '' && $versionApp == '') {
+				$infoPlugin .= ' : non enregistré';
+			} else {
+				$infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $osVersion . $cpl;
+			}
+
+			$infoPlugin .= ' - ' . JeedomConnectUtils::getUserInfo($eqLogic->getConfiguration('userId'));
+			$infoPlugin .=  '<br/>';
+		}
+
+		if ($str) {
+			$infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
+		}
+
+		return $infoPlugin;
+	}
+
 
 	/*
 	 ************************************************************************
