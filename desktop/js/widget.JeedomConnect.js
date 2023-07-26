@@ -1687,6 +1687,12 @@ $(".widgetMenu .saveWidget").click(function () {
                         });
                     }
                     else {
+
+                        if ($('#widgetModal #keepOpen').is(':checked')) {
+                            // console.log('on reste open');
+                            return;
+                        }
+
                         if ($('.widgetMenu .saveWidget').attr('exit-attr') == 'true') {
                             var vars = getUrlVars()
                             var url = 'index.php?'
@@ -1815,3 +1821,7 @@ $(".widgetMenu .duplicateWidget").click(function () {
     // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 
 });
+
+// if (typeof keepOpenVar != 'undefined' && keepOpenVar == '1') {
+//     $('#widgetModal #keepOpen').attr("checked", true);
+// }

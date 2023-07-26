@@ -310,6 +310,16 @@ sendVarToJS('userHash', $userHash);
         </div>
       </div>
 
+      <!-- <div class="form-group col-lg-6">
+        <label class="col-lg-3 control-label">{{Garder ouvert à la sauvegarde}}
+          <sup>
+            <i class="fas fa-question-circle floatright" title="Permet de garder la fenêtre d'édition d'un widget ouverte après la sauvegarde"></i>
+          </sup>
+        </label>
+        <div class="col-lg-3">
+          <input type="checkbox" class="configKey" data-l1key="keepOpen" />
+        </div>
+      </div> -->
 
     </div>
     <br />
