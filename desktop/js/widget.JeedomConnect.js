@@ -1396,6 +1396,8 @@ function getHtmlItem(type, option) {
 $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
+    var keepOpen = $(this).attr('data-close');
+
     try {
         var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
@@ -1688,8 +1690,8 @@ $(".widgetMenu .saveWidget").click(function () {
                     }
                     else {
 
-                        if ($('#widgetModal #keepOpen').is(':checked')) {
-                            // console.log('on reste open');
+                        if (keepOpen == 'false') {
+                            console.log('on reste open');
                             return;
                         }
 
@@ -1821,7 +1823,3 @@ $(".widgetMenu .duplicateWidget").click(function () {
     // $('.widgetMenu .saveWidget').attr('exit-attr', 'true');
 
 });
-
-// if (typeof keepOpenVar != 'undefined' && keepOpenVar == '1') {
-//     $('#widgetModal #keepOpen').attr("checked", true);
-// }
