@@ -2483,14 +2483,14 @@ class JeedomConnectCmd extends cmd {
 						if (strpos(json_encode($customConf), $cond) === false) {
 							if ($customConf == "") $customConf = array();
 
-							$initialValue = (($customConf['visibilityCond'] ?? '') != '') ? ($customConf['visibilityCond'] . ' || ') : '';
+							$initialValue = (($customConf['visibilityCond'] ?? '') != '') ? ($customConf['visibilityCond'] . ' && ') : '';
 							$customConf['visibilityCond'] = $initialValue . $cond;
 							$hasChange = true;
 						}
 					} else {
 						// JCLog::debug('Afficher // position =>' .  strpos(json_encode($customConf), $cond));
 						if (strpos(json_encode($customConf), $cond) !== false) {
-							$customConf['visibilityCond'] = trim(str_replace(array('|| ' . $cond, $cond), array('', ''), $customConf['visibilityCond']));
+							$customConf['visibilityCond'] = trim(str_replace(array('&& ' . $cond, $cond), array('', ''), $customConf['visibilityCond']));
 
 							if ($customConf['visibilityCond'] == '') unset($customConf['visibilityCond']);
 
