@@ -1070,7 +1070,7 @@ class JeedomConnect extends eqLogic {
 				$QR = imagecreatefrompng($filepath);
 
 				// START TO DRAW THE IMAGE ON THE QR CODE
-				$logopath = dirname(__FILE__) . '/../../data/img/JeedomConnect_icon2.png';
+				$logopath = __DIR__ . '/../../data/img/JeedomConnect_icon2.webp';
 				$logo = imagecreatefromstring(file_get_contents($logopath));
 				$QR_width = imagesx($QR);
 				$QR_height = imagesy($QR);
@@ -1429,10 +1429,10 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function removeAllData($apiKey) {
-		unlink(self::$_qr_dir . $apiKey . '.png');
-		unlink(self::$_config_dir . $apiKey . ".json");
-		unlink(self::$_config_dir . $apiKey . ".json.generated");
-		unlink(self::$_notif_dir . $apiKey . ".json");
+		@unlink(self::$_qr_dir . $apiKey . '.png');
+		@unlink(self::$_config_dir . $apiKey . ".json");
+		@unlink(self::$_config_dir . $apiKey . ".json.generated");
+		@unlink(self::$_notif_dir . $apiKey . ".json");
 		JeedomConnectUtils::delTree(self::$_backup_dir . $apiKey);
 
 		$allKey = config::searchKey('customData::' . $apiKey, 'JeedomConnect');
