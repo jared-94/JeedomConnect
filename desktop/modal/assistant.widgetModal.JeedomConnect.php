@@ -39,11 +39,11 @@ if (!isConnect('admin')) {
 		<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
 			<span class="input-group-btn">
 				<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-				<a class="btn btn-sm btn-danger roundedRight removeWidget"><i class="fas fa-minus-circle"></i> {{Supprimer}}
-				</a><a class="btn btn-sm btn-default roundedLeft duplicateWidget"><i class="far fa-copy"></i> {{Dupliquer}}
+				<a class="btn btn-sm btn-danger roundedLeft removeWidget"><i class="fas fa-minus-circle"></i> {{Supprimer}}
+				</a><a class="btn btn-sm btn-default duplicateWidget"><i class="far fa-copy"></i> {{Dupliquer}}
 				</a><a class="btn btn-sm btn-warning hideWidget"><i class="fas fa-times"></i> {{Annuler}}
 				</a><a class="btn btn-sm btn-primary saveWidget" data-close="false"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
-				</a><a class="btn btn-sm btn-success saveWidget" data-close="true"><i class="fas fa-check-circle"></i> {{Sauvegarder et Fermer}}
+				</a><a class="btn btn-sm btn-success roundedRight saveWidget" data-close="true"><i class="fas fa-check-circle"></i> {{Sauvegarder et Fermer}}
 				</a>
 			</span>
 		</div>
@@ -82,6 +82,7 @@ if (!isConnect('admin')) {
 
 </div>
 
+<?php include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'widget.JeedomConnect', 'js', 'JeedomConnect'); ?>
