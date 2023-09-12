@@ -12,7 +12,7 @@ var myDefaultIcon = L.icon({
 });
 
 $.post({
-    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajaxUser.php",
+    url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
     data: { 'action': 'getDefaultPosition' },
     dataType: 'json',
     async: false,
@@ -547,7 +547,7 @@ function addJcMapListener(cmdId) {
 async function getInfoPosition(cmdId = 'all') {
 
     const result = await $.post({
-        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajaxUser.php",
+        url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
         data: {
             action: 'getAllPositions',
             id: cmdId

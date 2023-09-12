@@ -21,6 +21,84 @@ try {
 	require_once dirname(__FILE__) . '/../class/JeedomConnect.class.php';
 	include_file('core', 'authentification', 'php');
 
+	/**************************************************************/
+	/********************* USER ONLY PART *************************/
+	/**************************************************************/
+
+	if (!isConnect()) {
+		throw new Exception(__('401 - Accès non autorisé', __FILE__));
+	}
+
+	if (init('action') == 'getDefaultPosition') {
+
+		list($lng, $lat) = JeedomConnectUtils::getJcCoordinates();
+		list($lngDefault, $latDefault) = JeedomConnectUtils::getDefaultCoordinates();
+
+		$defaultZoom = (($lat . $lng) == ($latDefault . $lngDefault)) ? 'Autour Paris' : 'Autour de mon Jeedom';
+
+		ajax::success(array('lng' => $lng, 'lat' => $lat, 'defaultText' => $defaultZoom));
+	}
+
+	if (init('action') == 'getAllPositions') {
+		$result = array();
+		$id = init('id', 'all');
+
+		$user = user::byId($_SESSION['user']->getId());
+		if (!is_object($user)) ajax::error('unable to find user details');
+
+		if ($id == 'all') {
+			$eqLogics = JeedomConnect::getAllJCequipment();
+		} else {
+			/** @var cmd $cmdTmp */
+			$cmdTmp = cmd::byId($id);
+			if (!is_object($cmdTmp)) return;
+			$eqTmp = eqLogic::byId($cmdTmp->getEqLogic_id());
+			$eqLogics = array($eqTmp);
+		}
+
+		/** @var JeedomConnect $eqLogic */
+		foreach ($eqLogics as $eqLogic) {
+			if ($eqLogic->getConfiguration('displayPosition', 0) == 0) continue;
+
+			/** @var cmd $cmd */
+			$cmd = $eqLogic->getCmd(null, 'position');
+			if (!is_object($cmd)) continue;
+			// JCLog::debug("position cmd/id => " . $cmd->getId());
+			if (!$cmd->hasRight($user)) {
+				JCLog::warning('limited user try to access equipment position');
+				continue;
+			}
+
+			/** @var string $position */
+			$position = $cmd->execCmd();
+			if ($position == "") continue;
+
+			$data = explode(',', $position);
+			if (count($data) < 2) continue;
+			$cmdDistance = cmd::byEqLogicIdAndLogicalId($eqLogic->getId(),  'distance');
+			$distance = is_object($cmdDistance) ? number_format(floatval($cmdDistance->execCmd()), 0, ',', ' ') . ' ' . $cmdDistance->getUnite() : '';
+			$img = $eqLogic->getConfiguration('customImg', 'plugins/JeedomConnect/data/img/pin.webp');
+			$infoImg = getimagesize('/var/www/html/' . $img);
+			$result[] = array(
+				'id' => $cmd->getId(),
+				'name' => $eqLogic->getName(),
+				'eqId' => $eqLogic->getId(),
+				'lat' => round($data[0], 6),
+				'lng' => round($data[1], 6),
+				'lastSeen' => $cmd->getCollectDate(),
+				'icon' => $img,
+				'infoImg' => $infoImg,
+				'distance' => $distance
+			);
+		}
+		ajax::success($result);
+	}
+
+	/**************************************************************/
+	/*********************** ADMIN PART ***************************/
+	/**************************************************************/
+
+
 	if (!isConnect('admin')) {
 		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
