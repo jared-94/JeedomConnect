@@ -32,50 +32,19 @@ class JeedomConnectUtils {
         return  false;
     }
 
-    public static function getInstallDetails(): string {
+    public static function getInstallDetails($str = false): string {
 
-        $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . '<br/>';
+        $infoPlugin = '<b>Jeedom Core</b> : ' . config::byKey('version', 'core', '#NA#') . ' (' . config::byKey('core::branch') . ')<br/>';
+        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/><br/>';
 
-        $pluginType = self::isBeta(true);
         $daemon_info = JeedomConnect::deamon_info();
 
+        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' (' . ($daemon_info['last_launch'] ?? 'NA') . ')<br/>';
+        $infoPlugin .= JeedomConnect::getConfigForCommunity(false);
 
-        $infoPlugin .= '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/>';
-        $infoPlugin .= '<b>DNS Jeedom</b> : ' . (self::hasDNSConnexion() ? 'oui ' : 'non') . '<br/>';
-        $infoPlugin .= '<b>Statut Démon</b> : ' . ($daemon_info['state'] == 'ok' ? 'Démarré ' : 'Stoppé') . ' - (' . ($daemon_info['last_launch'] ?? 'NA') . ')<br/><br/>';
-
-
-        $infoPlugin .= '<b>Equipements</b> : <br/>';
-
-        /** @var JeedomConnect $eqLogic */
-        foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
-            $platformOs = $eqLogic->getConfiguration('platformOs');
-            $platform = $platformOs != '' ? 'sur ' . $platformOs : $platformOs;
-
-            $versionAppConfig = $eqLogic->getConfiguration('appVersion');
-            $versionAppTypeConfig = $eqLogic->getConfiguration('appTypeVersion');
-            $buildVersion = $eqLogic->getConfiguration('buildVersion');
-            $warn = ($versionAppTypeConfig != '' && $versionAppTypeConfig != $pluginType) ? ' <i class="fas fa-exclamation-triangle" style="color:red"></i> ' : '';
-            $buildVersionApp = ($pluginType == 'beta' && $buildVersion != '') ? ' (' . $buildVersion . ')' : '';
-            $versionApp = $versionAppConfig != '' ? 'v' . $versionAppConfig . $buildVersionApp . ' ' . $versionAppTypeConfig . $warn  : $versionAppConfig;
-
-            $connexionType = $eqLogic->getConfiguration('useWs') == '1' ? 'ws'  : '';
-            $withPolling = $eqLogic->getConfiguration('polling') == '1' ? 'polling'  : '';
-
-            $osVersionConfig = $eqLogic->getConfiguration('osVersion');
-            $osVersion = $osVersionConfig != '' ? ' [os : ' . $osVersionConfig . ']'  : '';
-
-            $cpl =  (($connexionType . $withPolling) == '')  ? '' : ' (' . ((($connexionType != '' && $withPolling != '')) ? ($connexionType . '/' . $withPolling) : (($connexionType ?: '')  . ($withPolling ?: ''))) . ')';
-
-            $infoPlugin .= '&nbsp;&nbsp;' .  $eqLogic->getName();
-            if ($platform == '' && $versionApp == '') {
-                $infoPlugin .= ' : non enregistré';
-            } else {
-                $infoPlugin .=  ' : ' . $versionApp . ' ' . $platform . $osVersion . $cpl;
-            }
-
-            $infoPlugin .= ' - ' . self::getUserInfo($eqLogic->getConfiguration('userId'));
-            $infoPlugin .=  '<br/>';
+        if ($str) {
+            $infoPlugin = br2nl('< Ajoutez un titre puis rédigez votre question/problème ici, sans effacer les infos de config indiquées ci-dessous ><br/><br/><br/><br/>--- <br/>**Mes infos de config** : <br/>```<br/>' . $infoPlugin . '```');
+            $infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
         }
 
         return $infoPlugin;

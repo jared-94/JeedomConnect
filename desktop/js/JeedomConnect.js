@@ -862,6 +862,34 @@ $('.eqLogicAction[data-action=gotoGenTypeConfig]').off('click').on('click', func
 })
 // End Generic Types
 
+// Start Community Post
+async function createCommunityPost() {
+  var data = {
+    action: 'createCommunityPost'
+  }
+  var infoPlugin = await asyncAjaxGenericFunction(data);
+  // console.log('info plugin', infoPlugin);
+
+  var element = document.createElement('a');
+
+  element.setAttribute('href', infoPlugin.result.url);
+  element.setAttribute('target', '_blank');
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+
+
+}
+
+$('.eqLogicAction[data-action=createCommunityPostJC]').off('click').on('click', function () {
+  createCommunityPost();
+})
+// End Community Post
+
 
 $('.eqLogicAction[data-action=moreJcOptions]').off('click').on('click', function () {
   $('.hideOptionMenu').show();
