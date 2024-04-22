@@ -29,9 +29,11 @@ async function editWidgetModal(widgetId, itemType, removeAction, exit, duplicate
 
     var mesEquipments = await getUsedByEquipement(widgetId);
     var inEquipments = mesEquipments.result.names;
+    var inCusto = mesEquipments.result.custo;
   }
   else {
     var inEquipments = undefined;
+    var inCusto = undefined;
   }
 
   // var itemDetail = (itemType == 'widget') ? allWidgetsDetail : allWidgetsDetail;
@@ -40,7 +42,7 @@ async function editWidgetModal(widgetId, itemType, removeAction, exit, duplicate
     widgetToEdit.type = widgetToEdit.component
   }
 
-  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate, inEquipments: inEquipments, itemType: itemType }, function (result) {
+  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate, inEquipments: inEquipments, inCusto: inCusto, itemType: itemType }, function (result) {
     refreshWidgetDetails();
     if (!exit) refreshWidgetsContent();
   });

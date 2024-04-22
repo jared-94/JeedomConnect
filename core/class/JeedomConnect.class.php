@@ -18,8 +18,6 @@
 
 /* * ***************************Includes********************************* */
 
-use Sabre\DAV\Exception\UnsupportedMediaType;
-
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
@@ -815,6 +813,27 @@ class JeedomConnect extends eqLogic {
 		return $ids;
 	}
 
+	/**
+	 * Return the array of the widget specific widgetId (and not the id)
+	 *
+	 * @return array
+	 */
+	public function getWidgetWidgetId($from_id = null) {
+		$ids = array();
+		JCLog::debug(' getWidgetWidgetId looking for id  ' . $from_id);
+
+		$conf = $this->getConfig();
+		if (is_null($conf)) return $ids;
+
+		foreach ($conf['payload']['widgets'] as $item) {
+			if ($from_id == null || $from_id == $item['id']) {
+				$ids[] = $item['widgetId'];
+			}
+		}
+
+		JCLog::debug(' fx  getWidgetWidgetId -- result final ' . json_encode($ids));
+		return $ids;
+	}
 	public function isWidgetIncluded($widgetId) {
 
 		$conf = $this->getGeneratedConfigFile();
@@ -1262,15 +1281,20 @@ class JeedomConnect extends eqLogic {
 
 	public function setGeofencesByCoordinates($lat, $lgt, $timestamp) {
 		JCLog::debug("[setGeofencesByCoordinates] " . $lat . ' -- ' . $lgt);
-		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
+		// foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
+		foreach ($this->getCmd('info') as $cmd) {
 			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false) {
 				$dist = JeedomConnectUtils::getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
-				if ($dist < $cmd->getConfiguration('radius')) {
+				$radius = $cmd->getConfiguration('radius');
+				JCLog::trace("  -- testing " . $cmd->getName() . ' --> distance = ' . $dist . ' // radius : ' . $radius);
+				if ($dist < $radius) {
+					JCLog::trace("  ---- dist lower than radius - entering the area");
 					if ($cmd->execCmd() != 1) {
 						JCLog::debug("Set 1 for geofence " . $cmd->getName());
 						$cmd->event(1, date('Y-m-d H:i:s', $timestamp));
 					}
 				} else {
+					JCLog::trace("  ---- dist greater than radius - not in this area");
 					if ($cmd->execCmd() !== 0) {
 						JCLog::debug("Set 0 for geofence " . $cmd->getName());
 						$cmd->event(0, date('Y-m-d H:i:s', $timestamp));
@@ -2482,6 +2506,7 @@ class JeedomConnectCmd extends cmd {
 						// JCLog::debug('Masquer // position =>' .  strpos(json_encode($customConf), $cond));
 						if (strpos(json_encode($customConf), $cond) === false) {
 							if ($customConf == "") $customConf = array();
+							// if ($customConf == "") $customConf = array('widgetId' => $widgetId);
 
 							$initialValue = (($customConf['visibilityCond'] ?? '') != '') ? ($customConf['visibilityCond'] . ' && ') : '';
 							$customConf['visibilityCond'] = $initialValue . $cond;

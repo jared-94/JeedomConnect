@@ -46,4 +46,7 @@ if (!isConnect('admin')) {
   </ul>
 </form>
 
-<?php include_file('desktop', 'assistant.simpleModal.JeedomConnect', 'js', 'JeedomConnect'); ?>
+<?php
+include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect');
+include_file('desktop', 'assistant.simpleModal.JeedomConnect', 'js', 'JeedomConnect');
+?>

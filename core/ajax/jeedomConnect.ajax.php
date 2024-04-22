@@ -553,18 +553,31 @@ try {
 	if (init('action') == 'getWidgetExistance') {
 		$myId = init('id');
 		$arrayName = array();
+		$arrayNameCusto = array();
 		/** @var JeedomConnect $eqLogic */
 		foreach (JeedomConnect::getAllJCequipment() as $eqLogic) {
 			if ($eqLogic->isWidgetIncluded($myId)) {
 				JCLog::trace($myId . ' exist in [' . $eqLogic->getName() . ']');
 				$arrayName[] = $eqLogic->getName();
+
+				$all_widgetIds = $eqLogic->getWidgetWidgetId($myId);
+				JCLog::debug('looking for widgetIds => ' .  json_encode($all_widgetIds));
+				$custo = $eqLogic->getCustomWidget();
+				$all_custo_keys = array_keys($custo['widgets']);
+				JCLog::debug('$custo : ' .  json_encode($all_custo_keys));
+				foreach ($all_widgetIds as $search_custo_id) {
+					if (in_array($search_custo_id, $all_custo_keys) && !in_array($eqLogic->getName(), $arrayNameCusto)) {
+						JCLog::debug(' ***** ' . $myId . ' custo exist for [' . $eqLogic->getName() . ']');
+						$arrayNameCusto[] = $eqLogic->getName();
+					}
+				}
 			} else {
 				JCLog::trace($myId . ' does NOT exist in [' . $eqLogic->getName() . ']');
 			}
 		}
 
 		JCLog::trace('ajax -- all name final -- ' . json_encode($arrayName));
-		ajax::success(array('names' => $arrayName));
+		ajax::success(array('names' => $arrayName, 'custo' => $arrayNameCusto));
 	}
 
 	if (init('action') == 'getInstallDetails') {

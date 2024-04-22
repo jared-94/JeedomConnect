@@ -93,6 +93,17 @@ function getWidgetModal(_options, _callback) {
         $('#widgetInclusion').css('display', 'block');
     }
 
+    if (_options.inCusto !== undefined && _options.inCusto != '') {
+
+        $('#widgetPerso').append('Personnalisé sur :<br/><ul>');
+
+        $.each(_options.inCusto, function (index, value) {
+            $("#widgetPerso").append('<li>' + value + '</li>');
+        });
+        $("#widgetPerso").append('</ul>');
+        $('#widgetPerso').css('display', 'block');
+    }
+
     if (_options.removeAction != true) {
         $('.widgetMenu .removeWidget').hide();
         $('.widgetMenu .hideWidget').addClass('roundedRight');
