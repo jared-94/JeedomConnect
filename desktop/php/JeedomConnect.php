@@ -373,7 +373,7 @@ $jsClickCommunityPost = $displayInfoValueCreateCommunityPost ? 'createCommunityP
 						?>
 					</select>
 				</span>
-				<span id="eraseFilterChoice" class="btn roundedRight">
+				<span id="eraseFilterChoice">
 					<!-- <i class="fas fa-times"></i> -->
 					<i class="fas fa-trash-alt"></i>
 				</span>
