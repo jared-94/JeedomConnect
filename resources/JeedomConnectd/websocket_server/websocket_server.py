@@ -527,7 +527,15 @@ class WebSocketHandler(StreamRequestHandler):
         return headers
 
     def handshake(self):
-        headers = self.read_http_headers()
+        try:
+            headers = self.read_http_headers()
+        except Exception:
+            logging.warning(
+                "[E-00] Client tried to connect but encountered header issue - connexion aborted "
+                + str(self.client_address)
+            )
+            self.keep_alive = False
+            return
 
         try:
             assert headers["upgrade"].lower() == "websocket"

@@ -884,6 +884,7 @@ class apiHelper {
   }
 
   private static function detachEquipement($eqId) {
+    /** @var JeedomConnect $eq */
     $eq = eqLogic::byLogicalId($eqId, 'JeedomConnect');
     if (is_object($eq)) {
       $eq->removeDevice();

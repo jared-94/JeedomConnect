@@ -93,6 +93,17 @@ function getWidgetModal(_options, _callback) {
         $('#widgetInclusion').css('display', 'block');
     }
 
+    if (_options.inCusto !== undefined && _options.inCusto != '') {
+
+        $('#widgetPerso').append('Personnalisé sur :<br/><ul>');
+
+        $.each(_options.inCusto, function (index, value) {
+            $("#widgetPerso").append('<li>' + value + '</li>');
+        });
+        $("#widgetPerso").append('</ul>');
+        $('#widgetPerso').css('display', 'block');
+    }
+
     if (_options.removeAction != true) {
         $('.widgetMenu .removeWidget').hide();
         $('.widgetMenu .hideWidget').addClass('roundedRight');
@@ -1396,6 +1407,8 @@ function getHtmlItem(type, option) {
 $(".widgetMenu .saveWidget").click(function () {
     $('#widget-alert').hideAlert();
 
+    var keepOpen = $(this).attr('data-close');
+
     try {
         var widgetOld = JSON.parse($("#widgetModal").attr('widgetOld'));
         var result = {};
@@ -1687,6 +1700,12 @@ $(".widgetMenu .saveWidget").click(function () {
                         });
                     }
                     else {
+
+                        if (keepOpen == 'false') {
+                            console.log('on reste open');
+                            return;
+                        }
+
                         if ($('.widgetMenu .saveWidget').attr('exit-attr') == 'true') {
                             var vars = getUrlVars()
                             var url = 'index.php?'

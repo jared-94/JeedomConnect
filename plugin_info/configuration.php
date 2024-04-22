@@ -310,7 +310,6 @@ sendVarToJS('userHash', $userHash);
         </div>
       </div>
 
-
     </div>
     <br />
 

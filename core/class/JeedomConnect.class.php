@@ -17,6 +17,7 @@
  */
 
 /* * ***************************Includes********************************* */
+
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 require_once dirname(__FILE__) . '/JeedomConnectWidget.class.php';
 require_once dirname(__FILE__) . '/JeedomConnectActions.class.php';
@@ -411,6 +412,7 @@ class JeedomConnect extends eqLogic {
 				if ($search === false) {
 					JCLog::debug('removing custom data (not used anymore) : ' . $item['value']['widgetId']);
 					config::remove('customData::' . $apiKey . '::' . $item['value']['widgetId'], 'JeedomConnect');
+					$this->removeCustomConf($item['value']['widgetId']);
 				}
 			}
 		}
@@ -627,6 +629,36 @@ class JeedomConnect extends eqLogic {
 		return json_decode(file_get_contents($filePath), true);
 	}
 
+	public function getCustomConf($widgetId, $apiKey = null) {
+		if (is_null($apiKey)) $apiKey = $this->getLogicalId();
+
+		return config::byKey('customData::' . $apiKey . '::' . $widgetId, __CLASS__);
+	}
+
+	public function removeCustomConf($widgetId, $apiKey = null) {
+		if (is_null($apiKey)) $apiKey = $this->getLogicalId();
+
+		config::remove('customData::' . $apiKey . '::' . $widgetId, __CLASS__);
+	}
+
+	public function saveCustomConf($widgetId, $customData, $apiKey = null) {
+		if (is_null($apiKey)) $apiKey = $this->getLogicalId();
+
+		config::save('customData::' . $apiKey . '::' . $widgetId, json_encode($customData), __CLASS__);
+	}
+
+	public function updateCustomConf($widgetId, $key, $data, $apiKey = null) {
+		if (is_null($apiKey)) $apiKey = $this->getLogicalId();
+
+		$customConf = $this->getCustomConf($widgetId);
+		// JCLog::debug(' == custom data ' . json_encode($customConf));
+
+		$customConf[$key] = $data;
+
+		config::save('customData::' . $apiKey . '::' . $widgetId, json_encode($customConf), __CLASS__);
+	}
+
+
 	public function getCustomWidget() {
 
 		$myKey = 'customData::' . $this->getConfiguration('apiKey') . '::';
@@ -781,6 +813,27 @@ class JeedomConnect extends eqLogic {
 		return $ids;
 	}
 
+	/**
+	 * Return the array of the widget specific widgetId (and not the id)
+	 *
+	 * @return array
+	 */
+	public function getWidgetWidgetId($from_id = null) {
+		$ids = array();
+		JCLog::debug(' getWidgetWidgetId looking for id  ' . $from_id);
+
+		$conf = $this->getConfig();
+		if (is_null($conf)) return $ids;
+
+		foreach ($conf['payload']['widgets'] as $item) {
+			if ($from_id == null || $from_id == $item['id']) {
+				$ids[] = $item['widgetId'];
+			}
+		}
+
+		JCLog::debug(' fx  getWidgetWidgetId -- result final ' . json_encode($ids));
+		return $ids;
+	}
 	public function isWidgetIncluded($widgetId) {
 
 		$conf = $this->getGeneratedConfigFile();
@@ -1036,7 +1089,7 @@ class JeedomConnect extends eqLogic {
 				$QR = imagecreatefrompng($filepath);
 
 				// START TO DRAW THE IMAGE ON THE QR CODE
-				$logopath = dirname(__FILE__) . '/../../data/img/JeedomConnect_icon2.png';
+				$logopath = __DIR__ . '/../../data/img/JeedomConnect_icon2.webp';
 				$logo = imagecreatefromstring(file_get_contents($logopath));
 				$QR_width = imagesx($QR);
 				$QR_height = imagesy($QR);
@@ -1228,15 +1281,20 @@ class JeedomConnect extends eqLogic {
 
 	public function setGeofencesByCoordinates($lat, $lgt, $timestamp) {
 		JCLog::debug("[setGeofencesByCoordinates] " . $lat . ' -- ' . $lgt);
-		foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
+		// foreach (cmd::byEqLogicId($this->getId()) as $cmd) {
+		foreach ($this->getCmd('info') as $cmd) {
 			if (strpos(strtolower($cmd->getLogicalId()), 'geofence') !== false) {
 				$dist = JeedomConnectUtils::getDistance($lat, $lgt, $cmd->getConfiguration('latitude'), $cmd->getConfiguration('longitude'));
-				if ($dist < $cmd->getConfiguration('radius')) {
+				$radius = $cmd->getConfiguration('radius');
+				JCLog::trace("  -- testing " . $cmd->getName() . ' --> distance = ' . $dist . ' // radius : ' . $radius);
+				if ($dist < $radius) {
+					JCLog::trace("  ---- dist lower than radius - entering the area");
 					if ($cmd->execCmd() != 1) {
 						JCLog::debug("Set 1 for geofence " . $cmd->getName());
 						$cmd->event(1, date('Y-m-d H:i:s', $timestamp));
 					}
 				} else {
+					JCLog::trace("  ---- dist greater than radius - not in this area");
 					if ($cmd->execCmd() !== 0) {
 						JCLog::debug("Set 0 for geofence " . $cmd->getName());
 						$cmd->event(0, date('Y-m-d H:i:s', $timestamp));
@@ -1395,10 +1453,10 @@ class JeedomConnect extends eqLogic {
 	}
 
 	public static function removeAllData($apiKey) {
-		unlink(self::$_qr_dir . $apiKey . '.png');
-		unlink(self::$_config_dir . $apiKey . ".json");
-		unlink(self::$_config_dir . $apiKey . ".json.generated");
-		unlink(self::$_notif_dir . $apiKey . ".json");
+		@unlink(self::$_qr_dir . $apiKey . '.png');
+		@unlink(self::$_config_dir . $apiKey . ".json");
+		@unlink(self::$_config_dir . $apiKey . ".json.generated");
+		@unlink(self::$_notif_dir . $apiKey . ".json");
 		JeedomConnectUtils::delTree(self::$_backup_dir . $apiKey);
 
 		$allKey = config::searchKey('customData::' . $apiKey, 'JeedomConnect');
@@ -1870,6 +1928,29 @@ class JeedomConnect extends eqLogic {
 			$infoPlugin .=  '<br/>';
 		}
 
+		/*
+		$nbWar = 0;
+		$arrWar = array();
+		$nbErr = 0;
+		$arrErr = array();
+		foreach ((jeedom::health()) as $datas) {
+			if ($datas['state'] === 2) {
+				$nbWar++;
+				$arrWar[] = $datas['name'];
+			} else if (!$datas['state']) {
+				$nbErr++;
+				$arrErr[] = $datas['name'];
+			}
+		}
+		
+		$info = 'Infos Santé : <br/>';
+		if ($nbWar > 0) $info .= ' ' . $nbWar . ' warning (' . implode(', ', $arrWar) . ') <br/>';
+		if ($nbErr > 0) $info .= ' ' . $nbErr . ' erreur (' . implode(', ', $arrErr) . ') <br/>';
+
+		$infoPlugin .= $info;
+		*/
+
+
 		if ($str) {
 			$infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
 		}
@@ -2052,6 +2133,7 @@ class JeedomConnectCmd extends cmd {
 	}
 
 	public function cancelAsk($notificationId, $answer, $eqNameAnswered, $dateAnswer) {
+		/** @var JeedomConnect $eqLogic */
 		$eqLogic = $this->getEqLogic();
 
 		$data = array(
@@ -2414,8 +2496,45 @@ class JeedomConnectCmd extends cmd {
 				$widgetIds = explode(',', $_options['message']);
 				$setVisible = $_options['title'] == 'show' ? true : false;
 
+				$cond = "'enable' == #auto#";
+				$hasChange = false;
+
 				foreach ($widgetIds as $widgetId) {
-					JeedomConnectWidget::updateConfig($widgetId, 'enable', $setVisible);
+
+					$customConf = $eqLogic->getCustomConf($widgetId);
+					if (!$setVisible) {
+						// JCLog::debug('Masquer // position =>' .  strpos(json_encode($customConf), $cond));
+						if (strpos(json_encode($customConf), $cond) === false) {
+							if ($customConf == "") $customConf = array();
+							// if ($customConf == "") $customConf = array('widgetId' => $widgetId);
+
+							$initialValue = (($customConf['visibilityCond'] ?? '') != '') ? ($customConf['visibilityCond'] . ' && ') : '';
+							$customConf['visibilityCond'] = $initialValue . $cond;
+							$hasChange = true;
+						}
+					} else {
+						// JCLog::debug('Afficher // position =>' .  strpos(json_encode($customConf), $cond));
+						if (strpos(json_encode($customConf), $cond) !== false) {
+							$customConf['visibilityCond'] = trim(str_replace(array('&& ' . $cond, $cond), array('', ''), $customConf['visibilityCond']));
+
+							if ($customConf['visibilityCond'] == '') unset($customConf['visibilityCond']);
+
+							$hasChange = true;
+						}
+					}
+
+					if (count($customConf) == 0) {
+						$eqLogic->removeCustomConf($widgetId);
+					} else {
+						$eqLogic->saveCustomConf($widgetId, $customConf);
+					}
+				}
+
+				if ($hasChange) {
+					JCLog::trace(' ===>> has change !');
+					$eqLogic->generateNewConfigVersion();
+				} else {
+					JCLog::trace("nothing to change...");
 				}
 
 				break;
