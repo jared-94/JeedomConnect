@@ -244,6 +244,7 @@ function getSimpleModal(_options, _callback) {
 	if (!isset(_options)) {
 		return;
 	}
+	// console.log('_options =>', _options)
 	$("#simpleModal").dialog('destroy').remove();
 
 	if ($("#simpleModal").length == 0) {
@@ -267,6 +268,9 @@ function getSimpleModal(_options, _callback) {
 	}
 	setSimpleModalData(_options.fields);
 	var genericButton = {
+		// "Fermer": function () {
+		// 	$(this).dialog('close');
+		// },
 		"Annuler": function () {
 			$('#simpleModalAlert').hide();
 			$(this).dialog("close");
@@ -348,10 +352,10 @@ function getSimpleModal(_options, _callback) {
 						let choice = $("#advancedGrid-select option:selected").val();
 						if (choice == 'standard') {
 							result.advancedGrid = false
-						} else if (choice == 'sc') {
+						} else if (choice == 'advanced') {
 							result.advancedGrid = true
 						} else {
-							result.advancedGrid = undefined
+							result.advancedGrid = null
 						}
 					}
 					if (_options.fields.find(i => i.type == "swipeUp")) {
@@ -381,7 +385,13 @@ function getSimpleModal(_options, _callback) {
 					if ($.trim(result) != '' && 'function' == typeof (_callback)) {
 						_callback(result);
 					}
+					// console.log('result =>', result);
+					// if (typeof _options.keepOpen != 'undefined' && !_options.keepOpen) {
 					$(this).dialog('close');
+					// }
+					// else {
+					// 	$.fn.showAlert({ message: 'Ajouté !', level: 'success' });
+					// }
 
 				}
 				catch (error) {
