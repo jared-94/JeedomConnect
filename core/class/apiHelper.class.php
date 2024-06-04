@@ -787,7 +787,7 @@ class apiHelper {
       'useWs' => $eqLogic->getConfiguration('useWs', 0),
       'polling' => $eqLogic->getConfiguration('polling', 0),
       'userHash' => $userConnected->getHash(),
-      'userId' => $userConnected->getId(),
+      'userId' => (string) $userConnected->getId(),
       'userName' => $userConnected->getLogin(),
       'userProfil' => $userConnected->getProfils(),
       'userImgPath' => config::byKey('userImgPath',   'JeedomConnect'),
@@ -871,7 +871,7 @@ class apiHelper {
         array_push($payload, array(
           'logicalId' => $eqLogic->getLogicalId(),
           'name' => $eqLogic->getName(),
-          'enable' => $eqLogic->getIsEnable(),
+          'enable' => (string) $eqLogic->getIsEnable(),
           'useWs' => $eqLogic->getConfiguration('useWs', 0),
           'polling' => $eqLogic->getConfiguration('polling', 0),
           'deviceName' => $eqLogic->getConfiguration('deviceName', null),
@@ -1009,7 +1009,7 @@ class apiHelper {
       if (in_array($sc->getId(), $scIds) || $all) {
         $state = $sc->getCache(array('state', 'lastLaunch'));
         $sc_info = array(
-          'id' => $sc->getId(),
+          'id' => (string) $sc->getId(),
           'name' => $sc->getName(),
           'object' => $sc->getObject() == null ? 'Aucun' : $sc->getObject()->getName(),
           'group' => $sc->getGroup() == '' ? 'Aucun' : $sc->getGroup(),
@@ -1052,7 +1052,7 @@ class apiHelper {
     foreach (jeeObject::all() as $object) {
       if (in_array($object->getId(), $objIds)) {
         $object_info = array(
-          'object_id' => $object->getId(),
+          'object_id' => (string) $object->getId() ?: null,
           'keys' => array()
         );
         foreach ($object->getConfiguration('summary') as $key => $value) {
@@ -1307,11 +1307,11 @@ class apiHelper {
     foreach (cmd::all() as $item) {
       $array = utils::o2a($item);
       $cmd = array(
-        'id' => $array['id'],
+        'id' => (string) $array['id'],
         'name' => $array['name'],
         'type' => $array['type'],
         'subType' => $array['subType'],
-        'eqLogic_id' => $array['eqLogic_id'],
+        'eqLogic_id' => (string) $array['eqLogic_id'],
         'unite' => $array['unite'],
         'isHistorized' => $array['isHistorized'],
         'configuration' => $array['configuration'],
@@ -1322,17 +1322,17 @@ class apiHelper {
     foreach (eqLogic::all() as $item) {
       $array = utils::o2a($item);
       $eqLogic = array(
-        'id' => $array['id'],
+        'id' => (string) $array['id'],
         'name' => $array['name'],
-        'object_id' => $array['object_id'],
-        'isEnable' => $array['isEnable']
+        'object_id' => (string) $array['object_id'] ?: null,
+        'isEnable' => (string) $array['isEnable']
       );
       array_push($result['payload']['eqLogics'], $eqLogic);
     }
     foreach (jeeObject::all() as $item) {
       $array = utils::o2a($item);
       $jeeObject = array(
-        'id' => $array['id'],
+        'id' => (string) $array['id'],
         'name' => $array['name'],
         'display' => JeedomConnectUtils::getIconAndColor($array['display']['icon'])
       );
@@ -1341,10 +1341,10 @@ class apiHelper {
     foreach (scenario::all() as $item) {
       $array = utils::o2a($item);
       $scenario = array(
-        'id' => $array['id'],
+        'id' => (string) $array['id'],
         'name' => $array['name'],
         'group' => $array['group'],
-        'object_id' => $array['object_id'],
+        'object_id' => (string) $array['object_id'] ?: null,
       );
       array_push($result['payload']['scenarios'], $scenario);
     }
@@ -2351,7 +2351,7 @@ class apiHelper {
 
     $result['eqName'] = $eqLogic->getName();
     $result['roomName'] = $object_name;
-    $result['roomId'] = $object_id;
+    $result['roomId'] = strval($object_id) ?: null;
     $result['plugin'] = $plugin;
 
     $result['level'] = $level;

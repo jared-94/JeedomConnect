@@ -1095,7 +1095,7 @@ class JeedomConnectUtils {
         $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
 
         $cmd_info = array(
-            'id' => $cmd->getId(),
+            'id' => (string) $cmd->getId(),
             'value' => $state['value'],
             'modified' => strtotime($state['valueDate']),
             'collectDate' => strtotime($state['collectDate']),
