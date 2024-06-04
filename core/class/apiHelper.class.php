@@ -1106,7 +1106,7 @@ class apiHelper {
       return self::raiseException("Can't find command [logicalId=" . $notifId . "]");
     }
     try {
-      $cmd->execCmd();
+      $cmd->execCmd(array());
     } catch (Exception $e) {
       return self::raiseException($e->getMessage());
     }
@@ -2209,12 +2209,14 @@ class apiHelper {
 
     foreach ($events['result'] as $event) {
       if ($event['name'] == 'jeeObject::summary::update') {
-        array_push($result_obj['payload'], $event['option']);
+        $item = $event['option'];
+        $item['object_id'] = (string)$item['object_id'];
+        array_push($result_obj['payload'], $item);
       }
       if ($event['name'] == 'scenario::update') {
         if (in_array($event['option']['scenario_id'], $scIds) || $scAll) {
           $sc_info = array(
-            'id' => $event['option']['scenario_id'],
+            'id' => (string) $event['option']['scenario_id'],
             'status' => $event['option']['state'],
             'lastLaunch' => strtotime($event['option']['lastLaunch'])
           );
@@ -2227,7 +2229,7 @@ class apiHelper {
       if ($event['name'] == 'cmd::update') {
         if (in_array($event['option']['cmd_id'], $infoIds)) {
           $cmd_info = array(
-            'id' => $event['option']['cmd_id'],
+            'id' => (string)$event['option']['cmd_id'],
             'value' => $event['option']['value'],
             'modified' => strtotime($event['option']['valueDate']),
             'collectDate' => strtotime($event['option']['collectDate']),
