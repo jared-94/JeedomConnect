@@ -1273,7 +1273,7 @@ class JeedomConnectUtils {
 
         $cmd = cmd::byId($cmdId);
 
-        if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
+        if (is_object($cmd) && $cmd->getIsHistorized() == 1 && $cmd->getSubType() != 'string') {
             $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
             $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
 
