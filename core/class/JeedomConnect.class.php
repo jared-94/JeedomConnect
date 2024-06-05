@@ -1760,6 +1760,7 @@ class JeedomConnect extends eqLogic {
 	public function addInEqConfiguration($key, $value, $separator = ',') {
 
 		if (is_array($value)) {
+			$arr = array();
 			foreach ($value as $val) {
 				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
 				$arr[] = $val;
