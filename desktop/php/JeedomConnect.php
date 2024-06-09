@@ -155,8 +155,7 @@ $jeedomVersion  = jeedom::version() ?? '0';
 $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 
 
-$displayInfoValueCreateCommunityPost = version_compare($jeedomVersion, '4.4.0', '>=');
-$jsClickCommunityPost = $displayInfoValueCreateCommunityPost ? 'createCommunityPost' : 'createCommunityPostJC';
+$jsClickCommunityPost = 'createCommunityPostJC';
 
 ?>
 

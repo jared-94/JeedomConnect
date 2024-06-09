@@ -582,6 +582,7 @@ class JeedomConnect extends eqLogic {
 		$jsonConfig['payload']['password'] = $pwd;
 
 		//add summary details
+		/** @var ?array $objSummary */
 		$objSummary = config::byKey('object:summary');
 		$allSummaries = $jsonConfig['payload']['summaries'] ?? [];
 		foreach ($allSummaries as $index => $summary) {
@@ -1760,6 +1761,7 @@ class JeedomConnect extends eqLogic {
 	public function addInEqConfiguration($key, $value, $separator = ',') {
 
 		if (is_array($value)) {
+			$arr = array();
 			foreach ($value as $val) {
 				JCLog::debug('Adding ' . $val . ' in configuration ' . $key);
 				$arr[] = $val;
@@ -1894,7 +1896,13 @@ class JeedomConnect extends eqLogic {
 
 		$pluginType = JeedomConnectUtils::isBeta(true);
 
-		$infoPlugin = '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/><br/>';
+		$infoPlugin = '<b>Version JC</b> : ' . config::byKey('version', 'JeedomConnect', '#NA#') . ' ' . $pluginType  . '<br/>';
+
+		$infoPlugin .= '<b>Version OS</b> : ' .  system::getDistrib() . ' ' . system::getOsVersion() . '<br/>';
+
+		$infoPlugin .= '<b>Version PHP</b> : ' . phpversion() . '<br/><br/>';
+
+
 		$infoPlugin .= '<b>Equipements</b> : <br/>';
 
 		/** @var JeedomConnect $eqLogic */
@@ -1952,7 +1960,7 @@ class JeedomConnect extends eqLogic {
 
 
 		if ($str) {
-			$infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
+			$infoPlugin = '<br/>```<br/>' . str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin) . '<br/>```<br/>';
 		}
 
 		return $infoPlugin;
@@ -2025,6 +2033,7 @@ class JeedomConnect extends eqLogic {
 
 			// JCLog::debug('data  ' . json_encode($customDataOriginal), '_mig')
 
+			/** @var ?array $customDataOriginal */
 			if (array_key_exists('widgets', $customDataOriginal)) {
 				// JCLog::debug('widgets exist ! ', '_mig')
 				foreach ($customDataOriginal['widgets'] as $key => $value) {
@@ -2171,6 +2180,7 @@ class JeedomConnectCmd extends cmd {
 				$timestamp = round(microtime(true) * 10000);
 				// JCLog::debug( ' all cmd notif all : ' . json_encode($cmdNotif));
 
+				/** @var ?array $cmdNotif */
 				foreach ($cmdNotif['cmd'] as $cmdId) {
 					$cmd = cmd::byId($cmdId);
 					$_options['orignalCmdId'] = $orignalCmdId;
