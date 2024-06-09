@@ -1960,7 +1960,7 @@ class JeedomConnect extends eqLogic {
 
 
 		if ($str) {
-			$infoPlugin = str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin);
+			$infoPlugin = '<br/>```<br/>' . str_replace(array('<b>', '</b>', '&nbsp;'), array('', '', ' '), $infoPlugin) . '<br/>```<br/>';
 		}
 
 		return $infoPlugin;
