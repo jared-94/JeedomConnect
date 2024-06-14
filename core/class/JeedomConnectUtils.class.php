@@ -572,11 +572,12 @@ class JeedomConnectUtils {
      * @return void
      */
     public static function delTree($dir) {
-        $files = array_diff(scandir($dir), array('.', '..'));
-        foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? self::delTree("$dir/$file") : unlink("$dir/$file");
+        $files = @scandir($dir);
+        if ($files === false) return true;
+        foreach (array_diff($files, array('.', '..')) as $file) {
+            (is_dir("$dir/$file")) ? self::delTree("$dir/$file") : @unlink("$dir/$file");
         }
-        return rmdir($dir);
+        return @rmdir($dir);
     }
 
 
@@ -1094,7 +1095,7 @@ class JeedomConnectUtils {
         $state = $cmd->getCache(array('valueDate', 'collectDate', 'value'));
 
         $cmd_info = array(
-            'id' => $cmd->getId(),
+            'id' => (string) $cmd->getId(),
             'value' => $state['value'],
             'modified' => strtotime($state['valueDate']),
             'collectDate' => strtotime($state['collectDate']),
@@ -1272,7 +1273,7 @@ class JeedomConnectUtils {
 
         $cmd = cmd::byId($cmdId);
 
-        if (is_object($cmd) && $cmd->getIsHistorized() == 1) {
+        if (is_object($cmd) && $cmd->getIsHistorized() == 1 && $cmd->getSubType() != 'string') {
             $startHist = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' -' . config::byKey('historyCalculPeriod') . ' hour'));
             $historyStatistique = $cmd->getStatistique($startHist, date('Y-m-d H:i:s'));
 

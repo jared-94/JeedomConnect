@@ -187,11 +187,12 @@ function setSimpleModalData(options) {
       items.push(swipe);
     }
     else if (option.type == "advancedGrid") {
+      // console.log('current option =>', option);
       swipe = `<li><div class='form-group'>
 			   <label class='col-xs-3' >Mode de grille</label>
 			   <div class='col-xs-9'>
           <select id="advancedGrid-select">
-            <option value='auto' ${option.value === undefined ? "selected" : ""}>Automatique</option>
+            <option value='auto' ${option.value === null ? "selected" : ""}>Automatique</option>
             <option value='standard' ${option.value === false ? "selected" : ""}>Standard</option>
             <option value='advanced' ${option.value === true ? "selected" : ""}>Avancé</option>
           </select>

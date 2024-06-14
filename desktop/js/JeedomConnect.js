@@ -29,9 +29,11 @@ async function editWidgetModal(widgetId, itemType, removeAction, exit, duplicate
 
     var mesEquipments = await getUsedByEquipement(widgetId);
     var inEquipments = mesEquipments.result.names;
+    var inCusto = mesEquipments.result.custo;
   }
   else {
     var inEquipments = undefined;
+    var inCusto = undefined;
   }
 
   // var itemDetail = (itemType == 'widget') ? allWidgetsDetail : allWidgetsDetail;
@@ -40,7 +42,7 @@ async function editWidgetModal(widgetId, itemType, removeAction, exit, duplicate
     widgetToEdit.type = widgetToEdit.component
   }
 
-  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate, inEquipments: inEquipments, itemType: itemType }, function (result) {
+  getWidgetModal({ title: "Editer un widget", eqId: widgetId, widget: widgetToEdit, removeAction: removeAction, exit: exit, duplicate: duplicate, inEquipments: inEquipments, inCusto: inCusto, itemType: itemType }, function (result) {
     refreshWidgetDetails();
     if (!exit) refreshWidgetsContent();
   });
@@ -1318,9 +1320,6 @@ function addCmdToTable(_cmd) {
   tr += '<div class="row">';
   tr += '<div class="col-xs-7">';
   tr += '<input class="cmdAttr form-control input-sm" data-l1key="name" placeholder="{{Nom de la commande}}">';
-  tr += '<select class="cmdAttr form-control input-sm" data-l1key="value" style="display : none;margin-top : 5px;" title="{{Commande information liée}}">';
-  tr += '<option value="">{{Aucune}}</option>';
-  tr += '</select>';
   tr += '</div>';
   tr += '<div class="col-xs-5">';
   tr += '<a class="cmdAction btn btn-default btn-sm" data-l1key="chooseIcon"><i class="fas fa-flag"></i> {{Icône}}</a>';

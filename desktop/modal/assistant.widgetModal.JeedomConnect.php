@@ -35,15 +35,18 @@ if (!isConnect('admin')) {
 
 <div>
 	<div style="display:none;" id="widget-alert"></div>
-	<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
-		<span class="input-group-btn">
-			<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
-			<a class="btn btn-sm btn-default roundedLeft duplicateWidget"><i class="far fa-copy"></i> {{Dupliquer}}
-			</a><a class="btn btn-sm btn-success saveWidget"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
-			</a><a class="btn btn-sm btn-warning hideWidget"><i class="fas fa-times"></i> {{Annuler}}
-			</a><a class="btn btn-sm btn-danger roundedRight removeWidget"><i class="fas fa-minus-circle"></i> {{Supprimer}}
-			</a>
-		</span>
+	<div class="col-sm-12">
+		<div class="input-group pull-right widgetMenu" style="display:inline-flex;">
+			<span class="input-group-btn">
+				<!-- Les balises <a></a> sont volontairement fermées à la ligne suivante pour éviter les espaces entre les boutons. Ne pas modifier -->
+				<a class="btn btn-sm btn-danger roundedLeft removeWidget"><i class="fas fa-minus-circle"></i> {{Supprimer}}
+				</a><a class="btn btn-sm btn-default duplicateWidget"><i class="far fa-copy"></i> {{Dupliquer}}
+				</a><a class="btn btn-sm btn-warning hideWidget"><i class="fas fa-times"></i> {{Annuler}}
+				</a><a class="btn btn-sm btn-primary saveWidget" data-close="false"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
+				</a><a class="btn btn-sm btn-success roundedRight saveWidget" data-close="true"><i class="fas fa-check-circle"></i> {{Sauvegarder et Fermer}}
+				</a>
+			</span>
+		</div>
 	</div>
 	<div class="col-sm-12 jcItemModal">
 		<div class="col-xs-2">
@@ -63,6 +66,7 @@ if (!isConnect('admin')) {
 				<div class="alert alert-info" id="widgetDescription"></div>
 				<div class="alert alert-info" id="widgetVariables"></div>
 				<div class="alert alert-info" id="widgetInclusion" style="display:none;"></div>
+				<div class="alert alert-info" id="widgetPerso" style="display:none;"></div>
 			</div>
 		</div>
 
@@ -79,6 +83,7 @@ if (!isConnect('admin')) {
 
 </div>
 
+<?php include_file('desktop', 'assistant.JeedomConnect', 'css', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'assistant.JeedomConnect', 'js', 'JeedomConnect'); ?>
 <?php include_file('desktop', 'widget.JeedomConnect', 'js', 'JeedomConnect'); ?>

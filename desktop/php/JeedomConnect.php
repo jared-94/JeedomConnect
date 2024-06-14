@@ -155,8 +155,7 @@ $jeedomVersion  = jeedom::version() ?? '0';
 $displayInfoValue = version_compare($jeedomVersion, '4.3.0', '>=');
 
 
-$displayInfoValueCreateCommunityPost = version_compare($jeedomVersion, '4.4.0', '>=');
-$jsClickCommunityPost = $displayInfoValueCreateCommunityPost ? 'createCommunityPost' : 'createCommunityPostJC';
+$jsClickCommunityPost = 'createCommunityPostJC';
 
 ?>
 
@@ -373,7 +372,7 @@ $jsClickCommunityPost = $displayInfoValueCreateCommunityPost ? 'createCommunityP
 						?>
 					</select>
 				</span>
-				<span id="eraseFilterChoice" class="btn roundedRight">
+				<span id="eraseFilterChoice">
 					<!-- <i class="fas fa-times"></i> -->
 					<i class="fas fa-trash-alt"></i>
 				</span>
