@@ -670,7 +670,7 @@ class JeedomConnect extends eqLogic {
 		$final = array();
 		foreach ($allCustomData as $item) {
 			if (!key_exists('widgetId', $item['value'])) {
-				JCLog::error('no widgetId found - skip');
+				JCLog::warning('no widgetId found - skip - ' . json_encode($item));
 				continue;
 			}
 			$final[$item['value']['widgetId']] = $item['value'];
