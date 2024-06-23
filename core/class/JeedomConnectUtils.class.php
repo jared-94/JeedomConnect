@@ -1301,9 +1301,10 @@ class JeedomConnectUtils {
                 }
             }
         } catch (TypeError $e) {
-            JCLog::warning('history error with cmdId ' . $cmdId);
+            JCLog::warning('history error with cmdId ' . $cmdId . ' / val=' . ($val ?? null));
+            JCLog::debug('Error :' . $e->getMessage());
         } catch (Exception $e) {
-            JCLog::error('exception cmdId ' . $cmdId . ' -> ' . $e->getMessage());
+            JCLog::error('exception history cmdId ' . $cmdId . ' -> ' . $e->getMessage());
         }
 
         return array(
