@@ -134,7 +134,19 @@
                     "title_with_list": "1",
                     "title_placeholder": "Visibilité",
                     "title_disable": "1",
-                    "message_placeholder": "Id du Widget"
+                    "message_placeholder": "widgetId"
+                }
+            },
+            {
+                "logicalId": "remove_custo",
+                "name": "Supprimer la personnalisation",
+                "type": "action",
+                "subtype": "message",
+                "isVisible": 0,
+                "order": 13,
+                "display": {
+                    "title_disable": "1",
+                    "message_placeholder": "widgetId"
                 }
             }
         ],
