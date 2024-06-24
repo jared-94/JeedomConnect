@@ -1531,7 +1531,7 @@ class apiHelper {
     $apiKey = $eqLogic->getConfiguration('apiKey');
     foreach ($customWidgetList as $customWidget) {
       if (!key_exists('widgetId', $customWidget)) {
-        JCLog::error('no widgetId found - skip');
+        JCLog::warning('no widgetId found - skip - ' . json_encode($customWidget));
         continue;
       }
       JCLog::debug('save custom data for widget [' . $customWidget['widgetId'] . '] : ' . json_encode($customWidget));

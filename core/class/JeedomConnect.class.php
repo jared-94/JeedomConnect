@@ -639,13 +639,13 @@ class JeedomConnect extends eqLogic {
 	public function removeCustomConf($widgetId, $apiKey = null) {
 		if (is_null($apiKey)) $apiKey = $this->getLogicalId();
 
-		config::remove('customData::' . $apiKey . '::' . $widgetId, __CLASS__);
+		return config::remove('customData::' . $apiKey . '::' . $widgetId, __CLASS__);
 	}
 
 	public function saveCustomConf($widgetId, $customData, $apiKey = null) {
 		if (is_null($apiKey)) $apiKey = $this->getLogicalId();
 
-		config::save('customData::' . $apiKey . '::' . $widgetId, json_encode($customData), __CLASS__);
+		return config::save('customData::' . $apiKey . '::' . $widgetId, json_encode($customData), __CLASS__);
 	}
 
 	public function updateCustomConf($widgetId, $key, $data, $apiKey = null) {
@@ -670,7 +670,7 @@ class JeedomConnect extends eqLogic {
 		$final = array();
 		foreach ($allCustomData as $item) {
 			if (!key_exists('widgetId', $item['value'])) {
-				JCLog::error('no widgetId found - skip');
+				JCLog::warning('no widgetId found - skip - ' . json_encode($item));
 				continue;
 			}
 			$final[$item['value']['widgetId']] = $item['value'];
@@ -2597,6 +2597,18 @@ class JeedomConnectCmd extends cmd {
 				}
 				break;
 
+			case 'remove_custo':
+				if (empty($_options['message'])) {
+					JCLog::error('Empty field "' . $this->getDisplay('message_placeholder', 'Message') . '" [cmdId : ' . $this->getId() . ']');
+					return;
+				}
+
+				$exist = $eqLogic->getCustomConf($_options['message']);
+				JCLog::debug('custom exist => ' . json_encode($exist));
+				$result = $eqLogic->removeCustomConf($_options['message']);
+				if ($result) $eqLogic->generateNewConfigVersion();
+
+				break;
 			case 'send_sms':
 				if (empty($_options['title'])) {
 					JCLog::error('Empty field "' . $this->getDisplay('title_placeholder', 'Titre') . '" [cmdId : ' . $this->getId() . ']');
