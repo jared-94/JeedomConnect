@@ -5505,7 +5505,8 @@
 							"id": "bar",
 							"name": "Barre"
 						}
-					]
+					],
+					"defaultChoice": "line"
 				},
 				{
 					"id": "tabs",
