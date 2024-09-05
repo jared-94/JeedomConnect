@@ -32,6 +32,12 @@ function JeedomConnect_install() {
   config::save('jcOrderByDefault', 'object', 'JeedomConnect');
   config::save('withQrCode', '1', 'JeedomConnect');
   config::save('isStrict', '1', 'JeedomConnect');
+
+  if (JeedomConnect::install_notif_info() == 'nok') {
+    JCLog::debug('suppression de ' . __DIR__ . '/../resources/sendNotif*');
+    array_map('unlink', glob(__DIR__ . '/../resources/sendNotif*'));
+    JeedomConnect::install_notif();
+  }
 }
 
 function JeedomConnect_update() {
@@ -46,6 +52,11 @@ function JeedomConnect_update() {
   JeedomConnectUtils::addCronItems();
   JeedomConnect::createMapEquipment();
 
+  if (JeedomConnect::install_notif_info() == 'nok') {
+    JCLog::debug('suppression de ' . __DIR__ . '/../resources/sendNotif*');
+    array_map('unlink', glob(__DIR__ . '/../resources/sendNotif*'));
+    JeedomConnect::install_notif();
+  }
 
   //////// PLEASE KEEP IT AT THE END !! 
   // FORCE save on all equipments to save new cmd

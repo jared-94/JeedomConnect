@@ -526,11 +526,13 @@ function refreshAddWidgets() {
         } else if (option.category == "stringList") {
             var classSub = (option.id == "subtitle") ? "subtitleSelected" : "";
             curOption += '<div class="input-group"><select style="width:600px;" id="' + option.id + '-input" class="' + classSub + '">';
-            if (!required) {
+            let defaultValueSelect = option.defaultChoice || '';
+            if (required == '' && defaultValueSelect == '') {
                 curOption += `<option value="none">Aucun</option>`;
             }
             option.choices.forEach(item => {
-                curOption += `<option value="${item.id}">${item.name}</option>`;
+                let selectedOption = (defaultValueSelect == item.id) ? 'selected' : '';
+                curOption += `<option value="${item.id}" ${selectedOption}>${item.name}</option>`;
             })
             if (option.id == "subtitle") {
                 curOption += `<option value="custom">Personnalisé</option></select>`;

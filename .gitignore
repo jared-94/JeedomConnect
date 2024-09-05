@@ -3,7 +3,7 @@ data/qrcodes/
 data/notifs/
 data/backups/
 data/img/user_files/
-test/
+tests/
 
 resources/*/*/__pycache__
 
