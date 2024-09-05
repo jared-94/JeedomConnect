@@ -34,8 +34,10 @@ header('Content-Type: image/jpeg');
 $camWidgetId = init('id');
 $conf = JeedomConnectWidget::getConfiguration($camWidgetId);
 $snapUrl = getUrl($conf);
-$username = $conf['username'] ?? null ?: null;
-$pwd = $conf['password'] ?? null ?: null;
+// JCLog::debug('conf => ' . json_encode($conf));
+$username = ($conf['username'] ?? null) ?: null;
+$pwd = ($conf['password'] ?? null) ?: null;
+$authent = ($conf['authent'] ?? null) ?: null;
 
 if (!is_string($snapUrl)) {
 	JCLog::debug("Can't find snapshot url");
@@ -60,7 +62,7 @@ function getUrl($conf) {
 	return $url;
 }
 
-function getData($url, $username, $pwd) {
+function getData($url, $username, $pwd, $authent) {
 	$ch = curl_init();
 
 	$replaceArr = array(
@@ -72,12 +74,23 @@ function getData($url, $username, $pwd) {
 
 	if (!is_null($username) && !is_null($pwd)) {
 		$userPwd = $username . ':' . $pwd;
-		curl_setopt($ch, CURLOPT_USERPWD, $userPwd);
-		$headers = array(
-			'Content-Type:application/json',
-			'Authorization: Basic ' . base64_encode($userPwd),
-		);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		if (in_array($authent, array(null, 'basic'))) {
+			JCLog::trace('authent method : basic');
+			curl_setopt($ch, CURLOPT_USERPWD, $userPwd);
+			$headers = array(
+				'Content-Type:application/json',
+				'Authorization: Basic ' . base64_encode($userPwd),
+			);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		} elseif (in_array($authent, array('digest'))) {
+			JCLog::trace('authent method : digest');
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+			curl_setopt($ch, CURLOPT_USERPWD, $userPwd);
+		} else {
+			JCLog::trace('no authent method');
+		}
+	} else {
+		JCLog::trace('no login/pwd');
 	}
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -93,8 +106,8 @@ function getData($url, $username, $pwd) {
 	return $data;
 }
 
-
-$data = getData($snapUrl, $username, $pwd);
+// JCLog::debug('args => ' . json_encode(array($username, $pwd, $authent)));
+$data = getData($snapUrl, $username, $pwd, $authent);
 
 if (!function_exists('imagecreatefromstring')) {
 	echo $data;

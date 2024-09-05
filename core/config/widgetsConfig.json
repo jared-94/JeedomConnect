@@ -5140,7 +5140,7 @@
 					"name": "Nom d'utilisateur",
 					"required": false,
 					"category": "string",
-					"description": "permet d'utiliser le tag #username# dans l'url de flux et snapshot"
+					"description": "Permet d'utiliser le tag #username# dans l'url de flux et snapshot"
 				},
 				{
 					"id": "password",
@@ -5148,7 +5148,7 @@
 					"required": false,
 					"category": "string",
 					"subtype": "password",
-					"description": "permet d'utiliser le tag #password# dans l'url de flux et snapshot"
+					"description": "Permet d'utiliser le tag #password# dans l'url de flux et snapshot"
 				},
 				{
 					"id": "streamUrl",
@@ -5171,6 +5171,28 @@
 					"name": "Flux vidéo uniquement sur le LAN",
 					"required": false,
 					"category": "binary"
+				},
+				{
+					"id": "authent",
+					"name": "Authentification Snapshot",
+					"required": false,
+					"category": "stringList",
+					"choices": [
+						{
+							"id": "nill",
+							"name": "Aucune"
+						},
+						{
+							"id": "basic",
+							"name": "Basic"
+						},
+						{
+							"id": "digest",
+							"name": "Digest"
+						}
+					],
+					"defaultChoice": "nill",
+					"description": "Définit la méthode d'authentification, si nécessaire"
 				},
 				{
 					"id": "snapshotUrl",
