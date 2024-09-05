@@ -1991,8 +1991,9 @@ class JeedomConnect extends eqLogic {
 
 		$infoPlugin .= '<b>Version OS</b> : ' .  system::getDistrib() . ' ' . system::getOsVersion() . '<br/>';
 
-		$infoPlugin .= '<b>Version PHP</b> : ' . phpversion() . '<br/><br/>';
+		$infoPlugin .= '<b>Version PHP</b> : ' . phpversion() . '<br/>';
 
+		$infoPlugin .= '<b>Bin</b> : ' . self::install_notif_info() . '<br/><br/>';
 
 		$infoPlugin .= '<b>Equipements</b> : <br/>';
 
