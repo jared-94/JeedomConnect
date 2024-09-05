@@ -161,6 +161,7 @@ class JeedomConnect extends eqLogic {
 	public static $_qr_dir = __DIR__ . '/../../data/qrcodes/';
 	public static $_notif_dir = __DIR__ . '/../../data/notifs/';
 	public static $_backup_dir = __DIR__ . '/../../data/backups/';
+	public static $_notif_bin_dir = __DIR__ . "/../../resources/sendNotif/";
 
 	public static $_volumeType = array(
 		"alarm" => "Alarme",
@@ -274,6 +275,55 @@ class JeedomConnect extends eqLogic {
 	}
 
 	/*     * -------------------------------- END DAEMON -------------------------------- */
+
+
+	/*     * ********************** NOTIF INSTALL MANAGEMENT *************************** */
+
+	public static function install_notif() {
+		$filename = self::getSendNotifBin();
+		JCLog::debug('installation notif bin type >> ' . $filename);
+
+		$pluginInfo = self::getPluginInfo();
+		JCLog::debug('plugin info => ' . json_encode($pluginInfo));
+
+		$version = 'tag_notifBin_' . JeedomConnectUtils::isBeta(true);
+		JCLog::debug('   looking for version => ' . json_encode($version));
+		$tag = $pluginInfo[$version] ?? 'unknown';
+		if ($tag == 'unknown') throw new Exception("Version notification non disponible => " . $version);
+
+		@mkdir(self::$_notif_bin_dir);
+		$destination_dir = self::getSendNotifBinPath();
+		JCLog::debug('   destination_dir : ' . $destination_dir);
+
+		$sh_path = realpath(self::$_notif_bin_dir . "/../../resources/installNotifBin.sh");
+		if (!is_executable($sh_path)) {
+			chmod($sh_path, 0755);
+		}
+
+		$cmd = $sh_path . " $tag $filename $destination_dir >> " . log::getPathToLog(__CLASS__);
+		JCLog::debug('   cmd : ' . $cmd);
+		shell_exec($cmd);
+	}
+
+	public static function install_notif_info() {
+
+		$sendNotifBin = self::getSendNotifBinPath();
+
+		$return = 'nok';
+		if (file_exists($sendNotifBin)) {
+			JCLog::trace($sendNotifBin . ' not found ... ');
+			$return = 'ok';
+		}
+		return $return;
+	}
+
+	public static function backupExclude() {
+		return [
+			'resources/sendNotif/'
+		];
+	}
+
+	/*     * ---------------------- END NOTIF INSTALL -------------------------------- */
 
 	public static function useWebsocket() {
 		/** @param JeedomConnect $eqLogic */
@@ -874,7 +924,7 @@ class JeedomConnect extends eqLogic {
 			}
 		}
 		//move to new background format
-		if (array_key_exists("condImages", $jsonConfig['payload']['background'])) {
+		if (array_key_exists("condImages", $jsonConfig['payload']['background'] ?? array())) {
 			$cond = array();
 			foreach ($jsonConfig['payload']['background']['condImages'] as $i => $bgCond) {
 				array_push($cond, array(
@@ -890,7 +940,7 @@ class JeedomConnect extends eqLogic {
 			unset($jsonConfig['payload']['background']['condImages']);
 			$changed = true;
 		}
-		if (array_key_exists("image", $jsonConfig['payload']['background'])) {
+		if (array_key_exists("image", $jsonConfig['payload']['background'] ?? array())) {
 			$jsonConfig['payload']['background']["background"] = array(
 				'type' => 'image',
 				'options' => $jsonConfig['payload']['background']['image']
@@ -1170,6 +1220,11 @@ class JeedomConnect extends eqLogic {
 			return;
 		}
 
+		$binPath = self::getSendNotifBinPath();
+		if (!file_exists($binPath)) {
+			throw new Exception("Impossible d'envoyer des notifications - bin introuvable");
+		}
+
 		$postData = array(
 			'to' => $this->getConfiguration('token')
 		);
@@ -1198,11 +1253,62 @@ class JeedomConnect extends eqLogic {
 		$postData["data"] = $data;
 
 		if ($this->getConfiguration('platformOs') == 'ios' && $data["type"] == "DISPLAY_NOTIF") {
+			// JCLog::info("on passe chez ios");
 			$postData = JeedomConnectUtils::getIosPostData($postData, $data);
 		}
 
+		if (!is_executable($binPath)) {
+			chmod($binPath, 0555);
+		}
 
-		$sendBin = '';
+		$cmd = $binPath . " -token='" . $postData['to'] . "' -type='" . $data["type"] . "' -payload='" . json_encode($postData["data"]["payload"], JSON_HEX_APOS) . "' 2>&1";
+		$cmdIdInfo = is_null($cmdId) ? '' : "to [" . $cmdId . "] ";
+		// JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData));
+		JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData["data"]));
+
+		$output = shell_exec($cmd);
+		$outputJson = preg_replace('/.*success count:( )/', '', $output);
+
+		if (is_json($outputJson)) {
+			JCLog::debug("JSON OUTPUT : " . json_encode($outputJson));
+			$outputJson = json_decode($outputJson, true);
+			$SuccessCount = $outputJson['SuccessCount'];
+			JCLog::debug("   -- SuccessCount : " . json_encode($SuccessCount));
+			$FailureCount = $outputJson['FailureCount'];
+			JCLog::debug("   -- FailureCount : " . json_encode($FailureCount));
+			$Responses = $outputJson['Responses'] ?? array();
+			JCLog::debug("   -- Responses : ");
+			foreach ($Responses as $item) {
+				JCLog::debug("       " . json_encode($item));
+			}
+			if ($SuccessCount != 1 || $FailureCount != 0) {
+				JCLog::error("Erreur détectée sur le dernier envoie de notification => " . json_encode($outputJson));
+			}
+		} else {
+			JCLog::error("L'envoie de la notification ne peut pas être vérifiée : " . $output);
+		}
+
+		if (is_null($output) || empty($output)) {
+			JCLog::error("Error while sending notification");
+		}
+	}
+
+	public static function getSendNotifBinPath() {
+		$filename = self::getSendNotifBin();
+		JCLog::trace('notif bin type >> ' . $filename);
+
+		$pluginInfo = self::getPluginInfo();
+
+		$version = 'tag_notifBin_' . JeedomConnectUtils::isBeta(true);
+		$tag = $pluginInfo[$version] ?? 'unknown';
+		if ($tag == 'unknown') throw new Exception("Version notification non disponible => " . $version);
+
+		$destination_dir = realpath(self::$_notif_bin_dir) . '/' . $tag . '_' . $filename;
+		return $destination_dir;
+	}
+
+	public static function getSendNotifBin() {
+
 		switch (php_uname("m")) {
 			case "x86_64":
 				$sendBin = "sendNotif_x64";
@@ -1218,24 +1324,9 @@ class JeedomConnect extends eqLogic {
 				break;
 			default:
 				JCLog::error("Error while detecting system architecture. " . php_uname("m") . " detected");
-				return;
+				throw new Exception("Error while detecting system architecture. " . php_uname("m") . " detected");
 		}
-
-
-		$binFile =  __DIR__ . "/../../resources/" . $sendBin;
-		if (!is_executable($binFile)) {
-			chmod($binFile, 0555);
-		}
-		$cmd = $binFile . " -data='" . json_encode($postData, JSON_HEX_APOS) . "' 2>&1";
-		$cmdIdInfo = is_null($cmdId) ? '' : "to [" . $cmdId . "] ";
-		JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData["data"]));
-		$output = shell_exec($cmd);
-		if (is_null($output) || empty($output)) {
-			JCLog::error("Error while sending notification");
-			return;
-		} else {
-			JCLog::debug("Send output : " . $output);
-		}
+		return $sendBin;
 	}
 
 	public function addGeofenceCmd($geofence, $coordinates) {
