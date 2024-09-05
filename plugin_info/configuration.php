@@ -82,6 +82,18 @@ sendVarToJS('userHash', $userHash);
     </div>
   <?php
   }
+
+  if (JeedomConnect::install_notif_info() == 'nok') {
+  ?>
+    <div class="row">
+      <div class="alert alert-warning" style="text-align:center;">
+        Vous ne pouvez pas envoyer de notifications !<br />
+        Forcez la mise à jour du plugin.
+      </div>
+    </div>
+
+  <?php
+  }
   ?>
   <!-- used for refresh when page saved -->
   <div class="customJCObject"></div>
