@@ -1254,20 +1254,20 @@ class JeedomConnect extends eqLogic {
 
 		if ($this->getConfiguration('platformOs') == 'ios' && $data["type"] == "DISPLAY_NOTIF") {
 			// JCLog::info("on passe chez ios");
-			$postData = JeedomConnectUtils::getIosPostData($postData, $data);
+			$postData["data"]["payload"]["display_options"] = JeedomConnectUtils::getIosPostData($data);
 		}
 
 		if (!is_executable($binPath)) {
 			chmod($binPath, 0555);
 		}
 
-		$cmd = $binPath . " -token='" . $postData['to'] . "' -type='" . $data["type"] . "' -payload='" . json_encode($postData["data"]["payload"], JSON_HEX_APOS) . "' 2>&1";
+		$cmd = $binPath . " -token='" . $postData['to'] . "' -os='" . $this->getConfiguration('platformOs') .  "' -type='" . $data["type"] . "' -payload='" . json_encode($postData["data"]["payload"], JSON_HEX_APOS) . "' 2>&1";
 		$cmdIdInfo = is_null($cmdId) ? '' : "to [" . $cmdId . "] ";
 		// JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData));
 		JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData["data"]));
 
 		$output = shell_exec($cmd);
-		$outputJson = preg_replace('/.*success count:( )/', '', $output);
+		/*$outputJson = preg_replace('/.*success count:( )/', '', $output);
 
 		if (is_json($outputJson)) {
 			JCLog::debug("JSON OUTPUT : " . json_encode($outputJson));
@@ -1286,7 +1286,7 @@ class JeedomConnect extends eqLogic {
 			}
 		} else {
 			JCLog::error("L'envoie de la notification ne peut pas être vérifiée : " . $output);
-		}
+		}*/
 
 		if (is_null($output) || empty($output)) {
 			JCLog::error("Error while sending notification");
