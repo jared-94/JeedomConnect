@@ -1267,14 +1267,14 @@ class JeedomConnect extends eqLogic {
 		JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData["data"]));
 
 		$output = shell_exec($cmd);
-		/*$outputJson = preg_replace('/.*success count:( )/', '', $output);
+		$outputJson = preg_replace('/.*response:( )/', '', $output);
 
 		if (is_json($outputJson)) {
 			JCLog::debug("JSON OUTPUT : " . json_encode($outputJson));
 			$outputJson = json_decode($outputJson, true);
-			$SuccessCount = $outputJson['SuccessCount'];
+			$SuccessCount = $outputJson['SuccessCount'] ?? null;
 			JCLog::debug("   -- SuccessCount : " . json_encode($SuccessCount));
-			$FailureCount = $outputJson['FailureCount'];
+			$FailureCount = $outputJson['FailureCount'] ?? null;
 			JCLog::debug("   -- FailureCount : " . json_encode($FailureCount));
 			$Responses = $outputJson['Responses'] ?? array();
 			JCLog::debug("   -- Responses : ");
@@ -1286,7 +1286,7 @@ class JeedomConnect extends eqLogic {
 			}
 		} else {
 			JCLog::error("L'envoie de la notification ne peut pas être vérifiée : " . $output);
-		}*/
+		}
 
 		if (is_null($output) || empty($output)) {
 			JCLog::error("Error while sending notification");
