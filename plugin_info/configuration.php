@@ -85,11 +85,12 @@ sendVarToJS('userHash', $userHash);
 
   if (JeedomConnect::install_notif_info() == 'nok') {
   ?>
-    <div class="row">
-      <div class="alert alert-warning" style="text-align:center;">
-        Vous ne pouvez pas envoyer de notifications !<br />
-        Forcez la mise à jour du plugin.
-      </div>
+
+    <div class="alert alert-warning" style="text-align:center;">
+      Vous ne pouvez pas envoyer de notifications !<br />
+      Forcez la mise à jour.
+      <a class="btn btn-danger" id="reinitBin"><i class="fas fa-exclamation-triangle"></i> {{Réinitialiser}}
+      </a>
     </div>
 
   <?php

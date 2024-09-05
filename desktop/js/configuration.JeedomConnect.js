@@ -36,7 +36,41 @@ $('.jeedomConnect').off('click', '#removeAllWidgets').on('click', '#removeAllWid
 
 })
 
+$('.jeedomConnect').off('click', '#reinitBin').on('click', '#reinitBin', function () {
 
+    $('.actions-detail').hideAlert();
+    var warning = "<i source='md' name='alert-outline' style='color:#ff0000' class='mdi mdi-alert-outline'></i>";
+    var msg = "Vous allez réinstaller des packages nécessaire à l'envoie des notifications.<br>";
+    msg += warning + " <b>Le retour arrière n'est pas possible.</b> " + warning;
+    msg += "<br>Voulez-vous continuer ? ";
+    bootbox.confirm(msg, function (result) {
+        if (result) {
+            $.post({
+                url: "plugins/JeedomConnect/core/ajax/jeedomConnect.ajax.php",
+                data: {
+                    action: 'reinitBin'
+                },
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state != 'ok') {
+                        $('.actions-detail').showAlert({
+                            message: data.result,
+                            level: 'danger'
+                        });
+                    }
+                    else {
+                        $('.actions-detail').showAlert({
+                            message: 'Action réalisée. Rafraichissez cette page.',
+                            level: 'success'
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+})
 
 $('.jeedomConnect').off('click', '#reinitAllEq').on('click', '#reinitAllEq', function () {
 

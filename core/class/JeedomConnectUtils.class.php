@@ -766,7 +766,7 @@ class JeedomConnectUtils {
         return $data;
     }
 
-    public static function getIosPostData($postData, $data) {
+    public static function getIosPostData($data) {
         //clean body and title cause html not supported in native notif
         $display_options = array(
             "title" => $data['payload']["title"] == $data['payload']["message"] ? "" : trim(urldecode(html_entity_decode(strip_tags($data['payload']["title"])))),
@@ -807,24 +807,7 @@ class JeedomConnectUtils {
             ))
         );
 
-        $postData = array_merge($postData, array(
-            "notification" => array(
-                "title" => "title",
-                "body" => "body",
-                "display_options" => $display_options
-            ),
-            "mutable_content" => true,
-            "content_available" => true,
-            "apns" => array(
-                "payload" => array(
-                    "aps" => array(
-                        "mutable_content" => true
-                    )
-                )
-            )
-        ));
-
-        return $postData;
+        return $display_options;
     }
 
     public static function startsWith($haystack, $needle) {
