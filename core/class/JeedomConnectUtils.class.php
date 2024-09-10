@@ -1175,7 +1175,7 @@ class JeedomConnectUtils {
      */
     public static function getFormatedText($text, $cmdData) {
         foreach (self::getCmdIdFromText($text) as $id) {
-            $text = str_replace("#${id}#", $cmdData[$id], $text);
+            $text = str_replace("#{$id}#", $cmdData[$id], $text);
         }
         return $text;
     }
