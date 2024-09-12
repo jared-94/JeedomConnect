@@ -280,6 +280,8 @@ class JeedomConnect extends eqLogic {
 	/*     * ********************** NOTIF INSTALL MANAGEMENT *************************** */
 
 	public static function install_notif() {
+		array_map('unlink', glob(__DIR__ . '/../../resources/sendNotif/vNotif*'));
+
 		$filename = self::getSendNotifBin();
 		JCLog::debug('installation notif bin type >> ' . $filename);
 
