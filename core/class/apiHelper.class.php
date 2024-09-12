@@ -2175,7 +2175,8 @@ class apiHelper {
       array(
         'type' => 'SC_INFO',
         'payload' => apiHelper::getScenarioData($config, $scAll, false)
-      ), array(
+      ),
+      array(
         'type' => 'OBJ_INFO',
         'payload' => apiHelper::getObjectData($config, false)
       )
@@ -3122,6 +3123,7 @@ class apiHelper {
       throw new Exception($commandId . " is not a valid command");
     }
 
+    JCLog::info("Mise à jour de la commande $commandId par un évènement [" . json_encode($message) . "]");
     $cmd->event($message);
   }
 
