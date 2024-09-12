@@ -280,6 +280,8 @@ class JeedomConnect extends eqLogic {
 	/*     * ********************** NOTIF INSTALL MANAGEMENT *************************** */
 
 	public static function install_notif() {
+		array_map('unlink', glob(__DIR__ . '/../../resources/sendNotif/vNotif*'));
+
 		$filename = self::getSendNotifBin();
 		JCLog::debug('installation notif bin type >> ' . $filename);
 
@@ -1282,10 +1284,10 @@ class JeedomConnect extends eqLogic {
 				JCLog::debug("       " . json_encode($item));
 			}
 			if ($SuccessCount != 1 || $FailureCount != 0) {
-				JCLog::error("Erreur détectée sur le dernier envoie de notification => " . json_encode($outputJson));
+				JCLog::error("Erreur détectée sur le dernier envoi de notification => " . json_encode($outputJson));
 			}
 		} else {
-			JCLog::error("L'envoie de la notification ne peut pas être vérifiée : " . $output);
+			JCLog::error("L'envoi de la notification ne peut pas être vérifiée : " . $output);
 		}
 
 		if (is_null($output) || empty($output)) {
@@ -1293,14 +1295,21 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public static function getSendNotifBinPath() {
-		$filename = self::getSendNotifBin();
-		JCLog::trace('notif bin type >> ' . $filename);
+	public static function getNotifBinVersion() {
 
 		$pluginInfo = self::getPluginInfo();
 
 		$version = 'tag_notifBin_' . JeedomConnectUtils::isBeta(true);
 		$tag = $pluginInfo[$version] ?? 'unknown';
+
+
+		return array($tag, $version);
+	}
+	public static function getSendNotifBinPath() {
+		$filename = self::getSendNotifBin();
+		JCLog::trace('notif bin type >> ' . $filename);
+
+		list($tag, $version) = self::getNotifBinVersion();
 		if ($tag == 'unknown') throw new Exception("Version notification non disponible => " . $version);
 
 		$destination_dir = realpath(self::$_notif_bin_dir) . '/' . $tag . '_' . $filename;
@@ -1993,7 +2002,8 @@ class JeedomConnect extends eqLogic {
 
 		$infoPlugin .= '<b>Version PHP</b> : ' . phpversion() . '<br/>';
 
-		$infoPlugin .= '<b>Bin</b> : ' . self::install_notif_info() . '<br/><br/>';
+		list($tag,) = self::getNotifBinVersion();
+		$infoPlugin .= '<b>Bin</b> : ' . self::install_notif_info() . ' / ' . $tag . '<br/><br/>';
 
 		$infoPlugin .= '<b>Equipements</b> : <br/>';
 
