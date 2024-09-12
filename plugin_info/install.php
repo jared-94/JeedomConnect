@@ -36,6 +36,7 @@ function JeedomConnect_install() {
   if (JeedomConnect::install_notif_info() == 'nok') {
     JCLog::debug('suppression de ' . __DIR__ . '/../resources/sendNotif*');
     array_map('unlink', glob(__DIR__ . '/../resources/sendNotif*'));
+    array_map('unlink', glob(__DIR__ . '/../resources/sendNotif/*'));
     JeedomConnect::install_notif();
   }
 }
@@ -55,6 +56,7 @@ function JeedomConnect_update() {
   if (JeedomConnect::install_notif_info() == 'nok') {
     JCLog::debug('suppression de ' . __DIR__ . '/../resources/sendNotif*');
     array_map('unlink', glob(__DIR__ . '/../resources/sendNotif*'));
+    array_map('unlink', glob(__DIR__ . '/../resources/sendNotif/*'));
     JeedomConnect::install_notif();
   }
 

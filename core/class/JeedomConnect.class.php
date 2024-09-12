@@ -280,6 +280,8 @@ class JeedomConnect extends eqLogic {
 	/*     * ********************** NOTIF INSTALL MANAGEMENT *************************** */
 
 	public static function install_notif() {
+		array_map('unlink', glob(__DIR__ . '/../../resources/sendNotif/vNotif*'));
+
 		$filename = self::getSendNotifBin();
 		JCLog::debug('installation notif bin type >> ' . $filename);
 
@@ -1254,27 +1256,27 @@ class JeedomConnect extends eqLogic {
 
 		if ($this->getConfiguration('platformOs') == 'ios' && $data["type"] == "DISPLAY_NOTIF") {
 			// JCLog::info("on passe chez ios");
-			$postData = JeedomConnectUtils::getIosPostData($postData, $data);
+			$postData["data"]["payload"]["display_options"] = JeedomConnectUtils::getIosPostData($data);
 		}
 
 		if (!is_executable($binPath)) {
 			chmod($binPath, 0555);
 		}
 
-		$cmd = $binPath . " -token='" . $postData['to'] . "' -type='" . $data["type"] . "' -payload='" . json_encode($postData["data"]["payload"], JSON_HEX_APOS) . "' 2>&1";
+		$cmd = $binPath . " -token='" . $postData['to'] . "' -os='" . $this->getConfiguration('platformOs') .  "' -type='" . $data["type"] . "' -payload='" . json_encode($postData["data"]["payload"], JSON_HEX_APOS) . "' 2>&1";
 		$cmdIdInfo = is_null($cmdId) ? '' : "to [" . $cmdId . "] ";
 		// JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData));
 		JCLog::info("Send notification " . $cmdIdInfo . "with data " . json_encode($postData["data"]));
 
 		$output = shell_exec($cmd);
-		$outputJson = preg_replace('/.*success count:( )/', '', $output);
+		$outputJson = preg_replace('/.*response:( )/', '', $output);
 
 		if (is_json($outputJson)) {
 			JCLog::debug("JSON OUTPUT : " . json_encode($outputJson));
 			$outputJson = json_decode($outputJson, true);
-			$SuccessCount = $outputJson['SuccessCount'];
+			$SuccessCount = $outputJson['SuccessCount'] ?? null;
 			JCLog::debug("   -- SuccessCount : " . json_encode($SuccessCount));
-			$FailureCount = $outputJson['FailureCount'];
+			$FailureCount = $outputJson['FailureCount'] ?? null;
 			JCLog::debug("   -- FailureCount : " . json_encode($FailureCount));
 			$Responses = $outputJson['Responses'] ?? array();
 			JCLog::debug("   -- Responses : ");
@@ -1282,10 +1284,10 @@ class JeedomConnect extends eqLogic {
 				JCLog::debug("       " . json_encode($item));
 			}
 			if ($SuccessCount != 1 || $FailureCount != 0) {
-				JCLog::error("Erreur détectée sur le dernier envoie de notification => " . json_encode($outputJson));
+				JCLog::error("Erreur détectée sur le dernier envoi de notification => " . json_encode($outputJson));
 			}
 		} else {
-			JCLog::error("L'envoie de la notification ne peut pas être vérifiée : " . $output);
+			JCLog::error("L'envoi de la notification ne peut pas être vérifiée : " . $output);
 		}
 
 		if (is_null($output) || empty($output)) {
@@ -1293,14 +1295,21 @@ class JeedomConnect extends eqLogic {
 		}
 	}
 
-	public static function getSendNotifBinPath() {
-		$filename = self::getSendNotifBin();
-		JCLog::trace('notif bin type >> ' . $filename);
+	public static function getNotifBinVersion() {
 
 		$pluginInfo = self::getPluginInfo();
 
 		$version = 'tag_notifBin_' . JeedomConnectUtils::isBeta(true);
 		$tag = $pluginInfo[$version] ?? 'unknown';
+
+
+		return array($tag, $version);
+	}
+	public static function getSendNotifBinPath() {
+		$filename = self::getSendNotifBin();
+		JCLog::trace('notif bin type >> ' . $filename);
+
+		list($tag, $version) = self::getNotifBinVersion();
 		if ($tag == 'unknown') throw new Exception("Version notification non disponible => " . $version);
 
 		$destination_dir = realpath(self::$_notif_bin_dir) . '/' . $tag . '_' . $filename;
@@ -1991,8 +2000,10 @@ class JeedomConnect extends eqLogic {
 
 		$infoPlugin .= '<b>Version OS</b> : ' .  system::getDistrib() . ' ' . system::getOsVersion() . '<br/>';
 
-		$infoPlugin .= '<b>Version PHP</b> : ' . phpversion() . '<br/><br/>';
+		$infoPlugin .= '<b>Version PHP</b> : ' . phpversion() . '<br/>';
 
+		list($tag,) = self::getNotifBinVersion();
+		$infoPlugin .= '<b>Bin</b> : ' . self::install_notif_info() . ' / ' . $tag . '<br/><br/>';
 
 		$infoPlugin .= '<b>Equipements</b> : <br/>';
 

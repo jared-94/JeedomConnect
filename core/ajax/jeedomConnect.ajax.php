@@ -209,6 +209,12 @@ try {
 	}
 
 
+	if (init('action') == 'reinitBin') {
+
+		JeedomConnect::install_notif();
+		ajax::success();
+	}
+
 	if (init('action') == 'reinitEquipement') {
 		$nbEq = 0;
 		/** @var JeedomConnect $eqLogic */
