@@ -5220,6 +5220,13 @@
 					"category": "binary"
 				},
 				{
+					"id": "webrtcEnabled",
+					"name": "Flux vidéo optimisé (go2rtc)",
+					"required": false,
+					"category": "binary",
+					"description": "Diffusion fluide en LAN et hors LAN via le pont go2rtc du plugin, à la place du flux RTSP/Snapshot classique."
+				},
+				{
 					"id": "networkCaching",
 					"name": "Mise en cache réseau (ms)",
 					"required": false,

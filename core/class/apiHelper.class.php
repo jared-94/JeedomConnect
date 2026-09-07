@@ -230,6 +230,24 @@ class apiHelper {
           return null;
           break;
 
+        case 'CAMERA_STREAM_OPEN':
+          return self::cameraStreamOpen($param['widgetId'] ?? null, $param['message'] ?? null);
+          break;
+
+        case 'CAMERA_STREAM_SEND':
+          self::cameraStreamSend($param['sessionId'] ?? null, $param['message'] ?? null);
+          return null;
+          break;
+
+        case 'CAMERA_STREAM_POLL':
+          return self::cameraStreamPoll($param['sessionId'] ?? null);
+          break;
+
+        case 'CAMERA_STREAM_CLOSE':
+          self::cameraStreamClose($param['sessionId'] ?? null);
+          return null;
+          break;
+
         case 'ADD_WIDGETS':
           self::addWidgets($eqLogic, $param['widgets'], $param['parentId'], $param['index']);
           return null;
@@ -1444,6 +1462,62 @@ class apiHelper {
   private static function setWidget($widget) {
     // JCLog::debug('save widget data');
     JeedomConnectWidget::updateWidgetConfig($widget);
+  }
+
+  /**
+   * Ouvre une session vers go2rtc/api/ws pour un widget caméra, via le pont
+   * HTTP de Go2rtc, pour l'app quand elle n'est pas sur le LAN (voir
+   * webrtcPlayer.js). Générique : sert aussi bien le signaling WebRTC
+   * ($message = {type:"webrtc/offer",...}) que le démarrage d'un flux vidéo
+   * MSE ($message = {type:"mse",...}). L'appelant est déjà authentifié par
+   * apiKey (comme toute méthode de cette API) ; CAMERA_STREAM_OPEN vérifie
+   * en plus que le widget visé est bien une caméra avec webrtcEnabled - pas
+   * de proxy vers un stream non prévu pour ça. Le sessionId retourné sert de
+   * jeton pour les appels suivants (CAMERA_STREAM_SEND/POLL/CLOSE) : il est
+   * opaque (uuid4 généré par le pont) et n'est communiqué qu'à l'appelant
+   * ayant déjà passé ce contrôle - pas besoin de revalider le widget à
+   * chaque appel.
+   */
+  private static function cameraStreamOpen($widgetId, $message) {
+    if (empty($widgetId) || empty($message)) {
+      return self::raiseException('Paramètres manquants', 'CAMERA_STREAM_OPEN');
+    }
+
+    $conf = JeedomConnectWidget::getConfiguration($widgetId, '', null);
+    if (empty($conf) || ($conf['type'] ?? '') != 'camera' || empty($conf['webrtcEnabled'])) {
+      return self::raiseException('Widget caméra WebRTC introuvable ou désactivé', 'CAMERA_STREAM_OPEN');
+    }
+
+    try {
+      return array('sessionId' => Go2rtc::openSession($widgetId, $message));
+    } catch (Exception $e) {
+      return self::raiseException($e->getMessage(), 'CAMERA_STREAM_OPEN');
+    }
+  }
+
+  private static function cameraStreamSend($sessionId, $message) {
+    if (empty($sessionId) || empty($message)) {
+      return;
+    }
+    Go2rtc::sendToSession($sessionId, $message);
+  }
+
+  private static function cameraStreamPoll($sessionId) {
+    if (empty($sessionId)) {
+      return self::raiseException('Paramètres manquants', 'CAMERA_STREAM_POLL');
+    }
+    try {
+      return array('messages' => Go2rtc::pollSession($sessionId));
+    } catch (Exception $e) {
+      return self::raiseException($e->getMessage(), 'CAMERA_STREAM_POLL');
+    }
+  }
+
+  private static function cameraStreamClose($sessionId) {
+    if (empty($sessionId)) {
+      return;
+    }
+    Go2rtc::closeSession($sessionId);
   }
 
   /**

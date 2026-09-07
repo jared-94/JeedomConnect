@@ -48,6 +48,25 @@ class JeedomConnectWidget extends config {
 		return utils::getJsonAttr($conf, $_key, $_default);
 	}
 
+	/**
+	 * Résout une URL de widget caméra (flux ou snapshot) : soit une valeur
+	 * texte statique ($_urlKey), soit dynamique via une commande Jeedom
+	 * ($_urlInfoKey, ex "streamUrlInfo"/"snapshotUrlInfo" -> execCmd()).
+	 * Logique partagée par snapshot.php et Go2rtc::registerStream().
+	 */
+	public static function resolveConfUrl($conf, $_urlKey, $_urlInfoKey) {
+		$url = $conf[$_urlKey] ?? '';
+
+		if (isset($conf[$_urlInfoKey])) {
+			$cmdId = $conf[$_urlInfoKey]['id'];
+			$cmd = cmd::byId($cmdId);
+			if (is_object($cmd)) {
+				$url = $cmd->execCmd();
+			}
+		}
+		return $url;
+	}
+
 	public static function getJsonData($_data, $_key = '', $_default = '') {
 
 		// JCLog::info( ' ##  getJsonData  -- data received => ' . json_encode($_data) );
@@ -217,10 +236,30 @@ class JeedomConnectWidget extends config {
 		}
 	}
 
+	// Champs dont la modification justifie de rappeler l'API go2rtc (voir
+	// saveConfig()) - tout le reste (nom, sous-titre, ratio, refreshInterval
+	// du snapshot...) n'a aucun effet sur l'enregistrement du flux WebRTC.
+	private static $_go2rtcRelevantKeys = array('webrtcEnabled', 'streamUrl', 'streamUrlInfo', 'username', 'password');
+
+	private static function go2rtcRegistrationNeeded($previousConf, $conf) {
+		if ($previousConf === null) {
+			// nouvelle création : seulement pertinent si déjà coché à la création
+			return !empty($conf['webrtcEnabled']);
+		}
+		foreach (self::$_go2rtcRelevantKeys as $key) {
+			if (($previousConf[$key] ?? null) != ($conf[$key] ?? null)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static function saveConfig($conf, $widgetId = null) {
 
 		$cpl = '';
-		if (is_null($widgetId)) {
+		$isNew = is_null($widgetId);
+		$previousConf = $isNew ? null : self::getConfiguration($widgetId, '', null);
+		if ($isNew) {
 			$widgetId = self::incrementIndex();
 			$cpl = ' [new creation]';
 		}
@@ -233,6 +272,23 @@ class JeedomConnectWidget extends config {
 			return null;
 		}
 		JCLog::debug('saveConfiguration done');
+
+		if (($conf['type'] ?? '') == 'camera' && self::go2rtcRegistrationNeeded($previousConf, $conf)) {
+			// POC go2rtc : saveConfig() est le seul chokepoint commun à tous les
+			// chemins de sauvegarde d'un widget (SET_WIDGET, création via
+			// addGlobalWidgets, updateConfig...) - contrairement à
+			// updateWidgetConfig(), qui n'est pas systématiquement appelée (ex:
+			// création d'un nouveau widget caméra). Filtré aux changements
+			// réellement pertinents pour éviter un appel réseau à go2rtc (et un
+			// éventuel démarrage du démon) à chaque sauvegarde d'un widget
+			// caméra, même pour un simple renommage.
+			try {
+				Go2rtc::registerStream($widgetId, $conf);
+			} catch (Exception $e) {
+				JCLog::error('go2rtc registerStream error : ' . $e->getMessage());
+			}
+		}
+
 		return $widgetId;
 	}
 
@@ -298,6 +354,19 @@ class JeedomConnectWidget extends config {
 		}
 
 		foreach ($arrayIdToRemove as $idToRemove) {
+			// go2rtc : désenregistre le flux avant suppression, sinon une entrée
+			// orpheline reste indéfiniment dans la config go2rtc pour un widget
+			// qui n'existe plus. Appel sans risque même si le widget n'était pas
+			// en webrtcEnabled (unregisterStream() est un no-op si le stream
+			// n'existe pas).
+			$removedConf = self::getConfiguration($idToRemove, '', null);
+			if (($removedConf['type'] ?? '') == 'camera') {
+				try {
+					Go2rtc::unregisterStream($idToRemove);
+				} catch (Exception $e) {
+					JCLog::error('go2rtc unregisterStream error : ' . $e->getMessage());
+				}
+			}
 			self::removeWidgetConf('widget::' . $idToRemove);
 		}
 
